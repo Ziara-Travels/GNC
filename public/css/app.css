@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom scrollbar styling */
+.scrollbar-custom {
+  scrollbar-width: thin;
+  scrollbar-color: #2563eb transparent;
+}
+
+.scrollbar-custom::-webkit-scrollbar {
+  width: 5px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb {
+  background-color: #2563eb;
+  border-radius: 20px;
+}
+
+/* Import libraries that are actually installed */
+@import "animate.css";
+
+/* Dashboard specific styles */
+@layer components {
+  /* Sidebar styles */
+  #sidebar {
+    @apply fixed w-[70px] h-screen bg-gradient-to-br from-[#0f172a] to-[#1e293b] left-0 top-0 z-[1000] shadow-lg overflow-y-auto;
+  }
+  
+  /* Main content area */
+  #mainContent {
+    @apply ml-[70px] min-h-screen w-full transition-all duration-400 ease-in-out bg-[#f8fafc];
+  }
+  
+  /* Header styles */
+  header.sticky-header {
+    @apply sticky top-0 z-[200] bg-white/90 backdrop-blur-md shadow-sm border-b border-[#e2e8f0];
+  }
+  
+  /* Content area with proper spacing */
+  .content-area {
+    @apply p-6 pb-24 pt-16;
+  }
+  
+  /* Weather widget */
+  #weatherWidget {
+    @apply flex items-center gap-2 bg-gradient-to-r from-[#60a5fa] to-[#3b82f6] text-white py-1.5 px-3 rounded-full text-sm font-medium transition-all duration-300 hover:-translate-y-[2px] hover:shadow-[0_4px_15px_rgba(59,130,246,0.4)] cursor-pointer;
+  }
+  
+  /* Time widget */
+  #currentTime {
+    @apply bg-gradient-to-r from-[#10b981] to-[#059669] text-white py-1.5 px-3 rounded-full text-sm font-mono font-semibold shadow-sm;
+  }
+}

@@ -1,0 +1,10 @@
+/* Custom generated Tailwind output */
+@import '../../public/build/assets/output.css';
+
+/* Animate.css */
+@import 'animate.css';
+
+/* Tailwind layers */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

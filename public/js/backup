@@ -1,0 +1,738 @@
+// /**
+//  * Setup improved airport autocomplete functionality with focus flow between "from" and "to" fields
+//  * @param {string} fromInputId - The ID of the origin input field
+//  * @param {string} toInputId - The ID of the destination input field
+//  * @param {string} fromSuggestionsId - The ID of the origin suggestions container
+//  * @param {string} toSuggestionsId - The ID of the destination suggestions container
+//  * @param {string} fromHiddenId - The ID of the origin hidden field for IATA code
+//  * @param {string} toHiddenId - The ID of the destination hidden field for IATA code
+//  */
+// function setupImprovedAirportAutocomplete(fromInputId, toInputId, fromSuggestionsId, toSuggestionsId, fromHiddenId, toHiddenId) {
+//     const fromInput = document.getElementById(fromInputId);
+//     const toInput = document.getElementById(toInputId);
+//     const fromSuggestions = document.getElementById(fromSuggestionsId);
+//     const toSuggestions = document.getElementById(toSuggestionsId);
+//     const fromHidden = document.getElementById(fromHiddenId);
+//     const toHidden = document.getElementById(toHiddenId);
+    
+//     if (!fromInput || !toInput || !fromSuggestions || !toSuggestions) return;
+    
+//     // Variables for debounce
+//     let fromDebounceTimeout;
+//     let toDebounceTimeout;
+//     const debounceDelay = 250;
+    
+//     // Track field selection status
+//     let fromFieldSelected = false;
+//     let toFieldSelected = false;
+    
+//     // FROM Input handling
+//     fromInput.addEventListener('input', function() {
+//         // Reset selection status when user starts typing again
+//         if (fromFieldSelected) {
+//             fromFieldSelected = false;
+//             fromHidden.value = '';
+//         }
+        
+//         clearTimeout(fromDebounceTimeout);
+//         const query = this.value.trim();
+        
+//         // Clear suggestions if query is too short
+//         if (query.length < 1) {
+//             fromSuggestions.innerHTML = '';
+//             fromSuggestions.classList.remove('p-2');
+//             return;
+//         }
+        
+//         fromDebounceTimeout = setTimeout(() => {
+//             // Hide destination suggestions while searching from field
+//             toSuggestions.innerHTML = '';
+//             toSuggestions.classList.remove('p-2');
+            
+//             // Make AJAX request to search for airports
+//             fetch(`/api/airports/search?q=${encodeURIComponent(query)}`)
+//                 .then(response => response.json())
+//                 .then(data => {
+//                     renderEnhancedSuggestions(data, fromInput, fromSuggestions, fromHidden);
+//                 })
+//                 .catch(error => {
+//                     console.error('Error fetching airport suggestions:', error);
+//                     fromSuggestions.innerHTML = '<div class="text-danger p-2">Error fetching suggestions</div>';
+//                 });
+//         }, debounceDelay);
+//     });
+    
+//     // TO Input handling
+//     toInput.addEventListener('input', function() {
+//         // Reset selection status when user starts typing again
+//         if (toFieldSelected) {
+//             toFieldSelected = false;
+//             toHidden.value = '';
+//         }
+        
+//         clearTimeout(toDebounceTimeout);
+//         const query = this.value.trim();
+        
+//         // Clear suggestions if query is too short
+//         if (query.length < 1) {
+//             toSuggestions.innerHTML = '';
+//             toSuggestions.classList.remove('p-2');
+//             return;
+//         }
+        
+//         toDebounceTimeout = setTimeout(() => {
+//             // Hide origin suggestions while searching destination field
+//             fromSuggestions.innerHTML = '';
+//             fromSuggestions.classList.remove('p-2');
+            
+//             // Make AJAX request to search for airports
+//             fetch(`/api/airports/search?q=${encodeURIComponent(query)}`)
+//                 .then(response => response.json())
+//                 .then(data => {
+//                     renderEnhancedSuggestions(data, toInput, toSuggestions, toHidden);
+//                 })
+//                 .catch(error => {
+//                     console.error('Error fetching airport suggestions:', error);
+//                     toSuggestions.innerHTML = '<div class="text-danger p-2">Error fetching suggestions</div>';
+//                 });
+//         }, debounceDelay);
+//     });
+    
+//     // Custom selection handler for FROM field
+//     function selectFromAirport(iataCode, displayName) {
+//         fromInput.value = displayName;
+//         fromHidden.value = iataCode;
+//         fromFieldSelected = true;
+        
+//         // Add visual feedback with smooth transition
+//         fromInput.style.transition = 'all 0.2s ease';
+//         fromInput.style.backgroundColor = 'rgba(6, 182, 212, 0.1)';
+        
+//         // Return to normal after a short delay
+//         setTimeout(() => {
+//             fromInput.style.backgroundColor = '';
+//         }, 500);
+        
+//         // Clear suggestions
+//         fromSuggestions.innerHTML = '';
+//         fromSuggestions.classList.remove('p-2');
+        
+//         // Focus destination field if empty
+//         if (!toInput.value) {
+//             setTimeout(() => {
+//                 toInput.focus();
+                
+//                 // Show popular airports for destination
+//                 if (toInput.value.trim() === '') {
+//                     fetch('/api/airports/popular')
+//                         .then(response => response.json())
+//                         .then(data => {
+//                             renderEnhancedSuggestions(data, toInput, toSuggestions, toHidden, 'Popular Destinations');
+//                         })
+//                         .catch(error => console.error('Error fetching popular airports:', error));
+//                 }
+//             }, 150);
+//         }
+        
+//         // Trigger change event for any listeners
+//         fromInput.dispatchEvent(new Event('change'));
+//     }
+    
+//     // Custom selection handler for TO field
+//     function selectToAirport(iataCode, displayName) {
+//         toInput.value = displayName;
+//         toHidden.value = iataCode;
+//         toFieldSelected = true;
+        
+//         // Add visual feedback with smooth transition
+//         toInput.style.transition = 'all 0.2s ease';
+//         toInput.style.backgroundColor = 'rgba(6, 182, 212, 0.1)';
+        
+//         // Return to normal after a short delay
+//         setTimeout(() => {
+//             toInput.style.backgroundColor = '';
+//         }, 500);
+        
+//         // Clear suggestions
+//         toSuggestions.innerHTML = '';
+//         toSuggestions.classList.remove('p-2');
+        
+//         // Trigger change event for any listeners
+//         toInput.dispatchEvent(new Event('change'));
+//     }
+    
+//     // Show popular airports when focusing on FROM input
+//     fromInput.addEventListener('focus', function() {
+//         // Only show suggestions if this field isn't already selected
+//         if (!fromFieldSelected && this.value.trim() === '') {
+//             // Hide destination suggestions
+//             toSuggestions.innerHTML = '';
+//             toSuggestions.classList.remove('p-2');
+            
+//             fetch('/api/airports/popular')
+//                 .then(response => response.json())
+//                 .then(data => {
+//                     renderEnhancedSuggestions(data, fromInput, fromSuggestions, fromHidden, 'Popular Origins', selectFromAirport);
+//                 })
+//                 .catch(error => console.error('Error fetching popular airports:', error));
+//         }
+//     });
+    
+//     // Show popular airports when focusing on TO input
+//     toInput.addEventListener('focus', function() {
+//         // Only show suggestions if this field isn't already selected
+//         if (!toFieldSelected && this.value.trim() === '') {
+//             // Hide origin suggestions
+//             fromSuggestions.innerHTML = '';
+//             fromSuggestions.classList.remove('p-2');
+            
+//             fetch('/api/airports/popular')
+//                 .then(response => response.json())
+//                 .then(data => {
+//                     renderEnhancedSuggestions(data, toInput, toSuggestions, toHidden, 'Popular Destinations', selectToAirport);
+//                 })
+//                 .catch(error => console.error('Error fetching popular airports:', error));
+//         }
+//     });
+    
+//     // Hide suggestions when clicking outside
+//     document.addEventListener('click', function(e) {
+//         if (e.target !== fromInput && !fromSuggestions.contains(e.target)) {
+//             fromSuggestions.innerHTML = '';
+//             fromSuggestions.classList.remove('p-2');
+//         }
+        
+//         if (e.target !== toInput && !toSuggestions.contains(e.target)) {
+//             toSuggestions.innerHTML = '';
+//             toSuggestions.classList.remove('p-2');
+//         }
+//     });
+// }
+
+// /**
+//  * Render enhanced airport suggestions with icons and better styling
+//  * @param {Array} data - The airport data to render
+//  * @param {HTMLElement} inputField - The input field
+//  * @param {HTMLElement} container - The suggestions container
+//  * @param {HTMLElement} hiddenField - The hidden field for IATA code
+//  * @param {string} [title] - Optional title for the suggestions list
+//  * @param {Function} [customSelectHandler] - Optional custom selection handler
+//  */
+// function renderEnhancedSuggestions(data, inputField, container, hiddenField, title = null, customSelectHandler = null) {
+//     if (!data || data.length === 0) {
+//         container.innerHTML = `<div class="text-center text-muted p-2">
+//             <i class="fas fa-exclamation-circle me-2"></i>
+//             No airports found
+//         </div>`;
+//         container.classList.add('p-2');
+//         return;
+//     }
+    
+//     let html = `<div class="suggestions-table">`;
+    
+//     // Add title if provided
+//     if (title) {
+//         html += `<div class="suggestions-title text-muted small mb-2">
+//             <i class="fas fa-star text-warning me-1"></i> ${title}
+//         </div>`;
+//     }
+    
+//     html += `<table class="table table-sm table-hover mb-0">
+//         <thead>
+//             <tr class="bg-light">
+//                 <th class="small text-muted py-1 px-2"><i class="fas fa-plane-departure text-primary me-1"></i>Code</th>
+//                 <th class="small text-muted py-1 px-2"><i class="fas fa-building text-primary me-1"></i>Airport</th>
+//                 <th class="small text-muted py-1 px-2"><i class="fas fa-map-marker-alt text-primary me-1"></i>Location</th>
+//             </tr>
+//         </thead>
+//         <tbody>`;
+    
+//     data.forEach(airport => {
+//         html += `<tr class="suggestion-item cursor-pointer" 
+//                     data-iata="${airport.iata_code}" 
+//                     data-name="${airport.display_name || airport.name + ' (' + airport.iata_code + ')'}">
+//                     <td class="fw-bold text-primary small py-1 px-2">${airport.iata_code}</td>
+//                     <td class="small py-1 px-2">
+//                         <div class="d-flex align-items-center">
+//                             <div class="flex-grow-1">${airport.name}</div>
+//                             ${airport.international ? '<span class="ms-1 badge bg-info text-white" style="font-size: 0.6rem;">INTL</span>' : ''}
+//                         </div>
+//                     </td>
+//                     <td class="small text-muted py-1 px-2">${airport.city}, ${airport.country}</td>
+//                 </tr>`;
+//     });
+    
+//     html += `</tbody></table>
+//         <div class="text-end mt-1 px-2 py-1 bg-light border-top">
+//             <small class="text-muted"><i class="fas fa-info-circle me-1"></i> Click to select airport</small>
+//         </div>
+//     </div>`;
+    
+//     container.innerHTML = html;
+//     container.classList.add('p-2');
+    
+//     // Add click event listeners to suggestion items
+//     container.querySelectorAll('.suggestion-item').forEach(item => {
+//         item.addEventListener('click', function() {
+//             const iataCode = this.getAttribute('data-iata');
+//             const displayName = this.getAttribute('data-name');
+            
+//             // Use custom handler if provided
+//             if (customSelectHandler) {
+//                 customSelectHandler(iataCode, displayName);
+//                 return;
+//             }
+            
+//             // Default behavior
+//             inputField.value = displayName;
+//             if (hiddenField) hiddenField.value = iataCode;
+            
+//             // Add visual feedback with smooth transition
+//             inputField.style.transition = 'all 0.2s ease';
+//             inputField.style.backgroundColor = 'rgba(6, 182, 212, 0.1)';
+            
+//             // Return to normal after a short delay
+//             setTimeout(() => {
+//                 inputField.style.backgroundColor = '';
+//             }, 500);
+            
+//             container.innerHTML = '';
+//             container.classList.remove('p-2');
+            
+//             // Trigger change event for any listeners
+//             inputField.dispatchEvent(new Event('change'));
+//         });
+//     });
+    
+//     // Add touch support for mobile
+//     container.querySelectorAll('.suggestion-item').forEach(item => {
+//         item.addEventListener('touchstart', function(e) {
+//             e.preventDefault();
+//             this.classList.add('bg-light');
+//         });
+        
+//         item.addEventListener('touchend', function(e) {
+//             e.preventDefault();
+//             const iataCode = this.getAttribute('data-iata');
+//             const displayName = this.getAttribute('data-name');
+            
+//             // Use custom handler if provided
+//             if (customSelectHandler) {
+//                 customSelectHandler(iataCode, displayName);
+//                 return;
+//             }
+            
+//             // Default behavior
+//             inputField.value = displayName;
+//             if (hiddenField) hiddenField.value = iataCode;
+            
+//             container.innerHTML = '';
+//             container.classList.remove('p-2');
+            
+//             // Trigger change event for any listeners
+//             inputField.dispatchEvent(new Event('change'));
+//         });
+//     });
+// }
+
+// /**
+//  * Add loading state and results handling to flight search forms
+//  */
+// function setupFlightSearchForms() {
+//     // Get all search forms (round trip, one way, multi-city)
+//     const searchForms = document.querySelectorAll('#round-trip form, #one-way form, #multi-city form');
+    
+//     searchForms.forEach(form => {
+//         form.addEventListener('submit', function(e) {
+//             // Prevent default form submission to handle with AJAX
+//             e.preventDefault();
+            
+//             // Validate required fields
+//             const requiredInputs = this.querySelectorAll('input[required]');
+//             let isValid = true;
+            
+//             requiredInputs.forEach(input => {
+//                 if (!input.value.trim()) {
+//                     isValid = false;
+//                     input.classList.add('is-invalid');
+//                 } else {
+//                     input.classList.remove('is-invalid');
+//                 }
+//             });
+            
+//             // Validate IATA codes
+//             const fromIataFields = this.querySelectorAll('input[name="from_iata"], input[name="from_iata[]"]');
+//             const toIataFields = this.querySelectorAll('input[name="to_iata"], input[name="to_iata[]"]');
+            
+//             fromIataFields.forEach(field => {
+//                 if (!field.value) {
+//                     isValid = false;
+//                     const inputField = field.parentElement.querySelector('input[type="text"]');
+//                     if (inputField) {
+//                         inputField.classList.add('is-invalid');
+//                     }
+//                 }
+//             });
+            
+//             toIataFields.forEach(field => {
+//                 if (!field.value) {
+//                     isValid = false;
+//                     const inputField = field.parentElement.querySelector('input[type="text"]');
+//                     if (inputField) {
+//                         inputField.classList.add('is-invalid');
+//                     }
+//                 }
+//             });
+            
+//             if (!isValid) {
+//                 // Show validation error message
+//                 showSearchMessage('error', 'Please complete all required fields and select valid airports.');
+//                 return false;
+//             }
+            
+//             // Get the submit button
+//             const submitButton = this.querySelector('button[type="submit"]');
+//             const buttonIcon = submitButton.querySelector('i.fas');
+//             const buttonText = submitButton.querySelector('span');
+//             const spinner = submitButton.querySelector('.spinner-border') || createSpinner();
+            
+//             if (!submitButton.querySelector('.spinner-border')) {
+//                 buttonIcon.classList.add('d-none');
+//                 submitButton.insertBefore(spinner, buttonText);
+//             } else {
+//                 spinner.classList.remove('d-none');
+//                 buttonIcon.classList.add('d-none');
+//             }
+            
+//             // Update button text
+//             buttonText.textContent = 'Searching...';
+//             submitButton.disabled = true;
+            
+//             // Show search overlay
+//             showSearchOverlay();
+            
+//             // Submit the form
+//             const formData = new FormData(this);
+            
+//             fetch(this.action, {
+//                 method: 'POST',
+//                 body: formData,
+//                 headers: {
+//                     'X-Requested-With': 'XMLHttpRequest'
+//                 }
+//             })
+//             .then(response => {
+//                 // Check if we're being redirected
+//                 if (response.redirected) {
+//                     window.location.href = response.url;
+//                     return;
+//                 }
+                
+//                 if (!response.ok) {
+//                     throw new Error('Network response was not ok');
+//                 }
+                
+//                 return response.json();
+//             })
+//             .then(data => {
+//                 if (data && data.redirect) {
+//                     window.location.href = data.redirect;
+//                 } else if (data && data.error) {
+//                     hideSearchOverlay();
+//                     showSearchMessage('error', data.error);
+//                     resetButton();
+//                 } else {
+//                     hideSearchOverlay();
+//                     showSearchMessage('info', 'Your search is complete but no flights were found. Please try different dates or airports.');
+//                     resetButton();
+//                 }
+//             })
+//             .catch(error => {
+//                 console.error('Error during search:', error);
+//                 hideSearchOverlay();
+//                 showSearchMessage('error', 'An error occurred during your search. Please try again.');
+//                 resetButton();
+//             });
+            
+//             function resetButton() {
+//                 spinner.classList.add('d-none');
+//                 buttonIcon.classList.remove('d-none');
+//                 buttonText.textContent = 'Search';
+//                 submitButton.disabled = false;
+//             }
+//         });
+//     });
+// }
+
+// /**
+//  * Create a spinner element for the search button
+//  */
+// function createSpinner() {
+//     const spinner = document.createElement('span');
+//     spinner.className = 'spinner-border spinner-border-sm me-2';
+//     spinner.setAttribute('role', 'status');
+//     spinner.setAttribute('aria-hidden', 'true');
+//     return spinner;
+// }
+
+// /**
+//  * Show a search message notification
+//  * @param {string} type - Type of message: 'error', 'info', 'success'
+//  * @param {string} message - Message text
+//  */
+// function showSearchMessage(type, message) {
+//     // Remove any existing messages
+//     const existingMessages = document.querySelectorAll('.search-message');
+//     existingMessages.forEach(msg => msg.remove());
+    
+//     // Create message container
+//     const messageContainer = document.createElement('div');
+//     messageContainer.className = `search-message alert alert-${type === 'error' ? 'danger' : (type === 'info' ? 'info' : 'success')} mt-3 mb-3 d-flex align-items-center`;
+//     messageContainer.style.borderRadius = '8px';
+//     messageContainer.style.boxShadow = '0 2px 6px rgba(0,0,0,0.15)';
+    
+//     // Add message icon
+//     let icon = '';
+//     if (type === 'error') {
+//         icon = '<i class="fas fa-exclamation-triangle text-danger me-2 fa-lg"></i>';
+//     } else if (type === 'info') {
+//         icon = '<i class="fas fa-info-circle text-info me-2 fa-lg"></i>';
+//     } else {
+//         icon = '<i class="fas fa-check-circle text-success me-2 fa-lg"></i>';
+//     }
+    
+//     // Set message content
+//     messageContainer.innerHTML = `
+//         ${icon}
+//         <div>
+//             <strong>${type === 'error' ? 'Error' : (type === 'info' ? 'Information' : 'Success')}</strong>
+//             <div>${message}</div>
+//         </div>
+//         <button type="button" class="btn-close ms-auto" aria-label="Close"></button>
+//     `;
+    
+//     // Add close button functionality
+//     messageContainer.querySelector('.btn-close').addEventListener('click', function() {
+//         messageContainer.remove();
+//     });
+    
+//     // Find the search form container and insert the message at the top
+//     const searchContainer = document.querySelector('.search-form-container');
+//     if (searchContainer) {
+//         searchContainer.insertBefore(messageContainer, searchContainer.firstChild);
+        
+//         // Auto-hide after 8 seconds
+//         setTimeout(() => {
+//             if (messageContainer.parentNode) {
+//                 messageContainer.remove();
+//             }
+//         }, 8000);
+//     }
+// }
+
+// /**
+//  * Show search overlay with animation
+//  */
+// function showSearchOverlay() {
+//     // Check if overlay already exists
+//     let overlay = document.getElementById('search-overlay');
+    
+//     if (!overlay) {
+//         // Create overlay
+//         overlay = document.createElement('div');
+//         overlay.id = 'search-overlay';
+//         overlay.className = 'position-fixed top-0 start-0 w-100 h-100 d-flex flex-column justify-content-center align-items-center';
+//         overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+//         overlay.style.zIndex = '9999';
+        
+//         // Create content
+//         overlay.innerHTML = `
+//             <div class="bg-white p-4 rounded-3 shadow-lg text-center" style="max-width: 400px;">
+//                 <div class="mb-3">
+//                     <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;"></div>
+//                 </div>
+//                 <h4 class="mb-2">Searching for flights</h4>
+//                 <p class="text-muted mb-2">We're scanning hundreds of airlines for the best deals.</p>
+//                 <div class="progress" style="height: 6px;">
+//                     <div id="search-progress-bar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+//                 </div>
+//                 <p class="mt-2 small text-muted">This may take a few moments...</p>
+//             </div>
+//         `;
+        
+//         document.body.appendChild(overlay);
+        
+//         // Animate progress bar
+//         const progressBar = document.getElementById('search-progress-bar');
+//         let width = 0;
+        
+//         const interval = setInterval(() => {
+//             if (width >= 95) {
+//                 clearInterval(interval);
+//             } else {
+//                 width += Math.random() * 5;
+//                 if (width > 95) width = 95;
+//                 progressBar.style.width = width + '%';
+//             }
+//         }, 500);
+        
+//         // Add animation
+//         overlay.style.opacity = '0';
+//         overlay.style.transition = 'opacity 0.3s ease';
+//         setTimeout(() => {
+//             overlay.style.opacity = '1';
+//         }, 10);
+//     }
+// }
+
+// /**
+//  * Hide search overlay with animation
+//  */
+// function hideSearchOverlay() {
+//     const overlay = document.getElementById('search-overlay');
+//     if (overlay) {
+//         overlay.style.opacity = '0';
+//         setTimeout(() => {
+//             if (overlay.parentNode) {
+//                 overlay.parentNode.removeChild(overlay);
+//             }
+//         }, 300);
+//     }
+// }
+
+// /**
+//  * Check URL parameters for search results messages
+//  */
+// function checkSearchResultsMessages() {
+//     const urlParams = new URLSearchParams(window.location.search);
+//     const noFlightsFound = urlParams.get('no_flights') === 'true';
+//     const searchError = urlParams.get('search_error');
+    
+//     if (noFlightsFound) {
+//         showSearchMessage('info', 'No flights found for your search criteria. Please try different dates or airports.');
+//     } else if (searchError) {
+//         showSearchMessage('error', decodeURIComponent(searchError));
+//     }
+// }
+
+// // Additional function to add to your existing document ready handler
+// document.addEventListener('DOMContentLoaded', function() {
+//     // Your existing code here...
+    
+//     // Setup flight search forms with loading states
+//     setupFlightSearchForms();
+    
+//     // Check for search results messages in URL
+//     checkSearchResultsMessages();
+    
+//     // Add "no flights found" alert if present in the DOM
+//     const noFlightsAlert = document.getElementById('no-flights-alert');
+//     if (noFlightsAlert && noFlightsAlert.dataset.show === 'true') {
+//         showSearchMessage('info', noFlightsAlert.dataset.message || 'No flights were found for your search criteria.');
+//     }
+    
+//     // Add error alert if present in the DOM
+//     const errorAlert = document.getElementById('error-alert');
+//     if (errorAlert && errorAlert.dataset.show === 'true') {
+//         showSearchMessage('error', errorAlert.dataset.message || 'An error occurred during your search.');
+//     }
+    
+//     console.log('Flight search forms initialized with loading states');
+// });
+
+// /**
+//  * Show a message in the flight results section
+//  * @param {string} type - Message type: info, warning, danger
+//  * @param {string} message - Message text
+//  */
+// function showResultsMessage(type, message) {
+//     // Create the results message container
+//     const resultsContainer = document.createElement('div');
+//     resultsContainer.className = `alert alert-${type} d-flex align-items-center my-4`;
+    
+//     // Add appropriate icon
+//     let icon = 'info-circle';
+//     if (type === 'warning') icon = 'exclamation-triangle';
+//     if (type === 'danger') icon = 'exclamation-circle';
+    
+//     resultsContainer.innerHTML = `
+//         <div class="d-flex align-items-center">
+//             <i class="fas fa-${icon} fa-2x me-3"></i>
+//             <div>
+//                 <h5 class="mb-1 fw-bold">
+//                     ${type === 'info' ? 'Information' : (type === 'warning' ? 'No Results' : 'Error')}
+//                 </h5>
+//                 <p class="mb-0">${message}</p>
+//             </div>
+//         </div>
+//     `;
+    
+//     // Find where to insert the message
+//     const searchFormContainer = document.querySelector('.search-form-container');
+    
+//     if (searchFormContainer) {
+//         // Check if there's already a results container
+//         const existingResults = document.querySelector('.flight-results-container');
+        
+//         if (existingResults) {
+//             existingResults.innerHTML = '';
+//             existingResults.appendChild(resultsContainer);
+//         } else {
+//             // Create a new container
+//             const newResultsContainer = document.createElement('div');
+//             newResultsContainer.className = 'flight-results-container mt-4';
+//             newResultsContainer.appendChild(resultsContainer);
+            
+//             // Insert after the search form
+//             searchFormContainer.parentNode.insertBefore(newResultsContainer, searchFormContainer.nextSibling);
+//         }
+//     }
+// }
+
+// // Add CSS styles for better UI
+// const style = document.createElement('style');
+// style.textContent = `
+//     .search-overlay {
+//         backdrop-filter: blur(5px);
+//     }
+    
+//     .cursor-pointer {
+//         cursor: pointer;
+//     }
+    
+//     .is-invalid {
+//         border-color: #dc3545 !important;
+//         background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+//         background-repeat: no-repeat;
+//         background-position: right calc(0.375em + 0.1875rem) center;
+//         background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+//     }
+    
+//     .search-message {
+//         animation: fadeIn 0.3s;
+//     }
+    
+//     @keyframes fadeIn {
+//         from { opacity: 0; transform: translateY(-10px); }
+//         to { opacity: 1; transform: translateY(0); }
+//     }
+// `;
+// document.head.appendChild(style);
+
+// // Execute when DOM is fully loaded
+// document.addEventListener('DOMContentLoaded', function() {
+//     // Airport autocomplete functionality with focus flow
+//     setupImprovedAirportAutocomplete('rt-origin', 'rt-destination', 'fromSuggestions', 'toSuggestions', 'from_iata', 'to_iata');
+//     setupImprovedAirportAutocomplete('ow-origin', 'ow-destination', 'owFromSuggestions', 'owToSuggestions', 'ow-from-iata', 'ow-to-iata');
+    
+//     // Set up multi-city flight form airport autocomplete
+//     setupMultiCityAutocomplete();
+    
+//     // Initialize date fields with defaults
+//     setDefaultDates();
+    
+//     // Setup tab navigation
+//     setupTabNavigation();
+    
+//     console.log('Flight search JS initialized successfully');
+// });
