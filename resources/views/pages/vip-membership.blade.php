@@ -1,475 +1,102 @@
 @extends('layouts.main')
-
 @section('title', 'VIP Membership - Ziara Travel')
 
 @section('content')
-<div class="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-100">
-    <!-- Hero Section -->
-    <section class="relative py-20 bg-gradient-to-r from-purple-600 to-indigo-700 text-white overflow-hidden">
-        <div class="absolute inset-0 bg-black opacity-10"></div>
-        <div class="container mx-auto px-4 relative z-10">
-            <div class="max-w-4xl mx-auto text-center">
-                <h1 class="text-5xl md:text-6xl font-bold mb-6 animate-fade-in">
-                    VIP Membership
-                </h1>
-                <p class="text-xl md:text-2xl text-purple-100 mb-8 animate-slide-up">
-                    Elevate your travel experience with exclusive privileges and personalized service
-                </p>
-                <div class="bg-white/20 backdrop-blur-sm rounded-2xl p-6 inline-block">
-                    <div class="text-4xl font-bold mb-2">Premium Benefits</div>
-                    <div class="text-lg">Exclusively for VIP members</div>
-                </div>
+{{-- ===== HERO ===== --}}
+<section class="relative bg-slate-900 overflow-hidden">
+    <img src="https://images.unsplash.com/photo-1540541338287-41700207dee6?w=1400&h=500&fit=crop" alt="" class="absolute inset-0 w-full h-full object-cover opacity-20" loading="eager">
+    <div class="relative max-w-5xl mx-auto px-4 pt-28 pb-10 text-center">
+        <h1 class="text-2xl md:text-3xl font-bold text-white mb-1">VIP <span class="text-amber-400">Membership</span></h1>
+        <p class="text-xs text-gray-300">Unlock exclusive perks and premium travel experiences</p>
+    </div>
+</section>
+
+{{-- ===== MEMBERSHIP TIERS ===== --}}
+<section class="py-10 bg-white">
+    <div class="max-w-5xl mx-auto px-4">
+        <h2 class="text-lg font-bold text-gray-900 text-center mb-6">Choose Your Tier</h2>
+        <div class="grid sm:grid-cols-3 gap-3">
+            @php $tiers = [
+                ['name'=>'Silver VIP','price'=>'$29','period'=>'/month','color'=>'gray','features'=>['Priority customer support','5% discount on flights','Free seat selection','Early access to deals','Monthly travel newsletter'],'popular'=>false],
+                ['name'=>'Gold VIP','price'=>'$59','period'=>'/month','color'=>'amber','features'=>['Everything in Silver','10% discount on flights','Free luggage upgrade','Airport lounge access','Dedicated travel advisor','Flexible cancellations'],'popular'=>true],
+                ['name'=>'Platinum VIP','price'=>'$99','period'=>'/month','color'=>'emerald','features'=>['Everything in Gold','15% discount on flights','Complimentary travel insurance','Private airport transfers','VIP concierge service','Exclusive partner perks'],'popular'=>false],
+            ]; @endphp
+            @foreach($tiers as $t)
+            <div class="relative bg-gray-50 rounded-xl p-4 border {{ $t['popular'] ? 'border-amber-400 ring-2 ring-amber-100' : 'border-gray-100' }}">
+                @if($t['popular'])<span class="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-amber-400 text-[8px] font-bold text-gray-900 px-2.5 py-0.5 rounded-full">MOST POPULAR</span>@endif
+                <h3 class="text-xs font-bold text-gray-900 mb-1">{{ $t['name'] }}</h3>
+                <div class="mb-3"><span class="text-xl font-bold text-gray-900">{{ $t['price'] }}</span><span class="text-[10px] text-gray-400">{{ $t['period'] }}</span></div>
+                <ul class="space-y-1.5 mb-4">
+                    @foreach($t['features'] as $f)<li class="flex gap-1.5 text-[10px] text-gray-600"><i class="fas fa-check text-emerald-500 text-[8px] mt-0.5"></i>{{ $f }}</li>@endforeach
+                </ul>
+                <button class="w-full {{ $t['popular'] ? 'bg-amber-500 hover:bg-amber-600' : 'bg-emerald-600 hover:bg-emerald-700' }} text-white text-xs font-semibold py-2 rounded-lg transition-colors" onclick="alert('VIP registration coming soon!')">Get Started</button>
+            </div>
+            @endforeach
+        </div>
+    </div>
+</section>
+
+{{-- ===== PERKS ===== --}}
+<section class="py-10 bg-gray-50">
+    <div class="max-w-5xl mx-auto px-4">
+        <h2 class="text-lg font-bold text-gray-900 text-center mb-6">VIP Benefits</h2>
+        <div class="grid sm:grid-cols-2 md:grid-cols-4 gap-3">
+            @foreach([['icon'=>'fa-tags','title'=>'Exclusive Discounts','text'=>'Save up to 15% on every booking'],['icon'=>'fa-couch','title'=>'Lounge Access','text'=>'Relax in airport lounges worldwide'],['icon'=>'fa-headset','title'=>'Priority Support','text'=>'Skip the queue with VIP support'],['icon'=>'fa-shield-alt','title'=>'Free Insurance','text'=>'Complimentary travel protection']] as $p)
+            <div class="bg-white rounded-xl p-4 text-center border border-gray-100">
+                <div class="w-8 h-8 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-2"><i class="fas {{ $p['icon'] }} text-amber-500 text-xs"></i></div>
+                <h3 class="text-xs font-bold text-gray-900 mb-0.5">{{ $p['title'] }}</h3>
+                <p class="text-[10px] text-gray-500">{{ $p['text'] }}</p>
+            </div>
+            @endforeach
+        </div>
+    </div>
+</section>
+
+{{-- ===== CTA ===== --}}
+<section class="py-10 bg-white">
+    <div class="max-w-5xl mx-auto px-4">
+        <div class="flex flex-col md:flex-row items-center gap-6 bg-gray-50 rounded-xl overflow-hidden border border-gray-100">
+            <div class="md:w-1/2"><img src="https://images.unsplash.com/photo-1436491865332-7a61a109db05?w=600&h=400&fit=crop" alt="" class="w-full h-48 md:h-56 object-cover" loading="lazy"></div>
+            <div class="md:w-1/2 p-5">
+                <span class="text-[10px] font-bold text-amber-500 uppercase tracking-wider">Limited Offer</span>
+                <h2 class="text-lg font-bold text-gray-900 mt-1 mb-2">Start Your VIP Journey Today</h2>
+                <p class="text-xs text-gray-500 leading-relaxed mb-4">Join now and get your first month free. Experience travel the way it was meant to be.</p>
+                <button class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-5 py-2 rounded-lg transition-colors" onclick="alert('Coming soon!')">Claim Free Trial</button>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- Membership Tiers -->
-    <section class="py-20 bg-white">
-        <div class="container mx-auto px-4">
-            <div class="max-w-6xl mx-auto">
-                <div class="text-center mb-16">
-                    <h2 class="text-4xl font-bold text-gray-800 mb-4">Choose Your VIP Tier</h2>
-                    <p class="text-xl text-gray-600">Select the membership level that best suits your travel lifestyle</p>
-                </div>
-
-                <div class="grid lg:grid-cols-3 gap-8">
-                    <!-- Gold VIP -->
-                    <div class="bg-gradient-to-br from-yellow-100 to-yellow-200 rounded-3xl p-8 relative overflow-hidden border-2 border-yellow-300">
-                        <div class="absolute top-4 right-4">
-                            <div class="w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center">
-                                <i data-lucide="star" class="w-6 h-6 text-white"></i>
-                            </div>
-                        </div>
-                        <h3 class="text-3xl font-bold text-gray-800 mb-2">Gold VIP</h3>
-                        <p class="text-gray-600 mb-6">Perfect for frequent travelers</p>
-                        
-                        <div class="mb-8">
-                            <div class="text-4xl font-bold text-yellow-600 mb-2">$299</div>
-                            <div class="text-gray-600">per year</div>
-                        </div>
-
-                        <ul class="space-y-4 mb-8">
-                            <li class="flex items-center text-gray-700">
-                                <i data-lucide="check" class="w-5 h-5 text-green-500 mr-3"></i>
-                                Priority customer support
-                            </li>
-                            <li class="flex items-center text-gray-700">
-                                <i data-lucide="check" class="w-5 h-5 text-green-500 mr-3"></i>
-                                15% discount on all bookings
-                            </li>
-                            <li class="flex items-center text-gray-700">
-                                <i data-lucide="check" class="w-5 h-5 text-green-500 mr-3"></i>
-                                Free seat selection
-                            </li>
-                            <li class="flex items-center text-gray-700">
-                                <i data-lucide="check" class="w-5 h-5 text-green-500 mr-3"></i>
-                                Airport lounge access (2 visits/year)
-                            </li>
-                            <li class="flex items-center text-gray-700">
-                                <i data-lucide="check" class="w-5 h-5 text-green-500 mr-3"></i>
-                                Exclusive deals and early access
-                            </li>
-                            <li class="flex items-center text-gray-700">
-                                <i data-lucide="check" class="w-5 h-5 text-green-500 mr-3"></i>
-                                Travel insurance included
-                            </li>
-                        </ul>
-
-                        <button class="w-full bg-yellow-500 text-white py-4 rounded-2xl font-bold hover:bg-yellow-600 transition-colors duration-300">
-                            Choose Gold VIP
-                        </button>
-                    </div>
-
-                    <!-- Platinum VIP -->
-                    <div class="bg-gradient-to-br from-gray-200 to-gray-300 rounded-3xl p-8 relative overflow-hidden border-2 border-gray-400 transform scale-105">
-                        <div class="absolute top-0 left-0 bg-purple-600 text-white px-4 py-2 rounded-br-2xl text-sm font-bold">
-                            MOST POPULAR
-                        </div>
-                        <div class="absolute top-4 right-4">
-                            <div class="w-12 h-12 bg-gray-600 rounded-full flex items-center justify-center">
-                                <i data-lucide="crown" class="w-6 h-6 text-white"></i>
-                            </div>
-                        </div>
-                        <h3 class="text-3xl font-bold text-gray-800 mb-2">Platinum VIP</h3>
-                        <p class="text-gray-600 mb-6">For the discerning traveler</p>
-                        
-                        <div class="mb-8">
-                            <div class="text-4xl font-bold text-gray-700 mb-2">$599</div>
-                            <div class="text-gray-600">per year</div>
-                        </div>
-
-                        <ul class="space-y-4 mb-8">
-                            <li class="flex items-center text-gray-700">
-                                <i data-lucide="check" class="w-5 h-5 text-green-500 mr-3"></i>
-                                24/7 dedicated concierge service
-                            </li>
-                            <li class="flex items-center text-gray-700">
-                                <i data-lucide="check" class="w-5 h-5 text-green-500 mr-3"></i>
-                                25% discount on all bookings
-                            </li>
-                            <li class="flex items-center text-gray-700">
-                                <i data-lucide="check" class="w-5 h-5 text-green-500 mr-3"></i>
-                                Complimentary upgrades (subject to availability)
-                            </li>
-                            <li class="flex items-center text-gray-700">
-                                <i data-lucide="check" class="w-5 h-5 text-green-500 mr-3"></i>
-                                Unlimited airport lounge access
-                            </li>
-                            <li class="flex items-center text-gray-700">
-                                <i data-lucide="check" class="w-5 h-5 text-green-500 mr-3"></i>
-                                Fast-track security and immigration
-                            </li>
-                            <li class="flex items-center text-gray-700">
-                                <i data-lucide="check" class="w-5 h-5 text-green-500 mr-3"></i>
-                                Premium travel insurance
-                            </li>
-                            <li class="flex items-center text-gray-700">
-                                <i data-lucide="check" class="w-5 h-5 text-green-500 mr-3"></i>
-                                Personal travel assistant
-                            </li>
-                        </ul>
-
-                        <button class="w-full bg-gray-700 text-white py-4 rounded-2xl font-bold hover:bg-gray-800 transition-colors duration-300">
-                            Choose Platinum VIP
-                        </button>
-                    </div>
-
-                    <!-- Diamond VIP -->
-                    <div class="bg-gradient-to-br from-blue-100 to-indigo-200 rounded-3xl p-8 relative overflow-hidden border-2 border-blue-300">
-                        <div class="absolute top-4 right-4">
-                            <div class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center">
-                                <i data-lucide="gem" class="w-6 h-6 text-white"></i>
-                            </div>
-                        </div>
-                        <h3 class="text-3xl font-bold text-gray-800 mb-2">Diamond VIP</h3>
-                        <p class="text-gray-600 mb-6">Ultimate luxury experience</p>
-                        
-                        <div class="mb-8">
-                            <div class="text-4xl font-bold text-blue-600 mb-2">$1,299</div>
-                            <div class="text-gray-600">per year</div>
-                        </div>
-
-                        <ul class="space-y-4 mb-8">
-                            <li class="flex items-center text-gray-700">
-                                <i data-lucide="check" class="w-5 h-5 text-green-500 mr-3"></i>
-                                White-glove concierge service
-                            </li>
-                            <li class="flex items-center text-gray-700">
-                                <i data-lucide="check" class="w-5 h-5 text-green-500 mr-3"></i>
-                                35% discount on all bookings
-                            </li>
-                            <li class="flex items-center text-gray-700">
-                                <i data-lucide="check" class="w-5 h-5 text-green-500 mr-3"></i>
-                                Guaranteed upgrades to premium class
-                            </li>
-                            <li class="flex items-center text-gray-700">
-                                <i data-lucide="check" class="w-5 h-5 text-green-500 mr-3"></i>
-                                Private jet and yacht access
-                            </li>
-                            <li class="flex items-center text-gray-700">
-                                <i data-lucide="check" class="w-5 h-5 text-green-500 mr-3"></i>
-                                Exclusive luxury experiences
-                            </li>
-                            <li class="flex items-center text-gray-700">
-                                <i data-lucide="check" class="w-5 h-5 text-green-500 mr-3"></i>
-                                Comprehensive travel protection
-                            </li>
-                            <li class="flex items-center text-gray-700">
-                                <i data-lucide="check" class="w-5 h-5 text-green-500 mr-3"></i>
-                                Personal travel curator
-                            </li>
-                        </ul>
-
-                        <button class="w-full bg-blue-600 text-white py-4 rounded-2xl font-bold hover:bg-blue-700 transition-colors duration-300">
-                            Choose Diamond VIP
-                        </button>
-                    </div>
-                </div>
+{{-- ===== FAQ ===== --}}
+<section class="py-10 bg-gray-50">
+    <div class="max-w-2xl mx-auto px-4">
+        <h2 class="text-lg font-bold text-gray-900 text-center mb-6">Membership FAQs</h2>
+        @php $faqs = [
+            ['q'=>'Can I cancel my membership anytime?','a'=>'Yes, you can cancel at any time with no cancellation fees. Your benefits remain active until the end of the billing period.'],
+            ['q'=>'How do I upgrade my tier?','a'=>'You can upgrade directly from your account dashboard. The price difference is prorated for the remaining billing period.'],
+            ['q'=>'Do VIP discounts apply to all flights?','a'=>'Yes, VIP discounts apply to all flights booked through our platform, subject to availability and fare conditions.'],
+            ['q'=>'Can I share my membership?','a'=>'Membership benefits are personal but Gold and Platinum members can add one companion for lounge access.'],
+        ]; @endphp
+        <div class="space-y-2">
+            @foreach($faqs as $faq)
+            <div class="border border-gray-200 rounded-lg bg-white overflow-hidden">
+                <button class="faq-toggle w-full flex items-center justify-between p-3 text-left hover:bg-gray-50 transition-colors" onclick="toggleFaq(this)"><span class="text-xs font-semibold text-gray-900 pr-3">{{ $faq['q'] }}</span><i class="fas fa-chevron-down text-gray-300 text-[10px] transition-transform duration-200 shrink-0"></i></button>
+                <div class="faq-content hidden px-3 pb-3"><p class="text-[11px] text-gray-500 leading-relaxed">{{ $faq['a'] }}</p></div>
             </div>
+            @endforeach
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- VIP Benefits -->
-    <section class="py-20 bg-gray-50">
-        <div class="container mx-auto px-4">
-            <div class="max-w-6xl mx-auto">
-                <div class="text-center mb-16">
-                    <h2 class="text-4xl font-bold text-gray-800 mb-4">Exclusive VIP Benefits</h2>
-                    <p class="text-xl text-gray-600">Experience travel like never before with our premium services</p>
-                </div>
-
-                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <div class="bg-white p-8 rounded-2xl shadow-lg text-center">
-                        <div class="w-20 h-20 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                            <i data-lucide="headphones" class="w-10 h-10 text-purple-600"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-gray-800 mb-4">24/7 Concierge</h3>
-                        <p class="text-gray-600">Round-the-clock personal assistance for all your travel needs, from bookings to emergency support.</p>
-                    </div>
-
-                    <div class="bg-white p-8 rounded-2xl shadow-lg text-center">
-                        <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                            <i data-lucide="shield-check" class="w-10 h-10 text-green-600"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-gray-800 mb-4">Priority Access</h3>
-                        <p class="text-gray-600">Skip the lines with fast-track services at airports, hotels, and exclusive venues worldwide.</p>
-                    </div>
-
-                    <div class="bg-white p-8 rounded-2xl shadow-lg text-center">
-                        <div class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                            <i data-lucide="upgrade" class="w-10 h-10 text-blue-600"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-gray-800 mb-4">Complimentary Upgrades</h3>
-                        <p class="text-gray-600">Enjoy automatic upgrades to premium rooms, business class flights, and luxury car rentals.</p>
-                    </div>
-
-                    <div class="bg-white p-8 rounded-2xl shadow-lg text-center">
-                        <div class="w-20 h-20 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                            <i data-lucide="percent" class="w-10 h-10 text-yellow-600"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-gray-800 mb-4">Exclusive Discounts</h3>
-                        <p class="text-gray-600">Access special rates and exclusive discounts on flights, hotels, and travel experiences.</p>
-                    </div>
-
-                    <div class="bg-white p-8 rounded-2xl shadow-lg text-center">
-                        <div class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                            <i data-lucide="heart" class="w-10 h-10 text-red-600"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-gray-800 mb-4">Personalized Service</h3>
-                        <p class="text-gray-600">Tailored travel experiences crafted specifically to your preferences and travel style.</p>
-                    </div>
-
-                    <div class="bg-white p-8 rounded-2xl shadow-lg text-center">
-                        <div class="w-20 h-20 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                            <i data-lucide="globe" class="w-10 h-10 text-indigo-600"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-gray-800 mb-4">Global Network</h3>
-                        <p class="text-gray-600">Access to an exclusive network of luxury partners and premium services worldwide.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Success Stories -->
-    <section class="py-20 bg-white">
-        <div class="container mx-auto px-4">
-            <div class="max-w-6xl mx-auto">
-                <div class="text-center mb-16">
-                    <h2 class="text-4xl font-bold text-gray-800 mb-4">VIP Member Stories</h2>
-                    <p class="text-xl text-gray-600">Hear from our valued VIP members about their exceptional experiences</p>
-                </div>
-
-                <div class="grid md:grid-cols-3 gap-8">
-                    <div class="bg-gradient-to-br from-purple-50 to-purple-100 p-8 rounded-2xl">
-                        <div class="flex items-center mb-6">
-                            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=60&h=60&fit=crop&crop=face" 
-                                 alt="Member" class="w-12 h-12 rounded-full mr-4">
-                            <div>
-                                <h4 class="font-bold text-gray-800">Michael Chen</h4>
-                                <p class="text-sm text-gray-600">Diamond VIP Member</p>
-                            </div>
-                        </div>
-                        <p class="text-gray-700 italic">"The white-glove service exceeded all my expectations. My personal travel curator arranged an unforgettable yacht experience in Monaco that I could never have planned myself."</p>
-                        <div class="flex text-yellow-500 mt-4">
-                            <i data-lucide="star" class="w-5 h-5 fill-current"></i>
-                            <i data-lucide="star" class="w-5 h-5 fill-current"></i>
-                            <i data-lucide="star" class="w-5 h-5 fill-current"></i>
-                            <i data-lucide="star" class="w-5 h-5 fill-current"></i>
-                            <i data-lucide="star" class="w-5 h-5 fill-current"></i>
-                        </div>
-                    </div>
-
-                    <div class="bg-gradient-to-br from-blue-50 to-blue-100 p-8 rounded-2xl">
-                        <div class="flex items-center mb-6">
-                            <img src="https://images.unsplash.com/photo-1494790108755-2616b612b566?w=60&h=60&fit=crop&crop=face" 
-                                 alt="Member" class="w-12 h-12 rounded-full mr-4">
-                            <div>
-                                <h4 class="font-bold text-gray-800">Sarah Williams</h4>
-                                <p class="text-sm text-gray-600">Platinum VIP Member</p>
-                            </div>
-                        </div>
-                        <p class="text-gray-700 italic">"The 24/7 concierge service has been a game-changer for my business travels. They handle everything seamlessly, allowing me to focus on what matters most."</p>
-                        <div class="flex text-yellow-500 mt-4">
-                            <i data-lucide="star" class="w-5 h-5 fill-current"></i>
-                            <i data-lucide="star" class="w-5 h-5 fill-current"></i>
-                            <i data-lucide="star" class="w-5 h-5 fill-current"></i>
-                            <i data-lucide="star" class="w-5 h-5 fill-current"></i>
-                            <i data-lucide="star" class="w-5 h-5 fill-current"></i>
-                        </div>
-                    </div>
-
-                    <div class="bg-gradient-to-br from-yellow-50 to-yellow-100 p-8 rounded-2xl">
-                        <div class="flex items-center mb-6">
-                            <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=60&h=60&fit=crop&crop=face" 
-                                 alt="Member" class="w-12 h-12 rounded-full mr-4">
-                            <div>
-                                <h4 class="font-bold text-gray-800">David Rodriguez</h4>
-                                <p class="text-sm text-gray-600">Gold VIP Member</p>
-                            </div>
-                        </div>
-                        <p class="text-gray-700 italic">"The airport lounge access and priority support have made my frequent business trips so much more comfortable. Worth every penny!"</p>
-                        <div class="flex text-yellow-500 mt-4">
-                            <i data-lucide="star" class="w-5 h-5 fill-current"></i>
-                            <i data-lucide="star" class="w-5 h-5 fill-current"></i>
-                            <i data-lucide="star" class="w-5 h-5 fill-current"></i>
-                            <i data-lucide="star" class="w-5 h-5 fill-current"></i>
-                            <i data-lucide="star" class="w-5 h-5 fill-current"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Call to Action -->
-    <section class="py-20 bg-gradient-to-r from-purple-600 to-indigo-700 text-white">
-        <div class="container mx-auto px-4">
-            <div class="max-w-4xl mx-auto text-center">
-                <h2 class="text-4xl font-bold mb-6">Ready to Elevate Your Travel Experience?</h2>
-                <p class="text-xl text-purple-100 mb-8">
-                    Join thousands of satisfied VIP members who enjoy exclusive benefits and personalized service
-                </p>
-                <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <button class="px-8 py-4 bg-white text-purple-600 font-bold rounded-2xl hover:bg-gray-100 transition-colors duration-300">
-                        <i data-lucide="phone" class="w-5 h-5 inline-block mr-2"></i>
-                        Speak with VIP Advisor
-                    </button>
-                    <button class="px-8 py-4 bg-purple-800 text-white font-bold rounded-2xl hover:bg-purple-900 transition-colors duration-300">
-                        <i data-lucide="crown" class="w-5 h-5 inline-block mr-2"></i>
-                        Upgrade to VIP Now
-                    </button>
-                </div>
-                <p class="text-sm text-purple-200 mt-6">
-                    * 30-day money-back guarantee • No setup fees • Cancel anytime
-                </p>
-            </div>
-        </div>
-    </section>
-
-    <!-- FAQ Section -->
-    <section class="py-20 bg-gray-50">
-        <div class="container mx-auto px-4">
-            <div class="max-w-4xl mx-auto">
-                <div class="text-center mb-16">
-                    <h2 class="text-4xl font-bold text-gray-800 mb-4">VIP Membership FAQ</h2>
-                    <p class="text-xl text-gray-600">Common questions about our VIP membership program</p>
-                </div>
-
-                <div class="space-y-4">
-                    <div class="bg-white rounded-xl shadow-sm">
-                        <button class="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 transition-colors duration-200"
-                                onclick="toggleFAQ(this)">
-                            <span class="font-semibold text-gray-800">How quickly do VIP benefits activate?</span>
-                            <i data-lucide="chevron-down" class="w-5 h-5 text-gray-500 transition-transform duration-200"></i>
-                        </button>
-                        <div class="hidden px-6 pb-4">
-                            <p class="text-gray-600">VIP benefits activate immediately upon payment confirmation. You'll receive your welcome package and concierge contact details within 24 hours.</p>
-                        </div>
-                    </div>
-
-                    <div class="bg-white rounded-xl shadow-sm">
-                        <button class="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 transition-colors duration-200"
-                                onclick="toggleFAQ(this)">
-                            <span class="font-semibold text-gray-800">Can I upgrade or downgrade my membership?</span>
-                            <i data-lucide="chevron-down" class="w-5 h-5 text-gray-500 transition-transform duration-200"></i>
-                        </button>
-                        <div class="hidden px-6 pb-4">
-                            <p class="text-gray-600">Yes, you can upgrade or downgrade your membership at any time. When upgrading, you'll only pay the prorated difference. Downgrades take effect at your next renewal cycle.</p>
-                        </div>
-                    </div>
-
-                    <div class="bg-white rounded-xl shadow-sm">
-                        <button class="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 transition-colors duration-200"
-                                onclick="toggleFAQ(this)">
-                            <span class="font-semibold text-gray-800">Are there any additional fees for VIP services?</span>
-                            <i data-lucide="chevron-down" class="w-5 h-5 text-gray-500 transition-transform duration-200"></i>
-                        </button>
-                        <div class="hidden px-6 pb-4">
-                            <p class="text-gray-600">Most VIP services are included in your membership fee. Some premium services like private jet bookings or exclusive experiences may have additional costs, which will be clearly communicated upfront.</p>
-                        </div>
-                    </div>
-
-                    <div class="bg-white rounded-xl shadow-sm">
-                        <button class="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 transition-colors duration-200"
-                                onclick="toggleFAQ(this)">
-                            <span class="font-semibold text-gray-800">What happens if I'm not satisfied with my VIP membership?</span>
-                            <i data-lucide="chevron-down" class="w-5 h-5 text-gray-500 transition-transform duration-200"></i>
-                        </button>
-                        <div class="hidden px-6 pb-4">
-                            <p class="text-gray-600">We offer a 30-day money-back guarantee. If you're not completely satisfied within the first 30 days, we'll provide a full refund, no questions asked.</p>
-                        </div>
-                    </div>
-
-                    <div class="bg-white rounded-xl shadow-sm">
-                        <button class="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 transition-colors duration-200"
-                                onclick="toggleFAQ(this)">
-                            <span class="font-semibold text-gray-800">Can family members use my VIP benefits?</span>
-                            <i data-lucide="chevron-down" class="w-5 h-5 text-gray-500 transition-transform duration-200"></i>
-                        </button>
-                        <div class="hidden px-6 pb-4">
-                            <p class="text-gray-600">Platinum and Diamond VIP memberships include benefits for immediate family members (spouse and children under 18). Gold VIP members can add family coverage for an additional fee.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-</div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize Lucide icons
-    if (typeof lucide !== 'undefined') {
-        lucide.createIcons();
-    }
-});
-
-function toggleFAQ(element) {
-    const content = element.nextElementSibling;
-    const icon = element.querySelector('i[data-lucide="chevron-down"]');
-    
-    if (content.classList.contains('hidden')) {
-        content.classList.remove('hidden');
-        icon.style.transform = 'rotate(180deg)';
-    } else {
-        content.classList.add('hidden');
-        icon.style.transform = 'rotate(0deg)';
-    }
-}
-</script>
-
-@push('styles')
-<style>
-.animate-fade-in {
-    animation: fadeIn 1s ease-out;
-}
-
-.animate-slide-up {
-    animation: slideUp 1s ease-out 0.3s both;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes slideUp {
-    from {
-        opacity: 0;
-        transform: translateY(50px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-</style>
-@endpush
+<section class="py-10 bg-emerald-600">
+    <div class="max-w-xl mx-auto px-4 text-center">
+        <h2 class="text-base font-bold text-white mb-1">VIP Travel Updates</h2>
+        <p class="text-[11px] text-emerald-100 mb-4">Get exclusive VIP offers and membership updates.</p>
+        <form class="flex gap-2" onsubmit="event.preventDefault();alert('Subscribed!');this.reset();"><input type="email" placeholder="Your email" class="flex-1 px-3 py-2 rounded-lg text-xs text-gray-800 focus:ring-2 focus:ring-amber-400 focus:outline-none" required><button type="submit" class="bg-amber-500 hover:bg-amber-600 text-white text-xs font-semibold px-5 py-2 rounded-lg transition-colors whitespace-nowrap">Subscribe</button></form>
+    </div>
+</section>
 @endsection
+
+@push('scripts')
+<script>function toggleFaq(btn){var c=btn.nextElementSibling,ic=btn.querySelector('i'),open=!c.classList.contains('hidden');document.querySelectorAll('.faq-content').forEach(function(x){x.classList.add('hidden');});document.querySelectorAll('.faq-toggle i').forEach(function(x){x.style.transform='rotate(0)';});if(!open){c.classList.remove('hidden');ic.style.transform='rotate(180deg)';}}</script>
+@endpush

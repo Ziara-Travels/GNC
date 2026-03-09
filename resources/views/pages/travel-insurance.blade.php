@@ -1,477 +1,113 @@
 @extends('layouts.main')
-
 @section('title', 'Travel Insurance - Ziara Travel')
 
 @section('content')
-<div class="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-100">
-    <!-- Hero Section -->
-    <section class="relative py-20 bg-gradient-to-r from-blue-600 to-cyan-700 text-white overflow-hidden">
-        <div class="absolute inset-0 bg-black opacity-10"></div>
-        <div class="container mx-auto px-4 relative z-10">
-            <div class="max-w-4xl mx-auto text-center">
-                <h1 class="text-5xl md:text-6xl font-bold mb-6 animate-fade-in">
-                    Travel Insurance
-                </h1>
-                <p class="text-xl md:text-2xl text-blue-100 mb-8 animate-slide-up">
-                    Protect your journey with comprehensive travel insurance coverage
-                </p>
-                <div class="bg-white/20 backdrop-blur-sm rounded-2xl p-6 inline-block">
-                    <div class="text-4xl font-bold mb-2">Peace of Mind</div>
-                    <div class="text-lg">For every adventure</div>
+{{-- ===== HERO ===== --}}
+<section class="relative bg-slate-900 overflow-hidden">
+    <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1400&h=500&fit=crop" alt="" class="absolute inset-0 w-full h-full object-cover opacity-20" loading="eager">
+    <div class="relative max-w-5xl mx-auto px-4 pt-28 pb-10 text-center">
+        <h1 class="text-2xl md:text-3xl font-bold text-white mb-1">Travel <span class="text-amber-400">Insurance</span></h1>
+        <p class="text-xs text-gray-300">Comprehensive coverage for worry-free travel</p>
+    </div>
+</section>
+
+{{-- ===== PLANS ===== --}}
+<section class="py-10 bg-white">
+    <div class="max-w-5xl mx-auto px-4">
+        <div class="text-center mb-6">
+            <span class="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">Plans</span>
+            <h2 class="text-lg font-bold text-gray-900 mt-0.5">Choose Your Coverage</h2>
+        </div>
+        @php $plans = [
+            ['name'=>'Basic','price'=>'$12','per'=>'/trip','features'=>['Trip cancellation up to $1,000','Medical expenses up to $10,000','Lost baggage up to $500','24/7 emergency hotline'],'color'=>'gray','popular'=>false],
+            ['name'=>'Standard','price'=>'$25','per'=>'/trip','features'=>['Trip cancellation up to $5,000','Medical expenses up to $50,000','Lost baggage up to $1,500','Trip delay coverage','24/7 emergency hotline'],'color'=>'emerald','popular'=>true],
+            ['name'=>'Premium','price'=>'$45','per'=>'/trip','features'=>['Trip cancellation up to $10,000','Medical expenses up to $100,000','Lost baggage up to $3,000','Trip delay & interruption','Adventure sports cover','24/7 emergency hotline'],'color'=>'amber','popular'=>false],
+        ]; @endphp
+        <div class="grid md:grid-cols-3 gap-3">
+            @foreach($plans as $p)
+            <div class="bg-gray-50 rounded-xl p-4 border {{ $p['popular'] ? 'border-emerald-400 ring-1 ring-emerald-400' : 'border-gray-100' }} relative">
+                @if($p['popular'])<span class="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-emerald-600 text-white text-[9px] font-bold px-2 py-0.5 rounded-full">Most Popular</span>@endif
+                <h3 class="text-xs font-bold text-gray-900 mb-1">{{ $p['name'] }}</h3>
+                <div class="mb-2"><span class="text-xl font-bold text-gray-900">{{ $p['price'] }}</span><span class="text-[10px] text-gray-400">{{ $p['per'] }}</span></div>
+                <ul class="space-y-1 mb-3">@foreach($p['features'] as $f)<li class="flex items-center gap-1.5 text-[10px] text-gray-600"><i class="fas fa-check text-emerald-500 text-[8px]"></i>{{ $f }}</li>@endforeach</ul>
+                <button class="w-full {{ $p['popular'] ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50' }} text-[10px] font-semibold py-2 rounded-lg transition-colors">Choose {{ $p['name'] }}</button>
+            </div>
+            @endforeach
+        </div>
+    </div>
+</section>
+
+{{-- ===== WHAT'S COVERED ===== --}}
+<section class="py-10 bg-gray-50">
+    <div class="max-w-5xl mx-auto px-4">
+        <h2 class="text-lg font-bold text-gray-900 text-center mb-6">What's Covered</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            @php $covers = [
+                ['icon'=>'fa-times-circle','title'=>'Trip Cancellation','desc'=>'Reimbursement for pre-paid, non-refundable trip costs'],
+                ['icon'=>'fa-hospital','title'=>'Medical Emergency','desc'=>'Coverage for illness or injury during your trip'],
+                ['icon'=>'fa-suitcase','title'=>'Lost Baggage','desc'=>'Compensation for delayed, lost, or damaged luggage'],
+                ['icon'=>'fa-clock','title'=>'Trip Delays','desc'=>'Coverage for expenses due to flight delays'],
+            ]; @endphp
+            @foreach($covers as $c)
+            <div class="bg-white rounded-xl p-3 text-center border border-gray-100">
+                <div class="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center mx-auto mb-2"><i class="fas {{ $c['icon'] }} text-blue-600 text-xs"></i></div>
+                <h3 class="text-xs font-bold text-gray-900 mb-0.5">{{ $c['title'] }}</h3>
+                <p class="text-[10px] text-gray-400">{{ $c['desc'] }}</p>
+            </div>
+            @endforeach
+        </div>
+    </div>
+</section>
+
+{{-- ===== CTA ===== --}}
+<section class="py-10 bg-white">
+    <div class="max-w-5xl mx-auto px-4">
+        <div class="flex flex-col md:flex-row items-center gap-6 bg-gray-50 rounded-xl overflow-hidden border border-gray-100">
+            <div class="md:w-1/2"><img src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=600&h=400&fit=crop" alt="" class="w-full h-48 md:h-56 object-cover" loading="lazy"></div>
+            <div class="md:w-1/2 p-5">
+                <span class="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">Peace of Mind</span>
+                <h2 class="text-lg font-bold text-gray-900 mt-1 mb-2">Ready to Protect Your Trip?</h2>
+                <p class="text-xs text-gray-500 leading-relaxed mb-4">Add travel insurance during checkout for instant coverage. It takes just one click.</p>
+                <div class="flex gap-2">
+                    <a href="{{ url('/flights/search') }}" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors">Book With Insurance</a>
+                    <a href="{{ url('/contactus') }}" class="border border-gray-200 text-gray-700 text-xs font-semibold px-4 py-2 rounded-lg hover:bg-white transition-colors">Ask a Question</a>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- Why You Need Travel Insurance -->
-    <section class="py-20 bg-white">
-        <div class="container mx-auto px-4">
-            <div class="max-w-6xl mx-auto">
-                <div class="text-center mb-16">
-                    <h2 class="text-4xl font-bold text-gray-800 mb-4">Why Travel Insurance Matters</h2>
-                    <p class="text-xl text-gray-600">Unexpected events can happen - be prepared with the right coverage</p>
-                </div>
-
-                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-                    <div class="text-center p-6">
-                        <div class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                            <i data-lucide="heart-pulse" class="w-10 h-10 text-red-600"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-gray-800 mb-4">Medical Emergencies</h3>
-                        <p class="text-gray-600">Coverage for unexpected medical expenses, hospital stays, and emergency evacuations while traveling abroad.</p>
-                    </div>
-
-                    <div class="text-center p-6">
-                        <div class="w-20 h-20 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                            <i data-lucide="x-circle" class="w-10 h-10 text-orange-600"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-gray-800 mb-4">Trip Cancellation</h3>
-                        <p class="text-gray-600">Reimbursement for non-refundable trip costs if you need to cancel due to covered reasons.</p>
-                    </div>
-
-                    <div class="text-center p-6">
-                        <div class="w-20 h-20 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                            <i data-lucide="luggage" class="w-10 h-10 text-purple-600"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-gray-800 mb-4">Baggage Protection</h3>
-                        <p class="text-gray-600">Coverage for lost, stolen, or damaged luggage and personal belongings during your trip.</p>
-                    </div>
-
-                    <div class="text-center p-6">
-                        <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                            <i data-lucide="clock" class="w-10 h-10 text-green-600"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-gray-800 mb-4">Travel Delays</h3>
-                        <p class="text-gray-600">Compensation for additional expenses due to flight delays, missed connections, or travel interruptions.</p>
-                    </div>
-                </div>
+{{-- ===== FAQ ===== --}}
+<section class="py-10 bg-gray-50">
+    <div class="max-w-2xl mx-auto px-4">
+        <h2 class="text-lg font-bold text-gray-900 text-center mb-6">Insurance FAQs</h2>
+        @php $faqs = [
+            ['q'=>'When does coverage start?','a'=>'Coverage begins from the moment you purchase the insurance, or from the trip start date — whichever is later.'],
+            ['q'=>'Can I buy insurance after booking?','a'=>'Yes, you can add insurance up to 48 hours before your departure date through your booking dashboard.'],
+            ['q'=>'How do I file a claim?','a'=>'Contact our 24/7 emergency hotline or submit a claim through the help center with supporting documents.'],
+            ['q'=>'Are pre-existing conditions covered?','a'=>'Standard and Premium plans include limited coverage for pre-existing conditions. Check plan details for specifics.'],
+            ['q'=>'Can I get a refund on insurance?','a'=>'Insurance can be cancelled within 14 days of purchase (before trip start) for a full refund, if no claim has been filed.'],
+        ]; @endphp
+        <div class="space-y-2">
+            @foreach($faqs as $faq)
+            <div class="border border-gray-200 rounded-lg bg-white overflow-hidden">
+                <button class="faq-toggle w-full flex items-center justify-between p-3 text-left hover:bg-gray-50 transition-colors" onclick="toggleFaq(this)"><span class="text-xs font-semibold text-gray-900 pr-3">{{ $faq['q'] }}</span><i class="fas fa-chevron-down text-gray-300 text-[10px] transition-transform duration-200 shrink-0"></i></button>
+                <div class="faq-content hidden px-3 pb-3"><p class="text-[11px] text-gray-500 leading-relaxed">{{ $faq['a'] }}</p></div>
             </div>
+            @endforeach
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- Insurance Plans -->
-    <section class="py-20 bg-gray-50">
-        <div class="container mx-auto px-4">
-            <div class="max-w-6xl mx-auto">
-                <div class="text-center mb-16">
-                    <h2 class="text-4xl font-bold text-gray-800 mb-4">Choose Your Coverage</h2>
-                    <p class="text-xl text-gray-600">Select the plan that best fits your travel needs and budget</p>
-                </div>
-
-                <div class="grid lg:grid-cols-3 gap-8">
-                    <!-- Basic Plan -->
-                    <div class="bg-white rounded-3xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300">
-                        <div class="text-center mb-8">
-                            <h3 class="text-2xl font-bold text-gray-800 mb-2">Basic Coverage</h3>
-                            <p class="text-gray-600 mb-6">Essential protection for budget travelers</p>
-                            <div class="text-4xl font-bold text-blue-600 mb-2">$29</div>
-                            <div class="text-gray-600">per trip</div>
-                        </div>
-
-                        <ul class="space-y-4 mb-8">
-                            <li class="flex items-center text-gray-700">
-                                <i data-lucide="check" class="w-5 h-5 text-green-500 mr-3 flex-shrink-0"></i>
-                                Medical expenses up to $50,000
-                            </li>
-                            <li class="flex items-center text-gray-700">
-                                <i data-lucide="check" class="w-5 h-5 text-green-500 mr-3 flex-shrink-0"></i>
-                                Trip cancellation up to $5,000
-                            </li>
-                            <li class="flex items-center text-gray-700">
-                                <i data-lucide="check" class="w-5 h-5 text-green-500 mr-3 flex-shrink-0"></i>
-                                Baggage coverage up to $1,000
-                            </li>
-                            <li class="flex items-center text-gray-700">
-                                <i data-lucide="check" class="w-5 h-5 text-green-500 mr-3 flex-shrink-0"></i>
-                                24/7 assistance hotline
-                            </li>
-                            <li class="flex items-center text-gray-400">
-                                <i data-lucide="x" class="w-5 h-5 text-gray-400 mr-3 flex-shrink-0"></i>
-                                Adventure sports coverage
-                            </li>
-                            <li class="flex items-center text-gray-400">
-                                <i data-lucide="x" class="w-5 h-5 text-gray-400 mr-3 flex-shrink-0"></i>
-                                Pre-existing medical conditions
-                            </li>
-                        </ul>
-
-                        <button class="w-full bg-blue-600 text-white py-4 rounded-2xl font-bold hover:bg-blue-700 transition-colors duration-300">
-                            Choose Basic Plan
-                        </button>
-                    </div>
-
-                    <!-- Standard Plan -->
-                    <div class="bg-white rounded-3xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300 relative border-2 border-green-400">
-                        <div class="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                            <span class="bg-green-500 text-white px-4 py-2 rounded-full text-sm font-bold">MOST POPULAR</span>
-                        </div>
-                        
-                        <div class="text-center mb-8">
-                            <h3 class="text-2xl font-bold text-gray-800 mb-2">Standard Coverage</h3>
-                            <p class="text-gray-600 mb-6">Comprehensive protection for most travelers</p>
-                            <div class="text-4xl font-bold text-green-600 mb-2">$59</div>
-                            <div class="text-gray-600">per trip</div>
-                        </div>
-
-                        <ul class="space-y-4 mb-8">
-                            <li class="flex items-center text-gray-700">
-                                <i data-lucide="check" class="w-5 h-5 text-green-500 mr-3 flex-shrink-0"></i>
-                                Medical expenses up to $100,000
-                            </li>
-                            <li class="flex items-center text-gray-700">
-                                <i data-lucide="check" class="w-5 h-5 text-green-500 mr-3 flex-shrink-0"></i>
-                                Trip cancellation up to $10,000
-                            </li>
-                            <li class="flex items-center text-gray-700">
-                                <i data-lucide="check" class="w-5 h-5 text-green-500 mr-3 flex-shrink-0"></i>
-                                Baggage coverage up to $2,500
-                            </li>
-                            <li class="flex items-center text-gray-700">
-                                <i data-lucide="check" class="w-5 h-5 text-green-500 mr-3 flex-shrink-0"></i>
-                                24/7 assistance & concierge
-                            </li>
-                            <li class="flex items-center text-gray-700">
-                                <i data-lucide="check" class="w-5 h-5 text-green-500 mr-3 flex-shrink-0"></i>
-                                Adventure sports coverage
-                            </li>
-                            <li class="flex items-center text-gray-700">
-                                <i data-lucide="check" class="w-5 h-5 text-green-500 mr-3 flex-shrink-0"></i>
-                                Emergency evacuation
-                            </li>
-                        </ul>
-
-                        <button class="w-full bg-green-600 text-white py-4 rounded-2xl font-bold hover:bg-green-700 transition-colors duration-300">
-                            Choose Standard Plan
-                        </button>
-                    </div>
-
-                    <!-- Premium Plan -->
-                    <div class="bg-white rounded-3xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300">
-                        <div class="text-center mb-8">
-                            <h3 class="text-2xl font-bold text-gray-800 mb-2">Premium Coverage</h3>
-                            <p class="text-gray-600 mb-6">Maximum protection for luxury travelers</p>
-                            <div class="text-4xl font-bold text-purple-600 mb-2">$99</div>
-                            <div class="text-gray-600">per trip</div>
-                        </div>
-
-                        <ul class="space-y-4 mb-8">
-                            <li class="flex items-center text-gray-700">
-                                <i data-lucide="check" class="w-5 h-5 text-green-500 mr-3 flex-shrink-0"></i>
-                                Medical expenses up to $250,000
-                            </li>
-                            <li class="flex items-center text-gray-700">
-                                <i data-lucide="check" class="w-5 h-5 text-green-500 mr-3 flex-shrink-0"></i>
-                                Trip cancellation up to $25,000
-                            </li>
-                            <li class="flex items-center text-gray-700">
-                                <i data-lucide="check" class="w-5 h-5 text-green-500 mr-3 flex-shrink-0"></i>
-                                Baggage coverage up to $5,000
-                            </li>
-                            <li class="flex items-center text-gray-700">
-                                <i data-lucide="check" class="w-5 h-5 text-green-500 mr-3 flex-shrink-0"></i>
-                                24/7 premium assistance
-                            </li>
-                            <li class="flex items-center text-gray-700">
-                                <i data-lucide="check" class="w-5 h-5 text-green-500 mr-3 flex-shrink-0"></i>
-                                All adventure sports covered
-                            </li>
-                            <li class="flex items-center text-gray-700">
-                                <i data-lucide="check" class="w-5 h-5 text-green-500 mr-3 flex-shrink-0"></i>
-                                Pre-existing conditions covered
-                            </li>
-                        </ul>
-
-                        <button class="w-full bg-purple-600 text-white py-4 rounded-2xl font-bold hover:bg-purple-700 transition-colors duration-300">
-                            Choose Premium Plan
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- What's Covered -->
-    <section class="py-20 bg-white">
-        <div class="container mx-auto px-4">
-            <div class="max-w-6xl mx-auto">
-                <div class="text-center mb-16">
-                    <h2 class="text-4xl font-bold text-gray-800 mb-4">What's Covered</h2>
-                    <p class="text-xl text-gray-600">Comprehensive protection for various travel scenarios</p>
-                </div>
-
-                <div class="grid md:grid-cols-2 gap-12">
-                    <div>
-                        <h3 class="text-2xl font-bold text-gray-800 mb-6">Medical & Health Coverage</h3>
-                        <ul class="space-y-4">
-                            <li class="flex items-start">
-                                <i data-lucide="check-circle" class="w-6 h-6 text-green-500 mr-3 mt-1 flex-shrink-0"></i>
-                                <div>
-                                    <strong class="text-gray-800">Emergency medical treatment</strong>
-                                    <p class="text-gray-600">Hospital stays, doctor visits, and prescription medications</p>
-                                </div>
-                            </li>
-                            <li class="flex items-start">
-                                <i data-lucide="check-circle" class="w-6 h-6 text-green-500 mr-3 mt-1 flex-shrink-0"></i>
-                                <div>
-                                    <strong class="text-gray-800">Emergency evacuation</strong>
-                                    <p class="text-gray-600">Air ambulance and medical transportation to appropriate facilities</p>
-                                </div>
-                            </li>
-                            <li class="flex items-start">
-                                <i data-lucide="check-circle" class="w-6 h-6 text-green-500 mr-3 mt-1 flex-shrink-0"></i>
-                                <div>
-                                    <strong class="text-gray-800">Dental emergencies</strong>
-                                    <p class="text-gray-600">Emergency dental treatment due to accident or acute pain</p>
-                                </div>
-                            </li>
-                            <li class="flex items-start">
-                                <i data-lucide="check-circle" class="w-6 h-6 text-green-500 mr-3 mt-1 flex-shrink-0"></i>
-                                <div>
-                                    <strong class="text-gray-800">Repatriation</strong>
-                                    <p class="text-gray-600">Return of remains or medical repatriation to home country</p>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div>
-                        <h3 class="text-2xl font-bold text-gray-800 mb-6">Trip Protection</h3>
-                        <ul class="space-y-4">
-                            <li class="flex items-start">
-                                <i data-lucide="check-circle" class="w-6 h-6 text-green-500 mr-3 mt-1 flex-shrink-0"></i>
-                                <div>
-                                    <strong class="text-gray-800">Trip cancellation</strong>
-                                    <p class="text-gray-600">Illness, injury, death, or other covered reasons</p>
-                                </div>
-                            </li>
-                            <li class="flex items-start">
-                                <i data-lucide="check-circle" class="w-6 h-6 text-green-500 mr-3 mt-1 flex-shrink-0"></i>
-                                <div>
-                                    <strong class="text-gray-800">Trip interruption</strong>
-                                    <p class="text-gray-600">Early return due to covered emergencies</p>
-                                </div>
-                            </li>
-                            <li class="flex items-start">
-                                <i data-lucide="check-circle" class="w-6 h-6 text-green-500 mr-3 mt-1 flex-shrink-0"></i>
-                                <div>
-                                    <strong class="text-gray-800">Travel delays</strong>
-                                    <p class="text-gray-600">Additional accommodation and meal expenses</p>
-                                </div>
-                            </li>
-                            <li class="flex items-start">
-                                <i data-lucide="check-circle" class="w-6 h-6 text-green-500 mr-3 mt-1 flex-shrink-0"></i>
-                                <div>
-                                    <strong class="text-gray-800">Missed connections</strong>
-                                    <p class="text-gray-600">Alternative transportation and accommodation costs</p>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Claims Process -->
-    <section class="py-20 bg-gray-50">
-        <div class="container mx-auto px-4">
-            <div class="max-w-6xl mx-auto">
-                <div class="text-center mb-16">
-                    <h2 class="text-4xl font-bold text-gray-800 mb-4">Simple Claims Process</h2>
-                    <p class="text-xl text-gray-600">Filing a claim is easy and straightforward</p>
-                </div>
-
-                <div class="grid md:grid-cols-4 gap-8">
-                    <div class="text-center">
-                        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <span class="text-2xl font-bold text-blue-600">1</span>
-                        </div>
-                        <h3 class="text-lg font-bold text-gray-800 mb-3">Contact Us</h3>
-                        <p class="text-gray-600">Call our 24/7 assistance hotline or file online within 30 days of the incident</p>
-                    </div>
-
-                    <div class="text-center">
-                        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <span class="text-2xl font-bold text-blue-600">2</span>
-                        </div>
-                        <h3 class="text-lg font-bold text-gray-800 mb-3">Submit Documents</h3>
-                        <p class="text-gray-600">Provide required documentation such as receipts, medical reports, or police reports</p>
-                    </div>
-
-                    <div class="text-center">
-                        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <span class="text-2xl font-bold text-blue-600">3</span>
-                        </div>
-                        <h3 class="text-lg font-bold text-gray-800 mb-3">Claim Review</h3>
-                        <p class="text-gray-600">Our claims team reviews your submission and may request additional information</p>
-                    </div>
-
-                    <div class="text-center">
-                        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <span class="text-2xl font-bold text-blue-600">4</span>
-                        </div>
-                        <h3 class="text-lg font-bold text-gray-800 mb-3">Get Paid</h3>
-                        <p class="text-gray-600">Approved claims are typically processed and paid within 15 business days</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- FAQ -->
-    <section class="py-20 bg-white">
-        <div class="container mx-auto px-4">
-            <div class="max-w-4xl mx-auto">
-                <div class="text-center mb-16">
-                    <h2 class="text-4xl font-bold text-gray-800 mb-4">Insurance FAQ</h2>
-                    <p class="text-xl text-gray-600">Common questions about travel insurance</p>
-                </div>
-
-                <div class="space-y-4">
-                    <div class="bg-gray-50 rounded-xl">
-                        <button class="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-100 transition-colors duration-200"
-                                onclick="toggleFAQ(this)">
-                            <span class="font-semibold text-gray-800">When should I buy travel insurance?</span>
-                            <i data-lucide="chevron-down" class="w-5 h-5 text-gray-500 transition-transform duration-200"></i>
-                        </button>
-                        <div class="hidden px-6 pb-4">
-                            <p class="text-gray-600">It's best to buy travel insurance within 14-21 days of making your initial trip deposit to ensure maximum coverage benefits, including coverage for pre-existing medical conditions.</p>
-                        </div>
-                    </div>
-
-                    <div class="bg-gray-50 rounded-xl">
-                        <button class="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-100 transition-colors duration-200"
-                                onclick="toggleFAQ(this)">
-                            <span class="font-semibold text-gray-800">What if I need to cancel my trip?</span>
-                            <i data-lucide="chevron-down" class="w-5 h-5 text-gray-500 transition-transform duration-200"></i>
-                        </button>
-                        <div class="hidden px-6 pb-4">
-                            <p class="text-gray-600">Trip cancellation coverage reimburses you for non-refundable trip costs if you need to cancel for a covered reason such as illness, injury, or other qualifying events listed in your policy.</p>
-                        </div>
-                    </div>
-
-                    <div class="bg-gray-50 rounded-xl">
-                        <button class="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-100 transition-colors duration-200"
-                                onclick="toggleFAQ(this)">
-                            <span class="font-semibold text-gray-800">Does insurance cover adventure activities?</span>
-                            <i data-lucide="chevron-down" class="w-5 h-5 text-gray-500 transition-transform duration-200"></i>
-                        </button>
-                        <div class="hidden px-6 pb-4">
-                            <p class="text-gray-600">Our Standard and Premium plans include coverage for many adventure activities. Check your policy details for the complete list of covered activities, or contact us for specific questions about your planned activities.</p>
-                        </div>
-                    </div>
-
-                    <div class="bg-gray-50 rounded-xl">
-                        <button class="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-100 transition-colors duration-200"
-                                onclick="toggleFAQ(this)">
-                            <span class="font-semibold text-gray-800">Can I extend my insurance while traveling?</span>
-                            <i data-lucide="chevron-down" class="w-5 h-5 text-gray-500 transition-transform duration-200"></i>
-                        </button>
-                        <div class="hidden px-6 pb-4">
-                            <p class="text-gray-600">Yes, you can extend your coverage for up to 30 additional days while traveling, subject to underwriting approval. Contact our customer service team before your current policy expires to arrange an extension.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Call to Action -->
-    <section class="py-20 bg-gradient-to-r from-blue-600 to-cyan-700 text-white">
-        <div class="container mx-auto px-4">
-            <div class="max-w-4xl mx-auto text-center">
-                <h2 class="text-4xl font-bold mb-6">Ready to Protect Your Trip?</h2>
-                <p class="text-xl text-blue-100 mb-8">
-                    Get a quote in minutes and travel with confidence
-                </p>
-                <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <button class="px-8 py-4 bg-white text-blue-600 font-bold rounded-2xl hover:bg-gray-100 transition-colors duration-300">
-                        <i data-lucide="calculator" class="w-5 h-5 inline-block mr-2"></i>
-                        Get a Quote
-                    </button>
-                    <button class="px-8 py-4 bg-blue-800 text-white font-bold rounded-2xl hover:bg-blue-900 transition-colors duration-300">
-                        <i data-lucide="phone" class="w-5 h-5 inline-block mr-2"></i>
-                        Call for Assistance
-                    </button>
-                </div>
-            </div>
-        </div>
-    </section>
-</div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize Lucide icons
-    if (typeof lucide !== 'undefined') {
-        lucide.createIcons();
-    }
-});
-
-function toggleFAQ(element) {
-    const content = element.nextElementSibling;
-    const icon = element.querySelector('i[data-lucide="chevron-down"]');
-    
-    if (content.classList.contains('hidden')) {
-        content.classList.remove('hidden');
-        icon.style.transform = 'rotate(180deg)';
-    } else {
-        content.classList.add('hidden');
-        icon.style.transform = 'rotate(0deg)';
-    }
-}
-</script>
-
-@push('styles')
-<style>
-.animate-fade-in {
-    animation: fadeIn 1s ease-out;
-}
-
-.animate-slide-up {
-    animation: slideUp 1s ease-out 0.3s both;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes slideUp {
-    from {
-        opacity: 0;
-        transform: translateY(50px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-</style>
-@endpush
+<section class="py-10 bg-emerald-600">
+    <div class="max-w-xl mx-auto px-4 text-center">
+        <h2 class="text-base font-bold text-white mb-1">Insurance Updates</h2>
+        <p class="text-[11px] text-emerald-100 mb-4">Stay informed about our insurance products and travel safety tips.</p>
+        <form class="flex gap-2" onsubmit="event.preventDefault();alert('Subscribed!');this.reset();"><input type="email" placeholder="Your email" class="flex-1 px-3 py-2 rounded-lg text-xs text-gray-800 focus:ring-2 focus:ring-amber-400 focus:outline-none" required><button type="submit" class="bg-amber-500 hover:bg-amber-600 text-white text-xs font-semibold px-5 py-2 rounded-lg transition-colors whitespace-nowrap">Subscribe</button></form>
+    </div>
+</section>
 @endsection
+
+@push('scripts')
+<script>function toggleFaq(btn){var c=btn.nextElementSibling,ic=btn.querySelector('i'),open=!c.classList.contains('hidden');document.querySelectorAll('.faq-content').forEach(function(x){x.classList.add('hidden');});document.querySelectorAll('.faq-toggle i').forEach(function(x){x.style.transform='rotate(0)';});if(!open){c.classList.remove('hidden');ic.style.transform='rotate(180deg)';}}</script>
+@endpush

@@ -1,185 +1,66 @@
-
 @extends('layouts.main')
-
 @section('title', 'News & Updates - Ziara Travel')
 
 @section('content')
-<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-    <!-- Hero Section -->
-    <div class="relative py-16 md:py-24 bg-cover bg-center" style="background-image: url('{{ asset('images/backgrounds/news-bg.jpg') }}');">
-        <div class="absolute inset-0 bg-blue-900 opacity-60"></div>
-        <div class="container mx-auto px-4 relative z-10 text-center">
-            <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">News & Updates</h1>
-            <p class="text-xl text-white max-w-3xl mx-auto">Stay informed about travel trends, company announcements, and industry insights</p>
-        </div>
+{{-- ===== HERO ===== --}}
+<section class="relative bg-slate-900 overflow-hidden">
+    <img src="https://images.unsplash.com/photo-1504711434969-e33886168d6c?w=1400&h=500&fit=crop" alt="" class="absolute inset-0 w-full h-full object-cover opacity-20" loading="eager">
+    <div class="relative max-w-5xl mx-auto px-4 pt-28 pb-10 text-center">
+        <h1 class="text-2xl md:text-3xl font-bold text-white mb-1">News & <span class="text-amber-400">Updates</span></h1>
+        <p class="text-xs text-gray-300">Travel trends, announcements, and industry insights</p>
     </div>
+</section>
 
-    <!-- Featured News Section -->
-    <div class="py-16 bg-white">
-        <div class="container mx-auto px-4">
-            <div class="max-w-6xl mx-auto">
-                <div class="flex flex-col md:flex-row items-center">
-                    <div class="md:w-1/2 mb-8 md:mb-0 md:pr-8">
-                        <img src="{{ asset('images/news/featured-news.jpg') }}" alt="Featured News" class="rounded-lg shadow-lg">
-                    </div>
-                    <div class="md:w-1/2">
-                        <span class="text-primary-600 font-semibold">Featured News</span>
-                        <h2 class="text-3xl font-bold mb-4">Ziara Travel Expands Operations to Southern Africa</h2>
-                        <p class="text-gray-500 mb-4">
-                            <i class="far fa-calendar mr-2"></i> August 1, 2025
-                        </p>
-                        <p class="text-gray-600 mb-4">
-                            We're excited to announce our expansion into Southern Africa, with new offices opening in Cape Town, South Africa and Gaborone, Botswana. This strategic move allows us to better serve our clients looking to explore the incredible destinations in this region.
-                        </p>
-                        <p class="text-gray-600 mb-6">
-                            Our expanded team includes local travel experts who bring invaluable knowledge and connections to enhance your travel experiences throughout Southern Africa.
-                        </p>
-                        <a href="#" class="inline-block bg-primary-600 hover:bg-primary-700 text-white font-semibold py-2 px-6 rounded-md transition duration-300">
-                            Read Full Article
-                        </a>
-                    </div>
-                </div>
+{{-- ===== FEATURED ===== --}}
+<section class="py-10 bg-white">
+    <div class="max-w-5xl mx-auto px-4">
+        <div class="flex flex-col md:flex-row items-center gap-5 bg-gray-50 rounded-xl overflow-hidden border border-gray-100">
+            <div class="md:w-1/2"><img src="https://images.unsplash.com/photo-1436491865332-7a61a109db05?w=600&h=400&fit=crop" alt="" class="w-full h-48 md:h-56 object-cover" loading="lazy"></div>
+            <div class="md:w-1/2 p-5">
+                <span class="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">Featured</span>
+                <h2 class="text-lg font-bold text-gray-900 mt-1 mb-1">Ziara Travel Expands to Southern Africa</h2>
+                <p class="text-[9px] text-gray-400 mb-2"><i class="far fa-calendar mr-1"></i> August 1, 2025</p>
+                <p class="text-xs text-gray-500 leading-relaxed mb-3">New offices opening in Cape Town and Gaborone. Our expanded team of local travel experts will enhance your experiences throughout Southern Africa.</p>
+                <a href="#" class="text-xs font-semibold text-emerald-600 hover:text-emerald-700">Read Full Article <i class="fas fa-arrow-right text-[8px] ml-1"></i></a>
             </div>
         </div>
     </div>
+</section>
 
-    <!-- Latest News Section -->
-    <div class="py-16 bg-gray-50">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl font-bold mb-4">Latest News & Updates</h2>
-                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                    Stay up-to-date with the latest developments at Ziara Travel and in the travel industry
-                </p>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-                <!-- News Card 1 -->
-                <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <img src="{{ asset('images/news/news-1.jpg') }}" alt="News Article" class="w-full h-48 object-cover">
-                    <div class="p-6">
-                        <p class="text-gray-500 text-sm mb-2">
-                            <i class="far fa-calendar mr-1"></i> July 25, 2025
-                        </p>
-                        <h3 class="font-bold text-xl mb-2">New Luxury Safari Packages Launched</h3>
-                        <p class="text-gray-600 mb-4">
-                            Discover our newly curated luxury safari experiences featuring exclusive lodges and private guides for an unforgettable adventure.
-                        </p>
-                        <a href="#" class="text-primary-600 hover:text-primary-800 font-medium">Read More →</a>
-                    </div>
-                </div>
-                
-                <!-- News Card 2 -->
-                <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <img src="{{ asset('images/news/news-2.jpg') }}" alt="News Article" class="w-full h-48 object-cover">
-                    <div class="p-6">
-                        <p class="text-gray-500 text-sm mb-2">
-                            <i class="far fa-calendar mr-1"></i> July 18, 2025
-                        </p>
-                        <h3 class="font-bold text-xl mb-2">Ziara Travel Wins Service Excellence Award</h3>
-                        <p class="text-gray-600 mb-4">
-                            We're honored to receive the prestigious Travel Service Excellence Award for the third consecutive year, recognizing our commitment to customer satisfaction.
-                        </p>
-                        <a href="#" class="text-primary-600 hover:text-primary-800 font-medium">Read More →</a>
-                    </div>
-                </div>
-                
-                <!-- News Card 3 -->
-                <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <img src="{{ asset('images/news/news-3.jpg') }}" alt="News Article" class="w-full h-48 object-cover">
-                    <div class="p-6">
-                        <p class="text-gray-500 text-sm mb-2">
-                            <i class="far fa-calendar mr-1"></i> July 10, 2025
-                        </p>
-                        <h3 class="font-bold text-xl mb-2">New Partnership with Sustainable Tourism Alliance</h3>
-                        <p class="text-gray-600 mb-4">
-                            We've joined forces with the Sustainable Tourism Alliance to further our commitment to environmentally responsible and community-beneficial travel practices.
-                        </p>
-                        <a href="#" class="text-primary-600 hover:text-primary-800 font-medium">Read More →</a>
-                    </div>
-                </div>
-                
-                <!-- News Card 4 -->
-                <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <img src="{{ asset('images/news/news-4.jpg') }}" alt="News Article" class="w-full h-48 object-cover">
-                    <div class="p-6">
-                        <p class="text-gray-500 text-sm mb-2">
-                            <i class="far fa-calendar mr-1"></i> July 5, 2025
-                        </p>
-                        <h3 class="font-bold text-xl mb-2">Mobile App Launch: Book Flights On-The-Go</h3>
-                        <p class="text-gray-600 mb-4">
-                            Our new mobile app is now available, making it easier than ever to search, compare, and book flights directly from your smartphone.
-                        </p>
-                        <a href="#" class="text-primary-600 hover:text-primary-800 font-medium">Read More →</a>
-                    </div>
-                </div>
-                
-                <!-- News Card 5 -->
-                <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <img src="{{ asset('images/news/news-5.jpg') }}" alt="News Article" class="w-full h-48 object-cover">
-                    <div class="p-6">
-                        <p class="text-gray-500 text-sm mb-2">
-                            <i class="far fa-calendar mr-1"></i> June 28, 2025
-                        </p>
-                        <h3 class="font-bold text-xl mb-2">Special Summer Promotion: Family Packages</h3>
-                        <p class="text-gray-600 mb-4">
-                            Take advantage of our special summer promotion featuring discounted rates on family travel packages to popular destinations.
-                        </p>
-                        <a href="#" class="text-primary-600 hover:text-primary-800 font-medium">Read More →</a>
-                    </div>
-                </div>
-                
-                <!-- News Card 6 -->
-                <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <img src="{{ asset('images/news/news-6.jpg') }}" alt="News Article" class="w-full h-48 object-cover">
-                    <div class="p-6">
-                        <p class="text-gray-500 text-sm mb-2">
-                            <i class="far fa-calendar mr-1"></i> June 20, 2025
-                        </p>
-                        <h3 class="font-bold text-xl mb-2">Travel Industry Trends: What to Expect in 2026</h3>
-                        <p class="text-gray-600 mb-4">
-                            Our travel experts analyze the emerging trends in the industry and what travelers can expect in the coming year.
-                        </p>
-                        <a href="#" class="text-primary-600 hover:text-primary-800 font-medium">Read More →</a>
-                    </div>
+{{-- ===== LATEST NEWS ===== --}}
+<section class="py-10 bg-gray-50">
+    <div class="max-w-5xl mx-auto px-4">
+        <h2 class="text-lg font-bold text-gray-900 text-center mb-6">Latest News</h2>
+        @php $news = [
+            ['title'=>'New Luxury Safari Packages Launched','date'=>'July 25, 2025','text'=>'Discover newly curated luxury safari experiences featuring exclusive lodges and private guides.','img'=>'https://images.unsplash.com/photo-1516426122078-c23e76319801?w=400&h=250&fit=crop'],
+            ['title'=>'Ziara Wins Service Excellence Award','date'=>'July 18, 2025','text'=>'Honoured with the Travel Service Excellence Award for the third consecutive year.','img'=>'https://images.unsplash.com/photo-1567521464027-f127ff144326?w=400&h=250&fit=crop'],
+            ['title'=>'Sustainable Tourism Alliance Partnership','date'=>'July 10, 2025','text'=>'Joined forces to further commitment to environmentally responsible travel practices.','img'=>'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&h=250&fit=crop'],
+            ['title'=>'Mobile App: Book Flights On-The-Go','date'=>'July 5, 2025','text'=>'Search, compare, and book flights directly from your smartphone with our new app.','img'=>'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=400&h=250&fit=crop'],
+            ['title'=>'Summer Family Packages Promotion','date'=>'June 28, 2025','text'=>'Discounted rates on family travel packages to popular East African destinations.','img'=>'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&h=250&fit=crop'],
+            ['title'=>'Travel Trends: What to Expect in 2026','date'=>'June 20, 2025','text'=>'Our experts analyze emerging trends and what travelers can expect in the coming year.','img'=>'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=400&h=250&fit=crop'],
+        ]; @endphp
+        <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-3">
+            @foreach($news as $n)
+            <div class="bg-white rounded-xl overflow-hidden border border-gray-100 hover:shadow-md transition-shadow">
+                <img src="{{ $n['img'] }}" alt="{{ $n['title'] }}" class="w-full h-28 object-cover" loading="lazy">
+                <div class="p-3">
+                    <p class="text-[9px] text-gray-400 mb-1"><i class="far fa-calendar mr-1"></i>{{ $n['date'] }}</p>
+                    <h3 class="text-xs font-bold text-gray-900 mb-1 leading-tight">{{ $n['title'] }}</h3>
+                    <p class="text-[10px] text-gray-500 leading-relaxed mb-2">{{ $n['text'] }}</p>
+                    <a href="#" class="text-[10px] font-semibold text-emerald-600 hover:text-emerald-700">Read More <i class="fas fa-arrow-right text-[7px]"></i></a>
                 </div>
             </div>
-            
-            <div class="mt-12 text-center">
-                <a href="#" class="inline-block bg-primary-600 hover:bg-primary-700 text-white font-semibold py-3 px-8 rounded-md transition duration-300">
-                    Load More News
-                </a>
-            </div>
+            @endforeach
         </div>
     </div>
-    
-    <!-- Newsletter Section -->
-    <div class="py-16 bg-blue-800 text-white">
-        <div class="container mx-auto px-4">
-            <div class="max-w-4xl mx-auto text-center">
-                <h2 class="text-3xl font-bold mb-4">Stay Updated</h2>
-                <p class="text-xl mb-8 opacity-90">
-                    Subscribe to our newsletter to receive the latest news, travel tips, and exclusive offers directly in your inbox.
-                </p>
-                <div class="max-w-md mx-auto">
-                    <form class="flex flex-col sm:flex-row gap-4">
-                        <input type="email" placeholder="Enter your email address" class="flex-grow px-4 py-3 rounded-md text-gray-800 focus:outline-none">
-                        <button type="submit" class="bg-primary-500 hover:bg-primary-600 text-white font-semibold py-3 px-6 rounded-md transition duration-300">
-                            Subscribe
-                        </button>
-                    </form>
-                    <p class="mt-4 text-sm opacity-80">
-                        We respect your privacy. You can unsubscribe at any time.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+</section>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Any JavaScript functionality can be added here
-});
-</script>
+{{-- ===== NEWSLETTER ===== --}}
+<section class="py-10 bg-emerald-600">
+    <div class="max-w-xl mx-auto px-4 text-center">
+        <h2 class="text-base font-bold text-white mb-1">Stay Updated</h2>
+        <p class="text-[11px] text-emerald-100 mb-4">Get the latest news, travel tips, and exclusive offers in your inbox.</p>
+        <form class="flex gap-2" onsubmit="event.preventDefault();alert('Subscribed!');this.reset();"><input type="email" placeholder="Your email" class="flex-1 px-3 py-2 rounded-lg text-xs text-gray-800 focus:ring-2 focus:ring-amber-400 focus:outline-none" required><button type="submit" class="bg-amber-500 hover:bg-amber-600 text-white text-xs font-semibold px-5 py-2 rounded-lg transition-colors whitespace-nowrap">Subscribe</button></form>
+    </div>
+</section>
 @endsection
