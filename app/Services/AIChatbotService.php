@@ -3,17 +3,16 @@
 
 namespace App\Services;
 
-use Laravel\AI\AI;
 use App\Models\ChatSession;
 use App\Models\User;
 
 class AIChatbotService
 {
-    protected $ai;
+    protected $ai = null;
     
     public function __construct()
     {
-        $this->ai = AI::chat();
+        // AI package not yet installed; responses use rule-based fallbacks.
     }
     
     public function handleUserMessage($message, $sessionId = null, $userId = null)

@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('styles')
+@push('styles')
 <style>
     /* Custom animations */
     @keyframes fadeInUp {
@@ -74,7 +74,7 @@
         }
     }
 </style>
-@endsection
+@endpush
 
 @section('content')
 <div class="bg-gray-50 min-h-screen pb-16">

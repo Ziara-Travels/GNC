@@ -1,260 +1,103 @@
 @extends('layouts.main')
-
 @section('title', 'Why Choose Us - Ziara Travel')
 
 @section('content')
-<div class="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100">
-    <!-- Hero Section -->
-    <section class="relative py-20 bg-gradient-to-r from-indigo-600 to-purple-800 text-white overflow-hidden">
-        <div class="absolute inset-0 bg-black opacity-10"></div>
-        <div class="container mx-auto px-4 relative z-10">
-            <div class="max-w-4xl mx-auto text-center">
-                <h1 class="text-5xl md:text-6xl font-bold mb-6 animate-fade-in">
-                    Why Choose Ziara Travel?
-                </h1>
-                <p class="text-xl md:text-2xl text-indigo-100 mb-8 animate-slide-up">
-                    Discover what makes us the preferred choice for millions of travelers worldwide
-                </p>
-            </div>
+{{-- ===== HERO ===== --}}
+<section class="relative bg-slate-900 overflow-hidden">
+    <img src="https://images.unsplash.com/photo-1488085061387-422e29b40080?w=1400&h=500&fit=crop" alt="" class="absolute inset-0 w-full h-full object-cover opacity-20" loading="eager">
+    <div class="relative max-w-5xl mx-auto px-4 pt-28 pb-10 text-center">
+        <h1 class="text-2xl md:text-3xl font-bold text-white mb-1">Why Choose <span class="text-amber-400">Ziara Travels</span></h1>
+        <p class="text-xs text-gray-300">Trusted by thousands of travelers across East Africa</p>
+    </div>
+</section>
+
+{{-- ===== KEY REASONS ===== --}}
+<section class="py-10 bg-white">
+    <div class="max-w-5xl mx-auto px-4">
+        <div class="text-center mb-6">
+            <span class="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">Our Difference</span>
+            <h2 class="text-lg font-bold text-gray-900 mt-0.5">What Sets Us Apart</h2>
         </div>
-    </section>
-
-    <!-- Key Benefits Section -->
-    <section class="py-20">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl font-bold text-gray-800 mb-4">Our Competitive Advantages</h2>
-                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                    Here's why over 2 million customers trust us with their travel plans
-                </p>
+        @php $reasons = [
+            ['icon'=>'fa-tag','title'=>'Best Prices Guaranteed','desc'=>'We compare fares from 500+ airlines and negotiate directly with hotels for the lowest available rates.'],
+            ['icon'=>'fa-bolt','title'=>'Instant Booking','desc'=>'Search, compare, and book in seconds. Get e-tickets and confirmations delivered instantly to your email.'],
+            ['icon'=>'fa-shield-alt','title'=>'Secure Payments','desc'=>'M-Pesa, STK Push, Equity Eazzy, bank transfer, and cards — all protected with end-to-end encryption.'],
+            ['icon'=>'fa-headset','title'=>'24/7 Expert Support','desc'=>'Our team of travel specialists is available around the clock via chat, email, and phone.'],
+            ['icon'=>'fa-undo','title'=>'Flexible Cancellation','desc'=>'Free cancellation on most bookings. Change your plans without penalties on flexible-rate rooms.'],
+            ['icon'=>'fa-globe-africa','title'=>'East Africa Specialists','desc'=>'Deep expertise in East African destinations — Kenya, Tanzania, Uganda, Rwanda, and beyond.'],
+        ]; @endphp
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
+            @foreach($reasons as $r)
+            <div class="bg-gray-50 rounded-xl p-4 border border-gray-100 hover:shadow-md transition-shadow">
+                <div class="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center mb-2"><i class="fas {{ $r['icon'] }} text-emerald-600 text-xs"></i></div>
+                <h3 class="text-xs font-bold text-gray-900 mb-1">{{ $r['title'] }}</h3>
+                <p class="text-[10px] text-gray-500 leading-relaxed">{{ $r['desc'] }}</p>
             </div>
+            @endforeach
+        </div>
+    </div>
+</section>
 
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- Best Prices -->
-                <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 border-l-4 border-green-500">
-                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-6">
-                        <i data-lucide="dollar-sign" class="w-8 h-8 text-green-600"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold text-gray-800 mb-4">Best Price Guarantee</h3>
-                    <p class="text-gray-600 mb-4">
-                        We guarantee the lowest prices. If you find a better deal elsewhere, we'll match it plus give you an additional discount.
-                    </p>
-                    <div class="text-sm text-green-600 font-semibold">
-                        ✓ Price matching within 24 hours
-                    </div>
-                </div>
+{{-- ===== STATS ===== --}}
+<section class="py-10 bg-slate-900">
+    <div class="max-w-5xl mx-auto px-4">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            @php $stats = [['n'=>'10K+','l'=>'Flights Booked'],['n'=>'5K+','l'=>'Happy Travelers'],['n'=>'190+','l'=>'Countries'],['n'=>'98%','l'=>'Satisfaction Rate']]; @endphp
+            @foreach($stats as $s)
+            <div class="text-center"><div class="text-xl font-bold text-white">{{ $s['n'] }}</div><div class="text-[10px] text-gray-400">{{ $s['l'] }}</div></div>
+            @endforeach
+        </div>
+    </div>
+</section>
 
-                <!-- 24/7 Support -->
-                <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 border-l-4 border-blue-500">
-                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-6">
-                        <i data-lucide="headphones" class="w-8 h-8 text-blue-600"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold text-gray-800 mb-4">24/7 Customer Support</h3>
-                    <p class="text-gray-600 mb-4">
-                        Our dedicated support team is available round the clock to assist you with any queries or emergencies.
-                    </p>
-                    <div class="text-sm text-blue-600 font-semibold">
-                        ✓ Multi-language support available
-                    </div>
-                </div>
-
-                <!-- Instant Confirmation -->
-                <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 border-l-4 border-purple-500">
-                    <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mb-6">
-                        <i data-lucide="zap" class="w-8 h-8 text-purple-600"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold text-gray-800 mb-4">Instant Confirmation</h3>
-                    <p class="text-gray-600 mb-4">
-                        Get immediate booking confirmations with e-tickets delivered to your email within minutes.
-                    </p>
-                    <div class="text-sm text-purple-600 font-semibold">
-                        ✓ Real-time inventory updates
-                    </div>
-                </div>
-
-                <!-- Flexible Booking -->
-                <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 border-l-4 border-orange-500">
-                    <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-6">
-                        <i data-lucide="calendar" class="w-8 h-8 text-orange-600"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold text-gray-800 mb-4">Flexible Booking Options</h3>
-                    <p class="text-gray-600 mb-4">
-                        Enjoy free cancellations, date changes, and flexible payment options to suit your travel needs.
-                    </p>
-                    <div class="text-sm text-orange-600 font-semibold">
-                        ✓ Free cancellation up to 24 hours
-                    </div>
-                </div>
-
-                <!-- Global Network -->
-                <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 border-l-4 border-red-500">
-                    <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-6">
-                        <i data-lucide="globe" class="w-8 h-8 text-red-600"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold text-gray-800 mb-4">Global Network</h3>
-                    <p class="text-gray-600 mb-4">
-                        Access to 500+ airlines and 1 million+ hotels worldwide through our extensive partner network.
-                    </p>
-                    <div class="text-sm text-red-600 font-semibold">
-                        ✓ Covering 190+ countries
-                    </div>
-                </div>
-
-                <!-- Secure Payments -->
-                <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 border-l-4 border-indigo-500">
-                    <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mb-6">
-                        <i data-lucide="shield-check" class="w-8 h-8 text-indigo-600"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold text-gray-800 mb-4">Secure Payments</h3>
-                    <p class="text-gray-600 mb-4">
-                        Your payment information is protected with bank-level security and SSL encryption.
-                    </p>
-                    <div class="text-sm text-indigo-600 font-semibold">
-                        ✓ PCI DSS compliant
-                    </div>
+{{-- ===== CTA ===== --}}
+<section class="py-10 bg-gray-50">
+    <div class="max-w-5xl mx-auto px-4">
+        <div class="flex flex-col md:flex-row items-center gap-6 bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100">
+            <div class="md:w-1/2"><img src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=600&h=400&fit=crop" alt="" class="w-full h-48 md:h-56 object-cover" loading="lazy"></div>
+            <div class="md:w-1/2 p-5">
+                <span class="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">Start Today</span>
+                <h2 class="text-lg font-bold text-gray-900 mt-1 mb-2">Ready to Experience the Difference?</h2>
+                <p class="text-xs text-gray-500 leading-relaxed mb-4">Join thousands of happy travelers who trust Ziara Travels for their booking needs.</p>
+                <div class="flex gap-2">
+                    <a href="{{ url('/flights/search') }}" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors">Search Flights</a>
+                    <a href="{{ url('/contactus') }}" class="border border-gray-200 text-gray-700 text-xs font-semibold px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors">Contact Us</a>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- Statistics Section -->
-    <section class="py-20 bg-white">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl font-bold text-gray-800 mb-4">Trusted by Millions</h2>
-                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                    Our numbers speak for themselves
-                </p>
+{{-- ===== FAQ ===== --}}
+<section class="py-10 bg-white">
+    <div class="max-w-2xl mx-auto px-4">
+        <h2 class="text-lg font-bold text-gray-900 text-center mb-6">Common Questions</h2>
+        @php $faqs = [
+            ['q'=>'Do you offer a price match guarantee?','a'=>'Yes! If you find a lower price for the same flight or hotel within 24 hours of booking, we\'ll match it.'],
+            ['q'=>'How quickly do I get my e-ticket?','a'=>'E-tickets are generated instantly after payment confirmation and sent to your email within minutes.'],
+            ['q'=>'What if I need to cancel?','a'=>'Most flexible-rate bookings allow free cancellation. Non-refundable fares may have change fees — check your booking terms.'],
+            ['q'=>'Is my payment information safe?','a'=>'Absolutely. We use SSL encryption and never store your full card details. M-Pesa transactions are processed through Safaricom\'s secure gateway.'],
+        ]; @endphp
+        <div class="space-y-2">
+            @foreach($faqs as $faq)
+            <div class="border border-gray-200 rounded-lg bg-gray-50 overflow-hidden">
+                <button class="faq-toggle w-full flex items-center justify-between p-3 text-left hover:bg-gray-100 transition-colors" onclick="toggleFaq(this)"><span class="text-xs font-semibold text-gray-900 pr-3">{{ $faq['q'] }}</span><i class="fas fa-chevron-down text-gray-300 text-[10px] transition-transform duration-200 shrink-0"></i></button>
+                <div class="faq-content hidden px-3 pb-3"><p class="text-[11px] text-gray-500 leading-relaxed">{{ $faq['a'] }}</p></div>
             </div>
-
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <div class="text-center">
-                    <div class="text-5xl font-bold text-blue-600 mb-2">2M+</div>
-                    <div class="text-gray-600 font-medium">Happy Customers</div>
-                </div>
-                <div class="text-center">
-                    <div class="text-5xl font-bold text-green-600 mb-2">500+</div>
-                    <div class="text-gray-600 font-medium">Airline Partners</div>
-                </div>
-                <div class="text-center">
-                    <div class="text-5xl font-bold text-purple-600 mb-2">1M+</div>
-                    <div class="text-gray-600 font-medium">Hotels Listed</div>
-                </div>
-                <div class="text-center">
-                    <div class="text-5xl font-bold text-orange-600 mb-2">24/7</div>
-                    <div class="text-gray-600 font-medium">Customer Support</div>
-                </div>
-            </div>
+            @endforeach
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- Testimonials Section -->
-    <section class="py-20 bg-gray-50">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl font-bold text-gray-800 mb-4">What Our Customers Say</h2>
-                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                    Real feedback from real travelers
-                </p>
-            </div>
-
-            <div class="grid md:grid-cols-3 gap-8">
-                <!-- Testimonial 1 -->
-                <div class="bg-white rounded-2xl p-8 shadow-lg">
-                    <div class="flex items-center mb-4">
-                        <div class="flex text-yellow-400">
-                            <i data-lucide="star" class="w-5 h-5 fill-current"></i>
-                            <i data-lucide="star" class="w-5 h-5 fill-current"></i>
-                            <i data-lucide="star" class="w-5 h-5 fill-current"></i>
-                            <i data-lucide="star" class="w-5 h-5 fill-current"></i>
-                            <i data-lucide="star" class="w-5 h-5 fill-current"></i>
-                        </div>
-                    </div>
-                    <p class="text-gray-600 mb-6 italic">
-                        "Exceptional service! Booked my entire European vacation through Ziara Travel. The process was seamless and their customer support was outstanding."
-                    </p>
-                    <div class="flex items-center">
-                        <img src="https://ui-avatars.com/api/?name=Sarah+Johnson&background=3b82f6&color=ffffff" alt="Sarah Johnson" class="w-12 h-12 rounded-full mr-4">
-                        <div>
-                            <div class="font-semibold text-gray-800">Sarah Johnson</div>
-                            <div class="text-sm text-gray-600">Business Traveler</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Testimonial 2 -->
-                <div class="bg-white rounded-2xl p-8 shadow-lg">
-                    <div class="flex items-center mb-4">
-                        <div class="flex text-yellow-400">
-                            <i data-lucide="star" class="w-5 h-5 fill-current"></i>
-                            <i data-lucide="star" class="w-5 h-5 fill-current"></i>
-                            <i data-lucide="star" class="w-5 h-5 fill-current"></i>
-                            <i data-lucide="star" class="w-5 h-5 fill-current"></i>
-                            <i data-lucide="star" class="w-5 h-5 fill-current"></i>
-                        </div>
-                    </div>
-                    <p class="text-gray-600 mb-6 italic">
-                        "Best prices guaranteed and they actually delivered! Saved over $300 on my family vacation compared to other booking sites."
-                    </p>
-                    <div class="flex items-center">
-                        <img src="https://ui-avatars.com/api/?name=Michael+Chen&background=10b981&color=ffffff" alt="Michael Chen" class="w-12 h-12 rounded-full mr-4">
-                        <div>
-                            <div class="font-semibold text-gray-800">Michael Chen</div>
-                            <div class="text-sm text-gray-600">Family Traveler</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Testimonial 3 -->
-                <div class="bg-white rounded-2xl p-8 shadow-lg">
-                    <div class="flex items-center mb-4">
-                        <div class="flex text-yellow-400">
-                            <i data-lucide="star" class="w-5 h-5 fill-current"></i>
-                            <i data-lucide="star" class="w-5 h-5 fill-current"></i>
-                            <i data-lucide="star" class="w-5 h-5 fill-current"></i>
-                            <i data-lucide="star" class="w-5 h-5 fill-current"></i>
-                            <i data-lucide="star" class="w-5 h-5 fill-current"></i>
-                        </div>
-                    </div>
-                    <p class="text-gray-600 mb-6 italic">
-                        "The 24/7 support really saved my trip when my flight got cancelled. They rebooked me immediately without any extra charges."
-                    </p>
-                    <div class="flex items-center">
-                        <img src="https://ui-avatars.com/api/?name=Emma+Williams&background=8b5cf6&color=ffffff" alt="Emma Williams" class="w-12 h-12 rounded-full mr-4">
-                        <div>
-                            <div class="font-semibold text-gray-800">Emma Williams</div>
-                            <div class="text-sm text-gray-600">Solo Traveler</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- CTA Section -->
-    <section class="py-20 bg-gradient-to-r from-indigo-600 to-purple-800 text-white">
-        <div class="container mx-auto px-4 text-center">
-            <h2 class="text-4xl font-bold mb-6">Experience the Difference</h2>
-            <p class="text-xl mb-8 max-w-2xl mx-auto">
-                Join millions of satisfied customers and discover why Ziara Travel is the smart choice for your next adventure
-            </p>
-            <div class="flex flex-wrap justify-center gap-4">
-                <a href="{{ route('search-flights') }}" class="bg-white text-indigo-600 px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors duration-300">
-                    Start Booking Now
-                </a>
-                <a href="{{ route('contactus') }}" class="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-indigo-600 transition-colors duration-300">
-                    Contact Our Experts
-                </a>
-            </div>
-        </div>
-    </section>
-</div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    if (typeof lucide !== 'undefined') {
-        lucide.createIcons();
-    }
-});
-</script>
+<section class="py-10 bg-emerald-600">
+    <div class="max-w-xl mx-auto px-4 text-center">
+        <h2 class="text-base font-bold text-white mb-1">Travel Updates</h2>
+        <p class="text-[11px] text-emerald-100 mb-4">Get the latest deals and travel tips in your inbox.</p>
+        <form class="flex gap-2" onsubmit="event.preventDefault();alert('Subscribed!');this.reset();"><input type="email" placeholder="Your email" class="flex-1 px-3 py-2 rounded-lg text-xs text-gray-800 focus:ring-2 focus:ring-amber-400 focus:outline-none" required><button type="submit" class="bg-amber-500 hover:bg-amber-600 text-white text-xs font-semibold px-5 py-2 rounded-lg transition-colors whitespace-nowrap">Subscribe</button></form>
+    </div>
+</section>
 @endsection
+
+@push('scripts')
+<script>function toggleFaq(btn){var c=btn.nextElementSibling,ic=btn.querySelector('i'),open=!c.classList.contains('hidden');document.querySelectorAll('.faq-content').forEach(function(x){x.classList.add('hidden');});document.querySelectorAll('.faq-toggle i').forEach(function(x){x.style.transform='rotate(0)';});if(!open){c.classList.remove('hidden');ic.style.transform='rotate(180deg)';}}</script>
+@endpush

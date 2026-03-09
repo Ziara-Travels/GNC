@@ -12,7 +12,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Facades\Cache;
 
-class UserFlightController extends Controller
+class UserFlightContolller extends Controller
 {
     protected $client;
 

@@ -1,291 +1,89 @@
 @extends('layouts.main')
-
-@section('title', 'Our Achievements - Ziara Travels')
+@section('title', 'Achievements - Ziara Travel')
 
 @section('content')
-<div class="min-h-screen bg-gradient-to-br from-yellow-50 to-orange-100">
-    <!-- Hero Section -->
-    <section class="relative py-20 bg-gradient-to-r from-yellow-500 to-orange-600 text-white overflow-hidden">
-        <div class="absolute inset-0 bg-black opacity-10"></div>
-        <div class="container mx-auto px-4 relative z-10">
-            <div class="max-w-4xl mx-auto text-center">
-                <h1 class="text-5xl md:text-6xl font-bold mb-6 animate-fade-in">
-                    Our Achievements
-                </h1>
-                <p class="text-xl md:text-2xl text-yellow-100 mb-8 animate-slide-up">
-                    Celebrating milestones and recognitions that define our excellence in travel services
-                </p>
-                <div class="flex justify-center">
-                    <div class="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
-                        <i data-lucide="trophy" class="w-10 h-10 text-yellow-200"></i>
+{{-- ===== HERO ===== --}}
+<section class="relative bg-slate-900 overflow-hidden">
+    <img src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=1400&h=500&fit=crop" alt="" class="absolute inset-0 w-full h-full object-cover opacity-20" loading="eager">
+    <div class="relative max-w-5xl mx-auto px-4 pt-28 pb-10 text-center">
+        <h1 class="text-2xl md:text-3xl font-bold text-white mb-1">Our <span class="text-amber-400">Achievements</span></h1>
+        <p class="text-xs text-gray-300">Milestones and awards that define our journey</p>
+    </div>
+</section>
+
+{{-- ===== STATS ===== --}}
+<section class="py-10 bg-white">
+    <div class="max-w-5xl mx-auto px-4">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            @foreach([['num'=>'50K+','label'=>'Happy Travelers'],['num'=>'120+','label'=>'Destinations'],['num'=>'15K+','label'=>'Flights Booked'],['num'=>'4.8/5','label'=>'Customer Rating']] as $s)
+            <div class="bg-gray-50 rounded-xl p-4 text-center border border-gray-100">
+                <span class="text-xl font-bold text-emerald-600 block">{{ $s['num'] }}</span>
+                <span class="text-[10px] text-gray-500">{{ $s['label'] }}</span>
+            </div>
+            @endforeach
+        </div>
+    </div>
+</section>
+
+{{-- ===== AWARDS ===== --}}
+<section class="py-10 bg-gray-50">
+    <div class="max-w-5xl mx-auto px-4">
+        <h2 class="text-lg font-bold text-gray-900 text-center mb-6">Awards & Recognition</h2>
+        <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-3">
+            @foreach([['year'=>'2025','title'=>'Best Travel Agency – East Africa','org'=>'Africa Travel Awards','icon'=>'fa-trophy'],['year'=>'2024','title'=>'Service Excellence Award','org'=>'Kenya Tourism Board','icon'=>'fa-award'],['year'=>'2024','title'=>'Top Innovation in Travel Tech','org'=>'Tech in Travel Conference','icon'=>'fa-microchip'],['year'=>'2023','title'=>'Customer Choice Award','org'=>'Travel Weekly Africa','icon'=>'fa-heart'],['year'=>'2023','title'=>'Sustainable Tourism Partner','org'=>'Sustainable Tourism Alliance','icon'=>'fa-leaf'],['year'=>'2022','title'=>'Best New Travel Platform','org'=>'Startup Awards Africa','icon'=>'fa-star']] as $a)
+            <div class="bg-white rounded-xl p-4 border border-gray-100">
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 bg-amber-50 rounded-full flex items-center justify-center shrink-0"><i class="fas {{ $a['icon'] }} text-amber-500 text-xs"></i></div>
+                    <div>
+                        <span class="text-[9px] text-emerald-600 font-bold">{{ $a['year'] }}</span>
+                        <h3 class="text-xs font-bold text-gray-900 leading-tight">{{ $a['title'] }}</h3>
+                        <p class="text-[9px] text-gray-400">{{ $a['org'] }}</p>
                     </div>
                 </div>
+            </div>
+            @endforeach
+        </div>
+    </div>
+</section>
+
+{{-- ===== TIMELINE ===== --}}
+<section class="py-10 bg-white">
+    <div class="max-w-2xl mx-auto px-4">
+        <h2 class="text-lg font-bold text-gray-900 text-center mb-6">Our Journey</h2>
+        <div class="space-y-3">
+            @foreach([['year'=>'2022','title'=>'Founded','text'=>'Ziara Travel launches with a vision to make African travel seamless and affordable.'],['year'=>'2023','title'=>'10,000 Bookings','text'=>'Reached our first major milestone with 10K successful bookings in under a year.'],['year'=>'2023','title'=>'Expanded to 5 Countries','text'=>'Extended our services to Kenya, Tanzania, Uganda, Rwanda, and Ethiopia.'],['year'=>'2024','title'=>'Mobile App Launch','text'=>'Released our mobile app for iOS and Android, enabling travel on-the-go.'],['year'=>'2025','title'=>'Southern Africa Expansion','text'=>'Opened new offices in Cape Town and Gaborone, marking our continental growth.']] as $m)
+            <div class="flex gap-3">
+                <div class="shrink-0 text-center"><span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">{{ $m['year'] }}</span></div>
+                <div class="bg-gray-50 rounded-lg p-3 border border-gray-100 flex-1">
+                    <h3 class="text-xs font-bold text-gray-900">{{ $m['title'] }}</h3>
+                    <p class="text-[10px] text-gray-500 leading-relaxed">{{ $m['text'] }}</p>
+                </div>
+            </div>
+            @endforeach
+        </div>
+    </div>
+</section>
+
+{{-- ===== CTA ===== --}}
+<section class="py-10 bg-gray-50">
+    <div class="max-w-5xl mx-auto px-4">
+        <div class="flex flex-col md:flex-row-reverse items-center gap-6 bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100">
+            <div class="md:w-1/2"><img src="https://images.unsplash.com/photo-1488085061387-422e29b40080?w=600&h=400&fit=crop" alt="" class="w-full h-48 md:h-56 object-cover" loading="lazy"></div>
+            <div class="md:w-1/2 p-5">
+                <span class="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">Join Our Story</span>
+                <h2 class="text-lg font-bold text-gray-900 mt-1 mb-2">Be Part of Our Next Chapter</h2>
+                <p class="text-xs text-gray-500 leading-relaxed mb-4">Over 50,000 travelers trust us. Start your journey with an award-winning team.</p>
+                <a href="{{ url('/') }}" class="inline-block bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-5 py-2 rounded-lg transition-colors">Book Your Trip</a>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- Awards Section -->
-    <section class="py-20">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl font-bold text-gray-800 mb-4">Awards & Recognition</h2>
-                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                    Industry recognition that validates our commitment to excellence
-                </p>
-            </div>
-
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- Award 1 -->
-                <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 text-center border-t-4 border-yellow-500">
-                    <div class="w-20 h-20 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <i data-lucide="award" class="w-10 h-10 text-yellow-600"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-800 mb-3">Best Travel Platform 2023</h3>
-                    <p class="text-gray-600 mb-4">World Travel Awards</p>
-                    <div class="text-sm text-yellow-600 bg-yellow-50 px-4 py-2 rounded-lg">
-                        Recognized for innovation and customer satisfaction
-                    </div>
-                </div>
-
-                <!-- Award 2 -->
-                <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 text-center border-t-4 border-blue-500">
-                    <div class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <i data-lucide="star" class="w-10 h-10 text-blue-600"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-800 mb-3">Excellence in Customer Service</h3>
-                    <p class="text-gray-600 mb-4">Travel Industry Association</p>
-                    <div class="text-sm text-blue-600 bg-blue-50 px-4 py-2 rounded-lg">
-                        Outstanding 24/7 customer support
-                    </div>
-                </div>
-
-                <!-- Award 3 -->
-                <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 text-center border-t-4 border-green-500">
-                    <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <i data-lucide="shield-check" class="w-10 h-10 text-green-600"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-800 mb-3">Most Trusted Travel Brand</h3>
-                    <p class="text-gray-600 mb-4">Consumer Choice Awards</p>
-                    <div class="text-sm text-green-600 bg-green-50 px-4 py-2 rounded-lg">
-                        Based on customer trust and reliability
-                    </div>
-                </div>
-
-                <!-- Award 4 -->
-                <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 text-center border-t-4 border-purple-500">
-                    <div class="w-20 h-20 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <i data-lucide="zap" class="w-10 h-10 text-purple-600"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-800 mb-3">Technology Innovation Award</h3>
-                    <p class="text-gray-600 mb-4">Digital Travel Summit</p>
-                    <div class="text-sm text-purple-600 bg-purple-50 px-4 py-2 rounded-lg">
-                        AI-powered booking technology
-                    </div>
-                </div>
-
-                <!-- Award 5 -->
-                <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 text-center border-t-4 border-red-500">
-                    <div class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <i data-lucide="globe" class="w-10 h-10 text-red-600"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-800 mb-3">Global Expansion Excellence</h3>
-                    <p class="text-gray-600 mb-4">International Business Awards</p>
-                    <div class="text-sm text-red-600 bg-red-50 px-4 py-2 rounded-lg">
-                        Fastest growing travel platform
-                    </div>
-                </div>
-
-                <!-- Award 6 -->
-                <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 text-center border-t-4 border-indigo-500">
-                    <div class="w-20 h-20 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <i data-lucide="users" class="w-10 h-10 text-indigo-600"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-800 mb-3">Best Employer in Travel</h3>
-                    <p class="text-gray-600 mb-4">HR Excellence Awards</p>
-                    <div class="text-sm text-indigo-600 bg-indigo-50 px-4 py-2 rounded-lg">
-                        Outstanding workplace culture
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Milestones Section -->
-    <section class="py-20 bg-white">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl font-bold text-gray-800 mb-4">Major Milestones</h2>
-                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                    Key achievements that mark our journey to becoming a leading travel platform
-                </p>
-            </div>
-
-            <div class="max-w-4xl mx-auto">
-                <div class="relative">
-                    <!-- Timeline line -->
-                    <div class="absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b from-yellow-400 to-orange-500"></div>
-
-                    <!-- Timeline items -->
-                    <div class="space-y-12">
-                        <!-- Milestone 1 -->
-                        <div class="relative flex items-center">
-                            <div class="flex-1 text-right pr-8">
-                                <div class="bg-yellow-50 p-6 rounded-xl">
-                                    <h3 class="text-xl font-bold text-gray-800 mb-2">Company Founded</h3>
-                                    <p class="text-gray-600">Started with a vision to revolutionize travel booking</p>
-                                </div>
-                            </div>
-                            <div class="absolute left-1/2 transform -translate-x-1/2 w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center text-white font-bold">
-                                2015
-                            </div>
-                            <div class="flex-1 pl-8"></div>
-                        </div>
-
-                        <!-- Milestone 2 -->
-                        <div class="relative flex items-center">
-                            <div class="flex-1 pr-8"></div>
-                            <div class="absolute left-1/2 transform -translate-x-1/2 w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
-                                2017
-                            </div>
-                            <div class="flex-1 text-left pl-8">
-                                <div class="bg-blue-50 p-6 rounded-xl">
-                                    <h3 class="text-xl font-bold text-gray-800 mb-2">1 Million Users</h3>
-                                    <p class="text-gray-600">Reached our first major user milestone</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Milestone 3 -->
-                        <div class="relative flex items-center">
-                            <div class="flex-1 text-right pr-8">
-                                <div class="bg-green-50 p-6 rounded-xl">
-                                    <h3 class="text-xl font-bold text-gray-800 mb-2">Global Expansion</h3>
-                                    <p class="text-gray-600">Launched in 50+ countries worldwide</p>
-                                </div>
-                            </div>
-                            <div class="absolute left-1/2 transform -translate-x-1/2 w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
-                                2019
-                            </div>
-                            <div class="flex-1 pl-8"></div>
-                        </div>
-
-                        <!-- Milestone 4 -->
-                        <div class="relative flex items-center">
-                            <div class="flex-1 pr-8"></div>
-                            <div class="absolute left-1/2 transform -translate-x-1/2 w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
-                                2021
-                            </div>
-                            <div class="flex-1 text-left pl-8">
-                                <div class="bg-purple-50 p-6 rounded-xl">
-                                    <h3 class="text-xl font-bold text-gray-800 mb-2">AI Integration</h3>
-                                    <p class="text-gray-600">Launched AI-powered booking assistant</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Milestone 5 -->
-                        <div class="relative flex items-center">
-                            <div class="flex-1 text-right pr-8">
-                                <div class="bg-orange-50 p-6 rounded-xl">
-                                    <h3 class="text-xl font-bold text-gray-800 mb-2">10 Million Bookings</h3>
-                                    <p class="text-gray-600">Processed our 10 millionth booking</p>
-                                </div>
-                            </div>
-                            <div class="absolute left-1/2 transform -translate-x-1/2 w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
-                                2023
-                            </div>
-                            <div class="flex-1 pl-8"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Stats Section -->
-    <section class="py-20 bg-gradient-to-r from-yellow-500 to-orange-600 text-white">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl font-bold mb-4">By the Numbers</h2>
-                <p class="text-xl text-yellow-100 max-w-3xl mx-auto">
-                    Our achievements in numbers
-                </p>
-            </div>
-
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <div class="text-center">
-                    <div class="text-6xl font-bold mb-4">50+</div>
-                    <div class="text-xl font-medium text-yellow-100">Awards Won</div>
-                </div>
-                <div class="text-center">
-                    <div class="text-6xl font-bold mb-4">190+</div>
-                    <div class="text-xl font-medium text-yellow-100">Countries Served</div>
-                </div>
-                <div class="text-center">
-                    <div class="text-6xl font-bold mb-4">2M+</div>
-                    <div class="text-xl font-medium text-yellow-100">Happy Customers</div>
-                </div>
-                <div class="text-center">
-                    <div class="text-6xl font-bold mb-4">99%</div>
-                    <div class="text-xl font-medium text-yellow-100">Customer Satisfaction</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Future Goals Section -->
-    <section class="py-20 bg-gray-50">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl font-bold text-gray-800 mb-4">Looking Ahead</h2>
-                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                    Our vision for the future of travel
-                </p>
-            </div>
-
-            <div class="grid md:grid-cols-3 gap-8">
-                <!-- Goal 1 -->
-                <div class="bg-white rounded-2xl p-8 text-center shadow-lg hover:shadow-xl transition-all duration-300">
-                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <i data-lucide="target" class="w-8 h-8 text-blue-600"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold text-gray-800 mb-4">Carbon Neutral by 2025</h3>
-                    <p class="text-gray-600">
-                        Committed to sustainable travel and offsetting our carbon footprint
-                    </p>
-                </div>
-
-                <!-- Goal 2 -->
-                <div class="bg-white rounded-2xl p-8 text-center shadow-lg hover:shadow-xl transition-all duration-300">
-                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <i data-lucide="rocket" class="w-8 h-8 text-green-600"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold text-gray-800 mb-4">Next-Gen AI Platform</h3>
-                    <p class="text-gray-600">
-                        Launching the most advanced AI-powered travel planning system
-                    </p>
-                </div>
-
-                <!-- Goal 3 -->
-                <div class="bg-white rounded-2xl p-8 text-center shadow-lg hover:shadow-xl transition-all duration-300">
-                    <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <i data-lucide="globe" class="w-8 h-8 text-purple-600"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold text-gray-800 mb-4">5 Million Active Users</h3>
-                    <p class="text-gray-600">
-                        Expanding our community of travelers to 5 million active users
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
-</div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    if (typeof lucide !== 'undefined') {
-        lucide.createIcons();
-    }
-});
-</script>
+<section class="py-10 bg-emerald-600">
+    <div class="max-w-xl mx-auto px-4 text-center">
+        <h2 class="text-base font-bold text-white mb-1">Follow Our Journey</h2>
+        <p class="text-[11px] text-emerald-100 mb-4">Stay updated on our latest milestones and announcements.</p>
+        <form class="flex gap-2" onsubmit="event.preventDefault();alert('Subscribed!');this.reset();"><input type="email" placeholder="Your email" class="flex-1 px-3 py-2 rounded-lg text-xs text-gray-800 focus:ring-2 focus:ring-amber-400 focus:outline-none" required><button type="submit" class="bg-amber-500 hover:bg-amber-600 text-white text-xs font-semibold px-5 py-2 rounded-lg transition-colors whitespace-nowrap">Subscribe</button></form>
+    </div>
+</section>
 @endsection

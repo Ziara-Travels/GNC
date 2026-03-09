@@ -405,20 +405,25 @@ public function selectFlight(Request $request)
     
     public function showPublicResults()
     {
-        $flights = session('flight_search_results', []);
+        $flightDataJson = session('flight_data', null);
         $searchParams = session('search_params', []);
-        $amadeus_response = session('amadeus_search_response', []);
-        
-        if (empty($flights)) {
+
+        // Decode the stored JSON response
+        $response = $flightDataJson ? json_decode($flightDataJson, true) : null;
+        $flights = $response['data'] ?? [];
+        $dictionaries = $response['dictionaries'] ?? [];
+        $noFlightsFound = empty($flights);
+
+        // If no data at all and no search happened, redirect to search
+        if (!$flightDataJson && empty($searchParams)) {
             return redirect()->route('flights.public.search')->with('error', 'No search results found. Please search again.');
         }
 
         return view('flights.flight-results', [
             'flights' => $flights,
             'searchParams' => $searchParams,
-            'amadeus_response' => $amadeus_response,
-            'dictionaries' => $amadeus_response['dictionaries'] ?? [],
-            'noFlightsFound' => false
+            'dictionaries' => $dictionaries,
+            'noFlightsFound' => $noFlightsFound,
         ]);
     }
 
@@ -591,6 +596,12 @@ public function selectFlight(Request $request)
             session(['flight_data' => json_encode($response)]);
             session(['search_params' => $request->all()]);
             
+            // AJAX request: return JSON so the frontend can redirect
+            if ($request->ajax() || $request->wantsJson()) {
+                $count = isset($response->data) ? count($response->data) : 0;
+                return response()->json(['redirect' => route('flights.results'), 'count' => $count]);
+            }
+
             // Always redirect to flight-results page
             if (!isset($response->data) || count($response->data) === 0) {
                 // No flights found, but still redirect to results page
@@ -606,15 +617,15 @@ public function selectFlight(Request $request)
         } catch (GuzzleException $exception) {
             \Log::error('Flight search API error: ' . $exception->getMessage());
             
-            // Show no results page with error
-            return view('flights.flight-results', [
-                'flights' => [],
-                'searchParams' => $request->all(),
-                'dictionaries' => null,
-                'noFlightsFound' => true,
-                'pageTitle' => 'Search Error - Try Again',
-                'errorMessage' => 'Flight search failed. Please try again.'
-            ]);
+            // Store empty data so results page shows "no flights found"
+            session(['flight_data' => json_encode(['data' => []])]);
+            session(['search_params' => $request->all()]);
+
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json(['redirect' => route('flights.results'), 'count' => 0]);
+            }
+
+            return redirect()->route('flights.results');
         }
     }
 

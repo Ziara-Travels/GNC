@@ -38,28 +38,35 @@ class BookingConfirmation extends Mailable
      */
    public function build()
     {
-        return $this->subject('Booking Confirmation - ' . $this->booking->booking_reference)
+        $mail = $this->subject('Booking Confirmation - ' . $this->booking->booking_reference)
                     ->view('emails.booking-confirmation')
                     ->with([
                         'booking' => $this->booking,
-                        'passenger' => $this->booking->passengers->first(),
-                        'flight' => $this->booking->flight_details
-                    ])
-                    ->attach($this->eTicketPath, [
-                        'as' => 'e-ticket-' . $this->booking->booking_reference . '.pdf',
-                        'mime' => 'application/pdf',
                     ]);
+
+        if ($this->eTicketPath && file_exists($this->eTicketPath)) {
+            $mail->attach($this->eTicketPath, [
+                'as' => 'e-ticket-' . $this->booking->booking_reference . '.pdf',
+                'mime' => 'application/pdf',
+            ]);
+        }
+
+        return $mail;
     }
     private function generateETicket()
     {
-        $pdf = Pdf::loadView('pdf.e-ticket', [
-            'booking' => $this->booking,
-            'passengers' => $this->booking->passengers,
-            'flight' => $this->booking->flight_details
-        ]);
+        try {
+            $this->booking->loadMissing('user');
+            $pdf = Pdf::loadView('booking.eticket-pdf', [
+                'booking' => $this->booking,
+            ]);
 
-        $filename = 'e-tickets/ticket-' . $this->booking->booking_reference . '.pdf';
-        Storage::disk('public')->put($filename, $pdf->output());
-        $this->eTicketPath = Storage::disk('public')->path($filename);
+            $filename = 'e-tickets/ticket-' . $this->booking->booking_reference . '.pdf';
+            Storage::disk('public')->put($filename, $pdf->output());
+            $this->eTicketPath = Storage::disk('public')->path($filename);
+        } catch (\Exception $e) {
+            \Log::error('E-ticket generation failed: ' . $e->getMessage());
+            $this->eTicketPath = null;
+        }
     }
 }

@@ -1,384 +1,118 @@
 @extends('layouts.main')
-
-@section('title', 'Frequently Asked Questions - GNC Travel')
+@section('title', 'Frequently Asked Questions - Ziara Travel')
 
 @section('content')
-<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-    <!-- Hero Section -->
-    <section class="relative py-20 bg-gradient-to-r from-blue-600 to-indigo-700 text-white overflow-hidden">
-        <div class="absolute inset-0 bg-black opacity-10"></div>
-        <div class="container mx-auto px-4 relative z-10">
-            <div class="max-w-4xl mx-auto text-center">
-                <h1 class="text-5xl md:text-6xl font-bold mb-6 animate-fade-in">
-                    Frequently Asked Questions
-                </h1>
-                <p class="text-xl md:text-2xl text-blue-100 mb-8 animate-slide-up">
-                    Find answers to the most common questions about our travel services
-                </p>
-                <div class="bg-white/20 backdrop-blur-sm rounded-2xl p-6 inline-block">
-                    <div class="text-lg">Quick answers to help you travel better</div>
-                </div>
-            </div>
+{{-- ===== HERO ===== --}}
+<section class="relative bg-slate-900 overflow-hidden">
+    <img src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=1400&h=500&fit=crop" alt="" class="absolute inset-0 w-full h-full object-cover opacity-20" loading="eager">
+    <div class="relative max-w-5xl mx-auto px-4 pt-28 pb-10 text-center">
+        <h1 class="text-2xl md:text-3xl font-bold text-white mb-1">Frequently Asked <span class="text-amber-400">Questions</span></h1>
+        <p class="text-xs text-gray-300 mb-4">Find answers to common questions about our services</p>
+        <div class="max-w-md mx-auto relative">
+            <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-300 text-[10px]"></i>
+            <input type="text" id="faqSearch" placeholder="Search FAQs..." class="w-full pl-8 pr-3 py-2 rounded-lg text-xs text-gray-800 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- Search Bar -->
-    <section class="py-12 bg-white">
-        <div class="container mx-auto px-4">
-            <div class="max-w-2xl mx-auto">
-                <div class="relative">
-                    <input type="text" 
-                           id="faqSearch"
-                           placeholder="Search for answers..." 
-                           class="w-full px-6 py-4 pl-12 text-lg border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-lg">
-                    <i data-lucide="search" class="absolute left-4 top-1/2 transform -translate-y-1/2 w-6 h-6 text-gray-400"></i>
-                </div>
-            </div>
+{{-- ===== FAQ CATEGORIES ===== --}}
+<section class="py-10 bg-white">
+    <div class="max-w-3xl mx-auto px-4">
+        {{-- Category tabs --}}
+        <div class="flex flex-wrap gap-1.5 justify-center mb-6">
+            <button class="faq-cat-btn active bg-emerald-600 text-white text-[10px] font-semibold px-3 py-1.5 rounded-full transition-colors" data-cat="all">All</button>
+            <button class="faq-cat-btn bg-gray-100 text-gray-600 text-[10px] font-semibold px-3 py-1.5 rounded-full hover:bg-gray-200 transition-colors" data-cat="booking">Booking</button>
+            <button class="faq-cat-btn bg-gray-100 text-gray-600 text-[10px] font-semibold px-3 py-1.5 rounded-full hover:bg-gray-200 transition-colors" data-cat="payment">Payment</button>
+            <button class="faq-cat-btn bg-gray-100 text-gray-600 text-[10px] font-semibold px-3 py-1.5 rounded-full hover:bg-gray-200 transition-colors" data-cat="flights">Flights</button>
+            <button class="faq-cat-btn bg-gray-100 text-gray-600 text-[10px] font-semibold px-3 py-1.5 rounded-full hover:bg-gray-200 transition-colors" data-cat="hotels">Hotels</button>
+            <button class="faq-cat-btn bg-gray-100 text-gray-600 text-[10px] font-semibold px-3 py-1.5 rounded-full hover:bg-gray-200 transition-colors" data-cat="account">Account</button>
         </div>
-    </section>
 
-    <!-- FAQ Categories -->
-    <section class="py-12 bg-gray-50">
-        <div class="container mx-auto px-4">
-            <div class="max-w-6xl mx-auto">
-                <div class="text-center mb-12">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-4">Browse by Category</h2>
-                    <p class="text-xl text-gray-600">Select a category to find specific answers</p>
-                </div>
+        @php $faqs = [
+            ['cat'=>'booking','q'=>'How do I make a booking?','a'=>'Search for your desired flight or hotel on our homepage, select an option, fill in passenger/guest details, and complete payment. You\'ll receive an instant confirmation.'],
+            ['cat'=>'booking','q'=>'Can I modify my booking after payment?','a'=>'Yes, modifications are possible depending on your fare type. Flexible fares allow free changes. Contact our support team with your booking reference.'],
+            ['cat'=>'booking','q'=>'How do I cancel my booking?','a'=>'You can request cancellation through your account dashboard or by contacting support. Refund eligibility depends on the fare rules.'],
+            ['cat'=>'booking','q'=>'Do you offer group bookings?','a'=>'Yes! Groups of 10 or more travelers qualify for special rates. Contact our corporate team for a custom quote.'],
+            ['cat'=>'payment','q'=>'What payment methods do you accept?','a'=>'We accept M-Pesa, M-Pesa STK Push, Equity Eazzy, bank transfers, and all major credit/debit cards (Visa, Mastercard).'],
+            ['cat'=>'payment','q'=>'Is my payment information secure?','a'=>'Absolutely. We use SSL encryption for all transactions and never store your full card details. M-Pesa payments are processed through Safaricom\'s secure gateway.'],
+            ['cat'=>'payment','q'=>'When will I be charged?','a'=>'Payment is processed at the time of booking. For hotels, some properties may charge at check-in depending on the rate type.'],
+            ['cat'=>'payment','q'=>'How do I get a refund?','a'=>'Refund requests are processed within 5-7 business days. M-Pesa refunds are typically faster. Contact support with your booking reference.'],
+            ['cat'=>'flights','q'=>'How do I get my e-ticket?','a'=>'After successful payment, your e-ticket is generated instantly and sent to your email. You can also download it from the booking confirmation page.'],
+            ['cat'=>'flights','q'=>'Can I choose my seat?','a'=>'Seat selection depends on the airline. Some airlines allow free seat selection, while others charge a fee. This is handled during check-in.'],
+            ['cat'=>'flights','q'=>'What happens if my flight is cancelled?','a'=>'If an airline cancels your flight, you\'re entitled to a full refund or rebooking at no extra cost. We\'ll notify you immediately.'],
+            ['cat'=>'flights','q'=>'Is baggage included in the ticket price?','a'=>'Most economy tickets include a carry-on bag. Checked baggage allowance varies by airline and fare class — this is displayed during search.'],
+            ['cat'=>'hotels','q'=>'Can I get a hotel price match?','a'=>'Yes! If you find a lower price on the same hotel and dates within 24 hours, we\'ll match it.'],
+            ['cat'=>'hotels','q'=>'What is included in the room rate?','a'=>'Room rates typically include taxes. Extra services like breakfast, parking, or Wi-Fi depend on the hotel and rate selected.'],
+            ['cat'=>'hotels','q'=>'Can I request early check-in?','a'=>'You can add special requests during booking. The hotel will do their best to accommodate, but it\'s not guaranteed.'],
+            ['cat'=>'account','q'=>'How do I create an account?','a'=>'Click "Register" in the top navigation bar, fill in your details, and verify your email. You can also sign up during your first booking.'],
+            ['cat'=>'account','q'=>'I forgot my password. What do I do?','a'=>'Click "Forgot Password" on the login page and enter your email. You\'ll receive a password reset link within minutes.'],
+            ['cat'=>'account','q'=>'How do I earn loyalty points?','a'=>'Points are earned automatically on every booking. 1 KES spent = 1 point. Points can be redeemed for discounts on future bookings.'],
+        ]; @endphp
 
-                <div class="grid md:grid-cols-3 lg:grid-cols-4 gap-6 mb-12">
-                    <button class="category-btn active bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 text-center" data-category="general">
-                        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <i data-lucide="help-circle" class="w-8 h-8 text-blue-600"></i>
-                        </div>
-                        <h3 class="font-bold text-gray-800">General</h3>
-                    </button>
-
-                    <button class="category-btn bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 text-center" data-category="booking">
-                        <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <i data-lucide="calendar" class="w-8 h-8 text-green-600"></i>
-                        </div>
-                        <h3 class="font-bold text-gray-800">Booking</h3>
-                    </button>
-
-                    <button class="category-btn bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 text-center" data-category="payment">
-                        <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <i data-lucide="credit-card" class="w-8 h-8 text-orange-600"></i>
-                        </div>
-                        <h3 class="font-bold text-gray-800">Payment</h3>
-                    </button>
-
-                    <button class="category-btn bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 text-center" data-category="travel">
-                        <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <i data-lucide="plane" class="w-8 h-8 text-purple-600"></i>
-                        </div>
-                        <h3 class="font-bold text-gray-800">Travel</h3>
-                    </button>
-                </div>
+        <div class="space-y-2" id="faqList">
+            @foreach($faqs as $faq)
+            <div class="faq-item border border-gray-200 rounded-lg bg-gray-50 overflow-hidden" data-cat="{{ $faq['cat'] }}">
+                <button class="faq-toggle w-full flex items-center justify-between p-3 text-left hover:bg-gray-100 transition-colors" onclick="toggleFaq(this)">
+                    <span class="text-xs font-semibold text-gray-900 pr-3 faq-question">{{ $faq['q'] }}</span>
+                    <i class="fas fa-chevron-down text-gray-300 text-[10px] transition-transform duration-200 shrink-0"></i>
+                </button>
+                <div class="faq-content hidden px-3 pb-3"><p class="text-[11px] text-gray-500 leading-relaxed">{{ $faq['a'] }}</p></div>
             </div>
+            @endforeach
         </div>
-    </section>
 
-    <!-- FAQ Content -->
-    <section class="py-12 bg-white">
-        <div class="container mx-auto px-4">
-            <div class="max-w-4xl mx-auto">
-                <!-- General FAQs -->
-                <div class="faq-category" data-category="general">
-                    <h3 class="text-2xl font-bold text-gray-800 mb-8">General Questions</h3>
-                    <div class="space-y-4">
-                        <div class="faq-item bg-white rounded-xl shadow-sm border">
-                            <button class="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 transition-colors duration-200" onclick="toggleFAQ(this)">
-                                <span class="font-semibold text-gray-800">What is GNC Travel?</span>
-                                <i data-lucide="chevron-down" class="w-5 h-5 text-gray-500 transition-transform duration-200"></i>
-                            </button>
-                            <div class="hidden px-6 pb-4">
-                                <p class="text-gray-600">GNC Travel is a comprehensive travel booking platform that offers flights, hotels, car rentals, and vacation packages worldwide. We provide personalized travel solutions with 24/7 customer support.</p>
-                            </div>
-                        </div>
+        <p class="text-[10px] text-gray-400 text-center mt-4" id="noResults" style="display:none;">No matching questions found.</p>
+    </div>
+</section>
 
-                        <div class="faq-item bg-white rounded-xl shadow-sm border">
-                            <button class="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 transition-colors duration-200" onclick="toggleFAQ(this)">
-                                <span class="font-semibold text-gray-800">How do I create an account?</span>
-                                <i data-lucide="chevron-down" class="w-5 h-5 text-gray-500 transition-transform duration-200"></i>
-                            </button>
-                            <div class="hidden px-6 pb-4">
-                                <p class="text-gray-600">Click on the "Sign Up" button in the top right corner of our website. Fill in your personal details, create a password, and verify your email address. Your account will be ready to use immediately.</p>
-                            </div>
-                        </div>
-
-                        <div class="faq-item bg-white rounded-xl shadow-sm border">
-                            <button class="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 transition-colors duration-200" onclick="toggleFAQ(this)">
-                                <span class="font-semibold text-gray-800">Is my personal information secure?</span>
-                                <i data-lucide="chevron-down" class="w-5 h-5 text-gray-500 transition-transform duration-200"></i>
-                            </button>
-                            <div class="hidden px-6 pb-4">
-                                <p class="text-gray-600">Yes, we use industry-standard SSL encryption and comply with international data protection regulations. Your personal and payment information is securely stored and never shared with third parties without your consent.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Booking FAQs -->
-                <div class="faq-category hidden" data-category="booking">
-                    <h3 class="text-2xl font-bold text-gray-800 mb-8">Booking Questions</h3>
-                    <div class="space-y-4">
-                        <div class="faq-item bg-white rounded-xl shadow-sm border">
-                            <button class="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 transition-colors duration-200" onclick="toggleFAQ(this)">
-                                <span class="font-semibold text-gray-800">How do I make a booking?</span>
-                                <i data-lucide="chevron-down" class="w-5 h-5 text-gray-500 transition-transform duration-200"></i>
-                            </button>
-                            <div class="hidden px-6 pb-4">
-                                <p class="text-gray-600">Search for your desired destination and dates, select your preferred options, enter passenger details, and complete the payment. You'll receive a confirmation email with your booking details and e-tickets.</p>
-                            </div>
-                        </div>
-
-                        <div class="faq-item bg-white rounded-xl shadow-sm border">
-                            <button class="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 transition-colors duration-200" onclick="toggleFAQ(this)">
-                                <span class="font-semibold text-gray-800">Can I modify or cancel my booking?</span>
-                                <i data-lucide="chevron-down" class="w-5 h-5 text-gray-500 transition-transform duration-200"></i>
-                            </button>
-                            <div class="hidden px-6 pb-4">
-                                <p class="text-gray-600">Yes, you can modify or cancel most bookings through your account dashboard. Cancellation and modification policies vary by airline, hotel, or service provider. Additional fees may apply depending on the fare type and timing.</p>
-                            </div>
-                        </div>
-
-                        <div class="faq-item bg-white rounded-xl shadow-sm border">
-                            <button class="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 transition-colors duration-200" onclick="toggleFAQ(this)">
-                                <span class="font-semibold text-gray-800">What if I need to change passenger names?</span>
-                                <i data-lucide="chevron-down" class="w-5 h-5 text-gray-500 transition-transform duration-200"></i>
-                            </button>
-                            <div class="hidden px-6 pb-4">
-                                <p class="text-gray-600">Name changes are subject to airline policies and may incur fees. Contact our customer service team immediately if you need to correct a name. Minor spelling corrections are usually allowed, but complete name changes may require rebooking.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Payment FAQs -->
-                <div class="faq-category hidden" data-category="payment">
-                    <h3 class="text-2xl font-bold text-gray-800 mb-8">Payment Questions</h3>
-                    <div class="space-y-4">
-                        <div class="faq-item bg-white rounded-xl shadow-sm border">
-                            <button class="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 transition-colors duration-200" onclick="toggleFAQ(this)">
-                                <span class="font-semibold text-gray-800">What payment methods do you accept?</span>
-                                <i data-lucide="chevron-down" class="w-5 h-5 text-gray-500 transition-transform duration-200"></i>
-                            </button>
-                            <div class="hidden px-6 pb-4">
-                                <p class="text-gray-600">We accept all major credit cards (Visa, MasterCard, American Express), debit cards, PayPal, and bank transfers. Some destinations may have specific payment method restrictions.</p>
-                            </div>
-                        </div>
-
-                        <div class="faq-item bg-white rounded-xl shadow-sm border">
-                            <button class="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 transition-colors duration-200" onclick="toggleFAQ(this)">
-                                <span class="font-semibold text-gray-800">When will I be charged for my booking?</span>
-                                <i data-lucide="chevron-down" class="w-5 h-5 text-gray-500 transition-transform duration-200"></i>
-                            </button>
-                            <div class="hidden px-6 pb-4">
-                                <p class="text-gray-600">Payment is typically charged immediately upon booking confirmation. For some hotels and car rentals, you may be charged at the time of service. Payment terms will be clearly displayed before you complete your booking.</p>
-                            </div>
-                        </div>
-
-                        <div class="faq-item bg-white rounded-xl shadow-sm border">
-                            <button class="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 transition-colors duration-200" onclick="toggleFAQ(this)">
-                                <span class="font-semibold text-gray-800">How do refunds work?</span>
-                                <i data-lucide="chevron-down" class="w-5 h-5 text-gray-500 transition-transform duration-200"></i>
-                            </button>
-                            <div class="hidden px-6 pb-4">
-                                <p class="text-gray-600">Refunds are processed according to the fare rules and cancellation policy of your booking. Refundable bookings are processed within 7-14 business days to your original payment method. Non-refundable bookings may only be eligible for taxes and fees refund.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Travel FAQs -->
-                <div class="faq-category hidden" data-category="travel">
-                    <h3 class="text-2xl font-bold text-gray-800 mb-8">Travel Questions</h3>
-                    <div class="space-y-4">
-                        <div class="faq-item bg-white rounded-xl shadow-sm border">
-                            <button class="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 transition-colors duration-200" onclick="toggleFAQ(this)">
-                                <span class="font-semibold text-gray-800">Do I need a visa for my destination?</span>
-                                <i data-lucide="chevron-down" class="w-5 h-5 text-gray-500 transition-transform duration-200"></i>
-                            </button>
-                            <div class="hidden px-6 pb-4">
-                                <p class="text-gray-600">Visa requirements depend on your nationality and destination. We provide general visa information, but it's your responsibility to ensure you have the correct documentation. Check with the embassy or consulate of your destination country for official requirements.</p>
-                            </div>
-                        </div>
-
-                        <div class="faq-item bg-white rounded-xl shadow-sm border">
-                            <button class="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 transition-colors duration-200" onclick="toggleFAQ(this)">
-                                <span class="font-semibold text-gray-800">What's included in my flight ticket?</span>
-                                <i data-lucide="chevron-down" class="w-5 h-5 text-gray-500 transition-transform duration-200"></i>
-                            </button>
-                            <div class="hidden px-6 pb-4">
-                                <p class="text-gray-600">Your flight ticket includes transportation from origin to destination, taxes, and fees. Additional services like meals, baggage, seat selection, and in-flight entertainment may vary by airline and fare type. Check your booking details for specific inclusions.</p>
-                            </div>
-                        </div>
-
-                        <div class="faq-item bg-white rounded-xl shadow-sm border">
-                            <button class="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 transition-colors duration-200" onclick="toggleFAQ(this)">
-                                <span class="font-semibold text-gray-800">What happens if my flight is delayed or cancelled?</span>
-                                <i data-lucide="chevron-down" class="w-5 h-5 text-gray-500 transition-transform duration-200"></i>
-                            </button>
-                            <div class="hidden px-6 pb-4">
-                                <p class="text-gray-600">Airlines are responsible for rebooking you on the next available flight at no extra cost. You may be entitled to compensation depending on the delay duration and reason. Our customer service team can assist you with rebooking and compensation claims.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+{{-- ===== STILL NEED HELP ===== --}}
+<section class="py-10 bg-gray-50">
+    <div class="max-w-5xl mx-auto px-4 text-center">
+        <h2 class="text-lg font-bold text-gray-900 mb-2">Still Need Help?</h2>
+        <p class="text-xs text-gray-500 mb-4">Our support team is available 24/7 to assist you.</p>
+        <div class="flex justify-center gap-2">
+            <a href="{{ url('/contactus') }}" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-5 py-2 rounded-lg transition-colors"><i class="fas fa-envelope mr-1 text-[10px]"></i>Contact Us</a>
+            <a href="{{ url('/live-chat') }}" class="border border-gray-200 text-gray-700 text-xs font-semibold px-5 py-2 rounded-lg hover:bg-white transition-colors"><i class="fas fa-comments mr-1 text-[10px]"></i>Live Chat</a>
+            <a href="tel:+254700123456" class="border border-gray-200 text-gray-700 text-xs font-semibold px-5 py-2 rounded-lg hover:bg-white transition-colors"><i class="fas fa-phone mr-1 text-[10px]"></i>Call Us</a>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- Contact Support -->
-    <section class="py-20 bg-gray-50">
-        <div class="container mx-auto px-4">
-            <div class="max-w-4xl mx-auto text-center">
-                <h2 class="text-3xl font-bold text-gray-800 mb-4">Still Need Help?</h2>
-                <p class="text-xl text-gray-600 mb-8">Can't find the answer you're looking for? Our support team is here to help.</p>
-                
-                <div class="grid md:grid-cols-3 gap-6">
-                    <div class="bg-white p-6 rounded-2xl shadow-lg">
-                        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <i data-lucide="message-circle" class="w-8 h-8 text-blue-600"></i>
-                        </div>
-                        <h3 class="font-bold text-gray-800 mb-2">Live Chat</h3>
-                        <p class="text-gray-600 mb-4">Chat with our support team in real-time</p>
-                        <button class="text-blue-600 hover:text-blue-700 font-medium">Start Chat</button>
-                    </div>
+<section class="py-10 bg-emerald-600">
+    <div class="max-w-xl mx-auto px-4 text-center">
+        <h2 class="text-base font-bold text-white mb-1">Get Travel Tips</h2>
+        <p class="text-[11px] text-emerald-100 mb-4">Subscribe for helpful tips, FAQs, and exclusive deals.</p>
+        <form class="flex gap-2" onsubmit="event.preventDefault();alert('Subscribed!');this.reset();"><input type="email" placeholder="Your email" class="flex-1 px-3 py-2 rounded-lg text-xs text-gray-800 focus:ring-2 focus:ring-amber-400 focus:outline-none" required><button type="submit" class="bg-amber-500 hover:bg-amber-600 text-white text-xs font-semibold px-5 py-2 rounded-lg transition-colors whitespace-nowrap">Subscribe</button></form>
+    </div>
+</section>
+@endsection
 
-                    <div class="bg-white p-6 rounded-2xl shadow-lg">
-                        <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <i data-lucide="phone" class="w-8 h-8 text-green-600"></i>
-                        </div>
-                        <h3 class="font-bold text-gray-800 mb-2">Phone Support</h3>
-                        <p class="text-gray-600 mb-4">Call us for immediate assistance</p>
-                        <a href="tel:+1-800-123-4567" class="text-green-600 hover:text-green-700 font-medium">+1-800-123-4567</a>
-                    </div>
-
-                    <div class="bg-white p-6 rounded-2xl shadow-lg">
-                        <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <i data-lucide="mail" class="w-8 h-8 text-orange-600"></i>
-                        </div>
-                        <h3 class="font-bold text-gray-800 mb-2">Email Support</h3>
-                        <p class="text-gray-600 mb-4">Send us your questions</p>
-                        <a href="mailto:support@gnctravel.com" class="text-orange-600 hover:text-orange-700 font-medium">support@gnctravel.com</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-</div>
-
+@push('scripts')
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    if (typeof lucide !== 'undefined') {
-        lucide.createIcons();
-    }
+function toggleFaq(btn){var c=btn.nextElementSibling,ic=btn.querySelector('i'),open=!c.classList.contains('hidden');document.querySelectorAll('.faq-content').forEach(function(x){x.classList.add('hidden');});document.querySelectorAll('.faq-toggle i').forEach(function(x){x.style.transform='rotate(0)';});if(!open){c.classList.remove('hidden');ic.style.transform='rotate(180deg)';}}
 
-    // Category switching
-    const categoryBtns = document.querySelectorAll('.category-btn');
-    const faqCategories = document.querySelectorAll('.faq-category');
-
-    categoryBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-            const category = this.dataset.category;
-            
-            // Update active button
-            categoryBtns.forEach(b => b.classList.remove('active', 'bg-blue-100', 'border-blue-300'));
-            this.classList.add('active', 'bg-blue-100', 'border-blue-300');
-            
-            // Show corresponding category
-            faqCategories.forEach(cat => {
-                if (cat.dataset.category === category) {
-                    cat.classList.remove('hidden');
-                } else {
-                    cat.classList.add('hidden');
-                }
-            });
+document.addEventListener('DOMContentLoaded',function(){
+    // Category filter
+    document.querySelectorAll('.faq-cat-btn').forEach(function(btn){
+        btn.addEventListener('click',function(){
+            document.querySelectorAll('.faq-cat-btn').forEach(function(b){b.className='faq-cat-btn bg-gray-100 text-gray-600 text-[10px] font-semibold px-3 py-1.5 rounded-full hover:bg-gray-200 transition-colors';});
+            this.className='faq-cat-btn active bg-emerald-600 text-white text-[10px] font-semibold px-3 py-1.5 rounded-full transition-colors';
+            var cat=this.dataset.cat;
+            document.querySelectorAll('.faq-item').forEach(function(item){item.style.display=(cat==='all'||item.dataset.cat===cat)?'':'none';});
+            document.getElementById('noResults').style.display=document.querySelectorAll('.faq-item[style=""],.faq-item:not([style])').length?'none':'block';
         });
     });
-
-    // Search functionality
-    const searchInput = document.getElementById('faqSearch');
-    searchInput.addEventListener('input', function() {
-        const searchTerm = this.value.toLowerCase();
-        const faqItems = document.querySelectorAll('.faq-item');
-        
-        if (searchTerm === '') {
-            // Show all categories
-            faqCategories.forEach(cat => cat.classList.add('hidden'));
-            document.querySelector('.faq-category[data-category="general"]').classList.remove('hidden');
-            faqItems.forEach(item => item.style.display = 'block');
-        } else {
-            // Hide all categories first
-            faqCategories.forEach(cat => cat.classList.add('hidden'));
-            
-            let hasResults = false;
-            faqItems.forEach(item => {
-                const text = item.textContent.toLowerCase();
-                if (text.includes(searchTerm)) {
-                    item.style.display = 'block';
-                    item.closest('.faq-category').classList.remove('hidden');
-                    hasResults = true;
-                } else {
-                    item.style.display = 'none';
-                }
-            });
-        }
+    // Search filter
+    document.getElementById('faqSearch').addEventListener('input',function(){
+        var q=this.value.toLowerCase();
+        document.querySelectorAll('.faq-item').forEach(function(item){
+            var text=item.querySelector('.faq-question').textContent.toLowerCase();
+            item.style.display=text.includes(q)?'':'none';
+        });
+        document.querySelectorAll('.faq-cat-btn').forEach(function(b){b.className='faq-cat-btn bg-gray-100 text-gray-600 text-[10px] font-semibold px-3 py-1.5 rounded-full hover:bg-gray-200 transition-colors';});
+        document.querySelector('.faq-cat-btn[data-cat="all"]').className='faq-cat-btn active bg-emerald-600 text-white text-[10px] font-semibold px-3 py-1.5 rounded-full transition-colors';
+        document.getElementById('noResults').style.display=document.querySelectorAll('.faq-item[style=""],.faq-item:not([style])').length?'none':'block';
     });
 });
-
-function toggleFAQ(element) {
-    const content = element.nextElementSibling;
-    const icon = element.querySelector('i[data-lucide="chevron-down"]');
-    
-    if (content.classList.contains('hidden')) {
-        content.classList.remove('hidden');
-        icon.style.transform = 'rotate(180deg)';
-    } else {
-        content.classList.add('hidden');
-        icon.style.transform = 'rotate(0deg)';
-    }
-}
 </script>
-
-@push('styles')
-<style>
-.animate-fade-in {
-    animation: fadeIn 1s ease-out;
-}
-
-.animate-slide-up {
-    animation: slideUp 1s ease-out 0.3s both;
-}
-
-.category-btn.active {
-    border: 2px solid #3b82f6;
-    background-color: #dbeafe;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes slideUp {
-    from {
-        opacity: 0;
-        transform: translateY(50px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-</style>
 @endpush
-@endsection

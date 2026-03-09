@@ -305,6 +305,11 @@
                     <i data-lucide="printer" class="h-5 w-5"></i>
                     <span>Print E-Ticket</span>
                 </button>
+
+                <a href="{{ route('booking.eticket', $booking->booking_reference) }}" class="flex items-center justify-center gap-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold py-4 px-6 rounded-2xl shadow-lg transform hover:scale-105 transition-all duration-200">
+                    <i data-lucide="download" class="h-5 w-5"></i>
+                    <span>Download PDF</span>
+                </a>
                 
                 <a href="{{ route('home') }}" class="flex items-center justify-center gap-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold py-4 px-6 rounded-2xl shadow-lg transform hover:scale-105 transition-all duration-200">
                     <i data-lucide="plane" class="h-5 w-5"></i>

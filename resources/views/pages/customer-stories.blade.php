@@ -1,189 +1,90 @@
-
 @extends('layouts.main')
-
 @section('title', 'Customer Stories - Ziara Travel')
 
 @section('content')
-<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-    <!-- Hero Section -->
-    <div class="relative py-16 md:py-24 bg-cover bg-center" style="background-image: url('{{ asset('images/backgrounds/testimonials-bg.jpg') }}');">
-        <div class="absolute inset-0 bg-blue-900 opacity-60"></div>
-        <div class="container mx-auto px-4 relative z-10 text-center">
-            <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">Customer Stories</h1>
-            <p class="text-xl text-white max-w-3xl mx-auto">Real travel experiences from our satisfied clients around the world</p>
-        </div>
+{{-- ===== HERO ===== --}}
+<section class="relative bg-slate-900 overflow-hidden">
+    <img src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1400&h=500&fit=crop" alt="" class="absolute inset-0 w-full h-full object-cover opacity-20" loading="eager">
+    <div class="relative max-w-5xl mx-auto px-4 pt-28 pb-10 text-center">
+        <h1 class="text-2xl md:text-3xl font-bold text-white mb-1">Customer <span class="text-amber-400">Stories</span></h1>
+        <p class="text-xs text-gray-300">Real experiences from real travelers</p>
     </div>
+</section>
 
-    <!-- Featured Story Section -->
-    <div class="py-16 bg-white">
-        <div class="container mx-auto px-4">
-            <div class="max-w-6xl mx-auto">
-                <div class="flex flex-col md:flex-row items-center">
-                    <div class="md:w-1/2 mb-8 md:mb-0 md:pr-8">
-                        <img src="{{ asset('images/customers/featured-customer.jpg') }}" alt="Featured Customer Story" class="rounded-lg shadow-lg">
-                    </div>
-                    <div class="md:w-1/2">
-                        <span class="text-primary-600 font-semibold">Featured Story</span>
-                        <h2 class="text-3xl font-bold mb-4">An Unforgettable Safari Experience</h2>
-                        <p class="text-gray-600 mb-4">
-                            "My family and I had the most incredible experience with Ziara Travel. The safari package they arranged exceeded all our expectations. From the moment we landed in Nairobi until our departure, everything was perfectly organized."
-                        </p>
-                        <p class="text-gray-600 mb-6">
-                            "The accommodations were exceptional, the guides were knowledgeable and friendly, and we saw all the wildlife we had hoped for. It was truly the trip of a lifetime, and we're already planning our next adventure with Ziara!"
-                        </p>
-                        <div class="flex items-center">
-                            <img src="{{ asset('images/customers/customer-1.jpg') }}" alt="Customer" class="w-12 h-12 rounded-full object-cover mr-4">
-                            <div>
-                                <h4 class="font-semibold">Sarah & David Thompson</h4>
-                                <p class="text-sm text-gray-500">Family Safari Tour - Masai Mara</p>
-                            </div>
-                        </div>
+{{-- ===== TESTIMONIALS ===== --}}
+<section class="py-10 bg-white">
+    <div class="max-w-5xl mx-auto px-4">
+        @php $stories = [
+            ['name'=>'Mary Wanjiku','location'=>'Nairobi, Kenya','rating'=>5,'text'=>'Booked a last-minute flight to Mombasa and the whole process took under 5 minutes. E-ticket arrived instantly. Will definitely use again!','trip'=>'NBO → MBA','img'=>'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&facepad=2'],
+            ['name'=>'James Odhiambo','location'=>'Kisumu, Kenya','rating'=>5,'text'=>'The hotel deals are amazing. Found a 5-star in Zanzibar for half the usual price. Customer support helped me change dates for free.','trip'=>'Zanzibar Hotel','img'=>'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&facepad=2'],
+            ['name'=>'Grace Akinyi','location'=>'Kampala, Uganda','rating'=>4,'text'=>'First time using Ziara Travels for a group booking. 12 people, 6 rooms — they handled everything professionally.','trip'=>'Group Booking','img'=>'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&facepad=2'],
+            ['name'=>'Peter Mutua','location'=>'Nairobi, Kenya','rating'=>5,'text'=>'M-Pesa checkout was seamless. Got my e-ticket as a PDF and email confirmation within seconds. Very impressed!','trip'=>'NBO → KGL','img'=>'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&facepad=2'],
+            ['name'=>'Sarah Njeri','location'=>'Thika, Kenya','rating'=>5,'text'=>'Used the loyalty points from my previous booking to get a discount. The rewards program is actually worth it.','trip'=>'NBO → DAR','img'=>'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop&facepad=2'],
+            ['name'=>'David Kimani','location'=>'Mombasa, Kenya','rating'=>4,'text'=>'Travel insurance saved me when my flight got cancelled due to weather. Full refund processed within a week.','trip'=>'MBA → ZNZ','img'=>'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&facepad=2'],
+        ]; @endphp
+        <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-3">
+            @foreach($stories as $s)
+            <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                <div class="flex items-center gap-2 mb-2">
+                    <img src="{{ $s['img'] }}" alt="{{ $s['name'] }}" class="w-8 h-8 rounded-full object-cover">
+                    <div>
+                        <h3 class="text-xs font-bold text-gray-900">{{ $s['name'] }}</h3>
+                        <p class="text-[9px] text-gray-400">{{ $s['location'] }}</p>
                     </div>
                 </div>
+                <div class="flex gap-0.5 mb-1.5">@for($i=0;$i<$s['rating'];$i++)<i class="fas fa-star text-amber-400 text-[8px]"></i>@endfor @for($i=$s['rating'];$i<5;$i++)<i class="fas fa-star text-gray-200 text-[8px]"></i>@endfor</div>
+                <p class="text-[10px] text-gray-600 leading-relaxed mb-2">"{{ $s['text'] }}"</p>
+                <span class="text-[9px] bg-emerald-50 text-emerald-700 font-semibold px-2 py-0.5 rounded-full">{{ $s['trip'] }}</span>
             </div>
+            @endforeach
         </div>
     </div>
+</section>
 
-    <!-- More Stories Section -->
-    <div class="py-16 bg-gray-50">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl font-bold mb-4">More Success Stories</h2>
-                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                    Discover how we've helped travelers create lasting memories across the globe
-                </p>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-                <!-- Story Card 1 -->
-                <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <img src="{{ asset('images/customers/story-1.jpg') }}" alt="Customer Story" class="w-full h-48 object-cover">
-                    <div class="p-6">
-                        <h3 class="font-bold text-xl mb-2">Beach Paradise in Zanzibar</h3>
-                        <p class="text-gray-600 mb-4">
-                            "The beachfront villa Ziara Travel arranged for us in Zanzibar was absolute perfection. Crystal clear waters, pristine beaches, and impeccable service."
-                        </p>
-                        <div class="flex items-center">
-                            <img src="{{ asset('images/customers/customer-2.jpg') }}" alt="Customer" class="w-10 h-10 rounded-full object-cover mr-3">
-                            <div>
-                                <h4 class="font-semibold">Michael & Emma Davis</h4>
-                                <p class="text-xs text-gray-500">Honeymoon Package</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Story Card 2 -->
-                <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <img src="{{ asset('images/customers/story-2.jpg') }}" alt="Customer Story" class="w-full h-48 object-cover">
-                    <div class="p-6">
-                        <h3 class="font-bold text-xl mb-2">Cultural Tour of Morocco</h3>
-                        <p class="text-gray-600 mb-4">
-                            "Our guided tour through Morocco's historic cities was eye-opening. The local guides provided insights we never would have discovered on our own."
-                        </p>
-                        <div class="flex items-center">
-                            <img src="{{ asset('images/customers/customer-3.jpg') }}" alt="Customer" class="w-10 h-10 rounded-full object-cover mr-3">
-                            <div>
-                                <h4 class="font-semibold">Jennifer Wilson</h4>
-                                <p class="text-xs text-gray-500">Cultural Explorer Package</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Story Card 3 -->
-                <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <img src="{{ asset('images/customers/story-3.jpg') }}" alt="Customer Story" class="w-full h-48 object-cover">
-                    <div class="p-6">
-                        <h3 class="font-bold text-xl mb-2">Wildlife Photography Expedition</h3>
-                        <p class="text-gray-600 mb-4">
-                            "As a wildlife photographer, I needed specific access and timing. Ziara Travel understood my needs perfectly and arranged the perfect expedition."
-                        </p>
-                        <div class="flex items-center">
-                            <img src="{{ asset('images/customers/customer-4.jpg') }}" alt="Customer" class="w-10 h-10 rounded-full object-cover mr-3">
-                            <div>
-                                <h4 class="font-semibold">Robert Chen</h4>
-                                <p class="text-xs text-gray-500">Custom Safari Package</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="mt-12 text-center">
-                <a href="{{ route('contactus') }}" class="inline-block bg-primary-600 hover:bg-primary-700 text-white font-semibold py-3 px-8 rounded-md transition duration-300">
-                    Share Your Story
-                </a>
+{{-- ===== CTA ===== --}}
+<section class="py-10 bg-gray-50">
+    <div class="max-w-5xl mx-auto px-4">
+        <div class="flex flex-col md:flex-row-reverse items-center gap-6 bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100">
+            <div class="md:w-1/2"><img src="https://images.unsplash.com/photo-1488085061387-422e29b40080?w=600&h=400&fit=crop" alt="" class="w-full h-48 md:h-56 object-cover" loading="lazy"></div>
+            <div class="md:w-1/2 p-5">
+                <span class="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">Your Turn</span>
+                <h2 class="text-lg font-bold text-gray-900 mt-1 mb-2">Share Your Travel Story</h2>
+                <p class="text-xs text-gray-500 leading-relaxed mb-4">Had a great experience? We'd love to hear from you. Share your story and inspire other travelers.</p>
+                <a href="{{ url('/contactus') }}" class="inline-block bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-5 py-2 rounded-lg transition-colors">Share Your Story</a>
             </div>
         </div>
     </div>
-    
-    <!-- Testimonials Section -->
-    <div class="py-16 bg-white">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl font-bold mb-4">What Our Clients Say</h2>
-                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                    Read testimonials from travelers who have experienced our exceptional service
-                </p>
-            </div>
-            
-            <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
-                <!-- Testimonial 1 -->
-                <div class="bg-gray-50 p-8 rounded-lg shadow-sm border border-gray-100">
-                    <div class="flex items-center mb-4">
-                        <div class="text-yellow-400 flex">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                        </div>
-                        <span class="ml-2 text-gray-600">5.0</span>
-                    </div>
-                    <p class="text-gray-600 italic mb-6">
-                        "I've traveled with many companies over the years, but none have provided the level of personalized service that Ziara Travel does. They truly listen to what you want and create an experience tailored just for you."
-                    </p>
-                    <div class="flex items-center">
-                        <img src="{{ asset('images/customers/testimonial-1.jpg') }}" alt="Customer" class="w-12 h-12 rounded-full object-cover mr-4">
-                        <div>
-                            <h4 class="font-semibold">Patricia Gomez</h4>
-                            <p class="text-sm text-gray-500">Luxury Travel Client</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Testimonial 2 -->
-                <div class="bg-gray-50 p-8 rounded-lg shadow-sm border border-gray-100">
-                    <div class="flex items-center mb-4">
-                        <div class="text-yellow-400 flex">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                        </div>
-                        <span class="ml-2 text-gray-600">5.0</span>
-                    </div>
-                    <p class="text-gray-600 italic mb-6">
-                        "When our flight was canceled due to bad weather, I thought our vacation was ruined. But Ziara Travel's team worked tirelessly to rebook everything and salvage our trip. Their customer service is unmatched!"
-                    </p>
-                    <div class="flex items-center">
-                        <img src="{{ asset('images/customers/testimonial-2.jpg') }}" alt="Customer" class="w-12 h-12 rounded-full object-cover mr-4">
-                        <div>
-                            <h4 class="font-semibold">James & Laura Foster</h4>
-                            <p class="text-sm text-gray-500">Family Vacation Clients</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+</section>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Any JavaScript functionality can be added here
-});
-</script>
+{{-- ===== FAQ ===== --}}
+<section class="py-10 bg-white">
+    <div class="max-w-2xl mx-auto px-4">
+        <h2 class="text-lg font-bold text-gray-900 text-center mb-6">Customer FAQs</h2>
+        @php $faqs = [
+            ['q'=>'Are these real customer reviews?','a'=>'Yes! All stories are from verified Ziara Travels customers who booked through our platform.'],
+            ['q'=>'How can I leave a review?','a'=>'After your trip, you\'ll receive an email invitation to share your experience. You can also submit via the Contact Us page.'],
+            ['q'=>'Can I share photos from my trip?','a'=>'Absolutely! Include photos when submitting your story and we may feature them on this page.'],
+        ]; @endphp
+        <div class="space-y-2">
+            @foreach($faqs as $faq)
+            <div class="border border-gray-200 rounded-lg bg-gray-50 overflow-hidden">
+                <button class="faq-toggle w-full flex items-center justify-between p-3 text-left hover:bg-gray-100 transition-colors" onclick="toggleFaq(this)"><span class="text-xs font-semibold text-gray-900 pr-3">{{ $faq['q'] }}</span><i class="fas fa-chevron-down text-gray-300 text-[10px] transition-transform duration-200 shrink-0"></i></button>
+                <div class="faq-content hidden px-3 pb-3"><p class="text-[11px] text-gray-500 leading-relaxed">{{ $faq['a'] }}</p></div>
+            </div>
+            @endforeach
+        </div>
+    </div>
+</section>
+
+<section class="py-10 bg-emerald-600">
+    <div class="max-w-xl mx-auto px-4 text-center">
+        <h2 class="text-base font-bold text-white mb-1">Travel Inspiration</h2>
+        <p class="text-[11px] text-emerald-100 mb-4">Get inspired by real stories, tips, and exclusive offers.</p>
+        <form class="flex gap-2" onsubmit="event.preventDefault();alert('Subscribed!');this.reset();"><input type="email" placeholder="Your email" class="flex-1 px-3 py-2 rounded-lg text-xs text-gray-800 focus:ring-2 focus:ring-amber-400 focus:outline-none" required><button type="submit" class="bg-amber-500 hover:bg-amber-600 text-white text-xs font-semibold px-5 py-2 rounded-lg transition-colors whitespace-nowrap">Subscribe</button></form>
+    </div>
+</section>
 @endsection
+
+@push('scripts')
+<script>function toggleFaq(btn){var c=btn.nextElementSibling,ic=btn.querySelector('i'),open=!c.classList.contains('hidden');document.querySelectorAll('.faq-content').forEach(function(x){x.classList.add('hidden');});document.querySelectorAll('.faq-toggle i').forEach(function(x){x.style.transform='rotate(0)';});if(!open){c.classList.remove('hidden');ic.style.transform='rotate(180deg)';}}</script>
+@endpush

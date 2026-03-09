@@ -1,367 +1,145 @@
 @extends('layouts.main')
 
 @section('content')
-    <!-- Hero Section -->
-    <div class="relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 min-h-[60vh] flex items-center justify-center overflow-hidden">
-        <!-- Background Pattern -->
-        <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%239C92AC" fill-opacity="0.1"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-20"></div>
-        
-        <!-- Hero Content -->
-        <div class="relative z-10 text-center px-4 sm:px-6 lg:px-8">
-            <div class="max-w-4xl mx-auto">
-                <h1 class="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
-                    Our <span class="text-gradient bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">Services</span>
-                </h1>
-                <p class="text-xl md:text-2xl text-slate-300 mb-8 max-w-2xl mx-auto">
-                    Comprehensive travel solutions for every journey
-                </p>
-                <div class="flex justify-center">
-                    <div class="inline-flex items-center px-6 py-3 bg-white/10 backdrop-blur-sm rounded-full border border-white/20">
-                        <i data-lucide="briefcase" class="w-5 h-5 text-amber-400 mr-2"></i>
-                        <span class="text-white font-medium">Everything You Need for Travel</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Floating Elements -->
-        <div class="absolute top-20 left-10 w-20 h-20 bg-amber-400/20 rounded-full blur-xl animate-pulse"></div>
-        <div class="absolute bottom-20 right-10 w-32 h-32 bg-blue-400/20 rounded-full blur-xl animate-pulse delay-1000"></div>
+{{-- ===== HERO ===== --}}
+<section class="relative bg-slate-900 overflow-hidden">
+    <img src="https://images.unsplash.com/photo-1488085061387-422e29b40080?w=1400&h=500&fit=crop" alt="" class="absolute inset-0 w-full h-full object-cover opacity-20" loading="eager">
+    <div class="relative max-w-5xl mx-auto px-4 pt-28 pb-10 text-center">
+        <h1 class="text-2xl md:text-3xl font-bold text-white mb-1">Our <span class="text-amber-400">Services</span></h1>
+        <p class="text-xs text-gray-300">Comprehensive travel solutions for every journey</p>
     </div>
+</section>
 
-    <!-- Main Services Section -->
-    <section class="py-20 bg-gradient-to-br from-slate-50 to-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <div class="inline-flex items-center px-4 py-2 bg-amber-100 rounded-full mb-6">
-                    <i data-lucide="star" class="w-4 h-4 text-amber-600 mr-2"></i>
-                    <span class="text-amber-700 font-medium text-sm">Our Services</span>
-                </div>
-                <h2 class="text-3xl md:text-4xl font-bold text-slate-800 mb-4">
-                    Everything You Need for Perfect Travel
-                </h2>
-                <p class="text-lg text-slate-600 max-w-2xl mx-auto">
-                    From planning to booking, we provide comprehensive travel services to make your journey seamless
-                </p>
+{{-- ===== MAIN SERVICES ===== --}}
+<section class="py-10 bg-white">
+    <div class="max-w-5xl mx-auto px-4">
+        <div class="text-center mb-6">
+            <span class="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">What We Offer</span>
+            <h2 class="text-lg font-bold text-gray-900 mt-0.5">Everything You Need for Travel</h2>
+        </div>
+        @php $services = [
+            ['icon'=>'fa-plane','title'=>'Flight Booking','desc'=>'Real-time search across 500+ airlines with competitive prices and instant confirmation.','bullets'=>['Real-time pricing','Flexible dates','Instant e-ticket'],'link'=>url('/flights/search'),'color'=>'amber'],
+            ['icon'=>'fa-hotel','title'=>'Hotel Booking','desc'=>'Find 2M+ accommodations worldwide with verified reviews and best rate guarantee.','bullets'=>['Price match guarantee','Free cancellation','Verified reviews'],'link'=>url('/hotels/search'),'color'=>'blue'],
+            ['icon'=>'fa-map-marked-alt','title'=>'Tour Packages','desc'=>'Curated safari and adventure tours across East Africa's top destinations.','bullets'=>['Expert local guides','All-inclusive options','Group discounts'],'link'=>url('/tours'),'color'=>'emerald'],
+            ['icon'=>'fa-suitcase-rolling','title'=>'Package Deals','desc'=>'Save up to 30% with flight + hotel bundles, custom-built for your trip.','bullets'=>['Bundle & save','Flexible booking','One-click checkout'],'link'=>url('/'),'color'=>'purple'],
+            ['icon'=>'fa-building','title'=>'Corporate Travel','desc'=>'Tailored solutions for businesses with volume discounts and dedicated account managers.','bullets'=>['Consolidated billing','Policy compliance','Priority support'],'link'=>url('/contactus'),'color'=>'indigo'],
+            ['icon'=>'fa-shield-alt','title'=>'Travel Insurance','desc'=>'Comprehensive coverage for trip cancellations, medical emergencies, and lost baggage.','bullets'=>['Trip protection','Medical cover','24/7 claims support'],'link'=>url('/travel-insurance'),'color'=>'rose'],
+        ]; @endphp
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
+            @foreach($services as $s)
+            <div class="bg-gray-50 rounded-xl p-4 hover:shadow-md transition-shadow border border-gray-100 group">
+                <div class="w-8 h-8 bg-{{ $s['color'] }}-100 rounded-lg flex items-center justify-center mb-2 group-hover:scale-110 transition-transform"><i class="fas {{ $s['icon'] }} text-{{ $s['color'] }}-600 text-xs"></i></div>
+                <h3 class="text-xs font-bold text-gray-900 mb-1">{{ $s['title'] }}</h3>
+                <p class="text-[10px] text-gray-500 leading-relaxed mb-2">{{ $s['desc'] }}</p>
+                <ul class="space-y-0.5 mb-2">@foreach($s['bullets'] as $b)<li class="flex items-center gap-1.5 text-[10px] text-gray-600"><i class="fas fa-check text-emerald-500 text-[8px]"></i>{{ $b }}</li>@endforeach</ul>
+                <a href="{{ $s['link'] }}" class="text-[10px] font-semibold text-{{ $s['color'] }}-600 hover:underline">Learn More →</a>
             </div>
+            @endforeach
+        </div>
+    </div>
+</section>
 
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- Flight Booking -->
-                <div class="group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border border-slate-100 hover:border-amber-200">
-                    <div class="w-16 h-16 bg-gradient-to-br from-amber-400 to-orange-500 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <i data-lucide="plane" class="w-8 h-8 text-white"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-slate-800 mb-4">Flight Booking</h3>
-                    <p class="text-slate-600 mb-6 leading-relaxed">
-                        Search and book flights from multiple airlines worldwide with real-time pricing and instant confirmation.
-                    </p>
-                    <ul class="space-y-2 mb-6">
-                        <li class="flex items-center text-sm text-slate-600">
-                            <i data-lucide="check" class="w-4 h-4 text-green-500 mr-2"></i>
-                            <span>Real-time flight search</span>
-                        </li>
-                        <li class="flex items-center text-sm text-slate-600">
-                            <i data-lucide="check" class="w-4 h-4 text-green-500 mr-2"></i>
-                            <span>Competitive prices</span>
-                        </li>
-                        <li class="flex items-center text-sm text-slate-600">
-                            <i data-lucide="check" class="w-4 h-4 text-green-500 mr-2"></i>
-                            <span>Instant confirmation</span>
-                        </li>
-                    </ul>
-                    <a href="{{ route('flights.search') }}" class="inline-flex items-center text-amber-600 hover:text-amber-700 font-medium">
-                        <span>Book Flight</span>
-                        <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
-                    </a>
-                </div>
+{{-- ===== ADDITIONAL SERVICES ===== --}}
+<section class="py-10 bg-gray-50">
+    <div class="max-w-5xl mx-auto px-4">
+        <h2 class="text-lg font-bold text-gray-900 text-center mb-6">Additional Services</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            @php $extras = [
+                ['icon'=>'fa-exchange-alt','title'=>'Currency Exchange','desc'=>'Competitive forex rates for your travels'],
+                ['icon'=>'fa-passport','title'=>'Visa Assistance','desc'=>'Hassle-free visa application support'],
+                ['icon'=>'fa-car','title'=>'Airport Transfers','desc'=>'Reliable pickup & drop-off services'],
+                ['icon'=>'fa-headset','title'=>'24/7 Support','desc'=>'Round-the-clock customer assistance'],
+            ]; @endphp
+            @foreach($extras as $e)
+            <div class="bg-white rounded-xl p-3 text-center border border-gray-100 hover:shadow-sm transition-shadow">
+                <div class="w-8 h-8 bg-emerald-50 rounded-lg flex items-center justify-center mx-auto mb-2"><i class="fas {{ $e['icon'] }} text-emerald-600 text-xs"></i></div>
+                <h3 class="text-xs font-bold text-gray-900 mb-0.5">{{ $e['title'] }}</h3>
+                <p class="text-[10px] text-gray-400">{{ $e['desc'] }}</p>
+            </div>
+            @endforeach
+        </div>
+    </div>
+</section>
 
-                <!-- Hotel Booking -->
-                <div class="group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border border-slate-100 hover:border-blue-200">
-                    <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <i data-lucide="building" class="w-8 h-8 text-white"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-slate-800 mb-4">Hotel Booking</h3>
-                    <p class="text-slate-600 mb-6 leading-relaxed">
-                        Find and book comfortable accommodations worldwide with detailed reviews and competitive rates.
-                    </p>
-                    <ul class="space-y-2 mb-6">
-                        <li class="flex items-center text-sm text-slate-600">
-                            <i data-lucide="check" class="w-4 h-4 text-green-500 mr-2"></i>
-                            <span>Worldwide hotels</span>
-                        </li>
-                        <li class="flex items-center text-sm text-slate-600">
-                            <i data-lucide="check" class="w-4 h-4 text-green-500 mr-2"></i>
-                            <span>Detailed reviews</span>
-                        </li>
-                        <li class="flex items-center text-sm text-slate-600">
-                            <i data-lucide="check" class="w-4 h-4 text-green-500 mr-2"></i>
-                            <span>Best price guarantee</span>
-                        </li>
-                    </ul>
-                    <a href="{{ route('hotels.search') }}" class="inline-flex items-center text-blue-600 hover:text-blue-700 font-medium">
-                        <span>Book Hotel</span>
-                        <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
-                    </a>
-                </div>
-
-                <!-- Flight Search -->
-                <div class="group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border border-slate-100 hover:border-green-200">
-                    <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <i data-lucide="search" class="w-8 h-8 text-white"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-slate-800 mb-4">Flight Search</h3>
-                    <p class="text-slate-600 mb-6 leading-relaxed">
-                        Advanced flight search with flexible dates, multiple airports, and price comparison tools.
-                    </p>
-                    <ul class="space-y-2 mb-6">
-                        <li class="flex items-center text-sm text-slate-600">
-                            <i data-lucide="check" class="w-4 h-4 text-green-500 mr-2"></i>
-                            <span>Flexible date search</span>
-                        </li>
-                        <li class="flex items-center text-sm text-slate-600">
-                            <i data-lucide="check" class="w-4 h-4 text-green-500 mr-2"></i>
-                            <span>Price comparison</span>
-                        </li>
-                        <li class="flex items-center text-sm text-slate-600">
-                            <i data-lucide="check" class="w-4 h-4 text-green-500 mr-2"></i>
-                            <span>Multiple airports</span>
-                        </li>
-                    </ul>
-                    <a href="{{ route('flights.search') }}" class="inline-flex items-center text-green-600 hover:text-green-700 font-medium">
-                        <span>Search Flights</span>
-                        <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
-                    </a>
-                </div>
-
-                <!-- Trip Planning -->
-                <div class="group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border border-slate-100 hover:border-purple-200">
-                    <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <i data-lucide="map" class="w-8 h-8 text-white"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-slate-800 mb-4">Trip Planning</h3>
-                    <p class="text-slate-600 mb-6 leading-relaxed">
-                        Comprehensive trip planning services with itinerary creation and destination recommendations.
-                    </p>
-                    <ul class="space-y-2 mb-6">
-                        <li class="flex items-center text-sm text-slate-600">
-                            <i data-lucide="check" class="w-4 h-4 text-green-500 mr-2"></i>
-                            <span>Custom itineraries</span>
-                        </li>
-                        <li class="flex items-center text-sm text-slate-600">
-                            <i data-lucide="check" class="w-4 h-4 text-green-500 mr-2"></i>
-                            <span>Destination guides</span>
-                        </li>
-                        <li class="flex items-center text-sm text-slate-600">
-                            <i data-lucide="check" class="w-4 h-4 text-green-500 mr-2"></i>
-                            <span>Expert recommendations</span>
-                        </li>
-                    </ul>
-                    <a href="{{ route('support.trip-planning') }}" class="inline-flex items-center text-purple-600 hover:text-purple-700 font-medium">
-                        <span>Plan Trip</span>
-                        <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
-                    </a>
-                </div>
-
-                <!-- Travel Insurance -->
-                <div class="group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border border-slate-100 hover:border-red-200">
-                    <div class="w-16 h-16 bg-gradient-to-br from-red-500 to-rose-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <i data-lucide="shield" class="w-8 h-8 text-white"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-slate-800 mb-4">Travel Insurance</h3>
-                    <p class="text-slate-600 mb-6 leading-relaxed">
-                        Comprehensive travel insurance coverage to protect your journey and provide peace of mind.
-                    </p>
-                    <ul class="space-y-2 mb-6">
-                        <li class="flex items-center text-sm text-slate-600">
-                            <i data-lucide="check" class="w-4 h-4 text-green-500 mr-2"></i>
-                            <span>Medical coverage</span>
-                        </li>
-                        <li class="flex items-center text-sm text-slate-600">
-                            <i data-lucide="check" class="w-4 h-4 text-green-500 mr-2"></i>
-                            <span>Trip cancellation</span>
-                        </li>
-                        <li class="flex items-center text-sm text-slate-600">
-                            <i data-lucide="check" class="w-4 h-4 text-green-500 mr-2"></i>
-                            <span>24/7 assistance</span>
-                        </li>
-                    </ul>
-                    <a href="{{ route('support.insurance') }}" class="inline-flex items-center text-red-600 hover:text-red-700 font-medium">
-                        <span>Get Insurance</span>
-                        <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
-                    </a>
-                </div>
-
-                <!-- Customer Support -->
-                <div class="group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border border-slate-100 hover:border-teal-200">
-                    <div class="w-16 h-16 bg-gradient-to-br from-teal-500 to-cyan-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <i data-lucide="headphones" class="w-8 h-8 text-white"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-slate-800 mb-4">Customer Support</h3>
-                    <p class="text-slate-600 mb-6 leading-relaxed">
-                        24/7 customer support with dedicated agents ready to assist with all your travel needs.
-                    </p>
-                    <ul class="space-y-2 mb-6">
-                        <li class="flex items-center text-sm text-slate-600">
-                            <i data-lucide="check" class="w-4 h-4 text-green-500 mr-2"></i>
-                            <span>24/7 availability</span>
-                        </li>
-                        <li class="flex items-center text-sm text-slate-600">
-                            <i data-lucide="check" class="w-4 h-4 text-green-500 mr-2"></i>
-                            <span>Multiple channels</span>
-                        </li>
-                        <li class="flex items-center text-sm text-slate-600">
-                            <i data-lucide="check" class="w-4 h-4 text-green-500 mr-2"></i>
-                            <span>Expert assistance</span>
-                        </li>
-                    </ul>
-                    <a href="{{ route('support.contact') }}" class="inline-flex items-center text-teal-600 hover:text-teal-700 font-medium">
-                        <span>Contact Support</span>
-                        <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
-                    </a>
+{{-- ===== CTA ===== --}}
+<section class="py-10 bg-white">
+    <div class="max-w-5xl mx-auto px-4">
+        <div class="flex flex-col md:flex-row items-center gap-6 bg-gray-50 rounded-xl overflow-hidden border border-gray-100">
+            <div class="md:w-1/2"><img src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=600&h=400&fit=crop" alt="Travel" class="w-full h-48 md:h-56 object-cover" loading="lazy"></div>
+            <div class="md:w-1/2 p-5">
+                <span class="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">Get Started</span>
+                <h2 class="text-lg font-bold text-gray-900 mt-1 mb-2">Ready to Plan Your Trip?</h2>
+                <p class="text-xs text-gray-500 leading-relaxed mb-4">Whether it's a quick domestic flight or an international adventure, we have the tools and expertise to make it seamless.</p>
+                <div class="flex gap-2">
+                    <a href="{{ url('/flights/search') }}" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors">Book a Flight</a>
+                    <a href="{{ url('/contactus') }}" class="border border-gray-200 text-gray-700 text-xs font-semibold px-4 py-2 rounded-lg hover:bg-white transition-colors">Contact Us</a>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- Additional Services Section -->
-    <section class="py-20 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl font-bold text-slate-800 mb-4">Additional Services</h2>
-                <p class="text-lg text-slate-600 max-w-2xl mx-auto">
-                    Enhance your travel experience with our premium services
-                </p>
+{{-- ===== WHY CHOOSE US ===== --}}
+<section class="py-10 bg-gray-50">
+    <div class="max-w-5xl mx-auto px-4">
+        <h2 class="text-lg font-bold text-gray-900 text-center mb-6">Why Choose Ziara Travels?</h2>
+        <div class="grid md:grid-cols-3 gap-3">
+            @php $why = [
+                ['icon'=>'fa-tag','title'=>'Best Prices','desc'=>'We negotiate directly with airlines and hotels to guarantee the best rates.'],
+                ['icon'=>'fa-lock','title'=>'Secure Payments','desc'=>'M-Pesa, STK Push, bank transfer, and cards — all protected with end-to-end encryption.'],
+                ['icon'=>'fa-heart','title'=>'Dedicated Support','desc'=>'Our team of travel experts is available 24/7 to help you at every step of your journey.'],
+            ]; @endphp
+            @foreach($why as $w)
+            <div class="bg-white rounded-xl p-4 border border-gray-100 text-center">
+                <div class="w-8 h-8 bg-amber-50 rounded-lg flex items-center justify-center mx-auto mb-2"><i class="fas {{ $w['icon'] }} text-amber-600 text-xs"></i></div>
+                <h3 class="text-xs font-bold text-gray-900 mb-1">{{ $w['title'] }}</h3>
+                <p class="text-[10px] text-gray-500 leading-relaxed">{{ $w['desc'] }}</p>
             </div>
-
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <!-- Visa Assistance -->
-                <div class="text-center group">
-                    <div class="w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <i data-lucide="file-text" class="w-10 h-10 text-white"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold text-slate-800 mb-3">Visa Assistance</h3>
-                    <p class="text-slate-600 text-sm">
-                        Get help with visa applications and travel document requirements.
-                    </p>
-                </div>
-
-                <!-- Car Rental -->
-                <div class="text-center group">
-                    <div class="w-20 h-20 bg-gradient-to-br from-orange-500 to-red-600 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <i data-lucide="car" class="w-10 h-10 text-white"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold text-slate-800 mb-3">Car Rental</h3>
-                    <p class="text-slate-600 text-sm">
-                        Book rental cars at your destination with competitive rates.
-                    </p>
-                </div>
-
-                <!-- Airport Transfers -->
-                <div class="text-center group">
-                    <div class="w-20 h-20 bg-gradient-to-br from-green-500 to-teal-600 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <i data-lucide="navigation" class="w-10 h-10 text-white"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold text-slate-800 mb-3">Airport Transfers</h3>
-                    <p class="text-slate-600 text-sm">
-                        Convenient airport transfer services for a smooth journey.
-                    </p>
-                </div>
-
-                <!-- Travel Packages -->
-                <div class="text-center group">
-                    <div class="w-20 h-20 bg-gradient-to-br from-pink-500 to-rose-600 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <i data-lucide="package" class="w-10 h-10 text-white"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold text-slate-800 mb-3">Travel Packages</h3>
-                    <p class="text-slate-600 text-sm">
-                        Complete travel packages with flights, hotels, and activities.
-                    </p>
-                </div>
-            </div>
+            @endforeach
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- Why Choose Us Section -->
-    <section class="py-20 bg-gradient-to-br from-slate-800 to-slate-900">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl font-bold text-white mb-4">Why Choose Our Services?</h2>
-                <p class="text-slate-300 text-lg max-w-2xl mx-auto">
-                    We're committed to providing exceptional travel services with unmatched quality
-                </p>
+{{-- ===== FAQ ===== --}}
+<section class="py-10 bg-white">
+    <div class="max-w-2xl mx-auto px-4">
+        <h2 class="text-lg font-bold text-gray-900 text-center mb-6">Services FAQs</h2>
+        @php $faqs = [
+            ['q'=>'What destinations do you cover?','a'=>'We offer flights to 190+ countries and hotels in major cities worldwide, with a focus on East African destinations.'],
+            ['q'=>'Do you offer group booking discounts?','a'=>'Yes! Groups of 10+ travelers receive volume discounts. Contact our corporate team for a custom quote.'],
+            ['q'=>'What payment methods do you support?','a'=>'We accept M-Pesa, M-Pesa STK Push, Equity Eazzy, bank transfers, and all major credit/debit cards.'],
+            ['q'=>'Can I cancel and get a refund?','a'=>'Cancellation and refund policies depend on the specific booking type and fare rules. Flexible rates generally allow free cancellation.'],
+            ['q'=>'Do you provide travel insurance?','a'=>'Yes, we offer comprehensive travel insurance covering trip cancellations, medical emergencies, lost luggage, and more.'],
+        ]; @endphp
+        <div class="space-y-2">
+            @foreach($faqs as $faq)
+            <div class="border border-gray-200 rounded-lg bg-gray-50 overflow-hidden">
+                <button class="faq-toggle w-full flex items-center justify-between p-3 text-left hover:bg-gray-100 transition-colors" onclick="toggleFaq(this)">
+                    <span class="text-xs font-semibold text-gray-900 pr-3">{{ $faq['q'] }}</span>
+                    <i class="fas fa-chevron-down text-gray-300 text-[10px] transition-transform duration-200 shrink-0"></i>
+                </button>
+                <div class="faq-content hidden px-3 pb-3"><p class="text-[11px] text-gray-500 leading-relaxed">{{ $faq['a'] }}</p></div>
             </div>
-
-            <div class="grid md:grid-cols-3 gap-8">
-                <div class="text-center">
-                    <div class="w-16 h-16 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <i data-lucide="award" class="w-8 h-8 text-white"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-white mb-4">Best Prices</h3>
-                    <p class="text-slate-300">
-                        We guarantee the best prices on flights and hotels with our price match promise.
-                    </p>
-                </div>
-
-                <div class="text-center">
-                    <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <i data-lucide="clock" class="w-8 h-8 text-white"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-white mb-4">24/7 Support</h3>
-                    <p class="text-slate-300">
-                        Our customer support team is available around the clock to assist you.
-                    </p>
-                </div>
-
-                <div class="text-center">
-                    <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <i data-lucide="shield-check" class="w-8 h-8 text-white"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-white mb-4">Secure Booking</h3>
-                    <p class="text-slate-300">
-                        All bookings are secured with industry-leading encryption and security measures.
-                    </p>
-                </div>
-            </div>
+            @endforeach
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- CTA Section -->
-    <section class="py-20 bg-gradient-to-r from-amber-400 to-orange-500">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 class="text-3xl md:text-4xl font-bold text-white mb-6">
-                Ready to Start Your Journey?
-            </h2>
-            <p class="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-                Let us help you create unforgettable travel experiences with our comprehensive services
-            </p>
-            <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="{{ route('flights.search') }}" class="inline-flex items-center px-8 py-4 bg-white text-amber-600 font-semibold rounded-full hover:bg-slate-50 transition-colors duration-200">
-                    <i data-lucide="plane" class="w-5 h-5 mr-2"></i>
-                    Book Your Flight
-                </a>
-                <a href="{{ route('support.contact') }}" class="inline-flex items-center px-8 py-4 bg-white/20 text-white font-semibold rounded-full hover:bg-white/30 transition-colors duration-200 backdrop-blur-sm">
-                    <i data-lucide="message-circle" class="w-5 h-5 mr-2"></i>
-                    Contact Us
-                </a>
-            </div>
-        </div>
-    </section>
+{{-- ===== NEWSLETTER ===== --}}
+<section class="py-10 bg-emerald-600">
+    <div class="max-w-xl mx-auto px-4 text-center">
+        <h2 class="text-base font-bold text-white mb-1">Stay Informed</h2>
+        <p class="text-[11px] text-emerald-100 mb-4">Get updates on new services, exclusive deals, and travel tips.</p>
+        <form class="flex gap-2" onsubmit="event.preventDefault(); alert('Subscribed!'); this.reset();">
+            <input type="email" placeholder="Your email" class="flex-1 px-3 py-2 rounded-lg text-xs text-gray-800 focus:ring-2 focus:ring-amber-400 focus:outline-none" required>
+            <button type="submit" class="bg-amber-500 hover:bg-amber-600 text-white text-xs font-semibold px-5 py-2 rounded-lg transition-colors whitespace-nowrap">Subscribe</button>
+        </form>
+    </div>
+</section>
 @endsection
 
 @push('scripts')
-<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 <script>
-    lucide.createIcons();
+function toggleFaq(btn){var c=btn.nextElementSibling,ic=btn.querySelector('i'),open=!c.classList.contains('hidden');document.querySelectorAll('.faq-content').forEach(function(x){x.classList.add('hidden');});document.querySelectorAll('.faq-toggle i').forEach(function(x){x.style.transform='rotate(0)';});if(!open){c.classList.remove('hidden');ic.style.transform='rotate(180deg)';}}
 </script>
-@endpush
-
-@push('styles')
-<style>
-    .text-gradient {
-        background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-    }
-</style>
 @endpush
