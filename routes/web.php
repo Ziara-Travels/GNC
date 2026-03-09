@@ -54,6 +54,8 @@ use App\Http\Controllers\HotelBookingController;
 use App\Http\Controllers\TourBookingController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\SEOController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ExchangeRateController;
 
 
 Route::get('/search-flight', function () {

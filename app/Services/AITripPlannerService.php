@@ -3,16 +3,15 @@
 
 namespace App\Services;
 
-use Laravel\AI\AI;
 use Illuminate\Support\Facades\Http;
 
 class AITripPlannerService
 {
-    protected $ai;
+    protected $ai = null;
     
     public function __construct()
     {
-        $this->ai = AI::chat();
+        // AI package not yet installed; all methods fall back to curated responses.
     }
     
     public function generateTripSuggestions($request)

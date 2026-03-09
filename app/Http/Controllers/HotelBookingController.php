@@ -5,8 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use App\Services\BookingService;
 use App\Models\Booking;
+use App\Models\HotelBooking;
 use App\Models\User;
 use App\Models\Payment;
 use GuzzleHttp\Client;
@@ -324,10 +327,9 @@ class HotelBookingController extends Controller
                $booking->booked_by === $user->id || 
                $user->hasRole(['admin', 'superadmin']);
     }
-}
 
-class HotelBookingController extends Controller
-{
+    // ---- Methods from merged duplicate class ----
+
     /**
      * Display hotel booking form
      */
