@@ -1,237 +1,133 @@
-<!-- Flight Filters -->
-<div class="card">
-    <div class="card-header bg-primary text-white">
-        <h5 class="mb-0">Filter Results</h5>
-    </div>
-    <div class="card-body">
-        <form id="filter-form">
-            <!-- Airlines Filter -->
-            <div class="mb-4">
-                <h6 class="fw-bold">Airlines</h6>
-                <div class="airlines-filter">
-                    @php
-                    $airlines = collect($flights)->pluck('airline')->unique();
-                    @endphp
-                    
-                    @foreach($airlines as $airline)
-                    <div class="form-check">
-                        <input class="form-check-input airline-filter" type="checkbox" value="{{ $airline }}" id="airline-{{ Str::slug($airline) }}">
-                        <label class="form-check-label" for="airline-{{ Str::slug($airline) }}">
-                            {{ $airline }}
-                        </label>
-                    </div>
-                    @endforeach
-                </div>
-            </div>
-            
-            <!-- Price Range Filter -->
-            <!-- Price Range Filter -->
-<div class="mb-4">
-    <h6 class="fw-bold">Price Range</h6>
-    @php
-    $prices = collect($flights)->map(function($flight) {
-        // Handle different price property structures
-        if (isset($flight->price) && is_numeric($flight->price)) {
-            return (float) $flight->price;
-        }
-        if (isset($flight->offerPrice) && is_numeric($flight->offerPrice)) {
-            return (float) $flight->offerPrice;
-        }
-        // Handle nested price objects
-        if (isset($flight->price->amount)) {
-            return (float) $flight->price->amount;
-        }
-        if (isset($flight->offerPrice->amount)) {
-            return (float) $flight->offerPrice->amount;
-        }
-        return 0;
-    })->filter(function($price) {
-        return $price > 0; // Remove zero/invalid prices
-    });
+{{-- Flight Filters - works with data-* attributes on .flight-card --}}
+@php
+    // Extract airlines from Amadeus data
+    $airlineList = collect($flights)->map(function($f) {
+        return $f['itineraries'][0]['segments'][0]['carrierCode'] ?? '';
+    })->filter()->unique()->sort()->values();
 
-    $minPrice = $prices->count() > 0 ? $prices->min() : 0;
-    $maxPrice = $prices->count() > 0 ? $prices->max() : 1000;
-    @endphp
-    
-    <div class="price-slider mb-2">
-        <input type="range" class="form-range" id="price-range" 
-               min="{{ floor($minPrice) }}" 
-               max="{{ ceil($maxPrice) }}" 
-               step="10">
+    // Extract prices
+    $priceList = collect($flights)->map(function($f) {
+        return floatval($f['price']['grandTotal'] ?? $f['price']['total'] ?? 0);
+    })->filter(fn($p) => $p > 0);
+    $minPrice = $priceList->count() > 0 ? floor($priceList->min()) : 0;
+    $maxPrice = $priceList->count() > 0 ? ceil($priceList->max()) : 1000;
+@endphp
+
+<div class="bg-white rounded-xl border border-gray-200 overflow-hidden sticky top-24">
+    <div class="bg-gray-900 text-white px-5 py-4 flex items-center justify-between">
+        <h3 class="font-bold text-sm"><i class="fas fa-sliders-h mr-2"></i>Filters</h3>
+        <button type="button" id="reset-filters" class="text-xs text-blue-300 hover:text-white transition-colors">Reset</button>
     </div>
-    <div class="d-flex justify-content-between">
-        <span id="min-price">${{ number_format($minPrice, 0) }}</span>
-        <span id="max-price">${{ number_format($maxPrice, 0) }}</span>
-    </div>
-    <div class="text-center mt-2">
-        <span id="selected-price">Up to $<span id="price-value">{{ number_format($maxPrice, 0) }}</span></span>
-    </div>
-</div>
-            
-            <!-- Stops Filter -->
-            <div class="mb-4">
-                <h6 class="fw-bold">Stops</h6>
-                <div class="stops-filter">
-                    <div class="form-check">
-                        <input class="form-check-input stops-filter" type="checkbox" value="0" id="direct-flights" checked>
-                        <label class="form-check-label" for="direct-flights">
-                            Direct flights
-                        </label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input stops-filter" type="checkbox" value="1" id="one-stop" checked>
-                        <label class="form-check-label" for="one-stop">
-                            1 Stop
-                        </label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input stops-filter" type="checkbox" value="2+" id="multi-stop" checked>
-                        <label class="form-check-label" for="multi-stop">
-                            2+ Stops
-                        </label>
-                    </div>
-                </div>
+
+    <div class="p-5 space-y-6">
+        {{-- Airlines --}}
+        <div>
+            <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Airlines</h4>
+            @foreach($airlineList as $code)
+            <label class="flex items-center gap-2 mb-2 cursor-pointer group">
+                <input type="checkbox" class="airline-filter rounded text-blue-600 focus:ring-blue-500" value="{{ $code }}" checked>
+                <span class="text-sm text-gray-700 group-hover:text-gray-900">{{ $code }}</span>
+            </label>
+            @endforeach
+        </div>
+
+        {{-- Price Range --}}
+        <div>
+            <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Max Price</h4>
+            <input type="range" id="price-range" class="w-full accent-blue-600" min="{{ $minPrice }}" max="{{ $maxPrice }}" value="{{ $maxPrice }}" step="10">
+            <div class="flex justify-between text-xs text-gray-500 mt-1">
+                <span>${{ number_format($minPrice, 0) }}</span>
+                <span class="font-semibold text-blue-600">Up to $<span id="price-value">{{ number_format($maxPrice, 0) }}</span></span>
+                <span>${{ number_format($maxPrice, 0) }}</span>
             </div>
-            
-            <!-- Departure Time Filter -->
-            <div class="mb-4">
-                <h6 class="fw-bold">Departure Time</h6>
-                <div class="time-filter">
-                    <div class="form-check">
-                        <input class="form-check-input time-filter" type="checkbox" value="morning" id="morning" checked>
-                        <label class="form-check-label" for="morning">
-                            Morning (6AM - 12PM)
-                        </label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input time-filter" type="checkbox" value="afternoon" id="afternoon" checked>
-                        <label class="form-check-label" for="afternoon">
-                            Afternoon (12PM - 6PM)
-                        </label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input time-filter" type="checkbox" value="evening" id="evening" checked>
-                        <label class="form-check-label" for="evening">
-                            Evening (6PM - 12AM)
-                        </label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input time-filter" type="checkbox" value="night" id="night" checked>
-                        <label class="form-check-label" for="night">
-                            Night (12AM - 6AM)
-                        </label>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Reset Filters -->
-            <button type="button" id="reset-filters" class="btn btn-outline-secondary w-100">Reset Filters</button>
-        </form>
+        </div>
+
+        {{-- Stops --}}
+        <div>
+            <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Stops</h4>
+            <label class="flex items-center gap-2 mb-2 cursor-pointer">
+                <input type="checkbox" class="stops-filter rounded text-blue-600 focus:ring-blue-500" value="0" checked>
+                <span class="text-sm text-gray-700">Direct</span>
+            </label>
+            <label class="flex items-center gap-2 mb-2 cursor-pointer">
+                <input type="checkbox" class="stops-filter rounded text-blue-600 focus:ring-blue-500" value="1" checked>
+                <span class="text-sm text-gray-700">1 Stop</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" class="stops-filter rounded text-blue-600 focus:ring-blue-500" value="2+" checked>
+                <span class="text-sm text-gray-700">2+ Stops</span>
+            </label>
+        </div>
+
+        {{-- Departure Time --}}
+        <div>
+            <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Departure Time</h4>
+            @php
+            $timeSlots = [
+                ['id' => 'morning', 'label' => 'Morning', 'range' => '5AM – 12PM', 'icon' => 'fa-sun'],
+                ['id' => 'afternoon', 'label' => 'Afternoon', 'range' => '12PM – 5PM', 'icon' => 'fa-cloud-sun'],
+                ['id' => 'evening', 'label' => 'Evening', 'range' => '5PM – 9PM', 'icon' => 'fa-moon'],
+                ['id' => 'night', 'label' => 'Night', 'range' => '9PM – 5AM', 'icon' => 'fa-star'],
+            ];
+            @endphp
+            @foreach($timeSlots as $slot)
+            <label class="flex items-center gap-2 mb-2 cursor-pointer">
+                <input type="checkbox" class="time-filter rounded text-blue-600 focus:ring-blue-500" value="{{ $slot['id'] }}" checked>
+                <i class="fas {{ $slot['icon'] }} text-gray-400 text-xs w-4 text-center"></i>
+                <span class="text-sm text-gray-700">{{ $slot['label'] }} <span class="text-gray-400 text-xs">{{ $slot['range'] }}</span></span>
+            </label>
+            @endforeach
+        </div>
     </div>
 </div>
 
-<!-- Filter Script -->
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Price range slider
-        const priceRange = document.getElementById('price-range');
-        const priceValue = document.getElementById('price-value');
-        
-        if (priceRange && priceValue) {
-            priceRange.addEventListener('input', function() {
-                priceValue.textContent = Number(this.value).toLocaleString();
-                applyFilters();
-            });
-        }
-        
-        // Apply filters when checkboxes change
-        const filterCheckboxes = document.querySelectorAll('.form-check-input');
-        filterCheckboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', applyFilters);
+document.addEventListener('DOMContentLoaded', function() {
+    var priceRange = document.getElementById('price-range');
+    var priceValue = document.getElementById('price-value');
+
+    if (priceRange) {
+        priceRange.addEventListener('input', function() {
+            priceValue.textContent = Number(this.value).toLocaleString();
+            applyFilters();
         });
-        
-        // Reset filters button
-        const resetButton = document.getElementById('reset-filters');
-        if (resetButton) {
-            resetButton.addEventListener('click', resetFilters);
-        }
-        
-        // Apply filters function
-        function applyFilters() {
-            const selectedAirlines = Array.from(document.querySelectorAll('.airline-filter:checked'))
-                .map(input => input.value);
-                
-            const selectedStops = Array.from(document.querySelectorAll('.stops-filter:checked'))
-                .map(input => input.value);
-                
-            const selectedTimes = Array.from(document.querySelectorAll('.time-filter:checked'))
-                .map(input => input.value);
-                
-            const maxPrice = parseInt(priceRange.value);
-            
-            // Get all flight cards
-            const flights = document.querySelectorAll('.flight-card');
-            
-            // Loop through each flight and check if it matches filters
-            flights.forEach(flight => {
-                const airline = flight.getAttribute('data-airline');
-                const price = parseFloat(flight.getAttribute('data-price'));
-                const stops = flight.getAttribute('data-stops');
-                const departureTime = flight.getAttribute('data-departure-time');
-                
-                // Determine time of day
-                let timeOfDay = '';
-                if (departureTime) {
-                    const hour = parseInt(departureTime.split(':')[0]);
-                    if (hour >= 6 && hour < 12) timeOfDay = 'morning';
-                    else if (hour >= 12 && hour < 18) timeOfDay = 'afternoon';
-                    else if (hour >= 18 && hour < 24) timeOfDay = 'evening';
-                    else timeOfDay = 'night';
-                }
-                
-                // Check if flight matches all filters
-                const matchesAirline = selectedAirlines.length === 0 || selectedAirlines.includes(airline);
-                const matchesPrice = price <= maxPrice;
-                const matchesStops = selectedStops.length === 0 || selectedStops.includes(stops);
-                const matchesTime = selectedTimes.length === 0 || selectedTimes.includes(timeOfDay);
-                
-                // Show/hide flight based on filter matches
-                if (matchesAirline && matchesPrice && matchesStops && matchesTime) {
-                    flight.style.display = '';
-                } else {
-                    flight.style.display = 'none';
-                }
-            });
-            
-            // Update count of visible flights
-            updateVisibleCount();
-        }
-        
-        function resetFilters() {
-            // Reset all checkboxes to checked
-            document.querySelectorAll('.form-check-input').forEach(checkbox => {
-                checkbox.checked = true;
-            });
-            
-            // Reset price slider to max
-            priceRange.value = priceRange.max;
-            priceValue.textContent = Number(priceRange.max).toLocaleString();
-            
-            // Show all flights
-            document.querySelectorAll('.flight-card').forEach(flight => {
-                flight.style.display = '';
-            });
-            
-            // Update count
-            updateVisibleCount();
-        }
-        
-        function updateVisibleCount() {
-            const visibleFlights = document.querySelectorAll('.flight-card:not([style*="display: none"])').length;
-            const resultsHeading = document.querySelector('.flight-results').previousElementSibling.querySelector('h3');
-            if (resultsHeading) {
-                resultsHeading.textContent = `${visibleFlights} Flights Found`;
-            }
-        }
+    }
+
+    document.querySelectorAll('.airline-filter, .stops-filter, .time-filter').forEach(function(cb) {
+        cb.addEventListener('change', applyFilters);
     });
+
+    document.getElementById('reset-filters').addEventListener('click', function() {
+        document.querySelectorAll('.airline-filter, .stops-filter, .time-filter').forEach(function(cb) { cb.checked = true; });
+        if (priceRange) { priceRange.value = priceRange.max; priceValue.textContent = Number(priceRange.max).toLocaleString(); }
+        applyFilters();
+    });
+
+    function applyFilters() {
+        var airlines = Array.from(document.querySelectorAll('.airline-filter:checked')).map(function(i) { return i.value; });
+        var stops = Array.from(document.querySelectorAll('.stops-filter:checked')).map(function(i) { return i.value; });
+        var times = Array.from(document.querySelectorAll('.time-filter:checked')).map(function(i) { return i.value; });
+        var maxP = priceRange ? parseInt(priceRange.value) : Infinity;
+        var count = 0;
+
+        document.querySelectorAll('.flight-card').forEach(function(card) {
+            var a = card.getAttribute('data-airline') || '';
+            var p = parseFloat(card.getAttribute('data-price') || 0);
+            var s = parseInt(card.getAttribute('data-stops') || 0);
+            var t = card.getAttribute('data-departure-time') || '';
+            var sVal = s >= 2 ? '2+' : String(s);
+
+            var ok = (airlines.length === 0 || airlines.indexOf(a) !== -1)
+                  && p <= maxP
+                  && (stops.length === 0 || stops.indexOf(sVal) !== -1)
+                  && (times.length === 0 || times.indexOf(t) !== -1);
+
+            card.style.display = ok ? '' : 'none';
+            if (ok) count++;
+        });
+
+        var counter = document.getElementById('results-count');
+        if (counter) counter.textContent = count;
+    }
+});
 </script>

@@ -1,10 +1,10 @@
-<?php
 @extends('layouts.main')
 
 @php
     // Get booking details from session
     $bookingDetails = session('booking_details', []);
-    $flightData = json_decode(session('selected_flight'), true);
+    $rawFlight = session('selected_flight');
+    $flightData = is_string($rawFlight) ? json_decode($rawFlight, true) : $rawFlight;
     $bookingType = 'flight';
 
     // Flight information from selected flight data
@@ -163,7 +163,7 @@
                 <div class="flex flex-col xl:flex-row gap-8">
                     <!-- Left Column - Payment Methods -->
                     <div class="xl:w-2/3">
-                        <form id="checkoutForm" method="POST" action="{{ route('booking.process-payment') }}">
+                        <form id="checkoutForm" method="POST" action="{{ route('booking.process') }}">
                             @csrf
                             <input type="hidden" name="booking_reference" value="{{ $bookingReference }}">
                             <input type="hidden" name="booking_type" value="{{ $bookingType }}">
@@ -1234,7 +1234,7 @@
             formData.append('mpesa_phone', phoneNumber);
             
             // Send AJAX request
-            fetch('{{ route("booking.process-payment") }}', {
+            fetch('{{ route("booking.process") }}', {
                 method: 'POST',
                 body: formData,
                 headers: {

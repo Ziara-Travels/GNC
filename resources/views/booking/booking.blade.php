@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('styles')
+@push('styles')
 <style>
     /* Custom animations */
     @keyframes fadeInUp {
@@ -33,7 +33,7 @@
         animation: fadeOutDown 0.3s ease-in forwards;
     }
 </style>
-@endsection
+@endpush
 
 @section('content')
     <!-- Hero Section -->

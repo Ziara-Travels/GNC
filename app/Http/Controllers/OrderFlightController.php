@@ -180,18 +180,40 @@ class OrderFlightController extends Controller
         ]);
     }
 
+    /**
+     * Download e-ticket as PDF
+     */
+    public function downloadETicket($reference)
+    {
+        $booking = Booking::with('user')->where('booking_reference', $reference)->first();
+
+        if (!$booking) {
+            abort(404, 'Booking not found.');
+        }
+
+        if (Auth::check() && $booking->user_id !== Auth::id() && !in_array(Auth::user()->role ?? '', ['admin', 'superadmin'])) {
+            abort(403, 'Unauthorized.');
+        }
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('booking.eticket-pdf', compact('booking'));
+        $pdf->setPaper('a4');
+
+        return $pdf->download('eticket-' . $booking->booking_reference . '.pdf');
+    }
+
     // Process checkout payment
     public function processCheckout(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'booking_type' => 'required|in:flight,hotel',
             'booking_data' => 'required|json',
-            'payment_method' => 'required|in:mpesa,mpesa_stk,bank,card',
+            'payment_method' => 'required|in:mpesa,mpesa_stk,bank,card,equitel,equity',
             'amount' => 'required|numeric|min:0',
             'currency' => 'required|string|size:3',
             'booking_reference' => 'required|string',
             'mpesa_phone' => 'required_if:payment_method,mpesa,mpesa_stk|string',
-            'bank_account' => 'required_if:payment_method,bank|string',
+            'equitel_phone' => 'required_if:payment_method,equitel|string',
+            'bank_account' => 'required_if:payment_method,bank,equity|string',
             'bank_name' => 'required_if:payment_method,bank|string',
             'card_number' => 'required_if:payment_method,card|string',
             'card_expiry' => 'required_if:payment_method,card|string',
@@ -668,8 +690,12 @@ class OrderFlightController extends Controller
                 case 'mpesa_stk':
                     return $this->processMpesaPayment($payment, $request->input('mpesa_phone'));
                 
+                case 'equitel':
+                    return $this->processMpesaPayment($payment, $request->input('equitel_phone'));
+
+                case 'equity':
                 case 'bank':
-                    return $this->processBankPayment($payment, $request->input('bank_account'), $request->input('bank_name'));
+                    return $this->processBankPayment($payment, $request->input('bank_account'), $request->input('bank_name', 'Equity Bank'));
                 
                 case 'card':
                     $cardDetails = [
@@ -1017,10 +1043,10 @@ class OrderFlightController extends Controller
             ]);
         }
 
-        // User is authenticated, proceed to booking
+        // User is authenticated, proceed to checkout
         session(['selected_flight' => $flightData]);
         
-        return redirect()->route('booking.show', ['type' => 'flight'])->with([
+        return redirect()->route('booking.checkout')->with([
             'message' => 'Flight selected successfully. Please review your booking details.',
             'alert_type' => 'success'
         ]);

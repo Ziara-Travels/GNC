@@ -492,11 +492,12 @@ public function setupRoutes()
     /**
      * Get flight offers for East African destinations
      */
-    public function getEastAfricanOffers(Request $request, Client $client)
+    public function getEastAfricanOffers(Request $request)
     {
         // Check if we have cached results
         if (Cache::has('east_african_flight_offers')) {
-            return Cache::get('east_african_flight_offers');
+            $offers = Cache::get('east_african_flight_offers');
+            return response()->json(['success' => true, 'offers' => $offers]);
         }
 
         // Base airport (most likely Nairobi)
@@ -506,6 +507,7 @@ public function setupRoutes()
         $maxOffers = 9; // Maximum offers to display
 
         try {
+            $client = new Client(['timeout' => 10]);
             // Get access token
             if (session('access_token')) {
                 $access_token = session('access_token');
@@ -609,12 +611,12 @@ public function setupRoutes()
             // Cache the results for 1 hour to avoid repeated API calls
             Cache::put('east_african_flight_offers', $offers, now()->addHours(1));
             
-            return $offers;
+            return response()->json(['success' => true, 'offers' => $offers]);
             
-        } catch (GuzzleException $exception) {
-            // In case of API error, return dummy data
+        } catch (\Exception $exception) {
+            // In case of any error (API or otherwise), return dummy data
             $dummyOffers = $this->getDummyOffers($maxOffers, array_keys($this->eastAfricanDestinations));
-            return $dummyOffers;
+            return response()->json(['success' => true, 'offers' => $dummyOffers]);
         }
     }
     

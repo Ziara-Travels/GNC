@@ -128,6 +128,7 @@ Route::post('/deals/tours/payment/{reference}', [App\Http\Controllers\Travel\Dea
 // Flight search routes for all users (including non-authenticated)
 Route::post('/api/search', [FlightSearchController::class, '__invoke'])->name('flight.search');
 Route::get('/flights/search', [FlightSearchController::class, 'showPublicSearch'])->name('flights.public.search');
+Route::get('/flights/public-search', [FlightSearchController::class, 'showPublicSearch'])->name('flights.public.search.alt');
 Route::get('/flights/results', [FlightSearchController::class, 'showPublicResults'])->name('flights.results');
 Route::post('/api/price', [FlightSearchController::class, 'priceItinerary'])->name('flight.price');
 
@@ -138,6 +139,7 @@ Route::post('/flights/book', [FlightBookingController::class, 'store'])->name('f
 Route::get('/booking/checkout', [OrderFlightController::class, 'showCheckout'])->name('booking.checkout');
 Route::post('/booking/process', [OrderFlightController::class, 'processCheckout'])->name('booking.process');
 Route::get('/booking/success/{reference}', [OrderFlightController::class, 'showSuccess'])->name('booking.success');
+Route::get('/booking/eticket/{reference}', [OrderFlightController::class, 'downloadETicket'])->name('booking.eticket');
 Route::get('/booking/failure', [OrderFlightController::class, 'bookingFailure'])->name('booking.failure');
 
 // Airport search endpoints for flight search
@@ -209,7 +211,8 @@ Route::get('/booking/{type}/passenger-details', [FlightOffersController::class, 
 Route::post('/booking/passenger-details', [FlightOffersController::class, 'savePassengerDetails'])->name('booking.save-passengers');
 Route::get('/booking/{type}/payment', [FlightOffersController::class, 'showPaymentPage'])->name('booking.payment');
 Route::post('/booking/process-payment', [FlightOffersController::class, 'processPayment'])->name('booking.process-payment');
-Route::get('/booking/success/{bookingReference}', [FlightOffersController::class, 'bookingSuccess'])->name('booking.success');
+// Duplicate route removed — booking.success is defined at line 141 using OrderFlightController
+// Route::get('/booking/success/{bookingReference}', [FlightOffersController::class, 'bookingSuccess'])->name('booking.success');
 Route::get('/east-african-hotels', [HotelOffersController::class, 'getEastAfricanHotels'])->name('east-african-hotels');
 Route::post('/book-hotel', [HotelOffersController::class, 'bookHotel'])->name('book.hotel');
 
@@ -1456,8 +1459,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/bookings/{id}/download', [OrderFlightController::class, 'download'])->name('bookings.download');
     Route::get('/bookings', [UserDashboardController::class, 'allBookings'])->name('user.bookings.all');
     
-    // Flight Booking Routes
-    Route::get('/flights/search', [FlightBookingController::class, 'search'])->name('flights.search');
+    // Flight Booking Routes (POST only - GET is handled by the public routes above)
     Route::post('/flights/search', [FlightBookingController::class, 'searchFlights'])->name('flights.search.results');
     Route::post('/flights/book', [FlightBookingController::class, 'bookFlight'])->name('flights.book');
     Route::get('/flights/booking/{booking}/payment', [FlightBookingController::class, 'showPayment'])->name('flights.booking.payment');

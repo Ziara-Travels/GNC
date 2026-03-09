@@ -1,659 +1,207 @@
 @extends('layouts.main')
 
 @section('content')
-<!-- Hotel Search Header -->
-<div class="bg-gradient-to-br from-indigo-900 via-indigo-800 to-purple-900 min-h-screen">
-    <!-- Navigation Header -->
-    <div class="bg-white/10 backdrop-blur-md border-b border-white/20">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center py-4">
-                <div class="flex items-center space-x-8">
-                    <h2 class="text-xl font-bold text-white">Hotel Search</h2>
-                    <div class="hidden md:flex space-x-6">
-                        <a href="{{ route('search-flights') }}" class="text-white/70 hover:text-white transition-colors duration-200 flex items-center space-x-2">
-                            <i class="fas fa-plane text-sm"></i>
-                            <span>Flights</span>
-                        </a>
-                        <button class="text-white/90 hover:text-white transition-colors duration-200 flex items-center space-x-2">
-                            <i class="fas fa-hotel text-sm"></i>
-                            <span>Hotels</span>
-                        </button>
-                    </div>
-                </div>
-                <div class="flex items-center space-x-4">
-                    @auth
-                        <a href="{{ route('dashboard') }}" class="text-white/90 hover:text-white transition-colors duration-200">
-                            <i class="fas fa-user-circle text-xl"></i>
-                        </a>
-                    @else
-                        <a href="{{ route('login') }}" class="text-white/90 hover:text-white transition-colors duration-200">
-                            <i class="fas fa-sign-in-alt text-xl"></i>
-                        </a>
-                    @endauth
-                </div>
-            </div>
-        </div>
-    </div>
+{{-- ===== HERO + SEARCH ===== --}}
+<section class="relative bg-slate-900 overflow-hidden">
+    <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1400&h=500&fit=crop" alt="" class="absolute inset-0 w-full h-full object-cover opacity-25" loading="eager">
+    <div class="relative max-w-5xl mx-auto px-4 pt-28 pb-10">
+        <h1 class="text-2xl md:text-3xl font-bold text-white mb-1 text-center">Find Your Perfect Hotel</h1>
+        <p class="text-xs text-gray-300 text-center mb-8">Compare 2M+ hotels worldwide for the best rates.</p>
 
-    <!-- Hero Section -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-12">
-        <!-- Header -->
-        <div class="text-center mb-12">
-            <h1 class="text-4xl md:text-6xl font-bold text-white mb-4">
-                Find Your Perfect
-                <span class="bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">Hotel</span>
-            </h1>
-            <p class="text-xl text-white/80 max-w-2xl mx-auto">
-                Search thousands of hotels worldwide at the best prices
-            </p>
-        </div>
-
-        <!-- Search Form -->
-        <div class="max-w-5xl mx-auto">
-            <div class="bg-white rounded-2xl shadow-2xl p-6 md:p-8">
+        <div class="bg-white rounded-xl shadow-xl overflow-hidden max-w-4xl mx-auto">
+            <div class="p-4">
                 <form action="{{ route('hotels.search') }}" method="POST" id="hotelSearchForm">
                     @csrf
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-                        <!-- Destination -->
-                        <div class="col-span-1 md:col-span-2 lg:col-span-1">
-                            <label class="block text-gray-700 text-sm font-medium mb-2">Destination</label>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
+                        <div class="col-span-2 relative">
+                            <label class="text-[10px] font-semibold text-gray-400 uppercase mb-0.5 block">Destination</label>
                             <div class="relative">
-                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <i class="fas fa-map-marker-alt text-gray-400"></i>
-                                </div>
-                                <input 
-                                    type="text" 
-                                    name="destination" 
-                                    placeholder="City or Airport" 
-                                    class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
-                                    required
-                                    autocomplete="off"
-                                    id="hotel-destination"
-                                >
-                                <input type="hidden" name="city_code" id="city_code">
-                                <div class="city-suggestions absolute left-0 right-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg z-10 hidden" id="citySuggestions"></div>
+                                <i class="fas fa-map-marker-alt absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-300 text-[10px]"></i>
+                                <input type="text" name="destination" id="hs_dest" class="w-full pl-7 pr-2 py-2 border border-gray-200 rounded-lg text-xs text-gray-800 focus:ring-1 focus:ring-emerald-500 city-autocomplete" placeholder="City or region" autocomplete="off" required>
+                                <input type="hidden" name="city_code" id="hs_city_code">
                             </div>
+                            <div class="city-suggestions absolute z-50 w-full bg-white border border-gray-200 rounded-lg shadow-xl mt-1 hidden max-h-48 overflow-y-auto"></div>
                         </div>
-
-                        <!-- Check-in & Check-out -->
-                        <div class="col-span-1">
-                            <label class="block text-gray-700 text-sm font-medium mb-2">Check-in</label>
-                            <div class="relative">
-                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <i class="fas fa-calendar-alt text-gray-400"></i>
-                                </div>
-                                <input 
-                                    type="date" 
-                                    name="check_in_date" 
-                                    class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
-                                    required
-                                    min="{{ date('Y-m-d') }}"
-                                    id="check-in-date"
-                                >
-                            </div>
-                        </div>
-                        <div class="col-span-1">
-                            <label class="block text-gray-700 text-sm font-medium mb-2">Check-out</label>
-                            <div class="relative">
-                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <i class="fas fa-calendar-alt text-gray-400"></i>
-                                </div>
-                                <input 
-                                    type="date" 
-                                    name="check_out_date" 
-                                    class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
-                                    required
-                                    min="{{ date('Y-m-d', strtotime('+1 day')) }}"
-                                    id="check-out-date"
-                                >
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-                        <!-- Rooms -->
                         <div>
-                            <label class="block text-gray-700 text-sm font-medium mb-2">Rooms</label>
-                            <div class="relative">
-                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <i class="fas fa-door-open text-gray-400"></i>
-                                </div>
-                                <select 
-                                    name="rooms" 
-                                    class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 appearance-none"
-                                >
-                                    @for($i = 1; $i <= 8; $i++)
-                                        <option value="{{ $i }}">{{ $i }} {{ $i == 1 ? 'Room' : 'Rooms' }}</option>
-                                    @endfor
-                                </select>
-                                <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                    <i class="fas fa-chevron-down text-gray-400"></i>
-                                </div>
-                            </div>
+                            <label class="text-[10px] font-semibold text-gray-400 uppercase mb-0.5 block">Check-in</label>
+                            <input type="date" name="check_in_date" id="hs_checkin" class="w-full py-2 px-2.5 border border-gray-200 rounded-lg text-xs text-gray-800 focus:ring-1 focus:ring-emerald-500" required>
                         </div>
-
-                        <!-- Adults -->
                         <div>
-                            <label class="block text-gray-700 text-sm font-medium mb-2">Adults</label>
-                            <div class="relative">
-                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <i class="fas fa-user text-gray-400"></i>
-                                </div>
-                                <select 
-                                    name="adults" 
-                                    class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 appearance-none"
-                                >
-                                    @for($i = 1; $i <= 10; $i++)
-                                        <option value="{{ $i }}">{{ $i }} {{ $i == 1 ? 'Adult' : 'Adults' }}</option>
-                                    @endfor
-                                </select>
-                                <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                    <i class="fas fa-chevron-down text-gray-400"></i>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Children -->
-                        <div>
-                            <label class="block text-gray-700 text-sm font-medium mb-2">Children</label>
-                            <div class="relative">
-                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <i class="fas fa-child text-gray-400"></i>
-                                </div>
-                                <select 
-                                    name="children" 
-                                    id="children-select"
-                                    class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 appearance-none"
-                                >
-                                    @for($i = 0; $i <= 6; $i++)
-                                        <option value="{{ $i }}">{{ $i }} {{ $i == 1 ? 'Child' : 'Children' }}</option>
-                                    @endfor
-                                </select>
-                                <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                    <i class="fas fa-chevron-down text-gray-400"></i>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Search Button -->
-                        <div class="flex items-end">
-                            <button 
-                                type="submit" 
-                                class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 flex items-center justify-center"
-                                id="search-button"
-                            >
-                                <i class="fas fa-search mr-2"></i>
-                                <span>Search Hotels</span>
-                                <span class="ml-2 spinner hidden" id="search-spinner">
-                                    <i class="fas fa-spinner fa-spin"></i>
-                                </span>
-                            </button>
+                            <label class="text-[10px] font-semibold text-gray-400 uppercase mb-0.5 block">Check-out</label>
+                            <input type="date" name="check_out_date" id="hs_checkout" class="w-full py-2 px-2.5 border border-gray-200 rounded-lg text-xs text-gray-800 focus:ring-1 focus:ring-emerald-500" required>
                         </div>
                     </div>
-
-                    <div id="children-ages-container" class="hidden mb-6">
-                        <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                            <h4 class="text-gray-700 font-medium mb-3">Children Ages</h4>
-                            <p class="text-sm text-gray-600 mb-3">Please provide the age of each child for accurate pricing and availability.</p>
-                            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3" id="children-ages-inputs">
-                                <!-- Child age inputs will be dynamically inserted here -->
-                            </div>
-                        </div>
+                    <div class="grid grid-cols-3 gap-3 mb-3">
+                        <div><label class="text-[10px] font-semibold text-gray-400 uppercase mb-0.5 block">Rooms</label><select name="rooms" class="w-full py-2 px-2 border border-gray-200 rounded-lg text-xs text-gray-800">@for($i=1;$i<=5;$i++)<option value="{{$i}}">{{$i}}</option>@endfor</select></div>
+                        <div><label class="text-[10px] font-semibold text-gray-400 uppercase mb-0.5 block">Adults</label><select name="adults" class="w-full py-2 px-2 border border-gray-200 rounded-lg text-xs text-gray-800">@for($i=1;$i<=9;$i++)<option value="{{$i}}">{{$i}}</option>@endfor</select></div>
+                        <div><label class="text-[10px] font-semibold text-gray-400 uppercase mb-0.5 block">Children</label><select name="children" class="w-full py-2 px-2 border border-gray-200 rounded-lg text-xs text-gray-800">@for($i=0;$i<=5;$i++)<option value="{{$i}}">{{$i}}</option>@endfor</select></div>
                     </div>
-
-                    <!-- Advanced Options -->
-                    <div class="border-t border-gray-200 pt-4">
-                        <button 
-                            type="button"
-                            class="text-indigo-600 hover:text-indigo-800 text-sm font-medium flex items-center"
-                            id="toggle-advanced-options"
-                        >
-                            <i class="fas fa-sliders-h mr-2"></i>
-                            <span>Advanced Options</span>
-                            <i class="fas fa-chevron-down ml-2 text-xs transition-transform duration-300" id="advanced-chevron"></i>
-                        </button>
-                        
-                        <div class="mt-4 hidden" id="advanced-options">
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                <!-- Hotel Rating -->
-                                <div>
-                                    <label class="block text-gray-700 text-sm font-medium mb-2">Hotel Rating</label>
-                                    <div class="flex space-x-2">
-                                        @foreach(range(1, 5) as $stars)
-                                            <label class="star-rating-label flex items-center justify-center w-10 h-10 rounded-full border border-gray-300 cursor-pointer hover:bg-gray-50 transition">
-                                                <input type="checkbox" name="ratings[]" value="{{ $stars }}" class="sr-only star-rating-input">
-                                                <span class="text-gray-400 star-icon">{{ $stars }}★</span>
-                                            </label>
-                                        @endforeach
-                                    </div>
-                                </div>
-                                
-                                <!-- Price Range -->
-                                <div>
-                                    <label class="block text-gray-700 text-sm font-medium mb-2">Price Range (per night)</label>
-                                    <div class="flex items-center space-x-4">
-                                        <div class="relative flex-1">
-                                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                                <span class="text-gray-500">$</span>
-                                            </div>
-                                            <input 
-                                                type="number" 
-                                                name="price_min" 
-                                                placeholder="Min"
-                                                min="0" 
-                                                class="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                                            >
-                                        </div>
-                                        <span class="text-gray-500">-</span>
-                                        <div class="relative flex-1">
-                                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                                <span class="text-gray-500">$</span>
-                                            </div>
-                                            <input 
-                                                type="number" 
-                                                name="price_max" 
-                                                placeholder="Max"
-                                                min="0" 
-                                                class="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                                            >
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Search Radius -->
-                                <div>
-                                    <label class="block text-gray-700 text-sm font-medium mb-2">Search Radius (km)</label>
-                                    <div class="relative">
-                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                            <i class="fas fa-map-marker-alt text-gray-400"></i>
-                                        </div>
-                                        <input 
-                                            type="number" 
-                                            name="radius" 
-                                            value="5"
-                                            min="1"
-                                            max="50"
-                                            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                                        >
-                                    </div>
-                                    <p class="text-xs text-gray-500 mt-1">Distance from city center</p>
-                                </div>
-                            </div>
-                            
-                            <!-- Amenities -->
-                            <div class="mt-4">
-                                <label class="block text-gray-700 text-sm font-medium mb-2">Amenities</label>
-                                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                                    <label class="inline-flex items-center">
-                                        <input type="checkbox" name="amenities[]" value="WIFI" class="rounded text-indigo-600 focus:ring-indigo-500">
-                                        <span class="ml-2 text-sm text-gray-700">Free WiFi</span>
-                                    </label>
-                                    <label class="inline-flex items-center">
-                                        <input type="checkbox" name="amenities[]" value="POOL" class="rounded text-indigo-600 focus:ring-indigo-500">
-                                        <span class="ml-2 text-sm text-gray-700">Swimming Pool</span>
-                                    </label>
-                                    <label class="inline-flex items-center">
-                                        <input type="checkbox" name="amenities[]" value="SPA" class="rounded text-indigo-600 focus:ring-indigo-500">
-                                        <span class="ml-2 text-sm text-gray-700">Spa</span>
-                                    </label>
-                                    <label class="inline-flex items-center">
-                                        <input type="checkbox" name="amenities[]" value="RESTAURANT" class="rounded text-indigo-600 focus:ring-indigo-500">
-                                        <span class="ml-2 text-sm text-gray-700">Restaurant</span>
-                                    </label>
-                                    <label class="inline-flex items-center">
-                                        <input type="checkbox" name="amenities[]" value="PARKING" class="rounded text-indigo-600 focus:ring-indigo-500">
-                                        <span class="ml-2 text-sm text-gray-700">Parking</span>
-                                    </label>
-                                    <label class="inline-flex items-center">
-                                        <input type="checkbox" name="amenities[]" value="PETS" class="rounded text-indigo-600 focus:ring-indigo-500">
-                                        <span class="ml-2 text-sm text-gray-700">Pet Friendly</span>
-                                    </label>
-                                    <label class="inline-flex items-center">
-                                        <input type="checkbox" name="amenities[]" value="GYM" class="rounded text-indigo-600 focus:ring-indigo-500">
-                                        <span class="ml-2 text-sm text-gray-700">Gym</span>
-                                    </label>
-                                    <label class="inline-flex items-center">
-                                        <input type="checkbox" name="amenities[]" value="AC" class="rounded text-indigo-600 focus:ring-indigo-500">
-                                        <span class="ml-2 text-sm text-gray-700">Air Conditioning</span>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2"><i class="fas fa-search text-[10px]"></i> Search Hotels</button>
                 </form>
             </div>
         </div>
-        
-        <!-- Popular Destinations Section -->
-        <div class="mt-16">
-            <h2 class="text-2xl font-bold text-white mb-6">Popular Destinations</h2>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <!-- Card 1: New York -->
-                <div class="popular-destination-card bg-gradient-to-br from-black/60 to-black/30 backdrop-blur-sm p-4 rounded-lg cursor-pointer hover:scale-105 transition-transform duration-300 border border-white/10" data-city-code="NYC">
-                    <h3 class="text-white font-bold mb-1">New York</h3>
-                    <div class="flex justify-between items-center">
-                        <span class="text-white/70 text-sm">5,382 properties</span>
-                        <span class="text-yellow-400 text-sm font-semibold">Explore</span>
-                    </div>
+    </div>
+</section>
+
+{{-- ===== FEATURED HOTELS ===== --}}
+<section class="py-10 bg-white">
+    <div class="max-w-5xl mx-auto px-4">
+        <div class="flex items-end justify-between mb-6">
+            <div><span class="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">Top Picks</span><h2 class="text-lg font-bold text-gray-900 mt-0.5">Featured Hotels in East Africa</h2></div>
+        </div>
+        @php $hotels = [
+            ['name'=>'Zanzibar Serena','city'=>'Zanzibar','stars'=>5,'price'=>185,'img'=>'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=260&fit=crop','rating'=>'9.2'],
+            ['name'=>'Sarova Whitesands','city'=>'Mombasa','stars'=>4,'price'=>120,'img'=>'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=400&h=260&fit=crop','rating'=>'8.7'],
+            ['name'=>'Kigali Marriott','city'=>'Kigali','stars'=>5,'price'=>160,'img'=>'https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=400&h=260&fit=crop','rating'=>'9.0'],
+            ['name'=>'Hyatt Regency','city'=>'Addis Ababa','stars'=>5,'price'=>140,'img'=>'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=400&h=260&fit=crop','rating'=>'8.9'],
+        ]; @endphp
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            @foreach($hotels as $h)
+            <div class="group bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+                <div class="relative h-32 overflow-hidden">
+                    <img src="{{ $h['img'] }}" alt="{{ $h['name'] }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy">
+                    <span class="absolute top-2 right-2 bg-white/90 text-[10px] font-bold text-gray-800 px-1.5 py-0.5 rounded"><i class="fas fa-star text-amber-400 text-[8px]"></i> {{ $h['rating'] }}</span>
                 </div>
-                
-                <!-- Card 2: London -->
-                <div class="popular-destination-card bg-gradient-to-br from-black/60 to-black/30 backdrop-blur-sm p-4 rounded-lg cursor-pointer hover:scale-105 transition-transform duration-300 border border-white/10" data-city-code="LON">
-                    <h3 class="text-white font-bold mb-1">London</h3>
-                    <div class="flex justify-between items-center">
-                        <span class="text-white/70 text-sm">4,209 properties</span>
-                        <span class="text-yellow-400 text-sm font-semibold">Explore</span>
-                    </div>
-                </div>
-                
-                <!-- Card 3: Paris -->
-                <div class="popular-destination-card bg-gradient-to-br from-black/60 to-black/30 backdrop-blur-sm p-4 rounded-lg cursor-pointer hover:scale-105 transition-transform duration-300 border border-white/10" data-city-code="PAR">
-                    <h3 class="text-white font-bold mb-1">Paris</h3>
-                    <div class="flex justify-between items-center">
-                        <span class="text-white/70 text-sm">3,927 properties</span>
-                        <span class="text-yellow-400 text-sm font-semibold">Explore</span>
-                    </div>
-                </div>
-                
-                <!-- Card 4: Dubai -->
-                <div class="popular-destination-card bg-gradient-to-br from-black/60 to-black/30 backdrop-blur-sm p-4 rounded-lg cursor-pointer hover:scale-105 transition-transform duration-300 border border-white/10" data-city-code="DXB">
-                    <h3 class="text-white font-bold mb-1">Dubai</h3>
-                    <div class="flex justify-between items-center">
-                        <span class="text-white/70 text-sm">1,845 properties</span>
-                        <span class="text-yellow-400 text-sm font-semibold">Explore</span>
+                <div class="p-2.5">
+                    <div class="flex gap-0.5 mb-0.5">@for($s=0;$s<$h['stars'];$s++)<i class="fas fa-star text-amber-400 text-[7px]"></i>@endfor</div>
+                    <h3 class="text-xs font-semibold text-gray-900 truncate">{{ $h['name'] }}</h3>
+                    <p class="text-[10px] text-gray-400 mb-2"><i class="fas fa-map-marker-alt mr-0.5"></i>{{ $h['city'] }}</p>
+                    <div class="flex items-end justify-between">
+                        <div><span class="text-[10px] text-gray-400">From</span><div class="text-sm font-bold text-gray-900">${{ $h['price'] }}<span class="text-[10px] font-normal text-gray-400">/night</span></div></div>
                     </div>
                 </div>
             </div>
+            @endforeach
         </div>
     </div>
-</div>
+</section>
 
-<!-- Features Section -->
-<section class="py-16 bg-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 class="text-3xl font-bold text-gray-900 text-center mb-12">Why Book Hotels With Us</h2>
-        
-        <div class="grid md:grid-cols-3 gap-10">
-            <!-- Feature 1 -->
-            <div class="text-center">
-                <div class="bg-indigo-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                    <i class="fas fa-search text-indigo-600 text-2xl"></i>
-                </div>
-                <h3 class="text-xl font-bold text-gray-800 mb-2">Comprehensive Search</h3>
-                <p class="text-gray-600">Search thousands of hotels worldwide with our powerful search engine that finds the best deals.</p>
-            </div>
-            
-            <!-- Feature 2 -->
-            <div class="text-center">
-                <div class="bg-indigo-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                    <i class="fas fa-tags text-indigo-600 text-2xl"></i>
-                </div>
-                <h3 class="text-xl font-bold text-gray-800 mb-2">Best Price Guarantee</h3>
-                <p class="text-gray-600">Find a lower price? We'll match it and give you an additional discount on your booking.</p>
-            </div>
-            
-            <!-- Feature 3 -->
-            <div class="text-center">
-                <div class="bg-indigo-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                    <i class="fas fa-shield-alt text-indigo-600 text-2xl"></i>
-                </div>
-                <h3 class="text-xl font-bold text-gray-800 mb-2">Secure Booking</h3>
-                <p class="text-gray-600">Book with confidence knowing that your personal and payment information is protected.</p>
+{{-- ===== CTA ===== --}}
+<section class="py-10 bg-gray-50">
+    <div class="max-w-5xl mx-auto px-4">
+        <div class="flex flex-col md:flex-row-reverse items-center gap-8 bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100">
+            <div class="md:w-1/2"><img src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=600&h=400&fit=crop" alt="Hotel stay" class="w-full h-52 md:h-64 object-cover" loading="lazy"></div>
+            <div class="md:w-1/2 p-6">
+                <span class="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">Best Price Guarantee</span>
+                <h2 class="text-xl font-bold text-gray-900 mt-1 mb-2">Book With Confidence</h2>
+                <p class="text-xs text-gray-500 leading-relaxed mb-3">Free cancellation on most rooms. Secure payment via M-Pesa and card. Instant confirmation.</p>
+                <ul class="space-y-1.5 mb-4">
+                    <li class="flex items-center gap-2 text-xs text-gray-600"><i class="fas fa-check-circle text-emerald-500 text-[10px]"></i> Free cancellation on select rooms</li>
+                    <li class="flex items-center gap-2 text-xs text-gray-600"><i class="fas fa-check-circle text-emerald-500 text-[10px]"></i> Price match guarantee</li>
+                    <li class="flex items-center gap-2 text-xs text-gray-600"><i class="fas fa-check-circle text-emerald-500 text-[10px]"></i> 24/7 customer support</li>
+                </ul>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Travel Tips Section -->
-<section class="py-16 bg-gray-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 class="text-3xl font-bold text-gray-900 text-center mb-12">Hotel Booking Tips</h2>
-        
-        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <!-- Tip 1 -->
-            <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
-                <div class="text-indigo-600 text-2xl mb-4">
-                    <i class="fas fa-calendar-alt"></i>
-                </div>
-                <h3 class="font-bold text-lg text-gray-800 mb-2">Book in Advance</h3>
-                <p class="text-gray-600 text-sm">For the best rates, book your hotel at least 30 days in advance, especially during peak travel seasons.</p>
-            </div>
-            
-            <!-- Tip 2 -->
-            <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
-                <div class="text-indigo-600 text-2xl mb-4">
-                    <i class="fas fa-map-marker-alt"></i>
-                </div>
-                <h3 class="font-bold text-lg text-gray-800 mb-2">Check the Location</h3>
-                <p class="text-gray-600 text-sm">Consider proximity to attractions and public transportation when selecting a hotel to save time and money.</p>
-            </div>
-            
-            <!-- Tip 3 -->
-            <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
-                <div class="text-indigo-600 text-2xl mb-4">
-                    <i class="fas fa-star"></i>
-                </div>
-                <h3 class="font-bold text-lg text-gray-800 mb-2">Read Reviews</h3>
-                <p class="text-gray-600 text-sm">Check recent guest reviews for insights about the property that might not be mentioned in the official description.</p>
-            </div>
-            
-            <!-- Tip 4 -->
-            <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
-                <div class="text-indigo-600 text-2xl mb-4">
-                    <i class="fas fa-percentage"></i>
-                </div>
-                <h3 class="font-bold text-lg text-gray-800 mb-2">Compare Packages</h3>
-                <p class="text-gray-600 text-sm">Sometimes booking room packages with meals or other amenities can save you more than booking separately.</p>
-            </div>
+{{-- ===== POPULAR DESTINATIONS ===== --}}
+<section class="py-10 bg-white">
+    <div class="max-w-5xl mx-auto px-4">
+        <h2 class="text-lg font-bold text-gray-900 mb-6">Popular Hotel Destinations</h2>
+        @php $dests = [
+            ['city'=>'Mombasa','code'=>'MBA','hotels'=>'320+','img'=>'https://images.unsplash.com/photo-1596005554384-d293674c91d7?w=300&h=200&fit=crop'],
+            ['city'=>'Zanzibar','code'=>'ZNZ','hotels'=>'250+','img'=>'https://images.unsplash.com/photo-1586861635167-e5223aadc9fe?w=300&h=200&fit=crop'],
+            ['city'=>'Nairobi','code'=>'NBO','hotels'=>'580+','img'=>'https://images.unsplash.com/photo-1611348524140-53c9a25263d6?w=300&h=200&fit=crop'],
+            ['city'=>'Kampala','code'=>'EBB','hotels'=>'180+','img'=>'https://images.unsplash.com/photo-1619122753925-a01d8bb38c20?w=300&h=200&fit=crop'],
+            ['city'=>'Kigali','code'=>'KGL','hotels'=>'140+','img'=>'https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=300&h=200&fit=crop'],
+            ['city'=>'Dar es Salaam','code'=>'DAR','hotels'=>'290+','img'=>'https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=300&h=200&fit=crop'],
+        ]; @endphp
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+            @foreach($dests as $d)
+            <a href="{{ route('hotels.search.form') }}?dest={{ $d['code'] }}" class="relative h-32 rounded-xl overflow-hidden group block">
+                <img src="{{ $d['img'] }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                <div class="absolute bottom-2.5 left-2.5"><h3 class="text-xs font-bold text-white">{{ $d['city'] }}</h3><p class="text-[9px] text-white/70">{{ $d['hotels'] }} hotels</p></div>
+            </a>
+            @endforeach
         </div>
     </div>
 </section>
 
+{{-- ===== FAQ ===== --}}
+<section class="py-10 bg-gray-50">
+    <div class="max-w-2xl mx-auto px-4">
+        <h2 class="text-lg font-bold text-gray-900 text-center mb-6">Hotel Booking FAQs</h2>
+        @php $faqs = [
+            ['q'=>'When will I be charged?','a'=>'Most hotels charge at check-in. Some special rate rooms require a deposit at the time of booking.'],
+            ['q'=>'Can I cancel my reservation?','a'=>'Cancellation policies vary by hotel and rate type. Free cancellation is available on most flexible-rate rooms.'],
+            ['q'=>'What is included in my room rate?','a'=>'Room rate typically includes taxes. Extra services like breakfast, parking, or Wi-Fi depend on the hotel and rate selected.'],
+            ['q'=>'How do I get my booking confirmation?','a'=>'You will receive an instant email with your confirmation details right after payment.'],
+            ['q'=>'Can I request early check-in or late check-out?','a'=>'You can add a special request during the booking process. The hotel will do their best to accommodate.'],
+        ]; @endphp
+        <div class="space-y-2">
+            @foreach($faqs as $faq)
+            <div class="border border-gray-200 rounded-lg bg-white overflow-hidden">
+                <button class="faq-toggle w-full flex items-center justify-between p-3 text-left hover:bg-gray-50 transition-colors" onclick="toggleFaq(this)">
+                    <span class="text-xs font-semibold text-gray-900 pr-3">{{ $faq['q'] }}</span>
+                    <i class="fas fa-chevron-down text-gray-300 text-[10px] transition-transform duration-200 shrink-0"></i>
+                </button>
+                <div class="faq-content hidden px-3 pb-3"><p class="text-[11px] text-gray-500 leading-relaxed">{{ $faq['a'] }}</p></div>
+            </div>
+            @endforeach
+        </div>
+    </div>
+</section>
+
+<section class="py-10 bg-emerald-600">
+    <div class="max-w-xl mx-auto px-4 text-center">
+        <h2 class="text-base font-bold text-white mb-1">Hotel Deal Alerts</h2>
+        <p class="text-[11px] text-emerald-100 mb-4">Get notified when prices drop for your favourite destinations.</p>
+        <form class="flex gap-2" onsubmit="event.preventDefault(); alert('Subscribed!'); this.reset();">
+            <input type="email" placeholder="Your email" class="flex-1 px-3 py-2 rounded-lg text-xs text-gray-800 focus:ring-2 focus:ring-amber-400 focus:outline-none" required>
+            <button type="submit" class="bg-amber-500 hover:bg-amber-600 text-white text-xs font-semibold px-5 py-2 rounded-lg transition-colors whitespace-nowrap">Subscribe</button>
+        </form>
+    </div>
+</section>
 @endsection
 
 @push('scripts')
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Set minimum dates for check-in and check-out
-    const today = new Date();
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    
-    const checkInDateInput = document.getElementById('check-in-date');
-    const checkOutDateInput = document.getElementById('check-out-date');
-    
-    // Format dates as YYYY-MM-DD for input value
-    const formatDate = (date) => {
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
-    };
-    
-    checkInDateInput.min = formatDate(today);
-    checkOutDateInput.min = formatDate(tomorrow);
-    
-    // Set default values if none selected
-    if (!checkInDateInput.value) {
-        checkInDateInput.value = formatDate(today);
-    }
-    
-    if (!checkOutDateInput.value) {
-        checkOutDateInput.value = formatDate(tomorrow);
-    }
-    
-    // Update check-out min date when check-in changes
-    checkInDateInput.addEventListener('change', function() {
-        const newCheckInDate = new Date(this.value);
-        const newMinCheckOutDate = new Date(newCheckInDate);
-        newMinCheckOutDate.setDate(newMinCheckOutDate.getDate() + 1);
-        
-        checkOutDateInput.min = formatDate(newMinCheckOutDate);
-        
-        // If current check-out date is before new min date, update it
-        const currentCheckOutDate = new Date(checkOutDateInput.value);
-        if (currentCheckOutDate <= newCheckInDate) {
-            checkOutDateInput.value = formatDate(newMinCheckOutDate);
-        }
-    });
-    
-    // Toggle advanced options
-    const advancedOptionsToggle = document.getElementById('toggle-advanced-options');
-    const advancedOptionsPanel = document.getElementById('advanced-options');
-    const advancedChevron = document.getElementById('advanced-chevron');
-    
-    advancedOptionsToggle.addEventListener('click', function() {
-        advancedOptionsPanel.classList.toggle('hidden');
-        advancedChevron.classList.toggle('transform');
-        advancedChevron.classList.toggle('rotate-180');
-    });
-    
-    // Star rating selection
-    const starLabels = document.querySelectorAll('.star-rating-label');
-    starLabels.forEach(label => {
-        label.addEventListener('click', function() {
-            const input = this.querySelector('.star-rating-input');
-            const starIcon = this.querySelector('.star-icon');
-            
-            if (input.checked) {
-                this.classList.add('bg-indigo-500');
-                this.classList.add('border-indigo-500');
-                starIcon.classList.add('text-white');
-                starIcon.classList.remove('text-gray-400');
-            } else {
-                this.classList.remove('bg-indigo-500');
-                this.classList.remove('border-indigo-500');
-                starIcon.classList.remove('text-white');
-                starIcon.classList.add('text-gray-400');
-            }
-        });
-    });
-    
-    // Children ages inputs
-    const childrenSelect = document.getElementById('children-select');
-    const childrenAgesContainer = document.getElementById('children-ages-container');
-    const childrenAgesInputs = document.getElementById('children-ages-inputs');
-    
-    childrenSelect.addEventListener('change', function() {
-        const numChildren = parseInt(this.value);
-        
-        if (numChildren > 0) {
-            childrenAgesContainer.classList.remove('hidden');
-            childrenAgesInputs.innerHTML = '';
-            
-            for (let i = 0; i < numChildren; i++) {
-                const ageInput = document.createElement('div');
-                ageInput.innerHTML = `
-                    <label class="block text-gray-700 text-xs font-medium mb-1">Child ${i + 1} Age</label>
-                    <select name="child_ages[]" class="w-full pl-3 pr-8 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 appearance-none text-sm" required>
-                        <option value="" disabled selected>Select age</option>
-                        ${Array.from({length: 18}, (_, j) => `<option value="${j}">${j} ${j === 1 ? 'year' : 'years'}</option>`).join('')}
-                    </select>
-                `;
-                childrenAgesInputs.appendChild(ageInput);
-            }
-        } else {
-            childrenAgesContainer.classList.add('hidden');
-        }
-    });
-    
-    // City search autocomplete
-    const destinationInput = document.getElementById('hotel-destination');
-    const cityCodeInput = document.getElementById('city_code');
-    const citySuggestions = document.getElementById('citySuggestions');
-    let debounceTimer;
-    
-    destinationInput.addEventListener('input', function() {
-        clearTimeout(debounceTimer);
-        const query = this.value.trim();
-        
-        if (query.length < 2) {
-            citySuggestions.classList.add('hidden');
-            return;
-        }
-        
-        debounceTimer = setTimeout(() => {
-            fetch(`/api/airports/locations/search?q=${encodeURIComponent(query)}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data && data.length > 0) {
-                        citySuggestions.innerHTML = '';
-                        citySuggestions.classList.remove('hidden');
-                        
-                        data.forEach(item => {
-                            const suggestion = document.createElement('div');
-                            suggestion.className = 'py-2 px-4 hover:bg-indigo-50 cursor-pointer flex items-center';
-                            suggestion.innerHTML = `
-                                <div class="mr-3 text-gray-400"><i class="fas fa-${item.type === 'AIRPORT' ? 'plane' : 'building'}"></i></div>
-                                <div>
-                                    <div class="font-medium">${item.name}</div>
-                                    <div class="text-xs text-gray-500">${item.address.cityName}, ${item.address.countryName}</div>
-                                </div>
-                            `;
-                            suggestion.addEventListener('click', function() {
-                                destinationInput.value = item.name;
-                                cityCodeInput.value = item.iataCode || item.cityCode;
-                                citySuggestions.classList.add('hidden');
-                            });
-                            citySuggestions.appendChild(suggestion);
-                        });
-                    } else {
-                        citySuggestions.innerHTML = '<div class="py-2 px-4 text-gray-500">No results found</div>';
-                        citySuggestions.classList.remove('hidden');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error searching locations:', error);
-                });
-        }, 300);
-    });
-    
-    // Hide suggestions when clicking outside
-    document.addEventListener('click', function(e) {
-        if (!destinationInput.contains(e.target) && !citySuggestions.contains(e.target)) {
-            citySuggestions.classList.add('hidden');
-        }
-    });
-    
-    // Popular destination cards
-    const popularDestinationCards = document.querySelectorAll('.popular-destination-card');
-    popularDestinationCards.forEach(card => {
-        card.addEventListener('click', function() {
-            const cityCode = this.dataset.cityCode;
-            
-            // Set destination in the search form
-            let cityName = this.querySelector('h3').innerText;
-            destinationInput.value = cityName;
-            cityCodeInput.value = cityCode;
-            
-            // Scroll to search form
-            document.getElementById('hotelSearchForm').scrollIntoView({ behavior: 'smooth' });
-        });
-    });
-    
-    // Form submission
-    const searchForm = document.getElementById('hotelSearchForm');
-    const searchButton = document.getElementById('search-button');
-    const searchSpinner = document.getElementById('search-spinner');
-    
-    searchForm.addEventListener('submit', function(e) {
-        // Validation
-        if (checkInDateInput.value >= checkOutDateInput.value) {
-            e.preventDefault();
-            alert('Check-out date must be after check-in date');
-            return;
-        }
-        
-        if (!cityCodeInput.value) {
-            e.preventDefault();
-            alert('Please select a valid destination from the suggestions');
-            return;
-        }
-        
-        // Show loading state
-        searchButton.disabled = true;
-        searchSpinner.classList.remove('hidden');
-    });
+function toggleFaq(btn){
+    var c=btn.nextElementSibling,ic=btn.querySelector('i'),open=!c.classList.contains('hidden');
+    document.querySelectorAll('.faq-content').forEach(function(x){x.classList.add('hidden');});
+    document.querySelectorAll('.faq-toggle i').forEach(function(x){x.style.transform='rotate(0)';});
+    if(!open){c.classList.remove('hidden');ic.style.transform='rotate(180deg)';}
+}
+document.addEventListener('DOMContentLoaded',function(){
+    var tmr=new Date();tmr.setDate(tmr.getDate()+1);var nw=new Date();nw.setDate(nw.getDate()+3);
+    function fmt(d){return d.toISOString().split('T')[0];}
+    var ci=document.getElementById('hs_checkin'),co=document.getElementById('hs_checkout');
+    if(ci&&!ci.value){ci.value=fmt(tmr);ci.min=fmt(tmr);}
+    if(co&&!co.value){co.value=fmt(nw);co.min=fmt(nw);}
+    initCityAutocomplete();
 });
+function initCityAutocomplete(){
+    var cache={};
+    document.querySelectorAll('.city-autocomplete').forEach(function(input){
+        var parent=input.closest('.relative').parentElement;
+        var sug=parent.querySelector('.city-suggestions');
+        var hid=parent.querySelector('input[type="hidden"]');
+        var to;
+        input.addEventListener('input',function(){
+            clearTimeout(to);var q=this.value.trim();
+            if(q.length<2){sug.classList.add('hidden');return;}
+            to=setTimeout(function(){
+                if(cache[q]){renderSuggestions(cache[q],sug,input,hid);return;}
+                fetch('/api/airports/search?q='+encodeURIComponent(q)).then(function(r){return r.json();}).then(function(d){cache[q]=d;renderSuggestions(d,sug,input,hid);}).catch(function(){sug.classList.add('hidden');});
+            },200);
+        });
+        document.addEventListener('click',function(e){if(!input.contains(e.target)&&!sug.contains(e.target))sug.classList.add('hidden');});
+    });
+}
+function renderSuggestions(data,container,input,hidden){
+    if(!data||!data.length){container.classList.add('hidden');return;}
+    container.innerHTML='';var seen={};
+    data.forEach(function(item){
+        var city=item.city||item.name||'',code=item.iata_code||item.iataCode||item.code||'',country=item.country||'';
+        if(!city||seen[code])return;seen[code]=true;
+        var d=document.createElement('div');d.className='px-3 py-2 hover:bg-emerald-50 cursor-pointer flex justify-between items-center border-b border-gray-50 text-xs';
+        d.innerHTML='<span class="font-medium text-gray-900">'+city+'<span class="text-gray-400 ml-1">'+country+'</span></span><span class="font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded text-[10px]">'+code+'</span>';
+        d.addEventListener('click',function(){input.value=city;hidden.value=code;container.classList.add('hidden');});
+        container.appendChild(d);
+    });
+    container.classList.remove('hidden');
+}
 </script>
 @endpush
