@@ -1465,9 +1465,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/flights/booking/{booking}/payment', [FlightBookingController::class, 'showPayment'])->name('flights.booking.payment');
     Route::post('/flights/booking/{booking}/payment', [FlightBookingController::class, 'processPayment'])->name('flights.payment.process');
     
-    // Hotel Booking Routes
-    Route::get('/hotels/search', [HotelBookingController::class, 'search'])->name('hotels.search');
-    Route::post('/hotels/search', [HotelBookingController::class, 'searchHotels'])->name('hotels.search.results');
+    // Hotel Booking Routes (user dashboard - public search is at /hotels/search with name hotels.search.form)
+    Route::get('/user/hotels/search', [HotelBookingController::class, 'search'])->name('user.hotels.search');
+    Route::post('/user/hotels/search', [HotelBookingController::class, 'searchHotels'])->name('user.hotels.search.results');
     Route::post('/hotels/book', [HotelBookingController::class, 'bookHotel'])->name('hotels.book');
     Route::get('/hotels/booking/{booking}/payment', [HotelBookingController::class, 'showPayment'])->name('hotels.booking.payment');
     Route::post('/hotels/booking/{booking}/payment', [HotelBookingController::class, 'processPayment'])->name('hotels.payment.process');
