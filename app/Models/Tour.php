@@ -12,6 +12,13 @@ class Tour extends Model
 {
     use HasFactory;
 
+    // MySQL doesn't allow a DB-level DEFAULT on JSON columns, so these are
+    // enforced here instead (see the create_tours_table migration).
+    protected $attributes = [
+        'languages' => '["English"]',
+        'available_days' => '["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]',
+    ];
+
     protected $fillable = [
         'tour_reference',
         'name',
@@ -150,6 +157,11 @@ class Tour extends Model
             return $this->original_price - ($this->original_price * $this->discount_percent / 100);
         }
         return $this->price;
+    }
+
+    public function getHasDiscountAttribute()
+    {
+        return (bool) ($this->original_price && $this->discount_percent > 0);
     }
 
     public function getFormattedPriceAttribute()

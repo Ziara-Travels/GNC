@@ -71,18 +71,18 @@
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <h6 class="text-muted">Tour Date</h6>
-                                        <p class="mb-0">{{ isset($booking->tour_date) ? $booking->tour_date->format('M d, Y') : 'N/A' }}</p>
+                                        <p class="mb-0">{{ $booking->activity_date ? $booking->activity_date->format('M d, Y') : 'N/A' }}</p>
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <h6 class="text-muted">Tour Time</h6>
-                                        <p class="mb-0">{{ isset($booking->tour_time) ? $booking->tour_time : 'As scheduled' }}</p>
+                                        <p class="mb-0">{{ $booking->activity_time ?? 'As scheduled' }}</p>
                                     </div>
                                 </div>
-                                
+
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <h6 class="text-muted">Number of Participants</h6>
-                                        <p class="mb-0">{{ $booking->participants ?? $booking->adults ?? 1 }}</p>
+                                        <p class="mb-0">{{ $booking->traveler_count ?? $booking->adults ?? 1 }}</p>
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <h6 class="text-muted">Payment Status</h6>

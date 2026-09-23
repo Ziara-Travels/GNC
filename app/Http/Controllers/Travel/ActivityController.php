@@ -5,20 +5,32 @@ namespace App\Http\Controllers\Travel;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\TourBooking;
-use Illuminate\Support\Str;
+use App\Models\Tour;
+use App\Models\Booking;
+use App\Services\BookingService;
 
 /**
- * Activity Controller - handles tour/activity bookings and East African activities
+ * Activity Controller - handles tour/activity bookings and East African activities.
+ *
+ * Bookings are stored as generic Booking records (booking_type 'tour'/'activity'),
+ * created via BookingService, the same path flights and hotels use.
  */
 class ActivityController extends Controller
 {
+    protected $bookingService;
+
+    public function __construct(BookingService $bookingService)
+    {
+        $this->bookingService = $bookingService;
+    }
+
     /**
      * Show payment page for a tour booking
      */
     public function payment($reference)
     {
-        $booking = TourBooking::where('booking_reference', $reference)
+        $booking = Booking::tours()
+            ->where('booking_reference', $reference)
             ->where('user_id', Auth::id())
             ->firstOrFail();
 
@@ -32,15 +44,21 @@ class ActivityController extends Controller
     {
         $request->validate([
             'booking_reference' => 'required|string',
-            'payment_method'    => 'required|string',
+            'payment_method'    => 'required|in:mpesa,card,bank_transfer',
         ]);
 
-        $booking = TourBooking::where('booking_reference', $request->booking_reference)
+        $booking = Booking::tours()
+            ->where('booking_reference', $request->booking_reference)
             ->where('user_id', Auth::id())
             ->firstOrFail();
 
-        // Placeholder: update status
-        $booking->update(['status' => 'confirmed', 'payment_status' => 'paid']);
+        $paymentData = [
+            'payment_method' => $request->payment_method,
+            'transaction_id' => 'TOUR-' . strtoupper(uniqid()),
+            'provider_response' => $request->except(['_token', 'card_number', 'cvv']),
+        ];
+
+        $this->bookingService->processPayment($booking, $paymentData, Auth::user());
 
         return redirect()->route('tours.confirmation', ['reference' => $booking->booking_reference])
             ->with('success', 'Payment processed successfully.');
@@ -51,7 +69,8 @@ class ActivityController extends Controller
      */
     public function confirmation($reference)
     {
-        $booking = TourBooking::where('booking_reference', $reference)
+        $booking = Booking::tours()
+            ->where('booking_reference', $reference)
             ->where('user_id', Auth::id())
             ->firstOrFail();
 
@@ -63,11 +82,13 @@ class ActivityController extends Controller
      */
     public function myBookings()
     {
-        $bookings = TourBooking::where('user_id', Auth::id())
+        $tourBookings = Booking::tours()
+            ->with('tour')
+            ->where('user_id', Auth::id())
             ->orderByDesc('created_at')
-            ->paginate(15);
+            ->get();
 
-        return view('tours.my-bookings', compact('bookings'));
+        return view('tours.my-bookings', compact('tourBookings'));
     }
 
     /**
@@ -75,11 +96,16 @@ class ActivityController extends Controller
      */
     public function cancel(Request $request, $reference)
     {
-        $booking = TourBooking::where('booking_reference', $reference)
+        $booking = Booking::tours()
+            ->where('booking_reference', $reference)
             ->where('user_id', Auth::id())
             ->firstOrFail();
 
-        $booking->update(['status' => 'cancelled']);
+        $booking->update([
+            'status' => 'cancelled',
+            'booking_status' => 'cancelled',
+            'cancelled_at' => now(),
+        ]);
 
         return redirect()->route('tours.my-bookings')
             ->with('success', 'Booking cancelled successfully.');
@@ -100,90 +126,41 @@ class ActivityController extends Controller
     }
 
     /**
-     * Get East African tours
+     * Get East African tours (multi-day) from the real tours catalog
      */
     public function getEastAfricanTours(Request $request)
     {
-        $tours = [
-            [
-                'id'          => 'tour-masai-001',
-                'name'        => 'Masai Mara Safari',
-                'destination' => 'Masai Mara',
-                'country'     => 'Kenya',
-                'price'       => 45000,
-                'currency'    => 'KES',
-                'duration'    => '3 days',
-                'category'    => 'Safari',
-                'rating'      => 4.9,
-                'image'       => 'masai-mara.jpg',
-                'description' => 'Experience the Great Migration in the world-famous Masai Mara.',
-            ],
-            [
-                'id'          => 'tour-serengeti-002',
-                'name'        => 'Serengeti Experience',
-                'destination' => 'Serengeti',
-                'country'     => 'Tanzania',
-                'price'       => 55000,
-                'currency'    => 'KES',
-                'duration'    => '4 days',
-                'category'    => 'Safari',
-                'rating'      => 4.8,
-                'image'       => 'serengeti.jpg',
-                'description' => 'Explore the endless plains of the Serengeti National Park.',
-            ],
-            [
-                'id'          => 'tour-gorilla-003',
-                'name'        => 'Gorilla Trekking Rwanda',
-                'destination' => 'Volcanoes NP',
-                'country'     => 'Rwanda',
-                'price'       => 150000,
-                'currency'    => 'KES',
-                'duration'    => '2 days',
-                'category'    => 'Wildlife',
-                'rating'      => 5.0,
-                'image'       => 'rwanda-gorillas.jpg',
-                'description' => 'Trek through misty forests to encounter mountain gorillas.',
-            ],
-        ];
-
-        return response()->json($tours);
+        return response()->json($this->catalogResponse(false));
     }
 
     /**
-     * Get East African activities
+     * Get East African activities (short/day activities) from the real tours catalog
      */
     public function getEastAfricanActivities(Request $request)
     {
-        $activities = [
-            [
-                'id'          => 'act-zanzibar-001',
-                'name'        => 'Zanzibar Spice Tour',
-                'destination' => 'Zanzibar',
-                'country'     => 'Tanzania',
-                'price'       => 3500,
-                'currency'    => 'KES',
-                'duration'    => '4 hours',
-                'category'    => 'Cultural',
-                'rating'      => 4.7,
-                'image'       => 'zanzibar-spice.jpg',
-                'description' => 'Discover the aromatic spice plantations of Zanzibar.',
-            ],
-            [
-                'id'          => 'act-nile-002',
-                'name'        => 'White Water Rafting - Nile',
-                'destination' => 'Jinja',
-                'country'     => 'Uganda',
-                'price'       => 8500,
-                'currency'    => 'KES',
-                'duration'    => '1 day',
-                'category'    => 'Adventure',
-                'rating'      => 4.8,
-                'image'       => 'nile-rafting.jpg',
-                'description' => 'Experience thrilling rapids at the source of the Nile.',
-            ],
-        ];
+        return response()->json($this->catalogResponse(true));
+    }
 
-        return response()->json($activities);
+    private function catalogResponse($shortActivities)
+    {
+        $query = Tour::active();
+        $shortActivities ? $query->whereNotNull('duration_hours') : $query->whereNull('duration_hours');
+
+        return $query->get()->map(function (Tour $tour) {
+            return [
+                'id'          => $tour->id,
+                'name'        => $tour->name,
+                'destination' => $tour->city,
+                'country'     => $tour->country,
+                'price'       => (float) $tour->price,
+                'currency'    => $tour->currency,
+                'duration'    => $tour->duration,
+                'category'    => $tour->category,
+                'rating'      => (float) $tour->rating,
+                'image'       => $tour->main_image,
+                'description' => $tour->short_description,
+            ];
+        })->values();
     }
 
     /**
@@ -191,23 +168,7 @@ class ActivityController extends Controller
      */
     public function bookTour(Request $request)
     {
-        $request->validate([
-            'tour_id'   => 'required|string',
-            'tour_name' => 'required|string',
-            'date'      => 'required|date|after:today',
-            'adults'    => 'required|integer|min:1',
-        ]);
-
-        $reference = 'TOUR-' . strtoupper(Str::random(8));
-
-        // Store in session for guest users; for auth users create a record
-        session(['pending_tour_booking' => array_merge($request->all(), ['reference' => $reference])]);
-
-        if (!Auth::check()) {
-            return redirect()->route('login')->with('info', 'Please login to complete your booking.');
-        }
-
-        return redirect()->route('tours.confirmation', ['reference' => $reference]);
+        return $this->createTourBooking($request, 'tour');
     }
 
     /**
@@ -215,22 +176,60 @@ class ActivityController extends Controller
      */
     public function bookActivity(Request $request)
     {
-        $request->validate([
-            'activity_id'   => 'required|string',
-            'activity_name' => 'required|string',
-            'date'          => 'required|date|after:today',
-            'adults'        => 'required|integer|min:1',
-        ]);
+        return $this->createTourBooking($request, 'activity', true);
+    }
 
-        $reference = 'ACT-' . strtoupper(Str::random(8));
-
-        session(['pending_activity_booking' => array_merge($request->all(), ['reference' => $reference])]);
-
+    private function createTourBooking(Request $request, $bookingType, $jsonResponse = false)
+    {
         if (!Auth::check()) {
-            return redirect()->route('login')->with('info', 'Please login to complete your booking.');
+            return $jsonResponse
+                ? response()->json(['success' => false, 'message' => 'Please login to complete your booking.'], 401)
+                : redirect()->route('login')->with('info', 'Please login to complete your booking.');
         }
 
-        return response()->json(['success' => true, 'reference' => $reference]);
+        $request->validate([
+            'tour_id' => 'required|exists:tours,id',
+            'date'    => 'required|date|after:today',
+            'adults'  => 'required|integer|min:1',
+        ]);
+
+        $tour = Tour::findOrFail($request->tour_id);
+        $user = Auth::user();
+        $totalPrice = $tour->discounted_price * $request->adults;
+
+        $bookingData = [
+            'booking_type' => $bookingType,
+            'type' => $bookingType,
+            'title' => "{$tour->name} - {$tour->city}",
+            'tour_id' => $tour->id,
+            'activity_name' => $tour->name,
+            'destination' => $tour->city,
+            'country' => $tour->country,
+            'activity_date' => $request->date,
+            'duration' => $tour->duration,
+            'traveler_count' => $request->adults,
+            'adults' => $request->adults,
+            'amount' => $tour->discounted_price,
+            'total_amount' => $totalPrice,
+            'total_price' => $totalPrice,
+            'currency' => $tour->currency,
+            'tour_details' => $tour->toArray(),
+            'contact_email' => $user->email,
+            'contact_phone' => $user->phone ?? '',
+        ];
+
+        $result = $this->bookingService->createBooking($bookingData, $user);
+        $reference = $result['booking']->booking_reference;
+
+        if ($jsonResponse) {
+            return response()->json([
+                'success' => true,
+                'reference' => $reference,
+                'redirect_url' => route('tour.payment', ['reference' => $reference]),
+            ]);
+        }
+
+        return redirect()->route('tours.payment', ['reference' => $reference]);
     }
 
     /**

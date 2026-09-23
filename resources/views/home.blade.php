@@ -2,20 +2,6 @@
 
 @section('content')
 
-{{-- ===== SEARCH OVERLAY (loader + cancel) ===== --}}
-<div id="searchOverlay" class="fixed inset-0 z-[9999] bg-slate-900/80 backdrop-blur-sm hidden flex items-center justify-center">
-    <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full mx-4 text-center">
-        <div class="relative w-16 h-16 mx-auto mb-5">
-            <div class="absolute inset-0 rounded-full border-4 border-gray-200"></div>
-            <div class="absolute inset-0 rounded-full border-4 border-t-blue-600 animate-spin"></div>
-            <i class="fas fa-plane absolute inset-0 flex items-center justify-center text-blue-600 text-lg"></i>
-        </div>
-        <h3 class="text-base font-semibold text-gray-900 mb-1">Searching flights&hellip;</h3>
-        <p class="text-xs text-gray-500 mb-5" id="searchStatusText">Comparing prices across 500+ airlines</p>
-        <button onclick="cancelFlightSearch()" class="text-xs text-red-500 hover:text-red-700 font-medium underline underline-offset-2">Cancel search</button>
-    </div>
-</div>
-
 {{-- ===== HERO ===== --}}
 <section class="relative bg-slate-900 overflow-hidden">
     <img src="https://images.unsplash.com/photo-1436491865332-7a61a109db05?w=1400&h=600&fit=crop" alt="" class="absolute inset-0 w-full h-full object-cover opacity-30" loading="eager">
@@ -33,63 +19,7 @@
 
             {{-- FLIGHTS --}}
             <div class="search-panel p-4" id="panel-flights">
-                <div class="flex gap-3 mb-3">
-                    <label class="flex items-center gap-1.5 cursor-pointer"><input type="radio" name="trip_type_home" value="round_trip" checked class="w-3 h-3 text-blue-600" onchange="toggleReturnDate()"><span class="text-xs text-gray-600">Round Trip</span></label>
-                    <label class="flex items-center gap-1.5 cursor-pointer"><input type="radio" name="trip_type_home" value="one_way" class="w-3 h-3 text-blue-600" onchange="toggleReturnDate()"><span class="text-xs text-gray-600">One Way</span></label>
-                </div>
-                <form id="heroFlightForm" onsubmit="return submitFlightSearch(event)">
-                    @csrf
-                    <input type="hidden" name="trip_type" value="round_trip" id="hero_trip_type">
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
-                        <div class="relative">
-                            <label class="text-[10px] font-semibold text-gray-400 uppercase mb-0.5 block">From</label>
-                            <div class="relative">
-                                <i class="fas fa-plane-departure absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-300 text-[10px]"></i>
-                                <input type="text" name="from" id="hero_from" class="w-full pl-7 pr-2 py-2 border border-gray-200 rounded-lg text-xs text-gray-800 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 airport-autocomplete" placeholder="City or Airport" autocomplete="off" required>
-                                <input type="hidden" name="from_iata" id="hero_from_iata">
-                            </div>
-                            <div class="airport-suggestions absolute z-50 w-full bg-white border border-gray-200 rounded-lg shadow-xl mt-1 hidden max-h-48 overflow-y-auto"></div>
-                        </div>
-                        <div class="relative">
-                            <label class="text-[10px] font-semibold text-gray-400 uppercase mb-0.5 block">To</label>
-                            <div class="relative">
-                                <i class="fas fa-plane-arrival absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-300 text-[10px]"></i>
-                                <input type="text" name="to" id="hero_to" class="w-full pl-7 pr-2 py-2 border border-gray-200 rounded-lg text-xs text-gray-800 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 airport-autocomplete" placeholder="City or Airport" autocomplete="off" required>
-                                <input type="hidden" name="to_iata" id="hero_to_iata">
-                            </div>
-                            <div class="airport-suggestions absolute z-50 w-full bg-white border border-gray-200 rounded-lg shadow-xl mt-1 hidden max-h-48 overflow-y-auto"></div>
-                        </div>
-                        <div>
-                            <label class="text-[10px] font-semibold text-gray-400 uppercase mb-0.5 block">Departure</label>
-                            <input type="date" name="date" id="hero_depart" class="w-full py-2 px-2.5 border border-gray-200 rounded-lg text-xs text-gray-800 focus:ring-1 focus:ring-blue-500" required>
-                        </div>
-                        <div id="returnDateWrap">
-                            <label class="text-[10px] font-semibold text-gray-400 uppercase mb-0.5 block">Return</label>
-                            <input type="date" name="return_date" id="hero_return" class="w-full py-2 px-2.5 border border-gray-200 rounded-lg text-xs text-gray-800 focus:ring-1 focus:ring-blue-500">
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-4 gap-3 mb-3">
-                        <div>
-                            <label class="text-[10px] font-semibold text-gray-400 uppercase mb-0.5 block">Adults</label>
-                            <select name="adults" class="w-full py-2 px-2 border border-gray-200 rounded-lg text-xs text-gray-800 focus:ring-1 focus:ring-blue-500">@for($i=1;$i<=9;$i++)<option value="{{$i}}">{{$i}}</option>@endfor</select>
-                        </div>
-                        <div>
-                            <label class="text-[10px] font-semibold text-gray-400 uppercase mb-0.5 block">Children</label>
-                            <select name="children" class="w-full py-2 px-2 border border-gray-200 rounded-lg text-xs text-gray-800 focus:ring-1 focus:ring-blue-500">@for($i=0;$i<=8;$i++)<option value="{{$i}}">{{$i}}</option>@endfor</select>
-                        </div>
-                        <div>
-                            <label class="text-[10px] font-semibold text-gray-400 uppercase mb-0.5 block">Infants</label>
-                            <select name="infants" class="w-full py-2 px-2 border border-gray-200 rounded-lg text-xs text-gray-800 focus:ring-1 focus:ring-blue-500">@for($i=0;$i<=4;$i++)<option value="{{$i}}">{{$i}}</option>@endfor</select>
-                        </div>
-                        <div>
-                            <label class="text-[10px] font-semibold text-gray-400 uppercase mb-0.5 block">Cabin</label>
-                            <select name="travel_class" class="w-full py-2 px-2 border border-gray-200 rounded-lg text-xs text-gray-800 focus:ring-1 focus:ring-blue-500">
-                                <option value="ECONOMY">Economy</option><option value="PREMIUM_ECONOMY">Premium</option><option value="BUSINESS">Business</option><option value="FIRST">First</option>
-                            </select>
-                        </div>
-                    </div>
-                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2"><i class="fas fa-search text-[10px]"></i> Search Flights</button>
-                </form>
+                @include('flights.partials.search-widget', ['idPrefix' => 'hero'])
             </div>
 
             {{-- HOTELS --}}
@@ -429,23 +359,11 @@
 
 @push('scripts')
 <script>
-var flightSearchAbortController = null;
-var searchStatusInterval = null;
-
 function switchTab(tab){
     document.querySelectorAll('.search-tab').forEach(function(t){t.classList.remove('active');});
     document.querySelectorAll('.search-panel').forEach(function(p){p.classList.add('hidden');});
     document.querySelector('[data-tab="'+tab+'"]').classList.add('active');
     document.getElementById('panel-'+tab).classList.remove('hidden');
-}
-
-function toggleReturnDate(){
-    var tt=document.querySelector('input[name="trip_type_home"]:checked').value;
-    var w=document.getElementById('returnDateWrap');
-    document.getElementById('hero_trip_type').value=tt;
-    w.style.opacity=tt==='one_way'?'0.4':'1';
-    w.style.pointerEvents=tt==='one_way'?'none':'auto';
-    if(tt==='one_way') document.getElementById('hero_return').removeAttribute('required');
 }
 
 function toggleFaq(btn){
@@ -455,73 +373,17 @@ function toggleFaq(btn){
     if(!open){c.classList.remove('hidden');ic.style.transform='rotate(180deg)';}
 }
 
-// AJAX flight search with loader + cancel
-function submitFlightSearch(e){
-    e.preventDefault();
-    var form=document.getElementById('heroFlightForm');
-    var fd=new FormData(form);
-    var overlay=document.getElementById('searchOverlay');
-    var statusText=document.getElementById('searchStatusText');
-
-    // Validate IATA
-    if(!document.getElementById('hero_from_iata').value || !document.getElementById('hero_to_iata').value){
-        alert('Please select valid airports from the suggestions.');
-        return false;
-    }
-
-    overlay.classList.remove('hidden');
-    overlay.classList.add('flex');
-
-    var messages=['Comparing prices across 500+ airlines','Checking direct and connecting flights','Finding the best fares for your dates','Almost there, finalizing results...'];
-    var mi=0;
-    searchStatusInterval=setInterval(function(){mi++;if(mi<messages.length) statusText.textContent=messages[mi];},3000);
-
-    flightSearchAbortController=new AbortController();
-
-    fetch('/api/search',{
-        method:'POST',
-        body:fd,
-        headers:{'X-Requested-With':'XMLHttpRequest'},
-        signal:flightSearchAbortController.signal
-    }).then(function(r){return r.json();}).then(function(data){
-        clearInterval(searchStatusInterval);
-        window.location.href=data.redirect||'/flights/results';
-    }).catch(function(err){
-        clearInterval(searchStatusInterval);
-        if(err.name==='AbortError'){
-            overlay.classList.add('hidden');
-            overlay.classList.remove('flex');
-            return;
-        }
-        overlay.classList.add('hidden');
-        overlay.classList.remove('flex');
-        // Even on error, go to results page which will show no flights
-        window.location.href='/flights/results';
-    });
-    return false;
-}
-
-function cancelFlightSearch(){
-    if(flightSearchAbortController) flightSearchAbortController.abort();
-    clearInterval(searchStatusInterval);
-    var overlay=document.getElementById('searchOverlay');
-    overlay.classList.add('hidden');
-    overlay.classList.remove('flex');
-}
-
-// Default dates
+// Flight search itself (autocomplete, date picker, trip type, AJAX submit) is
+// now handled by public/js/flight-search-widget.js via the shared search
+// widget partial — only the hotel-panel defaults/autocomplete remain here.
 document.addEventListener('DOMContentLoaded',function(){
     var tmr=new Date();tmr.setDate(tmr.getDate()+1);
     var nw=new Date();nw.setDate(nw.getDate()+8);
     function fmt(d){return d.toISOString().split('T')[0];}
-    var dep=document.getElementById('hero_depart'),ret=document.getElementById('hero_return');
-    if(dep&&!dep.value){dep.value=fmt(tmr);dep.min=fmt(tmr);}
-    if(ret&&!ret.value){ret.value=fmt(nw);ret.min=fmt(nw);}
     var ci=document.getElementById('hero_checkin'),co=document.getElementById('hero_checkout');
     if(ci&&!ci.value){ci.value=fmt(tmr);ci.min=fmt(tmr);}
     if(co&&!co.value){co.value=fmt(nw);co.min=fmt(nw);}
     loadFlightDeals();
-    initHeroAirportAutocomplete();
     initCityAutocomplete();
 });
 
@@ -547,37 +409,6 @@ function renderStaticDeals(c){
     });
 }
 
-function initHeroAirportAutocomplete(){
-    var cache={};
-    document.querySelectorAll('.airport-autocomplete').forEach(function(input){
-        var parent=input.closest('.relative').parentElement;
-        var sug=parent.querySelector('.airport-suggestions');
-        var hid=parent.querySelector('input[type="hidden"]');
-        var to;
-        input.addEventListener('input',function(){
-            clearTimeout(to);var q=this.value.trim();
-            if(q.length<2){sug.classList.add('hidden');return;}
-            to=setTimeout(function(){
-                if(cache[q]){renderAirportSuggestions(cache[q],sug,input,hid);return;}
-                fetch('/api/airports/search?q='+encodeURIComponent(q)).then(function(r){return r.json();}).then(function(d){cache[q]=d;renderAirportSuggestions(d,sug,input,hid);}).catch(function(){sug.classList.add('hidden');});
-            },200);
-        });
-        document.addEventListener('click',function(e){if(!input.contains(e.target)&&!sug.contains(e.target))sug.classList.add('hidden');});
-    });
-}
-function renderAirportSuggestions(data,container,input,hidden){
-    if(!data||!data.length){container.classList.add('hidden');return;}
-    container.innerHTML='';
-    data.slice(0,6).forEach(function(item){
-        var d=document.createElement('div');
-        d.className='px-3 py-2 hover:bg-blue-50 cursor-pointer flex justify-between items-center border-b border-gray-50 text-xs';
-        var name=item.name||item.city||'',city=item.city||'',country=item.country||'',code=item.iata_code||item.iataCode||item.code||'';
-        d.innerHTML='<div><span class="font-medium text-gray-900">'+name+'</span><span class="text-gray-400 ml-1">'+city+(country?', '+country:'')+'</span></div><span class="font-bold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded text-[10px]">'+code+'</span>';
-        d.addEventListener('click',function(){input.value=name+' ('+code+')';hidden.value=code;container.classList.add('hidden');});
-        container.appendChild(d);
-    });
-    container.classList.remove('hidden');
-}
 
 function initCityAutocomplete(){
     var cache={};

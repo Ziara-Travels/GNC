@@ -99,6 +99,19 @@ $destination = $destination ?? null;
 
             {{-- Results --}}
             <div class="flex-1">
+                {{-- Best / Cheapest / Fastest tabs --}}
+                <div class="flex items-center gap-2 mb-4">
+                    <button onclick="sortFlights('best')" class="tab-sort-btn flex-1 text-center text-sm font-bold px-4 py-3 rounded-xl bg-blue-600 text-white transition-colors" data-sort="best">
+                        Best
+                    </button>
+                    <button onclick="sortFlights('price-asc')" class="tab-sort-btn flex-1 text-center text-sm font-bold px-4 py-3 rounded-xl bg-white border border-gray-200 text-gray-700 hover:border-blue-300 transition-colors" data-sort="price-asc">
+                        Cheapest
+                    </button>
+                    <button onclick="sortFlights('duration-asc')" class="tab-sort-btn flex-1 text-center text-sm font-bold px-4 py-3 rounded-xl bg-white border border-gray-200 text-gray-700 hover:border-blue-300 transition-colors" data-sort="duration-asc">
+                        Fastest
+                    </button>
+                </div>
+
                 {{-- Sort bar --}}
                 <div class="flex items-center justify-between mb-5 bg-white rounded-xl border border-gray-200 px-5 py-3">
                     <div class="text-sm text-gray-600">
@@ -133,6 +146,13 @@ $destination = $destination ?? null;
                     @endforeach
                 </div>
 
+                {{-- Show more --}}
+                <div class="text-center mt-6" id="show-more-wrap">
+                    <button onclick="showMoreFlights()" id="show-more-btn" class="inline-flex items-center gap-2 bg-white border border-gray-200 hover:border-blue-300 text-gray-700 font-semibold text-sm px-6 py-3 rounded-full transition-colors">
+                        Show more flights <i class="fas fa-chevron-down text-[10px]"></i>
+                    </button>
+                </div>
+
                 {{-- Modify search --}}
                 <div class="text-center mt-8">
                     <a href="{{ route('flights.public.search') }}" class="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 font-semibold text-sm">
@@ -150,35 +170,80 @@ $destination = $destination ?? null;
 
 @push('scripts')
 <script>
+var VISIBLE_STEP = 10;
+var visibleCount = VISIBLE_STEP;
+
 function sortFlights(sortBy) {
     var container = document.querySelector('.flight-results');
     if (!container) return;
     var cards = Array.from(container.querySelectorAll('.flight-card'));
 
-    // Highlight active sort button
-    document.querySelectorAll('.sort-btn').forEach(function(b) {
-        b.classList.remove('bg-blue-600', 'text-white');
-        b.classList.add('bg-gray-100', 'text-gray-700');
+    // Highlight active button in whichever bar it came from (best/cheapest/fastest tabs, or the granular sort bar)
+    document.querySelectorAll('.sort-btn, .tab-sort-btn').forEach(function(b) {
+        b.classList.remove('bg-blue-600', 'text-white', 'border-blue-600');
+        b.classList.add(b.classList.contains('tab-sort-btn') ? 'bg-white' : 'bg-gray-100');
+        b.classList.add('text-gray-700');
     });
-    var activeBtn = document.querySelector('.sort-btn[data-sort="' + sortBy + '"]');
-    if (activeBtn) {
-        activeBtn.classList.remove('bg-gray-100', 'text-gray-700');
-        activeBtn.classList.add('bg-blue-600', 'text-white');
+    document.querySelectorAll('[data-sort="' + sortBy + '"]').forEach(function(b) {
+        b.classList.remove('bg-gray-100', 'bg-white', 'text-gray-700');
+        b.classList.add('bg-blue-600', 'text-white');
+    });
+
+    if (sortBy === 'best') {
+        var prices = cards.map(getPrice), durations = cards.map(getDuration);
+        var minP = Math.min.apply(null, prices), maxP = Math.max.apply(null, prices);
+        var minD = Math.min.apply(null, durations), maxD = Math.max.apply(null, durations);
+        var score = function (el) {
+            var p = maxP > minP ? (getPrice(el) - minP) / (maxP - minP) : 0;
+            var d = maxD > minD ? (getDuration(el) - minD) / (maxD - minD) : 0;
+            // Weighted toward price, matching the "best value" framing most OTAs use.
+            return (p * 0.65) + (d * 0.35);
+        };
+        cards.sort(function (a, b) { return score(a) - score(b); });
+    } else {
+        cards.sort(function(a, b) {
+            if (sortBy === 'price-asc') return getPrice(a) - getPrice(b);
+            if (sortBy === 'price-desc') return getPrice(b) - getPrice(a);
+            if (sortBy === 'duration-asc') return getDuration(a) - getDuration(b);
+            if (sortBy === 'stops-asc') return getStops(a) - getStops(b);
+            return 0;
+        });
     }
 
-    cards.sort(function(a, b) {
-        if (sortBy === 'price-asc') return getPrice(a) - getPrice(b);
-        if (sortBy === 'price-desc') return getPrice(b) - getPrice(a);
-        if (sortBy === 'duration-asc') return getDuration(a) - getDuration(b);
-        if (sortBy === 'stops-asc') return getStops(a) - getStops(b);
-        return 0;
-    });
     cards.forEach(function(c) { container.appendChild(c); });
+    visibleCount = VISIBLE_STEP;
+    applyVisibility();
+}
+
+function applyVisibility() {
+    var cards = document.querySelectorAll('.flight-results .flight-card');
+    cards.forEach(function (card, i) {
+        card.style.display = i < visibleCount ? '' : 'none';
+    });
+    var wrap = document.getElementById('show-more-wrap');
+    var btn = document.getElementById('show-more-btn');
+    if (!wrap || !btn) return;
+    var remaining = cards.length - visibleCount;
+    if (remaining <= 0) {
+        wrap.style.display = 'none';
+    } else {
+        wrap.style.display = '';
+        btn.innerHTML = 'Show ' + Math.min(remaining, VISIBLE_STEP) + ' more flights <i class="fas fa-chevron-down text-[10px]"></i>';
+    }
+}
+
+function showMoreFlights() {
+    visibleCount += VISIBLE_STEP;
+    applyVisibility();
 }
 
 function getPrice(el) { return parseFloat(el.getAttribute('data-price') || 0); }
 function getDuration(el) { return parseInt(el.getAttribute('data-duration') || 0); }
 function getStops(el) { return parseInt(el.getAttribute('data-stops') || 0); }
+
+document.addEventListener('DOMContentLoaded', function () {
+    sortFlights('best');
+});
 </script>
 @endpush
 

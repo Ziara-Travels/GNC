@@ -26,23 +26,28 @@ class BookingService
             $booking->booked_by = $bookedBy->id;
             
             // If booking for someone else (admin/superadmin booking for others)
-            if ($bookFor) {
-                $booking->user_id = $bookFor->id;
-                $booking->payment_status = 'pending';
-                $booking->status = 'pending_payment';
-            } else {
-                $booking->user_id = $bookedBy->id;
-                $booking->payment_status = 'pending';
-                $booking->status = 'pending_payment';
-            }
+            $booking->user_id = $bookFor ? $bookFor->id : $bookedBy->id;
+            $booking->payment_status = 'pending';
+            // 'pending' is the valid enum value on bookings.status; 'pending_payment'
+            // is not and would fail the insert.
+            $booking->status = 'pending';
             
             $booking->save();
 
             // Create payment record
             $payment = $this->createPaymentRecord($booking, $bookedBy, $bookFor);
 
-            // Send notifications
-            $this->sendBookingNotifications($booking, $bookedBy, $bookFor);
+            // Notifications are a best-effort side effect (admin alert, pending-payment
+            // email) — a failure here (e.g. a mail/notification misconfiguration) must
+            // never roll back an otherwise-successful booking.
+            try {
+                $this->sendBookingNotifications($booking, $bookedBy, $bookFor);
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::error('Booking notification failed', [
+                    'booking_id' => $booking->id,
+                    'error' => $e->getMessage(),
+                ]);
+            }
 
             return [
                 'booking' => $booking,
@@ -106,13 +111,23 @@ class BookingService
                 'transaction_id' => $paymentData['transaction_id'] ?? null
             ]);
 
-            // Send confirmation emails
-            Mail::to($booking->user->email)->send(new BookingConfirmation($booking));
+            // Confirmation emails are a best-effort side effect — a broken template or
+            // mail-server hiccup must never roll back a payment that already succeeded.
+            try {
+                Mail::to($booking->user->email)->send(new BookingConfirmation($booking));
 
-            // Notify admin who booked if different from user
-            if ($booking->booked_by !== $booking->user_id) {
-                $bookedBy = User::find($booking->booked_by);
-                Mail::to($bookedBy->email)->send(new BookingConfirmation($booking, 'admin'));
+                // Notify admin who booked if different from user
+                if ($booking->booked_by && $booking->booked_by !== $booking->user_id) {
+                    $bookedBy = User::find($booking->booked_by);
+                    if ($bookedBy) {
+                        Mail::to($bookedBy->email)->send(new BookingConfirmation($booking));
+                    }
+                }
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::error('Booking confirmation email failed', [
+                    'booking_id' => $booking->id,
+                    'error' => $e->getMessage(),
+                ]);
             }
 
             return $payment;
@@ -175,10 +190,11 @@ class BookingService
             Mail::to($bookFor->email)->send(new PendingPaymentNotification($booking, $bookedBy));
         }
 
-        // Notify admins/superadmins about new booking
-        $admins = User::whereHas('roles', function ($query) {
-            $query->whereIn('name', ['admin', 'superadmin']);
-        })->get();
+        // Notify admins/superadmins about new booking. This project uses a
+        // plain 'role' string column on users (like the rest of the
+        // codebase), not the unused spatie/laravel-permission roles()
+        // relationship, whose 'user_roles' pivot table doesn't even exist.
+        $admins = User::whereIn('role', ['admin', 'superadmin'])->get();
 
         foreach ($admins as $admin) {
             if ($admin->id !== $bookedBy->id) {

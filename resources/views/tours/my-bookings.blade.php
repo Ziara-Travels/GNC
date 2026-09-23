@@ -78,8 +78,8 @@
                                             <small class="text-muted">{{ $booking->tour->city ?? 'Location' }}</small>
                                         </td>
                                         <td>
-                                            {{ $booking->tour_date->format('M d, Y') }}<br>
-                                            <small class="text-muted">{{ $booking->participants }} {{ $booking->participants > 1 ? 'participants' : 'participant' }}</small>
+                                            {{ $booking->activity_date->format('M d, Y') }}<br>
+                                            <small class="text-muted">{{ $booking->traveler_count }} {{ $booking->traveler_count > 1 ? 'participants' : 'participant' }}</small>
                                         </td>
                                         <td>
                                             <span class="text-success fw-bold">{{ $booking->currency }} {{ number_format($booking->total_amount, 2) }}</span>

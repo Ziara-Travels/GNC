@@ -136,6 +136,8 @@ Route::post('/api/price', [FlightSearchController::class, 'priceItinerary'])->na
 Route::post('/flights/select', [OrderFlightController::class, 'selectFlight'])->name('flights.select');
 Route::get('/flights/booking/{offerId}', [FlightBookingController::class, 'show'])->name('flights.booking');
 Route::post('/flights/book', [FlightBookingController::class, 'store'])->name('flights.book');
+Route::get('/booking/passengers', [OrderFlightController::class, 'showPassengerDetails'])->name('booking.passengers.show');
+Route::post('/booking/passengers', [OrderFlightController::class, 'savePassengerDetails'])->name('booking.passengers.save');
 Route::get('/booking/checkout', [OrderFlightController::class, 'showCheckout'])->name('booking.checkout');
 Route::post('/booking/process', [OrderFlightController::class, 'processCheckout'])->name('booking.process');
 Route::get('/booking/success/{reference}', [OrderFlightController::class, 'showSuccess'])->name('booking.success');
@@ -207,6 +209,10 @@ Route::get('/tour/confirmation/{reference}', [TravelActivityController::class, '
 // =====================================
 Route::get('/east-african-offers', [FlightOffersController::class, 'getEastAfricanOffers'])->name('east-african-offers');
 Route::post('/book-flight', [FlightOffersController::class, 'bookFlight'])->name('book.flight');
+// Legacy checkout flow (FlightOffersController) — superseded by OrderFlightController's
+// select -> booking.passengers.show -> booking.checkout -> booking.process flow above.
+// No live page links into this flow anymore; kept only to avoid breaking anything
+// that might still reference it. Candidate for removal in a future cleanup pass.
 Route::get('/booking/{type}/passenger-details', [FlightOffersController::class, 'showPassengerDetailsForm'])->name('booking.passenger-details');
 Route::post('/booking/passenger-details', [FlightOffersController::class, 'savePassengerDetails'])->name('booking.save-passengers');
 Route::get('/booking/{type}/payment', [FlightOffersController::class, 'showPaymentPage'])->name('booking.payment');
@@ -303,6 +309,12 @@ Route::prefix('api/flights')->group(function () {
 // =====================================
 require __DIR__.'/auth.php';
 
+// Server-to-server Jenga payment webhook. Must stay outside the 'auth' group —
+// Jenga has no Laravel session — and is CSRF-exempt (see VerifyCsrfToken::$except).
+// The handler independently re-verifies the transaction with Jenga's status API
+// rather than trusting this request's body, so it does not need its own secret.
+Route::post('/payments/jenga/callback', [OrderFlightController::class, 'handleJengaCallback'])->name('payments.jenga.callback');
+
 // =====================================
 // AUTHENTICATED USER ROUTES
 // =====================================
@@ -367,8 +379,6 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/payment/mpesa', [PaymentController::class, 'processMpesa'])->name('payment.mpesa');
     Route::post('/payment/bank', [PaymentController::class, 'processBank'])->name('payment.bank');
     Route::get('/payment/success', [PaymentController::class, 'success'])->name('payment.success');
-    Route::post('/payments/jenga/callback', [OrderFlightController::class, 'handleJengaCallback'])->name('payments.jenga.callback');
-
     Route::get('/payments/mpesa/check-status/{orderReference}', [OrderFlightController::class, 'checkMpesaOrderStatus'])->name('payments.mpesa.check-status');
     // Weather Routes
     Route::get('/weather/current', [WeatherController::class, 'getCurrentWeather'])->name('weather.current');

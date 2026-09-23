@@ -19,12 +19,27 @@
     </style>
 </head>
 <body>
+    @php
+        $isFlight = $booking->booking_type === 'flight';
+        $isHotel = $booking->booking_type === 'hotel';
+        $firstPassenger = collect($booking->passenger_details ?? [])->first();
+        $contactName = $firstPassenger
+            ? trim(($firstPassenger['first_name'] ?? '') . ' ' . ($firstPassenger['last_name'] ?? ''))
+            : ($booking->user->name ?? trim(($booking->user->first_name ?? '') . ' ' . ($booking->user->last_name ?? '')));
+
+        $detailsRoute = null;
+        if ($isFlight) {
+            $detailsRoute = route('booking.success', $booking->booking_reference);
+        } elseif (\Illuminate\Support\Facades\Route::has('tours.confirmation') && in_array($booking->booking_type, ['tour', 'activity'])) {
+            $detailsRoute = route('tours.confirmation', ['reference' => $booking->booking_reference]);
+        }
+    @endphp
     <div class="container">
         <div class="header">
-            <h1>✈️ Booking Confirmed!</h1>
-            <p>Your flight has been successfully booked</p>
+            <h1>&#9992;&#65039; Booking Confirmed!</h1>
+            <p>Your {{ $booking->booking_type }} has been successfully booked</p>
         </div>
-        
+
         <div class="content">
             <div style="text-align: center; margin-bottom: 30px;">
                 <h2>Booking Reference</h2>
@@ -32,77 +47,103 @@
                 <div class="status-badge confirmed">CONFIRMED</div>
             </div>
 
+            @if($isFlight)
             <div class="flight-info">
                 <h3>Flight Details</h3>
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <div>
-                        <strong>{{ $flight['from'] }}</strong>
-                        <div style="font-size: 14px; color: #666;">{{ $flight['departure_time'] }}</div>
-                        <div style="font-size: 12px; color: #999;">{{ $flight['departure_date'] }}</div>
+                        <strong>{{ $booking->departure_airport ?? 'N/A' }}</strong>
+                        <div style="font-size: 14px; color: #666;">{{ $booking->departure_time ? $booking->departure_time->format('H:i') : '' }}</div>
+                        <div style="font-size: 12px; color: #999;">{{ $booking->departure_time ? $booking->departure_time->format('D, d M Y') : '' }}</div>
                     </div>
                     <div style="text-align: center;">
-                        <div>✈️</div>
-                        <div style="font-size: 12px; color: #666;">{{ $flight['duration'] }}</div>
+                        <div>&#9992;&#65039;</div>
                     </div>
                     <div style="text-align: right;">
-                        <strong>{{ $flight['to'] }}</strong>
-                        <div style="font-size: 14px; color: #666;">{{ $flight['arrival_time'] }}</div>
-                        <div style="font-size: 12px; color: #999;">{{ $flight['arrival_date'] }}</div>
+                        <strong>{{ $booking->arrival_airport ?? 'N/A' }}</strong>
+                        <div style="font-size: 14px; color: #666;">{{ $booking->arrival_time ? $booking->arrival_time->format('H:i') : '' }}</div>
+                        <div style="font-size: 12px; color: #999;">{{ $booking->arrival_time ? $booking->arrival_time->format('D, d M Y') : '' }}</div>
                     </div>
                 </div>
-                
+
                 <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #dee2e6;">
                     <div style="display: flex; justify-content: space-between;">
-                        <span>Airline:</span>
-                        <span><strong>{{ $flight['airline'] }}</strong></span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between;">
                         <span>Flight Number:</span>
-                        <span><strong>{{ $flight['flight_number'] }}</strong></span>
+                        <span><strong>{{ $booking->flight_number ?? 'N/A' }}</strong></span>
                     </div>
                     <div style="display: flex; justify-content: space-between;">
                         <span>Class:</span>
-                        <span><strong>{{ $flight['class'] }}</strong></span>
+                        <span><strong>{{ ucfirst(strtolower($booking->travel_class ?? 'Economy')) }}</strong></span>
                     </div>
                 </div>
             </div>
+            @elseif($isHotel)
+            <div class="flight-info">
+                <h3>Hotel Details</h3>
+                <div style="display: flex; justify-content: space-between;">
+                    <span>Check-in:</span>
+                    <span><strong>{{ $booking->check_in_date ? $booking->check_in_date->format('D, d M Y') : 'N/A' }}</strong></span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span>Check-out:</span>
+                    <span><strong>{{ $booking->check_out_date ? $booking->check_out_date->format('D, d M Y') : 'N/A' }}</strong></span>
+                </div>
+            </div>
+            @else
+            <div class="flight-info">
+                <h3>{{ ucfirst($booking->booking_type) }} Details</h3>
+                <div style="display: flex; justify-content: space-between;">
+                    <span>{{ $booking->activity_name ?? $booking->title }}</span>
+                    <span><strong>{{ $booking->destination ?? '' }}</strong></span>
+                </div>
+                @if($booking->activity_date)
+                <div style="display: flex; justify-content: space-between;">
+                    <span>Date:</span>
+                    <span><strong>{{ $booking->activity_date->format('D, d M Y') }}</strong></span>
+                </div>
+                @endif
+            </div>
+            @endif
 
             <div class="passenger-info">
-                <h3>Passenger Information</h3>
+                <h3>Contact Information</h3>
                 <div>
-                    <strong>{{ $passenger->title }} {{ $passenger->first_name }} {{ $passenger->last_name }}</strong>
+                    <strong>{{ $contactName ?: 'Guest' }}</strong>
                 </div>
                 <div style="color: #666; font-size: 14px;">
-                    Email: {{ $passenger->email }}<br>
-                    Phone: {{ $passenger->phone }}
+                    Email: {{ $booking->contact_email }}<br>
+                    Phone: {{ $booking->contact_phone ?? 'N/A' }}
                 </div>
             </div>
 
             <div style="background-color: #e3f2fd; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                <h3 style="color: #1976d2; margin-top: 0;">💡 Important Reminders</h3>
+                <h3 style="color: #1976d2; margin-top: 0;">&#128161; Important Reminders</h3>
                 <ul style="margin: 0; padding-left: 20px;">
+                    @if($isFlight)
                     <li>Check-in opens 24 hours before departure</li>
-                    <li>Arrive at the airport 2 hours before domestic flights</li>
+                    <li>Arrive at the airport 2 hours before domestic flights, 3 hours for international</li>
                     <li>Ensure your passport is valid for at least 6 months</li>
-                    <li>Review baggage allowance and restrictions</li>
+                    @endif
+                    <li>Keep this confirmation and your booking reference handy</li>
                 </ul>
             </div>
 
+            @if($detailsRoute)
             <div style="text-align: center; margin: 30px 0;">
-                <a href="{{ route('booking.details', $booking->booking_reference) }}" class="button">
+                <a href="{{ $detailsRoute }}" class="button">
                     View Booking Details
                 </a>
-                <a href="{{ route('booking.manage', $booking->booking_reference) }}" class="button">
-                    Manage Booking
-                </a>
             </div>
+            @endif
 
+            @if($isFlight)
             <div style="background-color: #fff3cd; padding: 15px; border-radius: 8px; border-left: 4px solid #ffc107;">
-                <h4 style="color: #856404; margin-top: 0;">📎 E-Ticket Attached</h4>
+                <h4 style="color: #856404; margin-top: 0;">&#128206; E-Ticket Attached</h4>
                 <p style="color: #856404; margin: 0;">Your e-ticket has been attached to this email. Please keep it handy for your travel.</p>
             </div>
+            @endif
         </div>
-        
+
         <div class="footer">
             <p>Thank you for choosing {{ config('app.name') }}!</p>
             <p>Need help? Contact us at {{ config('mail.support_email', 'support@example.com') }}</p>

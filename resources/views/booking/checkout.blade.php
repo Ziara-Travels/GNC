@@ -17,10 +17,11 @@
     $airlineName = $airlineCode;  // You would need a mapping function to get the full airline name
     $travelClass = $flightData['travelerPricings'][0]['fareDetailsBySegment'][0]['cabin'] ?? 'ECONOMY';
 
-    // Passenger details
-    $adults = count($flightData['travelerPricings'] ?? []);
-    $children = 0;  // Would need to calculate based on traveler data
-    $infants = 0;   // Would need to calculate based on traveler data
+    // Passenger details — Amadeus travelerPricings carries the real per-traveler type.
+    $travelerTypes = array_column($flightData['travelerPricings'] ?? [], 'travelerType');
+    $adults = count(array_filter($travelerTypes, fn ($t) => $t === 'ADULT')) ?: count($flightData['travelerPricings'] ?? []);
+    $children = count(array_filter($travelerTypes, fn ($t) => $t === 'CHILD'));
+    $infants = count(array_filter($travelerTypes, fn ($t) => in_array($t, ['HELD_INFANT', 'SEATED_INFANT'])));
     $totalPassengers = $adults + $children + $infants;
 
     // Pricing
@@ -47,6 +48,10 @@
     // Generate booking reference
     $bookingReference = 'ZT-' . strtoupper(uniqid()) . '-' . date('ymd');
 @endphp
+
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/flight-flow.css') }}">
+@endpush
 
 @section('content')
     <div class="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
@@ -81,6 +86,22 @@
                             </div>
                         </div>
                     </div>
+
+                    @if($bookingType === 'flight')
+                    <div class="ff-step-track mb-8">
+                        <a href="{{ route('booking.passengers.show') }}" class="ff-step is-done" style="text-decoration:none;">
+                            <span class="ff-step-dot">&#10003;</span> Passengers
+                        </a>
+                        <span class="ff-step-line"></span>
+                        <div class="ff-step is-active">
+                            <span class="ff-step-dot">2</span> Payment
+                        </div>
+                        <span class="ff-step-line"></span>
+                        <div class="ff-step">
+                            <span class="ff-step-dot">3</span> Confirmation
+                        </div>
+                    </div>
+                    @endif
 
                     <!-- Checkout Header -->
                     <div class="text-center mb-8">
@@ -200,10 +221,6 @@
                                         <button type="button" class="payment-tab py-3 px-5 border-b-2 border-transparent font-medium text-gray-500 hover:text-gray-700" data-tab="bank-methods">
                                             <i data-lucide="building-2" class="h-5 w-5 inline mr-2"></i>
                                             Bank Payments
-                                        </button>
-                                        <button type="button" class="payment-tab py-3 px-5 border-b-2 border-transparent font-medium text-gray-500 hover:text-gray-700" data-tab="payment-link">
-                                            <i data-lucide="link" class="h-5 w-5 inline mr-2"></i>
-                                            Payment Link
                                         </button>
                                     </div>
 
@@ -629,76 +646,9 @@
                                         </div>
                                     </div>
 
-                                    <!-- PAYMENT LINK TAB CONTENT -->
-                                    <div class="payment-tab-content hidden" id="payment-link-content">
-                                        <div class="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-2xl p-6 border border-purple-200">
-                                            <h4 class="text-lg font-semibold text-purple-800 mb-4 flex items-center gap-2">
-                                                <i data-lucide="link" class="h-5 w-5"></i>
-                                                Payment Link
-                                            </h4>
-                                            <div class="space-y-6">
-                                                <p class="text-gray-700">
-                                                    We can send you a secure payment link via email or SMS that you can use to complete your payment at your convenience.
-                                                </p>
-
-                                                <div class="flex flex-col sm:flex-row gap-4">
-                                                    <!-- Email option -->
-                                                    <div class="flex-1 bg-white rounded-xl p-5 border border-purple-100 hover:border-purple-300 hover:shadow-md transition-all cursor-pointer">
-                                                        <div class="flex items-center gap-3">
-                                                            <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
-                                                                <i data-lucide="mail" class="h-5 w-5 text-purple-600"></i>
-                                                            </div>
-                                                            <div>
-                                                                <h5 class="font-medium text-gray-800">Email</h5>
-                                                                <p class="text-sm text-gray-500">Send link to my email</p>
-                                                            </div>
-                                                        </div>
-                                                        
-                                                        <div class="mt-4">
-                                                            <input type="email" name="payment_link_email" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="Enter your email">
-                                                        </div>
-                                                    </div>
-                                                    
-                                                    <!-- SMS option -->
-                                                    <div class="flex-1 bg-white rounded-xl p-5 border border-purple-100 hover:border-purple-300 hover:shadow-md transition-all cursor-pointer">
-                                                        <div class="flex items-center gap-3">
-                                                            <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
-                                                                <i data-lucide="message-square" class="h-5 w-5 text-purple-600"></i>
-                                                            </div>
-                                                            <div>
-                                                                <h5 class="font-medium text-gray-800">SMS</h5>
-                                                                <p class="text-sm text-gray-500">Send link to my phone</p>
-                                                            </div>
-                                                        </div>
-                                                        
-                                                        <div class="mt-4">
-                                                            <input type="tel" name="payment_link_phone" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="Enter your phone number">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="bg-purple-100/50 rounded-lg p-4 border border-purple-200">
-                                                    <h5 class="font-medium text-purple-800 mb-2">How it works:</h5>
-                                                    <ol class="text-sm text-gray-600 space-y-2 list-decimal ml-4">
-                                                        <li>Enter your preferred contact method (email or phone)</li>
-                                                        <li>We'll send you a secure payment link</li>
-                                                        <li>Open the link on any device</li>
-                                                        <li>Choose your payment method and complete the payment</li>
-                                                    </ol>
-                                                </div>
-                                                
-                                                <div class="flex items-center gap-2 bg-blue-50 p-3 rounded-lg border border-blue-200">
-                                                    <i data-lucide="info" class="h-5 w-5 text-blue-600"></i>
-                                                    <p class="text-sm text-blue-700">Payment links are valid for 24 hours. Your booking will be confirmed once payment is completed.</p>
-                                                </div>
-
-                                                <button type="button" id="sendPaymentLinkBtn" class="w-full py-3 px-4 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg flex items-center justify-center gap-2 transition-colors">
-                                                    <i data-lucide="send" class="h-5 w-5"></i>
-                                                    Send Payment Link
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    {{-- "Payment Link" option removed: it had no backend — the button only
+                                         faked a success message after a setTimeout. A real send-a-payment-
+                                         link feature is a separate future feature, not implemented here. --}}
 
                                     <!-- Terms and Conditions -->
                                     <div class="mt-8 p-6 bg-gray-50 rounded-2xl border border-gray-200">
@@ -1179,37 +1129,6 @@
             });
         }
         
-        // Send payment link button
-        const sendPaymentLinkBtn = document.getElementById('sendPaymentLinkBtn');
-        if (sendPaymentLinkBtn) {
-            sendPaymentLinkBtn.addEventListener('click', function() {
-                const email = document.querySelector('input[name="payment_link_email"]').value;
-                const phone = document.querySelector('input[name="payment_link_phone"]').value;
-                
-                if (!email && !phone) {
-                    alert('Please provide either an email or phone number to send the payment link.');
-                    return;
-                }
-                
-                this.textContent = 'Sending...';
-                this.disabled = true;
-                
-                // Simulate sending (would be an AJAX call in production)
-                setTimeout(() => {
-                    this.innerHTML = '<i data-lucide="check" class="h-5 w-5"></i> Link Sent Successfully';
-                    this.classList.remove('bg-purple-600', 'hover:bg-purple-700');
-                    this.classList.add('bg-green-600', 'hover:bg-green-700');
-                    
-                    // Re-initialize Lucide icons
-                    if (typeof lucide !== 'undefined') {
-                        lucide.createIcons();
-                    }
-                    
-                    alert('Payment link has been sent successfully! Please check your email or phone.');
-                }, 1500);
-            });
-        }
-
         // M-Pesa STK Push specific functionality
     const mpesaStkForm = document.querySelector('.payment-method-card[data-method="mpesa_stk"]');
     const mpesaStkButton = document.getElementById('mpesaStkButton');

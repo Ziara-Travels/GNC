@@ -66,22 +66,42 @@
     </div>
 
     {{-- PASSENGER --}}
+    @php
+        $passengers = $booking->passenger_details ?? [];
+        $typeLabels = [
+            'ADULT' => 'Adult', 'CHILD' => 'Child',
+            'HELD_INFANT' => 'Infant', 'SEATED_INFANT' => 'Infant',
+        ];
+    @endphp
     <div class="section">
         <div class="section-title">Passenger Information</div>
         <table class="pax-table">
             <tr>
                 <th>Passenger</th>
-                <th>Email</th>
-                <th>Phone</th>
+                <th>Date of Birth</th>
+                <th>Passport No.</th>
                 <th>Type</th>
             </tr>
-            <tr>
-                <td style="font-weight:bold;">{{ $booking->user->name ?? ($booking->user->first_name . ' ' . $booking->user->last_name) }}</td>
-                <td>{{ $booking->contact_email }}</td>
-                <td>{{ $booking->contact_phone ?? 'N/A' }}</td>
-                <td>Adult</td>
-            </tr>
+            @if(!empty($passengers))
+                @foreach($passengers as $pax)
+                <tr>
+                    <td style="font-weight:bold;">{{ ($pax['first_name'] ?? '') . ' ' . ($pax['last_name'] ?? '') }}</td>
+                    <td>{{ $pax['date_of_birth'] ?? 'N/A' }}</td>
+                    <td>{{ $pax['passport_number'] ?? 'N/A' }}</td>
+                    <td>{{ $typeLabels[$pax['type'] ?? 'ADULT'] ?? 'Adult' }}</td>
+                </tr>
+                @endforeach
+            @else
+                {{-- Fallback for bookings created before per-passenger details were collected --}}
+                <tr>
+                    <td style="font-weight:bold;">{{ $booking->user->name ?? trim(($booking->user->first_name ?? '') . ' ' . ($booking->user->last_name ?? '')) }}</td>
+                    <td>N/A</td>
+                    <td>N/A</td>
+                    <td>Adult</td>
+                </tr>
+            @endif
         </table>
+        <div style="font-size: 9px; color: #6b7280; margin-top: 4px;">Contact: {{ $booking->contact_email }} &bull; {{ $booking->contact_phone ?? 'N/A' }}</div>
     </div>
 
     {{-- FLIGHT SEGMENTS --}}

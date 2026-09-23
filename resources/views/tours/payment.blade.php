@@ -28,15 +28,15 @@
                         </div>
                         <div class="d-flex justify-content-between mb-2">
                             <span>Tour Date:</span>
-                            <span>{{ $booking->tour_date->format('M d, Y') }}</span>
+                            <span>{{ $booking->activity_date->format('M d, Y') }}</span>
                         </div>
                         <div class="d-flex justify-content-between mb-2">
                             <span>Participants:</span>
-                            <span>{{ $booking->participants }}</span>
+                            <span>{{ $booking->traveler_count }}</span>
                         </div>
                         <div class="d-flex justify-content-between mb-2">
                             <span>Price per person:</span>
-                            <span>{{ $booking->currency }} {{ number_format($booking->price_per_person, 2) }}</span>
+                            <span>{{ $booking->currency }} {{ number_format($booking->amount, 2) }}</span>
                         </div>
                         
                         <hr>

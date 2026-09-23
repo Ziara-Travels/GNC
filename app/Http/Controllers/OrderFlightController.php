@@ -40,73 +40,6 @@ class OrderFlightController extends Controller
         $this->jengaApiKey = env('JENGA_API_KEY');
     }
 
-    public function __invoke(Request $request)
-    {
-        $url = 'https://test.api.amadeus.com/v1/booking/flight-orders';
-        $access_token = $this->getAccessToken();
-
-        $data = [
-            'data' => [
-                'type' => 'flight-order',
-                'flightOffers' => [
-                    json_decode($request['data'])
-                ],
-                'travelers' => [
-                    [
-                        'id' => '1',
-                        'dateOfBirth' => '2001-09-02',
-                        'name' => [
-                            'firstName' => 'Idris Aweda',
-                            'lastName' => 'Zubair'
-                        ],
-                        'gender' => 'MALE',
-                        'contact' => [
-                            'emailAddress' => 'zubairidrisaweda@gmail.com',
-                            'phones' => [
-                                [
-                                    'deviceType' => 'MOBILE',
-                                    'countryCallingCode' => '234',
-                                    'number' => '7052053780'
-                                ]
-                            ]
-                        ],
-                        'documents' => [
-                            [
-                                'documentType' => 'PASSPORT',
-                                'birthPlace' => 'Madrid',
-                                'issuanceLocation' => 'Madrid',
-                                'issuanceDate' => '2015-04-14',
-                                'number' => '00000000',
-                                'expiryDate' => '2025-04-14',
-                                'issuanceCountry' => 'ES',
-                                'validityCountry' => 'ES',
-                                'nationality' => 'ES',
-                                'holder' => true
-                            ]
-                        ]
-                    ]
-                ]
-            ]
-        ];
-
-        try {
-            $response = $this->client->post($url, [
-                'headers' => [
-                    'Accept' => 'application/json',
-                    'Authorization' => 'Bearer ' . $access_token
-                ],
-                'json' => $data
-            ]);
-
-            $response = $response->getBody();
-            $response = json_decode($response);
-
-            return view('confirm')->with('flight', $response->data);
-        } catch (GuzzleException $exception) {
-            return $exception->getMessage();
-        }
-    }
-
     // Show checkout page
     public function showCheckout()
     {
@@ -127,11 +60,18 @@ class OrderFlightController extends Controller
 
         $flightData = session('selected_flight');
         $hotelData = session('selected_hotel');
-        
+
         if (!$flightData && !$hotelData) {
             return redirect()->route('home')->with([
                 'message' => 'No booking data found. Please search and select a flight or hotel first.',
                 'alert_type' => 'warning'
+            ]);
+        }
+
+        if ($flightData && !session('booking_passenger_details')) {
+            return redirect()->route('booking.passengers.show')->with([
+                'message' => 'Please enter passenger details to continue.',
+                'alert_type' => 'info'
             ]);
         }
 
@@ -232,6 +172,10 @@ class OrderFlightController extends Controller
         try {
             // Create booking record first
             $booking = $this->createBooking($user, $bookingData, $bookingType, $request);
+
+            // Passenger details are now persisted on the booking row; clear
+            // the session copy so a later, unrelated booking can't reuse it.
+            session()->forget(['booking_passenger_details', 'booking_contact_email', 'booking_contact_phone']);
 
             // Create Amadeus booking if flight
             if ($bookingType === 'flight') {
@@ -446,30 +390,60 @@ class OrderFlightController extends Controller
         return 'BK' . strtoupper(uniqid()) . rand(100, 999);
     }
 
+    /**
+     * Derive the authoritative price from the offer payload itself rather than
+     * trusting the client-submitted 'amount'/'currency' fields, which can be
+     * edited in the checkout request independently of the selected offer.
+     */
+    private function resolveAuthoritativePrice($bookingData, $bookingType)
+    {
+        if ($bookingType === 'flight') {
+            $amount = $bookingData['price']['total'] ?? null;
+            $currency = $bookingData['price']['currency'] ?? null;
+        } else {
+            $amount = $bookingData['offers'][0]['price']['total'] ?? null;
+            $currency = $bookingData['offers'][0]['price']['currency'] ?? null;
+        }
+
+        if ($amount === null || $currency === null) {
+            throw new \Exception('Unable to determine booking price from the selected offer.');
+        }
+
+        return [(float) $amount, $currency];
+    }
+
     private function createBooking($user, $bookingData, $bookingType, $request)
     {
+        [$amount, $currency] = $this->resolveAuthoritativePrice($bookingData, $bookingType);
+
         $bookingFields = [
             'user_id' => $user->id,
             'booking_reference' => $this->generateBookingReference(),
             'booking_type' => $bookingType,
-            'amount' => $request->input('amount'),
-            'currency' => $request->input('currency'),
+            'amount' => $amount,
+            'currency' => $currency,
             'status' => 'pending',
             'payment_method' => $request->input('payment_method'),
             'payment_status' => 'pending',
-            'contact_email' => $user->email,
-            'contact_phone' => $user->phone ?? '',
+            'contact_email' => session('booking_contact_email', $user->email),
+            'contact_phone' => session('booking_contact_phone', $user->phone ?? ''),
         ];
 
         if ($bookingType === 'flight') {
+            $passengers = session('booking_passenger_details', []);
+            $types = array_column($passengers, 'type');
+
             $bookingFields = array_merge($bookingFields, [
                 'flight_number' => $bookingData['itineraries'][0]['segments'][0]['number'] ?? null,
                 'departure_airport' => $bookingData['itineraries'][0]['segments'][0]['departure']['iataCode'] ?? null,
                 'arrival_airport' => $bookingData['itineraries'][0]['segments'][count($bookingData['itineraries'][0]['segments']) - 1]['arrival']['iataCode'] ?? null,
                 'departure_time' => $bookingData['itineraries'][0]['segments'][0]['departure']['at'] ?? null,
                 'arrival_time' => $bookingData['itineraries'][0]['segments'][count($bookingData['itineraries'][0]['segments']) - 1]['arrival']['at'] ?? null,
-                'flight_details' => json_encode($bookingData),
-                'adults' => count($bookingData['travelerPricings']),
+                'flight_details' => $bookingData,
+                'passenger_details' => $passengers,
+                'adults' => count(array_filter($types, fn ($t) => $t === 'ADULT')) ?: count($bookingData['travelerPricings']),
+                'children' => count(array_filter($types, fn ($t) => $t === 'CHILD')),
+                'infants' => count(array_filter($types, fn ($t) => in_array($t, ['HELD_INFANT', 'SEATED_INFANT']))),
                 'travel_class' => $bookingData['travelerPricings'][0]['fareDetailsBySegment'][0]['cabin'] ?? null,
             ]);
         } else {
@@ -477,7 +451,7 @@ class OrderFlightController extends Controller
                 'hotel_id' => $bookingData['hotel']['hotelId'] ?? null,
                 'check_in_date' => $bookingData['offers'][0]['checkInDate'] ?? null,
                 'check_out_date' => $bookingData['offers'][0]['checkOutDate'] ?? null,
-                'hotel_details' => json_encode($bookingData),
+                'hotel_details' => $bookingData,
                 'adults' => $bookingData['adults'] ?? 1,
                 'children' => $bookingData['children'] ?? 0,
             ]);
@@ -574,8 +548,11 @@ class OrderFlightController extends Controller
     private function prepareTravelersForAmadeus($booking)
     {
         $travelers = [];
-        $passengerDetails = json_decode($booking->passenger_details ?? '[]', true);
-        
+        // passenger_details is cast to 'array' on the model already — do not
+        // json_decode() it again (that throws a TypeError in PHP 8 once it's
+        // actually populated, since the value is no longer a JSON string here).
+        $passengerDetails = $booking->passenger_details ?? [];
+
         foreach ($passengerDetails as $index => $passenger) {
             $travelers[] = [
                 'id' => (string)($index + 1),
@@ -691,7 +668,7 @@ class OrderFlightController extends Controller
                     return $this->processMpesaPayment($payment, $request->input('mpesa_phone'));
                 
                 case 'equitel':
-                    return $this->processMpesaPayment($payment, $request->input('equitel_phone'));
+                    return $this->processEquitelPayment($payment, $request->input('equitel_phone'));
 
                 case 'equity':
                 case 'bank':
@@ -1043,13 +1020,114 @@ class OrderFlightController extends Controller
             ]);
         }
 
-        // User is authenticated, proceed to checkout
+        // User is authenticated, proceed to passenger details before checkout
         session(['selected_flight' => $flightData]);
-        
-        return redirect()->route('booking.checkout')->with([
-            'message' => 'Flight selected successfully. Please review your booking details.',
+        session()->forget('booking_passenger_details');
+
+        return redirect()->route('booking.passengers.show')->with([
+            'message' => 'Flight selected successfully. Please enter passenger details.',
             'alert_type' => 'success'
         ]);
+    }
+
+    /**
+     * Derive the ordered list of traveler types (ADULT/CHILD/HELD_INFANT/...)
+     * from the Amadeus offer's travelerPricings, so the passenger form asks
+     * for exactly the passengers that were searched for.
+     */
+    private function getTravelerTypesFromOffer($flightData)
+    {
+        $pricings = $flightData['travelerPricings'] ?? [];
+
+        if (empty($pricings)) {
+            return ['ADULT'];
+        }
+
+        return array_map(function ($pricing) {
+            return $pricing['travelerType'] ?? 'ADULT';
+        }, $pricings);
+    }
+
+    /**
+     * Show the passenger details form, sized to the travelers on the selected offer.
+     */
+    public function showPassengerDetails()
+    {
+        if (!Auth::check()) {
+            return redirect()->route('login');
+        }
+
+        $rawFlight = session('selected_flight');
+        $flightData = is_string($rawFlight) ? json_decode($rawFlight, true) : $rawFlight;
+
+        if (!$flightData) {
+            return redirect()->route('home')->with([
+                'message' => 'No flight selected. Please search and select a flight first.',
+                'alert_type' => 'warning'
+            ]);
+        }
+
+        $travelerTypes = $this->getTravelerTypesFromOffer($flightData);
+
+        return view('booking.passenger-details-wizard', [
+            'travelerTypes' => $travelerTypes,
+            'flightData' => $flightData,
+        ]);
+    }
+
+    /**
+     * Persist passenger details in session (not yet in the DB — the Booking
+     * row doesn't exist until processCheckout runs) and continue to checkout.
+     */
+    public function savePassengerDetails(Request $request)
+    {
+        if (!Auth::check()) {
+            return redirect()->route('login');
+        }
+
+        $rawFlight = session('selected_flight');
+        $flightData = is_string($rawFlight) ? json_decode($rawFlight, true) : $rawFlight;
+
+        if (!$flightData) {
+            return redirect()->route('home')->with([
+                'message' => 'No flight selected. Please search and select a flight first.',
+                'alert_type' => 'warning'
+            ]);
+        }
+
+        $travelerTypes = $this->getTravelerTypesFromOffer($flightData);
+        $expectedCount = count($travelerTypes);
+
+        $validated = $request->validate([
+            'contact_email' => 'required|email',
+            'contact_phone' => 'required|string|max:30',
+            'passengers' => "required|array|size:{$expectedCount}",
+            'passengers.*.first_name' => 'required|string|max:100',
+            'passengers.*.last_name' => 'required|string|max:100',
+            'passengers.*.date_of_birth' => 'required|date|before:today',
+            'passengers.*.gender' => 'required|in:male,female',
+            'passengers.*.nationality' => 'required|string|max:2',
+            'passengers.*.passport_number' => 'required|string|max:30',
+            'passengers.*.passport_expiry' => 'required|date|after:today',
+            'passengers.*.passport_country' => 'required|string|max:2',
+        ]);
+
+        // Attach the traveler type Amadeus originally priced this seat as,
+        // so prepareTravelersForAmadeus() stays consistent with the offer.
+        $passengers = array_map(function ($passenger, $index) use ($travelerTypes) {
+            $passenger['type'] = $travelerTypes[$index] ?? 'ADULT';
+            $passenger['email'] = $passenger['email'] ?? null;
+            $passenger['phone'] = $passenger['phone'] ?? null;
+            return $passenger;
+        }, $validated['passengers'], array_keys($validated['passengers']));
+
+        session([
+            'booking_passenger_details' => $passengers,
+            'booking_contact_email' => $validated['contact_email'],
+            'booking_contact_phone' => $validated['contact_phone'],
+        ]);
+
+        return redirect()->route('booking.checkout');
     }
 
     // Hotel Selection
@@ -1108,18 +1186,19 @@ class OrderFlightController extends Controller
 
     private function getJengaAccessToken()
     {
-        try {
-            // Implementation would cache the token
-            $response = Http::post($this->jengaApiUrl . '/auth/token', [
-                'api_key' => $this->jengaApiKey,
-                'grant_type' => 'client_credentials'
-            ]);
+        // Implementation would cache the token
+        $response = Http::post($this->jengaApiUrl . '/auth/token', [
+            'api_key' => $this->jengaApiKey,
+            'grant_type' => 'client_credentials'
+        ]);
 
-            return $response->json('access_token');
-        } catch (\Exception $e) {
-            // Return demo token for development
-            return 'demo_token_' . time();
+        $token = $response->successful() ? $response->json('access_token') : null;
+
+        if (!$token) {
+            throw new \Exception('Failed to obtain Jenga access token: ' . $response->status());
         }
+
+        return $token;
     }
 
     public function applyReferralDiscount($userId, $bookingAmount)
@@ -1257,37 +1336,61 @@ class OrderFlightController extends Controller
                 'transaction.reference' => 'required|string',
                 'transaction.status' => 'required|string'
             ]);
-            
-            // Extract relevant data
+
+            // Extract relevant data. NOTE: this endpoint has no session/CSRF
+            // protection (it's a server-to-server webhook) and Jenga does not
+            // sign callbacks, so the body is untrusted input. We only use it to
+            // learn *which* transaction to look at, then independently ask
+            // Jenga's own status API for the authoritative outcome below —
+            // an attacker posting a forged "SUCCESS" body cannot make Jenga's
+            // API agree with them.
             $callbackType = $request->input('callbackType');
             $transactionRef = $request->input('transaction.reference');
-            $status = $request->input('transaction.status');
             $paymentMode = $request->input('transaction.paymentMode');
-            $amount = $request->input('transaction.amount');
-            $currency = $request->input('transaction.currency');
             $remarks = $request->input('transaction.remarks');
             $customerRef = $request->input('customer.reference');
-            
+
             // Find the booking by reference
             $booking = Booking::where('booking_reference', $customerRef)
                 ->orWhere('transaction_id', $transactionRef)
                 ->first();
-                
+
             if (!$booking) {
                 Log::channel('payments')->warning('Booking not found for Jenga callback', [
                     'transaction_reference' => $transactionRef,
                     'customer_reference' => $customerRef
                 ]);
-                
+
                 return response()->json([
                     'status' => 'error',
                     'message' => 'Booking not found'
                 ], 404);
             }
-            
+
+            // Independently verify the transaction outcome with Jenga rather
+            // than trusting the callback body's 'transaction.status'.
+            $verifiedStatus = $this->verifyJengaTransactionStatus($transactionRef);
+
+            if ($verifiedStatus === null) {
+                Log::channel('payments')->warning('Could not independently verify Jenga transaction status; ignoring callback', [
+                    'transaction_reference' => $transactionRef,
+                    'booking_reference' => $booking->booking_reference,
+                    'claimed_status' => $request->input('transaction.status'),
+                ]);
+
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Unable to verify transaction status'
+                ], 409);
+            }
+
+            $status = $verifiedStatus['status'];
+            $amount = $verifiedStatus['amount'] ?? $booking->amount;
+            $currency = $verifiedStatus['currency'] ?? $booking->currency;
+
             // Find or create payment record
             $payment = Payment::where('booking_id', $booking->id)->first();
-            
+
             if (!$payment) {
                 $payment = new Payment();
                 $payment->user_id = $booking->user_id;
@@ -1297,14 +1400,14 @@ class OrderFlightController extends Controller
                 $payment->currency = $currency;
                 $payment->payment_method = strtolower($paymentMode);
             }
-            
+
             // Update payment status
             $payment->status = $status === 'SUCCESS' ? 'completed' : 'failed';
             $payment->provider_transaction_id = $transactionRef;
-            $payment->provider_response = json_encode($request->all());
+            $payment->provider_response = json_encode($verifiedStatus['raw']);
             $payment->save();
-            
-            // Update booking status based on payment result
+
+            // Update booking status based on the Jenga-verified payment result
             if ($status === 'SUCCESS') {
                 $booking->payment_status = 'completed';
                 $booking->status = 'confirmed';
@@ -1347,6 +1450,48 @@ class OrderFlightController extends Controller
                 'status' => 'error',
                 'message' => 'Error processing callback: ' . $e->getMessage()
             ], 500);
+        }
+    }
+
+    /**
+     * Query Jenga's own transaction-status API for the authoritative outcome
+     * of a transaction, instead of trusting a caller-supplied status. Returns
+     * null if the status can't be confirmed (network/API failure), which
+     * callers must treat as "not verified" rather than falling back to any
+     * caller-supplied claim.
+     */
+    private function verifyJengaTransactionStatus($transactionRef)
+    {
+        try {
+            $response = Http::withHeaders([
+                'Authorization' => 'Bearer ' . $this->getJengaAccessToken(),
+                'Content-Type' => 'application/json',
+            ])->get($this->jengaApiUrl . '/payment/status/' . $transactionRef);
+
+            if (!$response->successful()) {
+                return null;
+            }
+
+            $data = $response->json();
+            $status = $data['status'] ?? null;
+
+            if (!$status) {
+                return null;
+            }
+
+            return [
+                'status' => $this->mapJengaStatus($status) === 'completed' ? 'SUCCESS' : 'FAILED',
+                'amount' => $data['amount'] ?? null,
+                'currency' => $data['currency'] ?? null,
+                'raw' => $data,
+            ];
+        } catch (\Exception $e) {
+            Log::channel('payments')->error('Jenga transaction status verification failed', [
+                'transaction_reference' => $transactionRef,
+                'error' => $e->getMessage(),
+            ]);
+
+            return null;
         }
     }
 
@@ -1917,7 +2062,9 @@ private function processEquitelPayment($payment, $phoneNumber)
         // Prepare Equitel payment request data
         $equitelData = [
             'biller' => [
-                'billerCode' => '320320',  // Sample biller code
+                // TODO: env('JENGA_EQUITEL_BILLER_CODE') is unset in .env.example —
+                // this must be the real Jenga-issued biller code before going live.
+                'billerCode' => env('JENGA_EQUITEL_BILLER_CODE', '320320'),
                 'countryCode' => 'KE'
             ],
             'bill' => [

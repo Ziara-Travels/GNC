@@ -13,30 +13,60 @@ class Booking extends Model
     protected $fillable = [
         'user_id',
         'booked_by',
+        'role',
         'booking_reference',
         'booking_type',
         'type',
         'title',
+        'amadeus_offer_id',
+        'amadeus_activity_id',
+        'amadeus_data',
+        'amadeus_booking_id',
+        'amadeus_booking_data',
+        'e_ticket_data',
         'flight_number',
         'hotel_id',
+        'tour_id',
         'departure_airport',
         'arrival_airport',
         'departure_time',
         'arrival_time',
         'check_in_date',
         'check_out_date',
+        'room_type',
+        'room_count',
+        'nights',
+        'activity_name',
+        'destination',
+        'country',
+        'city',
+        'activity_date',
+        'activity_time',
+        'duration',
+        'activity_type',
+        'difficulty_level',
+        'traveler_count',
+        'guest_count',
         'amount',
         'total_amount',
+        'total_price',
         'paid_amount',
         'currency',
         'status',
+        'booking_status',
         'payment_method',
         'payment_status',
         'transaction_id',
+        'payment_reference',
         'flight_details',
         'hotel_details',
+        'tour_details',
         'traveler_details',
+        'passenger_details',
+        'contact_details',
+        'guest_details',
         'passengers',
+        'passenger_count',
         'adults',
         'children',
         'infants',
@@ -45,6 +75,9 @@ class Booking extends Model
         'contact_phone',
         'confirmation_sent',
         'reminder_sent',
+        'booked_at',
+        'cancelled_at',
+        'notes',
     ];
 
     protected $casts = [
@@ -52,16 +85,30 @@ class Booking extends Model
         'arrival_time' => 'datetime',
         'check_in_date' => 'datetime',
         'check_out_date' => 'datetime',
+        'activity_date' => 'date',
+        'booked_at' => 'datetime',
+        'cancelled_at' => 'datetime',
         'amount' => 'decimal:2',
         'total_amount' => 'decimal:2',
+        'total_price' => 'decimal:2',
         'paid_amount' => 'decimal:2',
+        'amadeus_data' => 'array',
+        'amadeus_booking_data' => 'array',
+        'e_ticket_data' => 'array',
         'flight_details' => 'array',
         'hotel_details' => 'array',
+        'tour_details' => 'array',
         'traveler_details' => 'array',
+        'passenger_details' => 'array',
+        'contact_details' => 'array',
+        'guest_details' => 'array',
         'passengers' => 'array',
         'adults' => 'integer',
         'children' => 'integer',
         'infants' => 'integer',
+        'traveler_count' => 'integer',
+        'guest_count' => 'integer',
+        'passenger_count' => 'integer',
         'confirmation_sent' => 'boolean',
         'reminder_sent' => 'boolean',
     ];
@@ -74,17 +121,14 @@ class Booking extends Model
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * Get the referral associated with this booking.
-     */
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
-
     public function bookedBy()
     {
         return $this->belongsTo(User::class, 'booked_by');
+    }
+
+    public function tour()
+    {
+        return $this->belongsTo(Tour::class);
     }
 
     public function payment()
@@ -142,6 +186,14 @@ class Booking extends Model
     public function scopeHotels($query)
     {
         return $query->where('booking_type', 'hotel');
+    }
+
+    /**
+     * Scope a query to only include tour/activity bookings.
+     */
+    public function scopeTours($query)
+    {
+        return $query->whereIn('booking_type', ['tour', 'activity']);
     }
 
     /**

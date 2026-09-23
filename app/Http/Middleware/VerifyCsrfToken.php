@@ -12,6 +12,7 @@ class VerifyCsrfToken extends Middleware
      * @var array<int, string>
      */
     protected $except = [
-        //
+        // Server-to-server payment webhook: Jenga cannot supply a session CSRF token.
+        'payments/jenga/callback',
     ];
 }

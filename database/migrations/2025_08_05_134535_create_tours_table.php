@@ -41,7 +41,10 @@ class CreateToursTable extends Migration
             $table->json('highlights'); // Tour highlights
             $table->json('itinerary')->nullable(); // Detailed itinerary
             $table->string('category'); // Adventure, Cultural, Wildlife, Historical, etc.
-            $table->json('languages')->default('["English"]'); // Available languages
+            // MySQL rejects a literal DEFAULT on JSON columns ("BLOB, TEXT, GEOMETRY or
+            // JSON column can't have a default value") — default is enforced in the
+            // Tour model's $attributes instead.
+            $table->json('languages')->nullable(); // Available languages
             $table->time('start_time')->nullable();
             $table->time('end_time')->nullable();
             $table->string('meeting_point')->nullable();
@@ -57,7 +60,8 @@ class CreateToursTable extends Migration
             $table->boolean('featured')->default(false);
             $table->boolean('seasonal')->default(false);
             $table->json('available_months')->nullable(); // For seasonal tours
-            $table->json('available_days')->default('["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]');
+            // Same MySQL JSON-default restriction as 'languages' above.
+            $table->json('available_days')->nullable();
             $table->integer('advance_booking_days')->default(0); // Minimum days in advance
             $table->enum('status', ['active', 'inactive', 'suspended'])->default('active');
             $table->timestamp('published_at')->nullable();

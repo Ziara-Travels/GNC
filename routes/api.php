@@ -3,7 +3,6 @@
 use App\Http\Controllers\AccessTokenController;
 use App\Http\Controllers\FlightSearchController;
 use App\Http\Controllers\GetPriceController;
-use App\Http\Controllers\OrderFlightController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -27,8 +26,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::get('/init', AccessTokenController::class)->name('init');
 Route::post('/search', FlightSearchController::class)->name('search');
 Route::post('/price', GetPriceController::class)->name('price');
-Route::post('/order', OrderFlightController::class)->name('order');
-
 // Include Amadeus API routes
 Route::prefix('amadeus')->group(function() {
     require __DIR__ . '/amadeus-api.php';

@@ -8,53 +8,7 @@
         <h1 class="text-2xl md:text-3xl font-bold text-white mb-1 text-center">Find Your Perfect Flight</h1>
         <p class="text-xs text-gray-300 text-center mb-8">Search across 500+ airlines for the best fares to East Africa and beyond.</p>
 
-        <div class="bg-white rounded-xl shadow-xl overflow-hidden max-w-4xl mx-auto">
-            {{-- Trip type tabs --}}
-            <div class="flex border-b border-gray-100">
-                <button class="trip-tab active flex-1 py-2.5 text-center text-xs font-semibold transition-all" data-type="round_trip" onclick="setTripType('round_trip')"><i class="fas fa-exchange-alt text-[10px] mr-1"></i> Round Trip</button>
-                <button class="trip-tab flex-1 py-2.5 text-center text-xs font-semibold transition-all" data-type="one_way" onclick="setTripType('one_way')"><i class="fas fa-long-arrow-alt-right text-[10px] mr-1"></i> One Way</button>
-            </div>
-
-            <form id="flightSearchForm" action="/api/search" method="POST" class="p-4">
-                @csrf
-                <input type="hidden" name="trip_type" value="round_trip" id="trip_type_input">
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
-                    <div class="relative">
-                        <label class="text-[10px] font-semibold text-gray-400 uppercase mb-0.5 block">From</label>
-                        <div class="relative">
-                            <i class="fas fa-plane-departure absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-300 text-[10px]"></i>
-                            <input type="text" name="from" id="sf_from" class="w-full pl-7 pr-2 py-2 border border-gray-200 rounded-lg text-xs text-gray-800 focus:ring-1 focus:ring-blue-500 airport-autocomplete" placeholder="City or Airport" autocomplete="off" required>
-                            <input type="hidden" name="from_iata" id="sf_from_iata">
-                        </div>
-                        <div class="airport-suggestions absolute z-50 w-full bg-white border border-gray-200 rounded-lg shadow-xl mt-1 hidden max-h-48 overflow-y-auto"></div>
-                    </div>
-                    <div class="relative">
-                        <label class="text-[10px] font-semibold text-gray-400 uppercase mb-0.5 block">To</label>
-                        <div class="relative">
-                            <i class="fas fa-plane-arrival absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-300 text-[10px]"></i>
-                            <input type="text" name="to" id="sf_to" class="w-full pl-7 pr-2 py-2 border border-gray-200 rounded-lg text-xs text-gray-800 focus:ring-1 focus:ring-blue-500 airport-autocomplete" placeholder="City or Airport" autocomplete="off" required>
-                            <input type="hidden" name="to_iata" id="sf_to_iata">
-                        </div>
-                        <div class="airport-suggestions absolute z-50 w-full bg-white border border-gray-200 rounded-lg shadow-xl mt-1 hidden max-h-48 overflow-y-auto"></div>
-                    </div>
-                    <div>
-                        <label class="text-[10px] font-semibold text-gray-400 uppercase mb-0.5 block">Departure</label>
-                        <input type="date" name="date" id="sf_depart" class="w-full py-2 px-2.5 border border-gray-200 rounded-lg text-xs text-gray-800 focus:ring-1 focus:ring-blue-500" required>
-                    </div>
-                    <div id="returnWrap">
-                        <label class="text-[10px] font-semibold text-gray-400 uppercase mb-0.5 block">Return</label>
-                        <input type="date" name="return_date" id="sf_return" class="w-full py-2 px-2.5 border border-gray-200 rounded-lg text-xs text-gray-800 focus:ring-1 focus:ring-blue-500">
-                    </div>
-                </div>
-                <div class="grid grid-cols-4 gap-3 mb-3">
-                    <div><label class="text-[10px] font-semibold text-gray-400 uppercase mb-0.5 block">Adults</label><select name="adults" class="w-full py-2 px-2 border border-gray-200 rounded-lg text-xs text-gray-800">@for($i=1;$i<=9;$i++)<option value="{{$i}}">{{$i}}</option>@endfor</select></div>
-                    <div><label class="text-[10px] font-semibold text-gray-400 uppercase mb-0.5 block">Children</label><select name="children" class="w-full py-2 px-2 border border-gray-200 rounded-lg text-xs text-gray-800">@for($i=0;$i<=8;$i++)<option value="{{$i}}">{{$i}}</option>@endfor</select></div>
-                    <div><label class="text-[10px] font-semibold text-gray-400 uppercase mb-0.5 block">Infants</label><select name="infants" class="w-full py-2 px-2 border border-gray-200 rounded-lg text-xs text-gray-800">@for($i=0;$i<=4;$i++)<option value="{{$i}}">{{$i}}</option>@endfor</select></div>
-                    <div><label class="text-[10px] font-semibold text-gray-400 uppercase mb-0.5 block">Cabin</label><select name="travel_class" class="w-full py-2 px-2 border border-gray-200 rounded-lg text-xs text-gray-800"><option value="ECONOMY">Economy</option><option value="PREMIUM_ECONOMY">Premium</option><option value="BUSINESS">Business</option><option value="FIRST">First</option></select></div>
-                </div>
-                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2"><i class="fas fa-search text-[10px]"></i> Search Flights</button>
-            </form>
-        </div>
+        @include('flights.partials.search-widget', ['idPrefix' => 'sf'])
     </div>
 </section>
 
@@ -160,68 +114,13 @@
 </section>
 @endsection
 
-@push('styles')
-<style>
-.trip-tab{color:#9ca3af;border-bottom:2px solid transparent;}.trip-tab.active{color:#2563eb;border-bottom-color:#2563eb;background:#eff6ff;}.trip-tab:hover:not(.active){background:#f9fafb;}
-</style>
-@endpush
-
 @push('scripts')
 <script>
-function setTripType(type){
-    document.querySelectorAll('.trip-tab').forEach(function(t){t.classList.remove('active');});
-    document.querySelector('.trip-tab[data-type="'+type+'"]').classList.add('active');
-    document.getElementById('trip_type_input').value=type;
-    var w=document.getElementById('returnWrap');
-    w.style.opacity=type==='one_way'?'0.4':'1';w.style.pointerEvents=type==='one_way'?'none':'auto';
-}
 function toggleFaq(btn){
     var c=btn.nextElementSibling,ic=btn.querySelector('i'),open=!c.classList.contains('hidden');
     document.querySelectorAll('.faq-content').forEach(function(x){x.classList.add('hidden');});
     document.querySelectorAll('.faq-toggle i').forEach(function(x){x.style.transform='rotate(0)';});
     if(!open){c.classList.remove('hidden');ic.style.transform='rotate(180deg)';}
-}
-document.addEventListener('DOMContentLoaded',function(){
-    var tmr=new Date();tmr.setDate(tmr.getDate()+1);var nw=new Date();nw.setDate(nw.getDate()+8);
-    function fmt(d){return d.toISOString().split('T')[0];}
-    var d=document.getElementById('sf_depart'),r=document.getElementById('sf_return');
-    if(d&&!d.value){d.value=fmt(tmr);d.min=fmt(tmr);}
-    if(r&&!r.value){r.value=fmt(nw);r.min=fmt(nw);}
-    initAirportAutocomplete();
-
-    // Pre-fill from URL params
-    var params=new URLSearchParams(window.location.search);
-    if(params.get('to')){document.getElementById('sf_to').value=params.get('to');document.getElementById('sf_to_iata').value=params.get('to');}
-});
-function initAirportAutocomplete(){
-    var cache={};
-    document.querySelectorAll('.airport-autocomplete').forEach(function(input){
-        var parent=input.closest('.relative').parentElement;
-        var sug=parent.querySelector('.airport-suggestions');
-        var hid=parent.querySelector('input[type="hidden"]');
-        var to;
-        input.addEventListener('input',function(){
-            clearTimeout(to);var q=this.value.trim();
-            if(q.length<2){sug.classList.add('hidden');return;}
-            to=setTimeout(function(){
-                if(cache[q]){renderSuggestions(cache[q],sug,input,hid);return;}
-                fetch('/api/airports/search?q='+encodeURIComponent(q)).then(function(r){return r.json();}).then(function(d){cache[q]=d;renderSuggestions(d,sug,input,hid);}).catch(function(){sug.classList.add('hidden');});
-            },200);
-        });
-        document.addEventListener('click',function(e){if(!input.contains(e.target)&&!sug.contains(e.target))sug.classList.add('hidden');});
-    });
-}
-function renderSuggestions(data,container,input,hidden){
-    if(!data||!data.length){container.classList.add('hidden');return;}
-    container.innerHTML='';
-    data.slice(0,6).forEach(function(item){
-        var d=document.createElement('div');d.className='px-3 py-2 hover:bg-blue-50 cursor-pointer flex justify-between items-center border-b border-gray-50 text-xs';
-        var name=item.name||item.city||'',city=item.city||'',country=item.country||'',code=item.iata_code||item.iataCode||item.code||'';
-        d.innerHTML='<div><span class="font-medium text-gray-900">'+name+'</span><span class="text-gray-400 ml-1">'+city+(country?', '+country:'')+'</span></div><span class="font-bold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded text-[10px]">'+code+'</span>';
-        d.addEventListener('click',function(){input.value=name+' ('+code+')';hidden.value=code;container.classList.add('hidden');});
-        container.appendChild(d);
-    });
-    container.classList.remove('hidden');
 }
 </script>
 @endpush

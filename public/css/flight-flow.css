@@ -1,0 +1,112 @@
+/*
+ * Shared, scoped styles for the redesigned flight search -> booking -> e-ticket
+ * flow. Intentionally NOT part of the global build pipeline (which mixes
+ * Bootstrap + Tailwind CDN + jQuery) — plain CSS, linked only from the pages
+ * in this flow, using Ziara's existing brand palette (see tailwind.config.js).
+ * New markup on these pages should use Tailwind utilities + these .ff-* classes
+ * only, never new Bootstrap classes, so the flow reads as one consistent system.
+ */
+
+:root {
+    --ff-primary: #2563eb;
+    --ff-primary-dark: #1e40af;
+    --ff-slate-50: #f8fafc;
+    --ff-slate-100: #f1f5f9;
+    --ff-slate-200: #e2e8f0;
+    --ff-slate-500: #64748b;
+    --ff-slate-700: #334155;
+    --ff-slate-900: #0f172a;
+    --ff-amber: #f59e0b;
+    --ff-emerald: #10b981;
+    --ff-rose: #f43f5e;
+    --ff-radius: 12px;
+}
+
+.ff-card {
+    background: #fff;
+    border: 1px solid var(--ff-slate-200);
+    border-radius: var(--ff-radius);
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+}
+
+.ff-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: var(--ff-primary);
+    color: #fff;
+    font-weight: 600;
+    border-radius: 9999px;
+    padding: 0.75rem 1.75rem;
+    transition: background-color 0.15s ease;
+}
+
+.ff-btn-primary:hover {
+    background: var(--ff-primary-dark);
+}
+
+.ff-btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.ff-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: 9999px;
+    padding: 0.2rem 0.65rem;
+    background: var(--ff-slate-100);
+    color: var(--ff-slate-700);
+}
+
+.ff-badge-adult { background: #eff6ff; color: var(--ff-primary-dark); }
+.ff-badge-child { background: #fef3c7; color: #92400e; }
+.ff-badge-infant { background: #fce7f3; color: #9d174d; }
+
+.ff-step-track {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.ff-step {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.55);
+}
+
+.ff-step.is-active,
+.ff-step.is-done {
+    color: #fff;
+}
+
+.ff-step-dot {
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.15);
+    font-size: 0.8rem;
+}
+
+.ff-step.is-active .ff-step-dot,
+.ff-step.is-done .ff-step-dot {
+    background: #fff;
+    color: var(--ff-primary-dark);
+}
+
+.ff-step-line {
+    width: 2.5rem;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.25);
+}
