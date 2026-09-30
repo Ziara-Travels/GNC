@@ -134,7 +134,7 @@ class AdminController extends Controller
                 $newUser->permissions()->sync($request->permissions);
             }
 
-            return redirect()->route('dashboard.roles.admin.index')
+            return redirect()->route('admin.roles.index')
                 ->with('success', 'User created successfully');
 
         } catch (\Exception $e) {
@@ -230,7 +230,7 @@ class AdminController extends Controller
                 $editUser->permissions()->detach();
             }
 
-            return redirect()->route('dashboard.roles.admin.index')
+            return redirect()->route('admin.roles.index')
                 ->with('success', 'User updated successfully');
 
         } catch (\Exception $e) {

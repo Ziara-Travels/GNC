@@ -1,11 +1,22 @@
 @extends('layouts.main')
 
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/ziara-booking.css') }}?v={{ (file_exists(public_path('css/ziara-booking.css')) ? filemtime(public_path('css/ziara-booking.css')) : 0) }}">
+@endpush
+
 @section('content')
-<div class="container py-5">
+<div class="ziara-bk">
+@include('partials.ziara-page-hero', [
+    'kicker' => 'Secure Checkout',
+    'title'  => 'Complete Your <em>Payment</em>',
+    'intro'  => 'Choose how you would like to settle your balance. Your booking is held until payment clears.',
+])
+
+<div class="ziara-bk-body container py-5">
     <div class="row justify-content-center">
         <div class="col-md-10">
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white">
+            <div class="card shadow-sm ziara-bk-card">
+                <div class="card-header bg-primary text-white ziara-bk-cta">
                     <h4 class="mb-0">Payment</h4>
                 </div>
                 <div class="card-body">
@@ -72,8 +83,8 @@
                         @endif
 
                         <div class="mb-4">
-                            <div class="card">
-                                <div class="card-body bg-light">
+                            <div class="card ziara-bk-card">
+                                <div class="card-body bg-light ziara-bk-total">
                                     <div class="d-flex justify-content-between mb-2">
                                         <div>Subtotal:</div>
                                         <div>{{ $bookingData['currency'] }} {{ number_format($originalPrice, 2) }}</div>
@@ -84,7 +95,7 @@
                                         <div>-{{ $bookingData['currency'] }} {{ number_format($discountInfo['amount'], 2) }}</div>
                                     </div>
                                     @endif
-                                    <div class="d-flex justify-content-between fw-bold">
+                                    <div class="d-flex justify-content-between fw-bold ziara-bk-total-row">
                                         <div>Total:</div>
                                         <div>{{ $bookingData['currency'] }} {{ number_format($finalPrice, 2) }}</div>
                                     </div>
@@ -154,13 +165,14 @@
                         </div>
                         
                         <div class="d-grid">
-                            <button type="submit" class="btn btn-primary btn-lg">Complete Payment</button>
+                            <button type="submit" class="btn btn-primary btn-lg ziara-btn ziara-btn--maroon">Complete Payment</button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
+</div>
 </div>
 
 <script>

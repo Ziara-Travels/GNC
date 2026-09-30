@@ -1,11 +1,22 @@
 @extends('layouts.main')
 
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/ziara-booking.css') }}?v={{ (file_exists(public_path('css/ziara-booking.css')) ? filemtime(public_path('css/ziara-booking.css')) : 0) }}">
+@endpush
+
 @section('content')
-<div class="container py-5">
+<div class="ziara-bk">
+@include('partials.ziara-page-hero', [
+    'kicker' => 'Flight Booking',
+    'title'  => 'Passenger <em>Details</em>',
+    'intro'  => 'Tell us who is travelling so we can issue your e-ticket exactly as it should be.',
+])
+
+<div class="ziara-bk-body container py-5">
     <div class="row justify-content-center">
         <div class="col-md-10">
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white">
+            <div class="card shadow-sm ziara-bk-card">
+                <div class="card-header bg-primary text-white ziara-bk-cta">
                     <h4 class="mb-0">Passenger Details</h4>
                 </div>
                 <div class="card-body">
@@ -101,19 +112,20 @@
                         </div>
                         
                         <div class="mb-4">
-                            <button type="button" id="add-passenger" class="btn btn-outline-primary">
+                            <button type="button" id="add-passenger" class="btn btn-outline-primary ziara-btn ziara-btn--outline">
                                 <i class="fas fa-plus-circle"></i> Add Another Passenger
                             </button>
                         </div>
                         
                         <div class="d-grid">
-                            <button type="submit" class="btn btn-primary btn-lg">Continue to Payment</button>
+                            <button type="submit" class="btn btn-primary btn-lg ziara-btn ziara-btn--maroon">Continue to Payment</button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
+</div>
 </div>
 
 <script>

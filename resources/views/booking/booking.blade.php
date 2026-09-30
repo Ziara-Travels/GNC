@@ -1,6 +1,7 @@
 @extends('layouts.main')
 
 @push('styles')
+<link rel="stylesheet" href="{{ asset('css/ziara-booking.css') }}?v={{ (file_exists(public_path('css/ziara-booking.css')) ? filemtime(public_path('css/ziara-booking.css')) : 0) }}">
 <style>
     /* Custom animations */
     @keyframes fadeInUp {
@@ -37,7 +38,7 @@
 
 @section('content')
     <!-- Hero Section -->
-    <div class="relative bg-gradient-to-r from-blue-700 to-indigo-800 py-16">
+    <div class="ziara-bk ziara-bk-hero relative bg-gradient-to-r from-blue-700 to-indigo-800 py-16">
         <!-- Animated Background Elements -->
         <div class="absolute inset-0 overflow-hidden">
             <div class="absolute top-20 left-10 w-72 h-72 bg-blue-400/10 rounded-full blur-3xl animate-pulse"></div>
@@ -143,7 +144,7 @@
     </div>
 
     <!-- Main Content -->
-    <div class="container mx-auto px-4 py-8 -mt-6">
+    <div class="ziara-bk ziara-bk-body container mx-auto px-4 py-8 -mt-6">
         <div class="flex flex-col xl:flex-row gap-8">
             <!-- Left Side - Flight Details -->
             <div class="flex-1">
@@ -166,7 +167,7 @@
                 </div>
 
                 <!-- Flight Information Card -->
-                <div class="bg-white rounded-3xl shadow-xl border border-gray-200 p-8 mb-8">
+                <div class="bg-white rounded-3xl shadow-xl border border-gray-200 p-8 mb-8 ziara-bk-card">
                     <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
                         <i data-lucide="plane-takeoff" class="h-6 w-6 text-blue-600"></i>
                         Flight Details
@@ -700,7 +701,7 @@
             
             <!-- Right Side - Booking Summary -->
             <div class="w-96 flex-shrink-0">
-                <div class="bg-white rounded-3xl shadow-xl border border-gray-200 p-8 sticky top-8 booking-summary">
+                <div class="bg-white rounded-3xl shadow-xl border border-gray-200 p-8 sticky top-8 booking-summary ziara-bk-card">
                     <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
                         <i data-lucide="clipboard-check" class="h-5 w-5 text-blue-600"></i>
                         Booking Summary
@@ -824,7 +825,7 @@
                             Proceed to Checkout
                         </button>
                         
-                        <button onclick="window.location.href='{{ route('flight.search.results') }}'" 
+                        <button onclick="window.location.href='{{ route('flights.public.search') }}'" 
                                 class="w-full bg-gray-100 text-gray-700 py-3 rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center gap-2">
                             <i data-lucide="arrow-left" class="w-4 h-4"></i>
                             Back to Flight Results
@@ -919,7 +920,7 @@
     <!-- AI Modals -->
     
     <!-- Passport Scanner Modal -->
-    <div id="passportScannerModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div id="passportScannerModal" class="ziara-bk ziara-bk-modal fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
         <div class="bg-white rounded-2xl shadow-xl max-w-md w-full mx-4">
             <div class="p-6 border-b border-gray-200">
                 <div class="flex justify-between items-center">
@@ -975,7 +976,7 @@
     </div>
     
     <!-- AI Assistant Modal -->
-    <div id="aiAssistantModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div id="aiAssistantModal" class="ziara-bk ziara-bk-modal fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
         <div class="bg-white rounded-2xl shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
             <div class="p-6 border-b border-gray-200">
                 <div class="flex justify-between items-center">
@@ -1013,7 +1014,7 @@
     </div>
 
     <!-- Share Modal -->
-    <div id="shareModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div id="shareModal" class="ziara-bk ziara-bk-modal fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
         <div class="bg-white rounded-2xl shadow-xl max-w-md w-full mx-4">
             <div class="p-6 border-b border-gray-200">
                 <div class="flex justify-between items-center">
@@ -1070,9 +1071,7 @@
             <i data-lucide="bot" class="h-6 w-6"></i>
         </button>
     </div>
-@endsection
 
-@section('scripts')
 <script>
     // Modal Functions
     function openPassportScanner() {
@@ -1563,7 +1562,7 @@
 
 <!-- Guest Registration Modal -->
 @if(isset($isGuest) && $isGuest)
-<div id="registrationModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+<div id="registrationModal" class="ziara-bk ziara-bk-modal fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
     <div class="bg-white rounded-2xl shadow-xl max-w-md w-full mx-4 overflow-hidden">
         <div class="p-6">
             <div class="flex justify-between items-center mb-4">

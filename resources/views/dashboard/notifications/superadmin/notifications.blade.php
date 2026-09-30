@@ -825,7 +825,7 @@ function exportToCsv() {
     showLoading();
     
     const formData = $('#filter-form').serialize();
-    window.location.href = `{{ route('superadmin.notifications.export') }}?${formData}`;
+    window.location.href = `{{ route('superadmin.data.export') }}?${formData}`;
     
     setTimeout(hideLoading, 2000);
 }

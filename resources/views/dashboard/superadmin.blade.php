@@ -2303,7 +2303,7 @@ window.addEventListener('beforeunload', function() {
                                                         </i>
                                                     </div>
                                                     <div class="ltr:ml-[12px] rtl:mr-[12px]">
-                                                        <a href="{{ route('admin.flights.show', $flight->id) }}" class="font-medium inline-block text-[14px] md:text-[15px] transition-all hover:text-primary-500">
+                                                        <a href="{{ route('flights.booking', $flight->id) }}" class="font-medium inline-block text-[14px] md:text-[15px] transition-all hover:text-primary-500">
                                                             {{ $flight->airline }} {{ $flight->flight_number }}
                                                         </a>
                                                         <span class="block text-sm text-gray-500 dark:text-gray-400">

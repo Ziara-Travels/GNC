@@ -1,6 +1,7 @@
 @extends('layouts.main')
 
-@section('styles')
+
+@section('content')
 <style>
     /* Custom animations */
     @keyframes fadeInUp {
@@ -13,7 +14,7 @@
             transform: translateY(0);
         }
     }
-    
+
     @keyframes fadeOutDown {
         from {
             opacity: 1;
@@ -24,47 +25,47 @@
             transform: translateY(20px);
         }
     }
-    
+
     .animate-fade-in-up {
         animation: fadeInUp 0.3s ease-out forwards;
     }
-    
+
     .animate-fade-out-down {
         animation: fadeOutDown 0.3s ease-out forwards;
     }
-    
+
     .modal-overlay {
         background-color: rgba(0, 0, 0, 0.5);
         backdrop-filter: blur(5px);
     }
-    
+
     /* Timeline styles */
     .timeline-step.active .timeline-circle {
-        background-color: #4f46e5;
-        border-color: #4f46e5;
+        background-color: #6b2c1f;
+        border-color: #6b2c1f;
     }
-    
+
     .timeline-step.active .timeline-text {
-        color: #4f46e5;
+        color: #6b2c1f;
         font-weight: 600;
     }
-    
+
     .timeline-step.completed .timeline-circle {
-        background-color: #22c55e;
-        border-color: #22c55e;
+        background-color: #c9a227;
+        border-color: #c9a227;
     }
-    
+
     .timeline-line {
         top: 24px;
         height: 3px;
         transform: translateY(-50%);
     }
-    
+
     /* Pulse animation for secured badge */
     .animate-pulse-slow {
         animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
     }
-    
+
     @keyframes pulse {
         0%, 100% {
             opacity: 1;
@@ -74,16 +75,42 @@
         }
     }
 </style>
-@endsection
-
-@section('content')
-<div class="bg-gray-50 min-h-screen pb-16">
+    <style>
+        .ziara-flow-checkout { background: #fdf8eb; }
+        .ziara-flow-checkout__bar { background: #fff; border-bottom: 1px solid #eadfca; box-shadow: 0 2px 12px rgba(74,29,19,.08); }
+        .ziara-flow-checkout__bar .timeline-line { background: #eadfca; }
+        .ziara-flow-checkout__panel { background: #fff; border: 1px solid #eadfca; border-radius: 16px; box-shadow: 0 2px 12px rgba(74,29,19,.10); }
+        .ziara-flow-checkout__title { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 700; color: #4a1d13; }
+        .ziara-flow-checkout__subtitle { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 700; color: #4a1d13; }
+        .ziara-flow-checkout__tourtype { background: #fdf6df; border: 1px solid rgba(201,162,39,.4); border-radius: 10px; }
+        .ziara-flow-checkout__tourtype strong { color: #6b1d15; }
+        .ziara-flow-checkout__tourtype-strong { color: #6b1d15; }
+        .ziara-flow-checkout__tourtype span { color: #7a6a60; }
+        .ziara-flow-checkout__icon { color: #c9a227; }
+        .ziara-flow-checkout__icon--ok { color: #167a3a; }
+        .ziara-flow-checkout__ok { color: #167a3a; }
+        .ziara-flow-checkout__ok-strong { color: #167a3a; }
+        .ziara-flow-checkout__secure { background: #fdf6df; border: 1px solid rgba(201,162,39,.45); border-radius: 999px; }
+        .ziara-flow-checkout__secure .ziara-flow-checkout__icon { color: #a8861a; }
+        .ziara-flow-checkout__secure span { color: #6b1d15; }
+        .ziara-flow-checkout__link { color: #7b2a1b; }
+        .ziara-flow-checkout__link:hover { color: #a8861a; }
+        .ziara-flow-checkout__cta { background: #6b2c1f; color: #fff; border-radius: 10px; }
+        .ziara-flow-checkout__cta:hover { background: #4a1d13; }
+        .ziara-flow-checkout__total { color: #6b1d15; font-weight: 700; }
+        .ziara-flow-checkout__modal { background: #fff; border: 1px solid #eadfca; border-radius: 16px; box-shadow: 0 30px 90px rgba(28,22,18,.4); }
+        .ziara-flow-checkout__btn-ghost { background: #fff; color: #4a1d13; border-color: #eadfca; }
+        .ziara-flow-checkout__btn-ghost:hover { background: #fdf8eb; border-color: #c9a227; }
+        .ziara-flow-checkout__paymethod { border-color: #eadfca; }
+        .ziara-flow-checkout__paymethod:has(input:checked) { border-color: #c9a227; background: #fdf8eb; box-shadow: 0 0 0 1px rgba(201,162,39,.45); }
+    </style>
+<div class="ziara-flow-checkout min-h-screen pb-16">
     <!-- Booking Progress Timeline -->
-    <div class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-30">
+    <div class="ziara-flow-checkout__bar sticky top-0 z-30">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div class="relative flex items-center justify-between">
                 <!-- Timeline Line -->
-                <div class="absolute timeline-line left-0 w-full bg-gray-200"></div>
+                <div class="absolute timeline-line left-0 w-full"></div>
                 
                 <!-- Step 1: Search -->
                 <div class="timeline-step completed relative z-10 flex flex-col items-center">
@@ -111,7 +138,7 @@
                 
                 <!-- Step 4: Pay -->
                 <div class="timeline-step active relative z-10 flex flex-col items-center">
-                    <div class="timeline-circle w-12 h-12 rounded-full bg-white border-4 border-gray-300 flex items-center justify-center text-indigo-600">
+                    <div class="timeline-circle w-12 h-12 rounded-full bg-white border-4 border-gray-300 flex items-center justify-center text-[#c9a227]">
                         <i data-lucide="credit-card" class="w-6 h-6"></i>
                     </div>
                     <span class="timeline-text mt-2 text-sm font-medium">Pay</span>
@@ -134,8 +161,8 @@
             <!-- Left Column: Payment Form -->
             <div class="lg:w-2/3">
                 <!-- Tour Summary -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-8 p-6">
-                    <h2 class="text-xl font-bold text-gray-900 mb-6">Tour Summary</h2>
+                <div class="ziara-flow-checkout__panel overflow-hidden mb-8 p-6">
+                    <h2 class="ziara-flow-checkout__title text-xl font-bold mb-6">Tour Summary</h2>
                     
                     <div class="flex flex-col md:flex-row gap-6 mb-6">
                         <!-- Tour Image -->
@@ -147,7 +174,7 @@
                         
                         <!-- Tour Details -->
                         <div class="md:w-2/3">
-                            <h3 class="text-lg font-bold text-gray-900">{{ $tour['name'] ?? 'Maasai Mara Safari Adventure' }}</h3>
+                            <h3 class="ziara-flow-checkout__subtitle text-lg font-bold">{{ $tour['name'] ?? 'Maasai Mara Safari Adventure' }}</h3>
                             
                             <div class="flex items-center mt-2">
                                 <div class="flex items-center text-gray-600">
@@ -155,18 +182,18 @@
                                     {{ $tour['location'] ?? 'Maasai Mara, Kenya' }}
                                 </div>
                                 
-                                <span class="mx-2 text-gray-300">•</span>
+                                <span class="mx-2 text-gray-300">â€¢</span>
                                 
                                 <div class="flex items-center">
-                                    <i data-lucide="star" class="h-4 w-4 text-yellow-500 fill-current"></i>
+                                    <i data-lucide="star" class="h-4 w-4 text-[#c9a227] fill-current"></i>
                                     <span class="ml-1">{{ $tour['rating'] ?? '4.9' }} ({{ $tour['review_count'] ?? '128' }} reviews)</span>
                                 </div>
                             </div>
                             
                             <!-- Tour Type -->
-                            <div class="mt-4 p-3 bg-indigo-50 rounded-lg border border-indigo-100">
-                                <div class="font-semibold text-indigo-800">{{ $tour['type'] ?? 'Multi-day Safari Tour' }}</div>
-                                <div class="text-gray-700 text-sm mt-1">{{ $tour['duration'] ?? '3 days' }} • {{ $tour['group_size'] ?? 'Small group' }} • {{ $tour['language'] ?? 'English guided' }}</div>
+                            <div class="ziara-flow-checkout__tourtype mt-4 p-3 rounded-lg">
+                                <div class="ziara-flow-checkout__tourtype-strong font-semibold">{{ $tour['type'] ?? 'Multi-day Safari Tour' }}</div>
+                                <div class="text-gray-700 text-sm mt-1">{{ $tour['duration'] ?? '3 days' }} â€¢ {{ $tour['group_size'] ?? 'Small group' }} â€¢ {{ $tour['language'] ?? 'English guided' }}</div>
                             </div>
                             
                             <!-- Tour Details -->
@@ -195,27 +222,27 @@
                     </div>
                     
                     <div class="border-t border-gray-200 pt-4 mt-4">
-                        <h3 class="font-semibold text-gray-900 mb-3">Important Information</h3>
+                        <h3 class="ziara-flow-checkout__subtitle font-semibold mb-3">Important Information</h3>
                         
                         <div class="space-y-2">
                             <div class="flex items-start">
-                                <i data-lucide="clock" class="h-5 w-5 text-indigo-600 mt-0.5 mr-2"></i>
+                                <i data-lucide="clock" class="ziara-flow-checkout__icon h-5 w-5 mt-0.5 mr-2"></i>
                                 <div class="text-sm text-gray-700">
                                     Please arrive at the meeting point 15 minutes before the start time.
                                 </div>
                             </div>
                             
                             <div class="flex items-start">
-                                <i data-lucide="map" class="h-5 w-5 text-indigo-600 mt-0.5 mr-2"></i>
+                                <i data-lucide="map" class="ziara-flow-checkout__icon h-5 w-5 mt-0.5 mr-2"></i>
                                 <div class="text-sm text-gray-700">
                                     Meeting point: {{ $tour['meeting_point'] ?? 'Hotel pickup (please confirm your hotel details)' }}
                                 </div>
                             </div>
                             
                             <div class="flex items-start">
-                                <i data-lucide="shield-check" class="h-5 w-5 text-green-600 mt-0.5 mr-2"></i>
+                                <i data-lucide="shield-check" class="ziara-flow-checkout__icon--ok h-5 w-5 mt-0.5 mr-2"></i>
                                 <div class="text-sm text-gray-700">
-                                    <span class="font-semibold text-green-700">{{ $tour['cancellation'] ?? 'Free cancellation' }}</span> up to 24 hours before the tour starts
+                                    <span class="ziara-flow-checkout__ok-strong font-semibold">{{ $tour['cancellation'] ?? 'Free cancellation' }}</span> up to 24 hours before the tour starts
                                 </div>
                             </div>
                         </div>
@@ -223,12 +250,12 @@
                     
                     <!-- What's Included -->
                     <div class="mt-6">
-                        <h3 class="font-semibold text-gray-900 mb-3">What's Included</h3>
+                        <h3 class="ziara-flow-checkout__subtitle font-semibold mb-3">What's Included</h3>
                         
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
                             @foreach($tour['included'] ?? ['Professional guide', 'Hotel pickup and drop-off', 'All park entrance fees', 'Meals as per itinerary', 'Bottled water'] as $included)
                                 <div class="flex items-center">
-                                    <i data-lucide="check" class="h-5 w-5 text-green-500 mr-2"></i>
+                                    <i data-lucide="check" class="ziara-flow-checkout__icon--ok h-5 w-5 mr-2"></i>
                                     <span class="text-sm">{{ $included }}</span>
                                 </div>
                             @endforeach
@@ -237,14 +264,14 @@
                 </div>
                 
                 <!-- Payment Method -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden p-6">
+                <div class="ziara-flow-checkout__panel overflow-hidden p-6">
                     <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-xl font-bold text-gray-900">Payment Method</h2>
+                        <h2 class="ziara-flow-checkout__title text-xl font-bold">Payment Method</h2>
                         
                         <!-- Secured Payment Badge -->
-                        <div class="flex items-center px-3 py-1 bg-green-100 rounded-full">
-                            <i data-lucide="shield" class="h-4 w-4 text-green-700 mr-1 animate-pulse-slow"></i>
-                            <span class="text-xs font-medium text-green-700">Secure Payment</span>
+                        <div class="ziara-flow-checkout__secure flex items-center px-3 py-1 rounded-full">
+                            <i data-lucide="shield" class="h-4 w-4 mr-1 animate-pulse-slow"></i>
+                            <span class="text-xs font-medium">Secure Payment</span>
                         </div>
                     </div>
                     
@@ -334,7 +361,7 @@
                                 <!-- Billing Address -->
                                 <div class="col-span-2">
                                     <div class="flex items-center mb-4">
-                                        <h3 class="font-semibold text-gray-900">Billing Address</h3>
+                                        <h3 class="ziara-flow-checkout__subtitle font-semibold">Billing Address</h3>
                                         <span class="ml-2 text-xs bg-gray-100 text-gray-800 py-1 px-2 rounded">Required</span>
                                     </div>
                                     
@@ -393,7 +420,7 @@
                                     </div>
                                     <div class="ml-3 text-sm">
                                         <label for="terms" class="font-medium text-gray-700">
-                                            I agree to the <a href="#" class="text-indigo-600 hover:text-indigo-500">Terms and Conditions</a>, <a href="#" class="text-indigo-600 hover:text-indigo-500">Privacy Policy</a>, and <a href="#" class="text-indigo-600 hover:text-indigo-500">Cancellation Policy</a>
+                                            I agree to the <a href="#" class="ziara-flow-checkout__link">Terms and Conditions</a>, <a href="#" class="ziara-flow-checkout__link">Privacy Policy</a>, and <a href="#" class="ziara-flow-checkout__link">Cancellation Policy</a>
                                         </label>
                                     </div>
                                 </div>
@@ -401,7 +428,7 @@
                             
                             <!-- Submit Button -->
                             <div class="mt-8">
-                                <button type="submit" class="w-full px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors flex items-center justify-center">
+                                <button type="submit" class="ziara-flow-checkout__cta w-full px-6 py-3 font-medium transition-colors flex items-center justify-center">
                                     Pay & Confirm Booking
                                     <i data-lucide="lock" class="w-5 h-5 ml-2"></i>
                                 </button>
@@ -437,7 +464,7 @@
                                     </div>
                                     <div class="ml-3 text-sm">
                                         <label for="mpesaTerms" class="font-medium text-gray-700">
-                                            I agree to the <a href="#" class="text-indigo-600 hover:text-indigo-500">Terms and Conditions</a>, <a href="#" class="text-indigo-600 hover:text-indigo-500">Privacy Policy</a>, and <a href="#" class="text-indigo-600 hover:text-indigo-500">Cancellation Policy</a>
+                                            I agree to the <a href="#" class="ziara-flow-checkout__link">Terms and Conditions</a>, <a href="#" class="ziara-flow-checkout__link">Privacy Policy</a>, and <a href="#" class="ziara-flow-checkout__link">Cancellation Policy</a>
                                         </label>
                                     </div>
                                 </div>
@@ -445,7 +472,7 @@
                             
                             <!-- Submit Button -->
                             <div class="mt-8">
-                                <button type="submit" class="w-full px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors flex items-center justify-center">
+                                <button type="submit" class="ziara-flow-checkout__cta w-full px-6 py-3 font-medium transition-colors flex items-center justify-center">
                                     Pay with M-Pesa
                                     <i data-lucide="smartphone" class="w-5 h-5 ml-2"></i>
                                 </button>
@@ -478,7 +505,7 @@
                                     </div>
                                     <div class="ml-3 text-sm">
                                         <label for="paypalTerms" class="font-medium text-gray-700">
-                                            I agree to the <a href="#" class="text-indigo-600 hover:text-indigo-500">Terms and Conditions</a>, <a href="#" class="text-indigo-600 hover:text-indigo-500">Privacy Policy</a>, and <a href="#" class="text-indigo-600 hover:text-indigo-500">Cancellation Policy</a>
+                                            I agree to the <a href="#" class="ziara-flow-checkout__link">Terms and Conditions</a>, <a href="#" class="ziara-flow-checkout__link">Privacy Policy</a>, and <a href="#" class="ziara-flow-checkout__link">Cancellation Policy</a>
                                         </label>
                                     </div>
                                 </div>
@@ -490,17 +517,17 @@
                     <div class="mt-8 border-t border-gray-200 pt-6">
                         <div class="flex items-center justify-center space-x-6">
                             <div class="flex items-center">
-                                <i data-lucide="shield" class="h-5 w-5 text-green-600 mr-2"></i>
+                                <i data-lucide="shield" class="ziara-flow-checkout__icon--ok h-5 w-5 mr-2"></i>
                                 <span class="text-sm text-gray-700">Secure Payment</span>
                             </div>
                             
                             <div class="flex items-center">
-                                <i data-lucide="lock" class="h-5 w-5 text-green-600 mr-2"></i>
+                                <i data-lucide="lock" class="ziara-flow-checkout__icon--ok h-5 w-5 mr-2"></i>
                                 <span class="text-sm text-gray-700">Encrypted Data</span>
                             </div>
                             
                             <div class="flex items-center">
-                                <i data-lucide="eye-off" class="h-5 w-5 text-green-600 mr-2"></i>
+                                <i data-lucide="eye-off" class="ziara-flow-checkout__icon--ok h-5 w-5 mr-2"></i>
                                 <span class="text-sm text-gray-700">Privacy Protected</span>
                             </div>
                         </div>
@@ -510,15 +537,15 @@
             
             <!-- Right Column: Booking Summary -->
             <div class="lg:w-1/3">
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden sticky top-24">
+                <div class="ziara-flow-checkout__panel overflow-hidden sticky top-24">
                     <div class="p-6">
-                        <h2 class="text-xl font-bold text-gray-900 mb-6">Tour Details</h2>
+                        <h2 class="ziara-flow-checkout__title text-xl font-bold mb-6">Tour Details</h2>
                         
                         <!-- Tour Summary -->
                         <div class="mb-6">
                             <div class="flex justify-between items-start mb-2">
                                 <div>
-                                    <h3 class="font-semibold">{{ $tour['name'] ?? 'Maasai Mara Safari Adventure' }}</h3>
+                                    <h3 class="ziara-flow-checkout__subtitle">{{ $tour['name'] ?? 'Maasai Mara Safari Adventure' }}</h3>
                                     <p class="text-sm text-gray-600">{{ $tour['duration'] ?? '3 days' }}</p>
                                 </div>
                             </div>
@@ -541,7 +568,7 @@
                             <div class="space-y-3">
                                 <!-- Tour Price -->
                                 <div class="flex justify-between">
-                                    <span class="text-gray-600">Adult Price ({{ $booking['adults'] ?? '2' }} × {{ $tour['currency'] ?? 'USD' }} {{ $tour['adult_price'] ?? '299' }})</span>
+                                    <span class="text-gray-600">Adult Price ({{ $booking['adults'] ?? '2' }} Ã— {{ $tour['currency'] ?? 'USD' }} {{ $tour['adult_price'] ?? '299' }})</span>
                                     <span>
                                         @php
                                             $adultTotal = ($booking['adults'] ?? 2) * ($tour['adult_price'] ?? 299);
@@ -553,7 +580,7 @@
                                 @if(($booking['children'] ?? 0) > 0)
                                     <!-- Child Price -->
                                     <div class="flex justify-between">
-                                        <span class="text-gray-600">Child Price ({{ $booking['children'] }} × {{ $tour['currency'] ?? 'USD' }} {{ $tour['child_price'] ?? '149' }})</span>
+                                        <span class="text-gray-600">Child Price ({{ $booking['children'] }} Ã— {{ $tour['currency'] ?? 'USD' }} {{ $tour['child_price'] ?? '149' }})</span>
                                         <span>
                                             @php
                                                 $childTotal = ($booking['children'] ?? 0) * ($tour['child_price'] ?? 149);
@@ -589,7 +616,7 @@
                                 
                                 @if(($tour['discount'] ?? 0) > 0)
                                     <!-- Discount -->
-                                    <div class="flex justify-between text-green-600">
+                                    <div class="ziara-flow-checkout__total flex justify-between">
                                         <span>{{ $tour['discount'] }}% Early booking discount</span>
                                         <span>
                                             @php
@@ -627,7 +654,7 @@
                         
                         <!-- Cancellation Policy -->
                         <div class="mt-6 p-4 bg-gray-50 rounded-lg">
-                            <h3 class="font-semibold text-gray-900 mb-2">Cancellation Policy</h3>
+                            <h3 class="ziara-flow-checkout__subtitle font-semibold mb-2">Cancellation Policy</h3>
                             <p class="text-sm text-gray-600">
                                 {{ $tour['cancellation_policy'] ?? 'Free cancellation up to 24 hours before the tour starts. If you cancel less than 24 hours before the start time, you will not be eligible for a refund.' }}
                             </p>
@@ -636,8 +663,8 @@
                         <!-- Contact Support -->
                         <div class="mt-6">
                             <div class="flex items-center justify-center">
-                                <i data-lucide="headphones" class="h-5 w-5 text-indigo-600 mr-2"></i>
-                                <span class="text-sm font-medium">Need help? <a href="#" class="text-indigo-600 hover:text-indigo-500">Contact support</a></span>
+                                <i data-lucide="headphones" class="ziara-flow-checkout__icon h-5 w-5 mr-2"></i>
+                                <span class="text-sm font-medium">Need help? <a href="#" class="ziara-flow-checkout__link">Contact support</a></span>
                             </div>
                         </div>
                     </div>
@@ -653,11 +680,11 @@
             <div class="fixed inset-0 transition-opacity modal-overlay" aria-hidden="true"></div>
 
             <!-- Modal panel -->
-            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full animate-fade-in-up">
+            <div class="ziara-flow-checkout__modal inline-block align-bottom text-left overflow-hidden transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full animate-fade-in-up">
                 <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                     <div class="sm:flex sm:items-start">
                         <div class="mt-3 text-center sm:mt-0 sm:text-left w-full">
-                            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4" id="modal-title">
+                            <h3 class="ziara-flow-checkout__title text-lg leading-6 font-medium mb-4" id="modal-title">
                                 Create an Account to Continue
                             </h3>
                             
@@ -709,14 +736,14 @@
                                             <input id="terms" name="terms" type="checkbox" required class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
                                         </div>
                                         <div class="ml-3 text-sm">
-                                            <label for="terms" class="font-medium text-gray-700">I agree to the <a href="#" class="text-indigo-600 hover:text-indigo-500">Terms and Conditions</a>.</label>
+                                            <label for="terms" class="font-medium text-gray-700">I agree to the <a href="#" class="ziara-flow-checkout__link">Terms and Conditions</a>.</label>
                                         </div>
                                     </div>
                                 </div>
                                 
                                 <div class="flex items-center justify-between mt-6">
                                     <div class="text-sm">
-                                        <a href="{{ route('login') }}" class="font-medium text-indigo-600 hover:text-indigo-500">
+                                        <a href="{{ route('login') }}" class="ziara-flow-checkout__link font-medium">
                                             Already have an account? Login
                                         </a>
                                     </div>
@@ -726,10 +753,10 @@
                     </div>
                 </div>
                 <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                    <button type="button" id="registerSubmitBtn" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm">
+                    <button type="button" id="registerSubmitBtn" class="ziara-flow-checkout__cta w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 text-base font-medium focus:outline-none sm:ml-3 sm:w-auto sm:text-sm">
                         Register & Continue
                     </button>
-                    <button type="button" id="modalCloseBtn" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                    <button type="button" id="modalCloseBtn" class="ziara-flow-checkout__btn-ghost mt-3 w-full inline-flex justify-center rounded-md border shadow-sm px-4 py-2 text-base font-medium focus:outline-none sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
                         Close
                     </button>
                 </div>
@@ -737,9 +764,7 @@
         </div>
     </div>
 </div>
-@endsection
 
-@section('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Initialize Lucide icons

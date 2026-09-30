@@ -21,7 +21,7 @@
                         <i data-lucide="download" class="h-5 w-5"></i>
                         Export Users
                     </button>
-                    <a href="{{ route('admin.profile') }}" class="bg-white/10 backdrop-blur-sm rounded-xl px-4 py-2 hover:bg-white/20 transition-colors">
+                    <a href="{{ route('admin.profile.my') }}" class="bg-white/10 backdrop-blur-sm rounded-xl px-4 py-2 hover:bg-white/20 transition-colors">
                         <i data-lucide="user" class="h-5 w-5 inline mr-2"></i>
                         My Profile
                     </a>

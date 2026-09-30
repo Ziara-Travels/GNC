@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Airport;
+use App\Services\SkyscannerService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -586,8 +587,70 @@ class AirportController extends Controller
                 $results[] = $dbResult;
             }
         }
-        
-        return response()->json(array_slice($results, 0, 12));
+
+        // Merge RapidAPI (Sky Scanner) autocomplete so cities outside the local DB work.
+        $rapidApiResults = $this->fromRapidApi($query);
+        $mergedByCode = [];
+        foreach (array_merge($rapidApiResults, $results) as $item) {
+            $code = isset($item['iata_code']) ? strtoupper($item['iata_code']) : '';
+            $item = $this->withEntity($item);
+            if ($code !== '') {
+                if (!isset($mergedByCode[$code])) {
+                    $mergedByCode[$code] = $item;
+                }
+            } elseif ($code === '') {
+                $mergedByCode[] = $item;
+            }
+        }
+
+        return response()->json(array_slice(array_values($mergedByCode), 0, 12));
+    }
+
+    /**
+     * Enrich a search result item with entity identifiers the widget forwards
+     * to the flight search endpoint.
+     */
+    private function withEntity(array $item)
+    {
+        $code = isset($item['iata_code']) ? strtoupper($item['iata_code']) : '';
+        $item['entity_id'] = $item['entity_id'] ?? ($item['sky_id'] ?? $code);
+        $item['entity_type'] = $item['entity_type'] ?? 'AIRPORT';
+        $item['sky_id'] = $item['sky_id'] ?? $code;
+        return $item;
+    }
+
+    /**
+     * Ask RapidAPI Sky Scanner autocomplete for places matching the query.
+     * Failures are swallowed - local results still work on their own.
+     */
+    private function fromRapidApi($query)
+    {
+        try {
+            $service = app(SkyscannerService::class);
+            $places = $service->autoComplete($query, 10);
+
+            $items = [];
+            foreach ($places as $place) {
+                $iata = isset($place['iata_code']) ? $place['iata_code'] : '';
+                $items[] = [
+                    'iata_code' => $iata,
+                    'name' => $place['name'] ?? '',
+                    'city' => $place['city'] ?? '',
+                    'country' => $place['country'] ?? '',
+                    'display_name' => $place['display_name'] ?? '',
+                    'location_description' => $place['location_description'] ?? '',
+                    'full_display' => $place['full_display'] ?? '',
+                    'entity_id' => $place['entity_id'] ?? $iata,
+                    'entity_type' => $place['entity_type'] ?? 'CITY',
+                    'sky_id' => $place['sky_id'] ?? $iata,
+                    'source' => 'rapidapi',
+                ];
+            }
+
+            return $items;
+        } catch (\Exception $e) {
+            return [];
+        }
     }
 
     /**
@@ -700,7 +763,7 @@ class AirportController extends Controller
             return array_slice($results, 0, 10);
         });
 
-        return response()->json($airports);
+        return response()->json(array_map([$this, 'withEntity'], $airports));
     }
 
     /**
@@ -743,7 +806,7 @@ class AirportController extends Controller
             return $cityResults;
         });
 
-        return response()->json($airports);
+        return response()->json(array_map([$this, 'withEntity'], $airports));
     }
 
     /**
@@ -814,7 +877,7 @@ class AirportController extends Controller
             return array_slice($results, 0, $limit);
         });
 
-        return response()->json($airports);
+        return response()->json(array_map([$this, 'withEntity'], $airports));
     }
 
     // Keep all your existing methods for Amadeus search, etc.

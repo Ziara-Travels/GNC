@@ -3,6 +3,7 @@
 namespace App\Exports;
 
 use App\Models\User;
+use Illuminate\Support\Enumerable;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
@@ -17,7 +18,7 @@ class UsersExport implements FromCollection, WithHeadings
         $this->role = $role;
     }
 
-    public function collection()
+    public function collection(): Enumerable
     {
         $query = User::with('roles');
         

@@ -29,7 +29,7 @@ class Role extends Model
 
     public function users()
     {
-        return $this->hasMany(User::class, 'role', 'slug');
+        return $this->hasMany(User::class, 'role', 'name');
     }
 
     public function creator()
@@ -144,7 +144,7 @@ class Role extends Model
     {
         $roles = [
             [
-                'name' => 'super_admin',
+                'name' => 'superadmin',
                 'display_name' => 'Super Administrator',
                 'description' => 'Full system access with all permissions',
                 'guard_name' => 'web',

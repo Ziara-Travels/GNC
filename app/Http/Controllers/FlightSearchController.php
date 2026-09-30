@@ -11,6 +11,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
 use App\Services\FlightOffersService;
+use App\Services\SkyscannerService;
 
 
 class FlightSearchController extends Controller
@@ -221,7 +222,7 @@ public function selectFlight(Request $request)
                                            ->get()
         ];
 
-        return view('dashboard.flights.superadmin.search', compact('users', 'recentSearches', 'searchStats'));
+        return view('dashboard.flights-search.superadmin.search', compact('users', 'recentSearches', 'searchStats'));
     }
 
     // Admin search page
@@ -332,7 +333,7 @@ public function selectFlight(Request $request)
         
         switch ($userRole) {
             case 'superadmin':
-                return redirect()->route('flights.results.superadmin');
+                return redirect()->route('superadmin.flights.results');
             case 'admin':
                 return redirect()->route('flights.results.admin');
             default:
@@ -405,17 +406,21 @@ public function selectFlight(Request $request)
     
     public function showPublicResults()
     {
-        $flightDataJson = session('flight_data', null);
+        $flightData = session('flight_data');
         $searchParams = session('search_params', []);
 
-        // Decode the stored JSON response
-        $response = $flightDataJson ? json_decode($flightDataJson, true) : null;
-        $flights = $response['data'] ?? [];
-        $dictionaries = $response['dictionaries'] ?? [];
+        // Backwards compatible with the old JSON-string storage.
+        if (is_string($flightData) && $flightData !== '') {
+            $flightData = json_decode($flightData, true);
+        }
+        $flightData = is_array($flightData) ? $flightData : [];
+
+        $flights = $flightData['data'] ?? [];
+        $dictionaries = $flightData['airlines'] ?? [];
         $noFlightsFound = empty($flights);
 
         // If no data at all and no search happened, redirect to search
-        if (!$flightDataJson && empty($searchParams)) {
+        if (empty($flightData) && empty($searchParams)) {
             return redirect()->route('flights.public.search')->with('error', 'No search results found. Please search again.');
         }
 
@@ -424,6 +429,7 @@ public function selectFlight(Request $request)
             'searchParams' => $searchParams,
             'dictionaries' => $dictionaries,
             'noFlightsFound' => $noFlightsFound,
+            'flightData' => $flightData,
         ]);
     }
 
@@ -532,101 +538,128 @@ public function selectFlight(Request $request)
 
    
    /**
-     * Handle the incoming request - Main invoke method
+     * Handle the incoming request - Main invoke method (RapidAPI Sky Scanner)
      */
    public function __invoke(Request $request, Client $client)
     {
-        $url = 'https://test.api.amadeus.com/v2/shopping/flight-offers';
-
-        // Get access token
-        if (session('access_token')) {
-            $access_token = session('access_token');
-        } else {
-            $access_token = app('App\Http\Controllers\AccessTokenController')->__invoke($client)->access_token;
-            session(['access_token' => $access_token]);
-        }
-
-        // Validate IATA codes
+        // Validate IATA codes (multi-city sends arrays)
         $fromIata = $request->input('from_iata');
         $toIata = $request->input('to_iata');
-        
-        if (!$fromIata || !$toIata) {
+
+        $jsonRequest = $request->ajax() || $request->wantsJson();
+
+        if (empty($fromIata) || empty($toIata)) {
+            if ($jsonRequest) {
+                return response()->json(['redirect' => route('flights.results'), 'count' => 0, 'error' => 'Missing origin or destination']);
+            }
             return redirect()->back()->with([
                 'message' => 'Please select valid airports from the suggestions.',
                 'alert_type' => 'error'
             ])->withInput();
         }
 
-        // Build the search request
-        $travelers = $this->buildTravelers($request);
-        $originDestinations = $this->buildOriginDestinations($request);
-        $searchCriteria = $this->buildSearchCriteria($request);
-
-        $data = [
-            'currencyCode' => 'USD',
-            'originDestinations' => $originDestinations,
-            'travelers' => $travelers,
-            'sources' => ['GDS']
-        ];
-
-        if (!empty($searchCriteria)) {
-            $data['searchCriteria'] = $searchCriteria;
-        }
-
         try {
-            $response = $client->post($url, [
-                'headers' => [
-                    'Accept' => 'application/json',
-                    'Authorization' => 'Bearer ' . $access_token
-                ],
-                'json' => $data
-            ]);
+            $service = app(SkyscannerService::class);
+            $tripType = $request->input('trip_type', 'one_way');
 
-            $response = $response->getBody();
-            $response = json_decode($response);
+            $params = $this->buildSkyscannerParams($request, $service);
 
-            // Add dictionaries to each flight for easy access in view
-            if (isset($response->data) && isset($response->dictionaries)) {
-                foreach ($response->data as $flight) {
-                    $flight->dictionaries = $response->dictionaries;
-                }
-            }
+            $payload = $service->searchFlights($params);
+            $normalized = $service->normalizePayload($payload, $params);
 
-            // Store flight data in session
-            session(['flight_data' => json_encode($response)]);
-            session(['search_params' => $request->all()]);
-            
-            // AJAX request: return JSON so the frontend can redirect
-            if ($request->ajax() || $request->wantsJson()) {
-                $count = isset($response->data) ? count($response->data) : 0;
+            // Store flight data + search params in session
+            session(['flight_data' => $normalized]);
+            session(['search_params' => $normalized['searchParams']]);
+            $count = count($normalized['data']);
+
+            if ($jsonRequest) {
                 return response()->json(['redirect' => route('flights.results'), 'count' => $count]);
             }
 
-            // Always redirect to flight-results page
-            if (!isset($response->data) || count($response->data) === 0) {
-                // No flights found, but still redirect to results page
-                return redirect()->route('flights.results')->with([
-                    'noFlightsFound' => true,
-                    'searchParams' => $request->all()
-                ]);
-            }
-
-            // Flights found, redirect to results page
             return redirect()->route('flights.results');
-
-        } catch (GuzzleException $exception) {
+        } catch (\Exception $exception) {
             \Log::error('Flight search API error: ' . $exception->getMessage());
-            
-            // Store empty data so results page shows "no flights found"
-            session(['flight_data' => json_encode(['data' => []])]);
-            session(['search_params' => $request->all()]);
 
-            if ($request->ajax() || $request->wantsJson()) {
+            $empty = [
+                'source' => 'skyscanner',
+                'context' => ['status' => 'failed'],
+                'searchParams' => $this->buildSkyscannerParams($request, app(SkyscannerService::class)),
+                'data' => [],
+                'airlines' => [],
+            ];
+            session(['flight_data' => $empty]);
+            session(['search_params' => $empty['searchParams']]);
+
+            if ($jsonRequest) {
                 return response()->json(['redirect' => route('flights.results'), 'count' => 0]);
             }
 
             return redirect()->route('flights.results');
         }
+    }
+
+    /**
+     * Build Sky Scanner search params from the widget request.
+     * Resolves entity ids (RapidAPI) from the IATA codes when the widget did not
+     * forward an explicit entity id.
+     */
+    private function buildSkyscannerParams(Request $request, SkyscannerService $service)
+    {
+        $tripType = $request->input('trip_type', 'one_way');
+
+        if ($tripType === 'multi_city') {
+            $fromIatas = (array) $request->input('from_iata', []);
+            $toIatas = (array) $request->input('to_iata', []);
+            $dates = (array) $request->input('date', []);
+            $fromEntities = (array) $request->input('from_entity', []);
+            $toEntities = (array) $request->input('to_entity', []);
+
+            $resolvedFrom = [];
+            $resolvedTo = [];
+            foreach ($fromIatas as $i => $iata) {
+                $entity = $fromEntities[$i] ?? '';
+                $resolvedFrom[] = $entity !== '' ? $entity : $service->resolveEntityId($iata, $iata);
+            }
+            foreach ($toIatas as $i => $iata) {
+                $entity = $toEntities[$i] ?? '';
+                $resolvedTo[] = $entity !== '' ? $entity : $service->resolveEntityId($iata, $iata);
+            }
+
+            return [
+                'trip_type' => 'multi_city',
+                'from' => array_map(function ($i) { return $i; }, $fromIatas),
+                'to' => array_map(function ($i) { return $i; }, $toIatas),
+                'from_iata' => array_map('strtoupper', $fromIatas),
+                'to_iata' => array_map('strtoupper', $toIatas),
+                'from_entity' => $resolvedFrom,
+                'to_entity' => $resolvedTo,
+                'date' => $dates,
+                'return_date' => null,
+                'adults' => (int) $request->input('adults', 1),
+                'children' => (int) $request->input('children', 0),
+                'infants' => (int) $request->input('infants', 0),
+                'travel_class' => $request->input('travel_class', 'ECONOMY'),
+            ];
+        }
+
+        $fromIata = strtoupper((string) $request->input('from_iata'));
+        $toIata = strtoupper((string) $request->input('to_iata'));
+
+        return [
+            'trip_type' => $tripType,
+            'from' => $request->input('from', $fromIata),
+            'to' => $request->input('to', $toIata),
+            'from_iata' => $fromIata,
+            'to_iata' => $toIata,
+            'from_entity' => $request->input('from_entity') ?: $service->resolveEntityId($fromIata, $fromIata),
+            'to_entity' => $request->input('to_entity') ?: $service->resolveEntityId($toIata, $toIata),
+            'date' => $request->input('date'),
+            'return_date' => $request->input('return_date'),
+            'adults' => (int) $request->input('adults', 1),
+            'children' => (int) $request->input('children', 0),
+            'infants' => (int) $request->input('infants', 0),
+            'travel_class' => $request->input('travel_class', 'ECONOMY'),
+        ];
     }
 
     /**
@@ -1602,7 +1635,7 @@ public function selectFlight(Request $request)
             ->limit(10)
             ->get();
 
-        return view('dashboard.flights.superadmin.search', compact('users', 'searchStats', 'recentSearches'));
+        return view('dashboard.flights-search.superadmin.search', compact('users', 'searchStats', 'recentSearches'));
     }
 
     // Process SuperAdmin Flight Search
@@ -1662,7 +1695,7 @@ public function selectFlight(Request $request)
                 ]
             ]);
             
-            return redirect()->route('flights.results.superadmin');
+            return redirect()->route('superadmin.flights.results');
             
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Flight search failed: ' . $e->getMessage());
@@ -1683,7 +1716,7 @@ public function selectFlight(Request $request)
         $metadata = session('search_metadata');
         
         if (!$flights || !$searchParams) {
-            return redirect()->route('flights.search.superadmin')->with('error', 'No search results found. Please search again.');
+            return redirect()->route('superadmin.flights.search')->with('error', 'No search results found. Please search again.');
         }
 
         // Get user being searched for
@@ -1692,7 +1725,7 @@ public function selectFlight(Request $request)
             $searchedUser = User::find($metadata['searched_for_user']);
         }
 
-        return view('dashboard.flights.superadmin.flight-results', compact('flights', 'searchParams', 'metadata', 'searchedUser'));
+        return view('dashboard.flights-search.superadmin.flight-results', compact('flights', 'searchParams', 'metadata', 'searchedUser'));
     }
 
     // Log flight search activity

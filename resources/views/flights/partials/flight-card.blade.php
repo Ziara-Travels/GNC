@@ -36,7 +36,7 @@
     else $depTimeSlot = 'night';
 @endphp
 
-<div class="flight-card bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-200 overflow-hidden mb-4 {{ $cardClass }}"
+<div class="flight-card ziara-card overflow-hidden mb-4 {{ $cardClass }}"
      data-airline="{{ $airlineCode }}"
      data-price="{{ $price }}"
      data-stops="{{ $stopCount }}"
@@ -44,7 +44,7 @@
      data-duration="{{ $durationMinutes }}">
 
     @if($isHighlighted)
-        <div class="bg-amber-400 py-1.5 px-4 text-amber-900 font-bold text-center text-xs uppercase tracking-wide">
+        <div class="ziara-cta-amber py-1.5 px-4 text-amber-900 font-bold text-center text-xs uppercase tracking-wide">
             <i class="fas fa-star mr-1"></i> Featured Destination
         </div>
     @endif
@@ -73,14 +73,14 @@
 
                     <div class="flex-1 flex flex-col items-center px-2">
                         <span class="text-xs text-gray-400 flight-duration">{{ $totalDuration }}</span>
-                        <div class="w-full h-px bg-gray-300 relative my-1">
+                        <div class="ziara-rule w-full relative my-1">
                             <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-gray-300 rounded-full"></div>
                             <div class="absolute right-0 top-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-gray-300 rounded-full"></div>
                             @for($i = 0; $i < $stopCount; $i++)
-                                <div class="absolute w-2 h-2 bg-orange-500 rounded-full top-1/2 -translate-y-1/2" style="left: {{ (($i + 1) / ($stopCount + 1)) * 100 }}%"></div>
+                                <div class="absolute w-2 h-2 bg-amber-500 rounded-full top-1/2 -translate-y-1/2" style="left: {{ (($i + 1) / ($stopCount + 1)) * 100 }}%"></div>
                             @endfor
                         </div>
-                        <span class="text-[10px] flight-stops {{ $stopCount === 0 ? 'text-emerald-600 font-semibold' : 'text-orange-600' }}">
+                        <span class="text-[10px] flight-stops {{ $stopCount === 0 ? 'text-emerald-600 font-semibold' : 'text-amber-600 font-semibold' }}">
                             {{ $stopCount === 0 ? 'Direct' : $stopCount . ($stopCount === 1 ? ' stop' : ' stops') }}
                         </span>
                     </div>
@@ -96,7 +96,7 @@
                     <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-blue-50 text-blue-700">
                         <i class="fas fa-couch mr-1 text-[8px]"></i> {{ $cabinClassFormatted }}
                     </span>
-                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-green-50 text-green-700">
+                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-emerald-50 text-emerald-700">
                         <i class="fas fa-suitcase mr-1 text-[8px]"></i> Baggage
                     </span>
                     @if(count($flight['itineraries']) > 1)
@@ -111,13 +111,13 @@
             <div class="flex md:flex-col items-center md:items-end justify-between md:justify-center gap-2 md:w-44 flex-shrink-0 pt-3 md:pt-0 border-t md:border-t-0 md:border-l md:pl-5 border-gray-100">
                 <div class="text-right">
                     <p class="text-xs text-gray-500">per person</p>
-                    <p class="text-2xl font-bold text-blue-600 flight-price">{{ $currencySymbol }}{{ number_format($price, 0) }}</p>
+                    <p class="ziara-price text-2xl flight-price">{{ $currencySymbol }}{{ number_format($price, 0) }}</p>
                     <p class="text-[10px] text-gray-400">{{ $currency }}</p>
                 </div>
                 <form action="{{ ($isDirectBooking ?? false) ? route('popular.destination.process') : route('flights.select') }}" method="POST" class="w-full md:w-auto">
                     @csrf
                     <input type="hidden" name="flight_data" value="{{ json_encode($flight) }}">
-                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-6 rounded-lg transition-colors text-sm">
+                    <button type="submit" class="ziara-cta w-full font-semibold py-2.5 px-6 rounded-lg transition-colors text-sm">
                         Select <i class="fas fa-arrow-right ml-1 text-xs"></i>
                     </button>
                 </form>

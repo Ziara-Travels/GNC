@@ -136,7 +136,7 @@ class SignInController extends Controller
                 session()->forget('needs_email_update');
                 // If it's a temporary email, redirect to email update page
                 if (Str::startsWith($user->email, 'twitter_')) {
-                    return redirect()->route('profile.edit')
+                    return redirect()->route('profile.user')
                         ->with('message', 'Please update your email address to complete your profile.');
                 }
             }

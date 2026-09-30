@@ -1,845 +1,147 @@
 @extends('layouts.main')
 
-@push('styles')
-<style>
-    /* Custom animations */
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-    
-    @keyframes fadeOutDown {
-        from {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        to {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-    }
-    
-    .animate-fade-in-up {
-        animation: fadeInUp 0.3s ease-out forwards;
-    }
-    
-    .animate-fade-out-down {
-        animation: fadeOutDown 0.3s ease-out forwards;
-    }
-    
-    .modal-overlay {
-        background-color: rgba(0, 0, 0, 0.5);
-        backdrop-filter: blur(5px);
-    }
-    
-    /* Timeline styles */
-    .timeline-step.active .timeline-circle {
-        background-color: #4f46e5;
-        border-color: #4f46e5;
-    }
-    
-    .timeline-step.active .timeline-text {
-        color: #4f46e5;
-        font-weight: 600;
-    }
-    
-    .timeline-step.completed .timeline-circle {
-        background-color: #22c55e;
-        border-color: #22c55e;
-    }
-    
-    .timeline-line {
-        top: 24px;
-        height: 3px;
-        transform: translateY(-50%);
-    }
-    
-    /* Pulse animation for secured badge */
-    .animate-pulse-slow {
-        animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-    }
-    
-    @keyframes pulse {
-        0%, 100% {
-            opacity: 1;
-        }
-        50% {
-            opacity: 0.8;
-        }
-    }
-</style>
-@endpush
+@section('title', 'Secure Checkout - ' . ($booking['hotel']['name'] ?? 'Hotel') . ' - Ziara Travel')
 
 @section('content')
-<div class="bg-gray-50 min-h-screen pb-16">
-    <!-- Booking Progress Timeline -->
-    <div class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-30">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <div class="relative flex items-center justify-between">
-                <!-- Timeline Line -->
-                <div class="absolute timeline-line left-0 w-full bg-gray-200"></div>
-                
-                <!-- Step 1: Search -->
-                <div class="timeline-step completed relative z-10 flex flex-col items-center">
-                    <div class="timeline-circle w-12 h-12 rounded-full bg-gray-200 border-4 border-white flex items-center justify-center text-white">
-                        <i data-lucide="check" class="w-6 h-6"></i>
-                    </div>
-                    <span class="timeline-text mt-2 text-sm font-medium text-gray-600">Search</span>
-                </div>
-                
-                <!-- Step 2: Select -->
-                <div class="timeline-step completed relative z-10 flex flex-col items-center">
-                    <div class="timeline-circle w-12 h-12 rounded-full bg-gray-200 border-4 border-white flex items-center justify-center text-white">
-                        <i data-lucide="check" class="w-6 h-6"></i>
-                    </div>
-                    <span class="timeline-text mt-2 text-sm font-medium text-gray-600">Select</span>
-                </div>
-                
-                <!-- Step 3: Book -->
-                <div class="timeline-step completed relative z-10 flex flex-col items-center">
-                    <div class="timeline-circle w-12 h-12 rounded-full bg-gray-200 border-4 border-white flex items-center justify-center text-white">
-                        <i data-lucide="check" class="w-6 h-6"></i>
-                    </div>
-                    <span class="timeline-text mt-2 text-sm font-medium text-gray-600">Book</span>
-                </div>
-                
-                <!-- Step 4: Pay -->
-                <div class="timeline-step active relative z-10 flex flex-col items-center">
-                    <div class="timeline-circle w-12 h-12 rounded-full bg-white border-4 border-gray-300 flex items-center justify-center text-indigo-600">
-                        <i data-lucide="credit-card" class="w-6 h-6"></i>
-                    </div>
-                    <span class="timeline-text mt-2 text-sm font-medium">Pay</span>
-                </div>
-                
-                <!-- Step 5: Confirm -->
-                <div class="timeline-step relative z-10 flex flex-col items-center">
-                    <div class="timeline-circle w-12 h-12 rounded-full bg-white border-4 border-gray-300 flex items-center justify-center text-gray-400">
-                        <i data-lucide="check-circle" class="w-6 h-6"></i>
-                    </div>
-                    <span class="timeline-text mt-2 text-sm font-medium text-gray-400">Confirm</span>
-                </div>
-            </div>
-        </div>
-    </div>
+@php
+    $hotel = $booking['hotel'] ?? [];
+    $params = $booking['search_params'] ?? [];
+    $name = $hotel['name'] ?? 'Hotel booking';
+    $total = floatval($hotel['totalPrice'] ?? 0);
+    $price = floatval($hotel['price'] ?? 0);
+    $currency = $hotel['currency'] ?? 'KES';
+    $guest = $booking['guest_details'] ?? null;
+    $reference = $booking['booking_reference'] ?? '';
+    $bookingUrl = $booking['booking_url'] ?? '#';
+    $nights = 1;
+    if (!empty($params['checkin']) && !empty($params['checkout'])) {
+        $nights = max(1, (int) \Carbon\Carbon::parse($params['checkin'])->diffInDays(\Carbon\Carbon::parse($params['checkout'])));
+    }
+@endphp
 
-    <!-- Main Content -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="flex flex-col lg:flex-row gap-8">
-            <!-- Left Column: Payment Form -->
-            <div class="lg:w-2/3">
-                <!-- Booking Review -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-8 p-6">
-                    <h2 class="text-xl font-bold text-gray-900 mb-6">Booking Summary</h2>
-                    
-                    <div class="flex flex-col md:flex-row gap-6 mb-6">
-                        <!-- Hotel Image -->
-                        <div class="md:w-1/3">
-                            <div class="rounded-lg overflow-hidden">
-                                <img src="{{ asset('images/hotels/' . ($hotel['image'] ?? 'hotel-placeholder.jpg')) }}" alt="{{ $hotel['name'] ?? 'Hotel' }}" class="w-full h-full object-cover">
-                            </div>
+<style>
+.ziara-hotel-checkout-page .ziara-archive__hero { --zt-maroon:#7b2a1b;--zt-maroon-deep:#6b1d15;--zt-gold:#d9a561;--zt-gold-bright:#f3d24a; }
+.ziara-hotel-checkout-page .ziara-hotel-checkout__tile { background:var(--gold-pale);border:1px solid var(--gold-border);border-radius:12px; }
+.ziara-hotel-checkout-page .fa-map-marker-alt,
+.ziara-hotel-checkout-page .fa-user,
+.ziara-hotel-checkout-page .fa-bolt { color:var(--gold); }
+</style>
+
+@include('partials.ziara-page-hero', [
+    'kicker' => 'Step 2 of 3',
+    'title'  => 'Review &amp; <em>Confirm Your Stay</em>',
+    'intro'  => 'Check your stay details, guest information and handover details before you continue.',
+    'crumbs' => [
+        ['label' => 'Home', 'url' => route('home')],
+        ['label' => 'Hotels', 'url' => route('hotels.search.form')],
+        ['label' => 'Checkout', 'url' => route('hotels.search.form')],
+    ],
+])
+
+<div class="ziara-paper ziara-hotel-checkout-page py-8" style="--maroon:#7b2a1b;--maroon-deep:#6b1d15;--gold:#d9a561;--gold-bright:#f3d24a;">
+    <div class="max-w-4xl mx-auto px-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {{-- Booking summary --}}
+            <div class="md:col-span-2 space-y-6">
+                <div class="ziara-card ziara-panel p-6">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h2 class="ziara-panel__title" style="font-size:24px;">{{ $name }}</h2>
+                            <p class="text-sm text-gray-500 mt-1"><i class="fas fa-map-marker-alt text-blue-400 mr-1"></i>{{ $hotel['city'] ?? '' }}{{ !empty($hotel['address']) ? ' &middot; ' . $hotel['address'] : '' }}</p>
                         </div>
-                        
-                        <!-- Hotel Details -->
-                        <div class="md:w-2/3">
-                            <h3 class="text-lg font-bold text-gray-900">{{ $hotel['name'] ?? 'Serena Hotel Nairobi' }}</h3>
-                            
-                            <div class="flex items-center mt-2">
-                                <div class="flex text-yellow-400">
-                                    @for ($i = 0; $i < ($hotel['stars'] ?? 5); $i++)
-                                        <i data-lucide="star" class="h-4 w-4 fill-current"></i>
-                                    @endfor
-                                </div>
-                                
-                                <span class="mx-2 text-gray-300">•</span>
-                                
-                                <div class="flex items-center text-gray-600">
-                                    <i data-lucide="map-pin" class="h-4 w-4 mr-1"></i>
-                                    {{ $hotel['location'] ?? 'City Center' }}
-                                </div>
-                            </div>
-                            
-                            <!-- Room Type -->
-                            <div class="mt-4 p-3 bg-indigo-50 rounded-lg border border-indigo-100">
-                                <div class="font-semibold text-indigo-800">{{ $hotel['room_type'] ?? 'Deluxe Room with Garden View' }}</div>
-                                <div class="text-gray-700 text-sm mt-1">{{ $hotel['bed_type'] ?? '1 king bed' }} • {{ $hotel['meal_plan'] ?? 'Breakfast included' }}</div>
-                            </div>
-                            
-                            <!-- Reservation Details -->
-                            <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <div class="text-sm text-gray-600">Check-in</div>
-                                    <div class="font-semibold">{{ $booking['check_in'] ?? date('D, M d, Y') }}</div>
-                                    <div class="text-sm text-gray-600">From 14:00</div>
-                                </div>
-                                
-                                <div>
-                                    <div class="text-sm text-gray-600">Check-out</div>
-                                    <div class="font-semibold">{{ $booking['check_out'] ?? date('D, M d, Y', strtotime('+3 days')) }}</div>
-                                    <div class="text-sm text-gray-600">Before 11:00</div>
-                                </div>
-                                
-                                <div>
-                                    <div class="text-sm text-gray-600">Length of stay</div>
-                                    <div class="font-semibold">{{ $booking['nights'] ?? '3' }} nights</div>
-                                </div>
-                                
-                                <div>
-                                    <div class="text-sm text-gray-600">Guests</div>
-                                    <div class="font-semibold">{{ $booking['adults'] ?? '2' }} adults{{ ($booking['children'] ?? 0) > 0 ? ', ' . $booking['children'] . ' children' : '' }}</div>
-                                </div>
-                            </div>
+                        @if(!empty($hotel['imageUrl']))
+                            <img src="{{ $hotel['imageUrl'] }}" alt="{{ $name }}" class="w-24 h-20 object-cover rounded-lg"
+                                 onerror="this.onerror=null;this.src='https://placehold.co/200x160/e2e8f0/94a3b8?text=No+Image';">
+                        @endif
+                    </div>
+
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                        <div class="ziara-hotel-checkout__tile rounded-lg p-3">
+                            <p class="text-[11px] text-gray-500">Check-in</p>
+                            <p class="font-semibold text-gray-900">{{ \Carbon\Carbon::parse($params['checkin'])->format('M d, Y') }}</p>
+                        </div>
+                        <div class="ziara-hotel-checkout__tile rounded-lg p-3">
+                            <p class="text-[11px] text-gray-500">Check-out</p>
+                            <p class="font-semibold text-gray-900">{{ \Carbon\Carbon::parse($params['checkout'])->format('M d, Y') }}</p>
+                        </div>
+                        <div class="ziara-hotel-checkout__tile rounded-lg p-3">
+                            <p class="text-[11px] text-gray-500">Guests</p>
+                            <p class="font-semibold text-gray-900">{{ $params['adults'] ?? 2 }} adults &middot; {{ $params['rooms'] ?? 1 }} room</p>
+                        </div>
+                        <div class="ziara-hotel-checkout__tile rounded-lg p-3">
+                            <p class="text-[11px] text-gray-500">Duration</p>
+                            <p class="font-semibold text-gray-900">{{ $nights }} {{ $nights > 1 ? 'nights' : 'night' }}</p>
                         </div>
                     </div>
-                    
-                    <div class="border-t border-gray-200 pt-4 mt-4">
-                        <h3 class="font-semibold text-gray-900 mb-3">Important Information</h3>
-                        
-                        <div class="space-y-2">
-                            <div class="flex items-start">
-                                <i data-lucide="info" class="h-5 w-5 text-indigo-600 mt-0.5 mr-2"></i>
-                                <div class="text-sm text-gray-700">
-                                    Check-in time starts at 2 PM. Front desk staff will greet guests on arrival.
-                                </div>
-                            </div>
-                            
-                            <div class="flex items-start">
-                                <i data-lucide="info" class="h-5 w-5 text-indigo-600 mt-0.5 mr-2"></i>
-                                <div class="text-sm text-gray-700">
-                                    Check-out time is 11 AM. Express check-out is available.
-                                </div>
-                            </div>
-                            
-                            <div class="flex items-start">
-                                <i data-lucide="shield-check" class="h-5 w-5 text-green-600 mt-0.5 mr-2"></i>
-                                <div class="text-sm text-gray-700">
-                                    <span class="font-semibold text-green-700">{{ $hotel['cancellation'] ?? 'Free cancellation' }}</span> until {{ $booking['cancel_date'] ?? date('M d, Y', strtotime('+1 day')) }}
-                                </div>
-                            </div>
+
+                    <div class="mt-5 pt-4 border-t border-gray-100 flex items-end justify-between">
+                        <div>
+                            <p class="text-xs text-gray-500">Total for your stay</p>
+                            <p class="ziara-price text-3xl">{{ number_format($total > 0 ? $total : $price, 0) }} <span class="text-sm font-normal text-gray-500">{{ $currency }}</span></p>
                         </div>
                     </div>
                 </div>
-                
-                <!-- Payment Method -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden p-6">
-                    <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-xl font-bold text-gray-900">Payment Method</h2>
-                        
-                        <!-- Secured Payment Badge -->
-                        <div class="flex items-center px-3 py-1 bg-green-100 rounded-full">
-                            <i data-lucide="shield" class="h-4 w-4 text-green-700 mr-1 animate-pulse-slow"></i>
-                            <span class="text-xs font-medium text-green-700">Secure Payment</span>
+
+                {{-- Guest details --}}
+                <div class="ziara-card ziara-panel p-6">
+                    <h3 class="ziara-panel__title" style="font-size:22px;margin-bottom:18px;">
+                        <i class="fas fa-user mr-2 text-blue-500"></i> Who's checking in?
+                    </h3>
+                    @if($guest)
+                        <div class="ziara-hotel-checkout__tile rounded-lg p-4 text-sm text-gray-700 space-y-1 mb-4">
+                            <p><strong>{{ $guest['guest_name'] }}</strong></p>
+                            <p>{{ $guest['guest_email'] }}</p>
+                            <p>{{ $guest['guest_phone'] }}</p>
                         </div>
-                    </div>
-                    
-                    <!-- Payment Method Selection -->
-                    <div class="space-y-4 mb-6">
-                        <div class="flex items-center">
-                            <input id="card" name="paymentMethod" type="radio" checked class="h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500">
-                            <label for="card" class="ml-3 block font-medium text-gray-700">
-                                Credit/Debit Card
-                            </label>
-                            
-                            <!-- Card Icons -->
-                            <div class="flex ml-auto space-x-2">
-                                <img src="{{ asset('images/payment/visa.svg') }}" alt="Visa" class="h-6">
-                                <img src="{{ asset('images/payment/mastercard.svg') }}" alt="Mastercard" class="h-6">
-                                <img src="{{ asset('images/payment/amex.svg') }}" alt="American Express" class="h-6">
-                            </div>
-                        </div>
-                        
-                        <div class="flex items-center">
-                            <input id="mpesa" name="paymentMethod" type="radio" class="h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500">
-                            <label for="mpesa" class="ml-3 block font-medium text-gray-700">
-                                M-Pesa
-                            </label>
-                            
-                            <!-- MPesa Icon -->
-                            <div class="ml-auto">
-                                <img src="{{ asset('images/payment/mpesa.svg') }}" alt="MPesa" class="h-6">
-                            </div>
-                        </div>
-                        
-                        <div class="flex items-center">
-                            <input id="paypal" name="paymentMethod" type="radio" class="h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500">
-                            <label for="paypal" class="ml-3 block font-medium text-gray-700">
-                                PayPal
-                            </label>
-                            
-                            <!-- PayPal Icon -->
-                            <div class="ml-auto">
-                                <img src="{{ asset('images/payment/paypal.svg') }}" alt="PayPal" class="h-6">
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Credit Card Form (Default active) -->
-                    <div id="cardPaymentForm" class="border-t border-gray-200 pt-6">
-                        <form action="{{ route('hotels.payment.process') }}" method="POST">
+                    @else
+                        <form action="{{ route('hotels.book') }}" method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-3">
                             @csrf
-                            <input type="hidden" name="booking_id" value="{{ $booking['id'] ?? '' }}">
-                            <input type="hidden" name="booking_type" value="hotel">
-                            
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <!-- Card Holder Name -->
-                                <div class="col-span-2">
-                                    <label for="cardName" class="block text-sm font-medium text-gray-700 mb-1">Cardholder Name</label>
-                                    <input type="text" name="cardName" id="cardName" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500" placeholder="As appears on card">
-                                </div>
-                                
-                                <!-- Card Number -->
-                                <div class="col-span-2">
-                                    <label for="cardNumber" class="block text-sm font-medium text-gray-700 mb-1">Card Number</label>
-                                    <div class="relative">
-                                        <input type="text" name="cardNumber" id="cardNumber" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 pr-10" placeholder="1234 5678 9012 3456" maxlength="19">
-                                        <div class="absolute inset-y-0 right-0 flex items-center pr-3">
-                                            <i data-lucide="credit-card" class="h-5 w-5 text-gray-400"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Expiry Date -->
-                                <div>
-                                    <label for="cardExpiry" class="block text-sm font-medium text-gray-700 mb-1">Expiry Date</label>
-                                    <input type="text" name="cardExpiry" id="cardExpiry" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500" placeholder="MM/YY" maxlength="5">
-                                </div>
-                                
-                                <!-- CVV -->
-                                <div>
-                                    <label for="cardCvv" class="block text-sm font-medium text-gray-700 mb-1">CVV</label>
-                                    <div class="relative">
-                                        <input type="text" name="cardCvv" id="cardCvv" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 pr-10" placeholder="123" maxlength="4">
-                                        <div class="absolute inset-y-0 right-0 flex items-center pr-3">
-                                            <i data-lucide="help-circle" class="h-5 w-5 text-gray-400 cursor-help" title="3 or 4 digit security code usually found on the back of your card"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Billing Address -->
-                                <div class="col-span-2">
-                                    <div class="flex items-center mb-4">
-                                        <h3 class="font-semibold text-gray-900">Billing Address</h3>
-                                        <span class="ml-2 text-xs bg-gray-100 text-gray-800 py-1 px-2 rounded">Required</span>
-                                    </div>
-                                    
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <!-- Country -->
-                                        <div class="col-span-2">
-                                            <label for="country" class="block text-sm font-medium text-gray-700 mb-1">Country</label>
-                                            <select name="country" id="country" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
-                                                <option value="">Select Country</option>
-                                                <option value="KE">Kenya</option>
-                                                <option value="UG">Uganda</option>
-                                                <option value="TZ">Tanzania</option>
-                                                <option value="RW">Rwanda</option>
-                                                <option value="US">United States</option>
-                                                <option value="GB">United Kingdom</option>
-                                                <!-- Add more countries as needed -->
-                                            </select>
-                                        </div>
-                                        
-                                        <!-- Address -->
-                                        <div class="col-span-2">
-                                            <label for="address" class="block text-sm font-medium text-gray-700 mb-1">Street Address</label>
-                                            <input type="text" name="address" id="address" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
-                                        </div>
-                                        
-                                        <!-- City -->
-                                        <div>
-                                            <label for="city" class="block text-sm font-medium text-gray-700 mb-1">City</label>
-                                            <input type="text" name="city" id="city" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
-                                        </div>
-                                        
-                                        <!-- Postal Code -->
-                                        <div>
-                                            <label for="postalCode" class="block text-sm font-medium text-gray-700 mb-1">Postal Code</label>
-                                            <input type="text" name="postalCode" id="postalCode" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Save Card Info -->
-                                <div class="col-span-2 mt-4">
-                                    <div class="flex items-center">
-                                        <input id="saveCardInfo" name="saveCardInfo" type="checkbox" class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
-                                        <label for="saveCardInfo" class="ml-2 block text-sm text-gray-700">
-                                            Save my card information securely for future bookings
-                                        </label>
-                                    </div>
-                                </div>
+                            <div class="md:col-span-2">
+                                <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider block mb-1.5">Full name</label>
+                                <input type="text" name="guest_name" required placeholder="Jane Wanjiru"
+                                       class="w-full px-3 py-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-200 focus:border-blue-400">
                             </div>
-                            
-                            <!-- Terms and Conditions -->
-                            <div class="mt-6">
-                                <div class="flex items-start">
-                                    <div class="flex items-center h-5">
-                                        <input id="terms" name="terms" type="checkbox" required class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
-                                    </div>
-                                    <div class="ml-3 text-sm">
-                                        <label for="terms" class="font-medium text-gray-700">
-                                            I agree to the <a href="#" class="text-indigo-600 hover:text-indigo-500">Terms and Conditions</a>, <a href="#" class="text-indigo-600 hover:text-indigo-500">Privacy Policy</a>, and <a href="#" class="text-indigo-600 hover:text-indigo-500">Cancellation Policy</a>
-                                        </label>
-                                    </div>
-                                </div>
+                            <div>
+                                <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider block mb-1.5">Email</label>
+                                <input type="email" name="guest_email" required placeholder="you@example.com"
+                                       class="w-full px-3 py-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-200 focus:border-blue-400">
                             </div>
-                            
-                            <!-- Submit Button -->
-                            <div class="mt-8">
-                                <button type="submit" class="w-full px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors flex items-center justify-center">
-                                    Pay & Confirm Booking
-                                    <i data-lucide="lock" class="w-5 h-5 ml-2"></i>
-                                </button>
+                            <div>
+                                <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider block mb-1.5">Phone / WhatsApp</label>
+                                <input type="tel" name="guest_phone" required placeholder="+254 7XX XXX XXX"
+                                       class="w-full px-3 py-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-200 focus:border-blue-400">
+                            </div>
+                            <div class="md:col-span-2">
+                                <button type="submit" class="ziara-btn ziara-btn--gold w-full">Save guest details</button>
                             </div>
                         </form>
-                    </div>
-                    
-                    <!-- Mobile Money Form (Initially hidden) -->
-                    <div id="mpesaPaymentForm" class="hidden border-t border-gray-200 pt-6">
-                        <form action="{{ route('hotels.payment.process') }}" method="POST">
-                            @csrf
-                            <input type="hidden" name="payment_method" value="mpesa">
-                            <input type="hidden" name="booking_id" value="{{ $booking['id'] ?? '' }}">
-                            <input type="hidden" name="booking_type" value="hotel">
-                            
-                            <!-- Phone Number -->
-                            <div class="mb-6">
-                                <label for="mpesaPhone" class="block text-sm font-medium text-gray-700 mb-1">M-Pesa Phone Number</label>
-                                <div class="relative">
-                                    <input type="tel" name="mpesaPhone" id="mpesaPhone" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g. 07XXXXXXXX">
-                                    <div class="absolute inset-y-0 right-0 flex items-center pr-3">
-                                        <i data-lucide="smartphone" class="h-5 w-5 text-gray-400"></i>
-                                    </div>
-                                </div>
-                                <p class="mt-1 text-xs text-gray-500">You will receive a payment prompt on this phone number</p>
-                            </div>
-                            
-                            <!-- Terms and Conditions -->
-                            <div class="mt-6">
-                                <div class="flex items-start">
-                                    <div class="flex items-center h-5">
-                                        <input id="mpesaTerms" name="terms" type="checkbox" required class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
-                                    </div>
-                                    <div class="ml-3 text-sm">
-                                        <label for="mpesaTerms" class="font-medium text-gray-700">
-                                            I agree to the <a href="#" class="text-indigo-600 hover:text-indigo-500">Terms and Conditions</a>, <a href="#" class="text-indigo-600 hover:text-indigo-500">Privacy Policy</a>, and <a href="#" class="text-indigo-600 hover:text-indigo-500">Cancellation Policy</a>
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Submit Button -->
-                            <div class="mt-8">
-                                <button type="submit" class="w-full px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors flex items-center justify-center">
-                                    Pay with M-Pesa
-                                    <i data-lucide="smartphone" class="w-5 h-5 ml-2"></i>
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                    
-                    <!-- PayPal Form (Initially hidden) -->
-                    <div id="paypalPaymentForm" class="hidden border-t border-gray-200 pt-6">
-                        <form action="{{ route('hotels.payment.process') }}" method="POST">
-                            @csrf
-                            <input type="hidden" name="payment_method" value="paypal">
-                            <input type="hidden" name="booking_id" value="{{ $booking['id'] ?? '' }}">
-                            <input type="hidden" name="booking_type" value="hotel">
-                            
-                            <div class="text-center py-6">
-                                <p class="mb-6 text-gray-700">Click the button below to proceed to PayPal's secure payment page.</p>
-                                
-                                <button type="submit" class="px-6 py-3 bg-[#0070ba] hover:bg-[#005ea6] text-white font-medium rounded-lg transition-colors flex items-center justify-center mx-auto">
-                                    <img src="{{ asset('images/payment/paypal-white.svg') }}" alt="PayPal" class="h-5 mr-2">
-                                    Pay with PayPal
-                                </button>
-                            </div>
-                            
-                            <!-- Terms and Conditions -->
-                            <div class="mt-6">
-                                <div class="flex items-start">
-                                    <div class="flex items-center h-5">
-                                        <input id="paypalTerms" name="terms" type="checkbox" required class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
-                                    </div>
-                                    <div class="ml-3 text-sm">
-                                        <label for="paypalTerms" class="font-medium text-gray-700">
-                                            I agree to the <a href="#" class="text-indigo-600 hover:text-indigo-500">Terms and Conditions</a>, <a href="#" class="text-indigo-600 hover:text-indigo-500">Privacy Policy</a>, and <a href="#" class="text-indigo-600 hover:text-indigo-500">Cancellation Policy</a>
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                    
-                    <!-- Payment Security Information -->
-                    <div class="mt-8 border-t border-gray-200 pt-6">
-                        <div class="flex items-center justify-center space-x-6">
-                            <div class="flex items-center">
-                                <i data-lucide="shield" class="h-5 w-5 text-green-600 mr-2"></i>
-                                <span class="text-sm text-gray-700">Secure Payment</span>
-                            </div>
-                            
-                            <div class="flex items-center">
-                                <i data-lucide="lock" class="h-5 w-5 text-green-600 mr-2"></i>
-                                <span class="text-sm text-gray-700">Encrypted Data</span>
-                            </div>
-                            
-                            <div class="flex items-center">
-                                <i data-lucide="eye-off" class="h-5 w-5 text-green-600 mr-2"></i>
-                                <span class="text-sm text-gray-700">Privacy Protected</span>
-                            </div>
-                        </div>
-                    </div>
+                    @endif
                 </div>
             </div>
-            
-            <!-- Right Column: Booking Summary -->
-            <div class="lg:w-1/3">
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden sticky top-24">
-                    <div class="p-6">
-                        <h2 class="text-xl font-bold text-gray-900 mb-6">Price Details</h2>
-                        
-                        <!-- Room Summary -->
-                        <div class="mb-6">
-                            <div class="flex justify-between items-start mb-2">
-                                <div>
-                                    <h3 class="font-semibold">{{ $hotel['room_type'] ?? 'Deluxe Room with Garden View' }}</h3>
-                                    <p class="text-sm text-gray-600">{{ $booking['nights'] ?? '3' }} nights</p>
-                                </div>
-                                <div class="text-right">
-                                    <span class="font-semibold">{{ $hotel['currency'] ?? 'USD' }} {{ $hotel['price'] ?? 189 }}</span>
-                                    <p class="text-xs text-gray-600">per night</p>
-                                </div>
-                            </div>
-                            
-                            <div class="text-sm text-gray-600">
-                                <span>{{ $booking['adults'] ?? '2' }} adults</span>
-                                @if(($booking['children'] ?? 0) > 0)
-                                    <span>, {{ $booking['children'] }} {{ ($booking['children'] ?? 0) == 1 ? 'child' : 'children' }}</span>
-                                @endif
-                            </div>
-                        </div>
-                        
-                        <!-- Price Breakdown -->
-                        <div class="border-t border-b border-gray-200 py-4">
-                            <div class="space-y-3">
-                                <!-- Room Price -->
-                                <div class="flex justify-between">
-                                    <span class="text-gray-600">Room ({{ $booking['nights'] ?? '3' }} nights × {{ $booking['adults'] ?? '2' }} adults)</span>
-                                    <span>
-                                        {{ $hotel['currency'] ?? 'USD' }} {{ ($hotel['price'] ?? 189) * ($booking['nights'] ?? 3) }}
-                                    </span>
-                                </div>
-                                
-                                <!-- Taxes -->
-                                <div class="flex justify-between">
-                                    <span class="text-gray-600">Taxes and fees (12%)</span>
-                                    <span>
-                                        @php
-                                            $roomTotal = ($hotel['price'] ?? 189) * ($booking['nights'] ?? 3);
-                                            $taxes = $roomTotal * 0.12;
-                                            $taxes = round($taxes, 2);
-                                        @endphp
-                                        {{ $hotel['currency'] ?? 'USD' }} {{ $taxes }}
-                                    </span>
-                                </div>
-                                
-                                @if(($hotel['discount'] ?? 0) > 0)
-                                    <!-- Discount -->
-                                    <div class="flex justify-between text-green-600">
-                                        <span>{{ $hotel['discount'] }}% Discount</span>
-                                        <span>
-                                            @php
-                                                $discount = $roomTotal * ($hotel['discount'] ?? 0) / 100;
-                                                $discount = round($discount, 2);
-                                            @endphp
-                                            -{{ $hotel['currency'] ?? 'USD' }} {{ $discount }}
-                                        </span>
-                                    </div>
-                                @endif
-                            </div>
-                        </div>
-                        
-                        <!-- Total -->
-                        <div class="pt-4">
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="font-bold text-lg">Total</span>
-                                <span class="font-bold text-lg">
-                                    @php
-                                        $total = $roomTotal + $taxes;
-                                        if(($hotel['discount'] ?? 0) > 0) {
-                                            $total -= $discount;
-                                        }
-                                        $total = round($total, 2);
-                                    @endphp
-                                    {{ $hotel['currency'] ?? 'USD' }} {{ $total }}
-                                </span>
-                            </div>
-                            
-                            <div class="text-xs text-gray-600 flex items-center justify-end">
-                                <i data-lucide="info" class="h-3 w-3 mr-1"></i>
-                                Includes taxes and fees
-                            </div>
-                        </div>
-                        
-                        <!-- Cancellation Policy -->
-                        <div class="mt-6 p-4 bg-gray-50 rounded-lg">
-                            <h3 class="font-semibold text-gray-900 mb-2">Cancellation Policy</h3>
-                            <p class="text-sm text-gray-600">
-                                {{ $hotel['cancellation_policy'] ?? 'Free cancellation until 24 hours before check-in. If you cancel less than 24 hours before check-in or fail to show up, you will be charged the full amount of the reservation.' }}
-                            </p>
-                        </div>
-                        
-                        <!-- Contact Support -->
-                        <div class="mt-6">
-                            <div class="flex items-center justify-center">
-                                <i data-lucide="headphones" class="h-5 w-5 text-indigo-600 mr-2"></i>
-                                <span class="text-sm font-medium">Need help? <a href="#" class="text-indigo-600 hover:text-indigo-500">Contact support</a></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Registration Modal -->
-    <div id="registrationModal" class="fixed inset-0 z-50 overflow-y-auto hidden">
-        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-            <!-- Background overlay -->
-            <div class="fixed inset-0 transition-opacity modal-overlay" aria-hidden="true"></div>
-
-            <!-- Modal panel -->
-            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full animate-fade-in-up">
-                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                    <div class="sm:flex sm:items-start">
-                        <div class="mt-3 text-center sm:mt-0 sm:text-left w-full">
-                            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4" id="modal-title">
-                                Create an Account to Continue
-                            </h3>
-                            
-                            <div class="mb-4">
-                                <p class="text-sm text-gray-500">
-                                    Please create an account to continue with your booking. It only takes a minute!
-                                </p>
-                            </div>
-                            
-                            <!-- Registration Form -->
-                            <form method="POST" action="{{ route('register') }}" id="quickRegisterForm">
-                                @csrf
-                                <input type="hidden" name="redirect_to" value="booking">
-                                
-                                <!-- Name -->
-                                <div class="mb-4">
-                                    <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
-                                    <input type="text" name="name" id="name" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                                </div>
-                                
-                                <!-- Email Address -->
-                                <div class="mb-4">
-                                    <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-                                    <input type="email" name="email" id="email" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                                </div>
-                                
-                                <!-- Phone Number -->
-                                <div class="mb-4">
-                                    <label for="phone" class="block text-sm font-medium text-gray-700">Phone Number</label>
-                                    <input type="tel" name="phone" id="phone" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                                </div>
-                                
-                                <!-- Password -->
-                                <div class="mb-4">
-                                    <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-                                    <input type="password" name="password" id="password" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                                </div>
-                                
-                                <!-- Confirm Password -->
-                                <div class="mb-4">
-                                    <label for="password_confirmation" class="block text-sm font-medium text-gray-700">Confirm Password</label>
-                                    <input type="password" name="password_confirmation" id="password_confirmation" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                                </div>
-                                
-                                <!-- Terms Checkbox -->
-                                <div class="mb-4">
-                                    <div class="flex items-start">
-                                        <div class="flex items-center h-5">
-                                            <input id="terms" name="terms" type="checkbox" required class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
-                                        </div>
-                                        <div class="ml-3 text-sm">
-                                            <label for="terms" class="font-medium text-gray-700">I agree to the <a href="#" class="text-indigo-600 hover:text-indigo-500">Terms and Conditions</a>.</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="flex items-center justify-between mt-6">
-                                    <div class="text-sm">
-                                        <a href="{{ route('login') }}" class="font-medium text-indigo-600 hover:text-indigo-500">
-                                            Already have an account? Login
-                                        </a>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                    <button type="button" id="registerSubmitBtn" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm">
-                        Register & Continue
-                    </button>
-                    <button type="button" id="modalCloseBtn" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
-                        Close
-                    </button>
+            {{-- Booking.com panel --}}
+            <div class="space-y-5">
+                <div class="ziara-card ziara-panel p-6 lg:sticky lg:top-24">
+                    <h3 class="ziara-panel__title" style="font-size:22px;margin-bottom:8px;"><i class="fas fa-bolt mr-1 text-amber-500"></i> Complete your booking</h3>
+                    <p class="text-sm text-gray-500 mb-4 leading-relaxed">
+                        Reservations are made securely on Booking.com — the world's largest booking platform. You'll finish payment there.
+                    </p>
+                    <a href="{{ $bookingUrl }}" target="_blank" rel="nofollow noopener"
+                       class="ziara-btn ziara-btn--maroon w-full mb-3">
+                        <i class="fab fa-booking"></i> Continue on Booking.com
+                    </a>
+                    <form action="{{ route('hotels.payment', ['reference' => $reference]) }}" method="POST" onsubmit="return confirm('Only mark as complete if you finished booking on Booking.com.');">
+                        @csrf
+                        <button type="submit" class="ziara-btn ziara-btn--outline w-full text-xs">
+                            I've completed my booking
+                        </button>
+                    </form>
+                    <p class="text-[11px] text-gray-400 mt-3 leading-relaxed">
+                        Reference: <span class="font-mono">{{ $reference }}</span>
+                    </p>
                 </div>
             </div>
         </div>
     </div>
 </div>
-@endsection
-
-@section('scripts')
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Initialize Lucide icons
-        lucide.createIcons();
-        
-        // Payment method selection
-        const paymentOptions = document.querySelectorAll('input[name="paymentMethod"]');
-        const cardPaymentForm = document.getElementById('cardPaymentForm');
-        const mpesaPaymentForm = document.getElementById('mpesaPaymentForm');
-        const paypalPaymentForm = document.getElementById('paypalPaymentForm');
-        
-        paymentOptions.forEach(option => {
-            option.addEventListener('change', function() {
-                // Hide all payment forms
-                cardPaymentForm.classList.add('hidden');
-                mpesaPaymentForm.classList.add('hidden');
-                paypalPaymentForm.classList.add('hidden');
-                
-                // Show the selected payment form
-                if (this.id === 'card') {
-                    cardPaymentForm.classList.remove('hidden');
-                } else if (this.id === 'mpesa') {
-                    mpesaPaymentForm.classList.remove('hidden');
-                } else if (this.id === 'paypal') {
-                    paypalPaymentForm.classList.remove('hidden');
-                }
-            });
-        });
-        
-        // Credit card input formatting
-        const cardNumberInput = document.getElementById('cardNumber');
-        const cardExpiryInput = document.getElementById('cardExpiry');
-        const cardCvvInput = document.getElementById('cardCvv');
-        
-        // Format card number with spaces
-        if (cardNumberInput) {
-            cardNumberInput.addEventListener('input', function(e) {
-                let value = e.target.value.replace(/\s+/g, '');
-                if (value.length > 0) {
-                    value = value.match(new RegExp('.{1,4}', 'g')).join(' ');
-                }
-                e.target.value = value;
-            });
-        }
-        
-        // Format expiry date with slash
-        if (cardExpiryInput) {
-            cardExpiryInput.addEventListener('input', function(e) {
-                let value = e.target.value.replace(/\D/g, '');
-                if (value.length > 0) {
-                    if (value.length > 2) {
-                        value = value.slice(0, 2) + '/' + value.slice(2, 4);
-                    }
-                }
-                e.target.value = value;
-            });
-        }
-        
-        // Limit CVV to numbers
-        if (cardCvvInput) {
-            cardCvvInput.addEventListener('input', function(e) {
-                e.target.value = e.target.value.replace(/\D/g, '');
-            });
-        }
-        
-        // Modal functionality
-        const registrationModal = document.getElementById('registrationModal');
-        const modalCloseBtn = document.getElementById('modalCloseBtn');
-        const quickRegisterForm = document.getElementById('quickRegisterForm');
-        const registerSubmitBtn = document.getElementById('registerSubmitBtn');
-        
-        if (modalCloseBtn) {
-            modalCloseBtn.addEventListener('click', function() {
-                registrationModal.classList.add('hidden');
-            });
-        }
-        
-        if (registerSubmitBtn) {
-            registerSubmitBtn.addEventListener('click', function() {
-                quickRegisterForm.submit();
-            });
-        }
-        
-        // Show registration modal for guest users (if needed)
-        @if(!Auth::check() && isset($showRegistrationModal) && $showRegistrationModal)
-            setTimeout(() => {
-                registrationModal.classList.remove('hidden');
-            }, 500);
-        @endif
-        
-        // Fill stars for star ratings
-        document.querySelectorAll('[data-lucide="star"]').forEach(function(star) {
-            if (star.classList.contains('fill-current')) {
-                star.setAttribute('fill', 'currentColor');
-            }
-        });
-        
-        // Toast notification functionality
-        function showToast(message, type = 'success') {
-            const toast = document.createElement('div');
-            toast.className = `fixed bottom-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50 flex items-center ${
-                type === 'success' ? 'bg-green-500' : 'bg-red-500'
-            } text-white transform transition-all duration-300 translate-y-20 opacity-0`;
-            
-            toast.innerHTML = `
-                <i data-lucide="${type === 'success' ? 'check-circle' : 'alert-circle'}" class="w-5 h-5 mr-2"></i>
-                <span>${message}</span>
-            `;
-            
-            document.body.appendChild(toast);
-            
-            // Initialize the Lucide icon in the toast
-            lucide.createIcons();
-            
-            // Show toast with animation
-            setTimeout(() => {
-                toast.classList.remove('translate-y-20', 'opacity-0');
-            }, 100);
-            
-            // Hide toast after 5 seconds
-            setTimeout(() => {
-                toast.classList.add('translate-y-20', 'opacity-0');
-                
-                // Remove from DOM after animation completes
-                setTimeout(() => {
-                    document.body.removeChild(toast);
-                }, 300);
-            }, 5000);
-        }
-        
-        // Show success toast if redirected with success message
-        @if(session('success'))
-            showToast('{{ session('success') }}', 'success');
-        @endif
-        
-        // Show error toast if redirected with error message
-        @if(session('error'))
-            showToast('{{ session('error') }}', 'error');
-        @endif
-    });
-</script>
 @endsection

@@ -47,7 +47,7 @@ class SendBookingConfirmationJob implements ShouldQueue
                     'booking_id' => $this->booking->id,
                     'booking_reference' => $this->booking->booking_reference,
                 ],
-                'action_url' => route('bookings.view', $this->booking->booking_reference),
+                'action_url' => route('bookings.detail', $this->booking->booking_reference),
                 'priority' => 'high'
             ]);
         }
@@ -65,7 +65,7 @@ class SendBookingConfirmationJob implements ShouldQueue
                     'booking_reference' => $this->booking->booking_reference,
                     'user_id' => $this->booking->user_id,
                 ],
-                'action_url' => route('admin.bookings.view', $this->booking->id),
+                'action_url' => route('admin.bookings.all'),
                 'priority' => 'medium'
             ]);
         }

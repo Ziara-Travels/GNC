@@ -131,6 +131,20 @@ class Booking extends Model
         return $this->belongsTo(Tour::class);
     }
 
+    /**
+     * Bookings link to flights by flight_number; the bookings table has no
+     * flight_id column.
+     */
+    public function flight()
+    {
+        return $this->belongsTo(Flight::class, 'flight_number', 'flight_number');
+    }
+
+    public function hotel()
+    {
+        return $this->belongsTo(Hotel::class);
+    }
+
     public function payment()
     {
         return $this->hasOne(Payment::class);

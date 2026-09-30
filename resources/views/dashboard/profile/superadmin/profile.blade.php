@@ -20,7 +20,7 @@
                     <div class="bg-white/10 backdrop-blur-sm rounded-xl px-4 py-2">
                         <span class="text-sm font-medium">{{ auth()->user()->name }}</span>
                     </div>
-                    <a href="{{ route('superadmin.users') }}" class="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
+                    <a href="{{ route('superadmin.users.index') }}" class="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
                         <i data-lucide="users" class="h-4 w-4"></i>
                         Manage Users
                     </a>
@@ -137,7 +137,7 @@
 
             <!-- Profile Form Section -->
             <div class="lg:col-span-2">
-                <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('user.profile.update') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
                     

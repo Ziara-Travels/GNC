@@ -2,6 +2,7 @@
     "private": true,
     "scripts": {
         "dev": "npm-run-all --parallel watch-css vite",
+        "vite": "vite",
         "build": "vite build",
         "mix-dev": "npm run development",
         "development": "mix",

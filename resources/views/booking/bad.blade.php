@@ -1,8 +1,12 @@
 @extends('layouts.main')
 
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/ziara-booking.css') }}?v={{ (file_exists(public_path('css/ziara-booking.css')) ? filemtime(public_path('css/ziara-booking.css')) : 0) }}">
+@endpush
+
 @section('content')
     <!-- Hero Section -->
-    <div class="relative bg-gradient-to-r from-red-700 to-rose-800 py-16">
+    <div class="ziara-bk ziara-bk-hero relative bg-gradient-to-r from-red-700 to-rose-800 py-16">
         <!-- Animated Background Elements -->
         <div class="absolute inset-0 overflow-hidden">
             <div class="absolute top-20 left-10 w-72 h-72 bg-red-400/10 rounded-full blur-3xl animate-pulse"></div>
@@ -40,11 +44,11 @@
     </div>
 
     <!-- Main Content -->
-    <div class="container mx-auto px-4 py-12 -mt-16 relative z-10">
+    <div class="ziara-bk ziara-bk-body container mx-auto px-4 py-12 -mt-16 relative z-10">
         <div class="max-w-4xl mx-auto">
             <!-- Error Details Card -->
-            <div class="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden mb-8">
-                <div class="bg-gradient-to-r from-red-600 to-rose-600 p-8 text-white">
+            <div class="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden mb-8 ziara-bk-card">
+                <div class="bg-gradient-to-r from-red-600 to-rose-600 p-8 text-white ziara-bk-cta">
                     <div class="flex items-center gap-4">
                         <div class="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
                             <i data-lucide="alert-triangle" class="h-8 w-8"></i>
@@ -97,7 +101,7 @@
                             <i data-lucide="home" class="h-5 w-5"></i>
                             <span>Back to Home</span>
                         </a>
-                        <a href="{{ url()->previous() }}" class="flex items-center justify-center gap-2 border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-3 px-6 rounded-xl transition-colors">
+                        <a href="{{ url()->previous() }}" class="ziara-bk-ghost flex items-center justify-center gap-2 border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-3 px-6 rounded-xl transition-colors">
                             <i data-lucide="refresh-cw" class="h-5 w-5"></i>
                             <span>Try Again</span>
                         </a>

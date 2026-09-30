@@ -41,7 +41,7 @@ class LoyaltyPointsUpdateMail extends Mailable
                         'pointsEarned' => $this->pointsEarned,
                         'totalPoints' => $this->totalPoints,
                         'booking' => $this->booking,
-                        'rewardsUrl' => route('user.rewards')
+                        'rewardsUrl' => route('user.rewards.loyalties')
                     ]);
     }
 }

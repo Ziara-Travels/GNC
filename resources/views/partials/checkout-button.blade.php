@@ -1,5 +1,5 @@
 @auth
-    <form action="{{ route('checkout') }}" method="POST" class="mt-4">
+    <form action="{{ route('booking.process') }}" method="POST" class="mt-4">
         @csrf
         <input type="hidden" name="flight_data" value="{{ json_encode($data) }}">
         <button type="submit" class="btn btn-lg w-100" 

@@ -555,7 +555,7 @@ class SuperadminDashboardController extends Controller
             $query->where('name', 'user');
         })->with('roles')->paginate(15);
 
-        return view('dashboard.users.users.users', compact('users'));
+        return view('dashboard.users.superadmin.index', compact('users'));
     }
 
     /**
@@ -1529,7 +1529,7 @@ class SuperadminDashboardController extends Controller
         public function roles()
         {
             $roles = Role::with(['permissions', 'users'])->paginate(15);
-            return view('dashboard.roles.superadmin.index', compact('roles'));
+            return view('superadmin.roles.index', compact('roles'));
         }
 
         /**
@@ -1538,7 +1538,7 @@ class SuperadminDashboardController extends Controller
         public function addRole()
         {
             $permissions = Permission::all();
-            return view('dashboard.roles.superadmin.create', compact('permissions'));
+            return view('superadmin.roles.add', compact('permissions'));
         }
 
         /**
@@ -1548,7 +1548,7 @@ class SuperadminDashboardController extends Controller
         {
             $role = Role::with('permissions')->findOrFail($id);
             $permissions = Permission::all();
-            return view('dashboard.roles.superadmin.edit', compact('role', 'permissions'));
+            return view('superadmin.roles.edit', compact('role', 'permissions'));
         }
 
         /**
@@ -1557,7 +1557,7 @@ class SuperadminDashboardController extends Controller
         public function viewRole($id)
         {
             $role = Role::with(['permissions', 'users'])->findOrFail($id);
-            return view('dashboard.roles.superadmin.view', compact('role'));
+            return view('superadmin.roles.view', compact('role'));
         }
 
              /**
@@ -1566,7 +1566,7 @@ class SuperadminDashboardController extends Controller
         public function viewMyRole ($id)
         {
             $role = Role::with(['permissions', 'users'])->findOrFail($id);
-            return view('dashboard.roles.superadmin.view', compact('role'));
+            return view('superadmin.roles.view', compact('role'));
         }
 
         /**
@@ -1575,7 +1575,7 @@ class SuperadminDashboardController extends Controller
         public function permissions()
         {
             $permissions = Permission::with(['roles'])->paginate(15);
-            return view('dashboard.permissions.superadmin.index', compact('permissions'));
+            return view('superadmin.permissions.index', compact('permissions'));
         }
 
         /**
@@ -1584,7 +1584,7 @@ class SuperadminDashboardController extends Controller
         public function addPermission()
         {
             $roles = Role::all();
-            return view('dashboard.permissions.superadmin.create', compact('roles'));
+            return view('superadmin.permissions.add', compact('roles'));
         }
 
         /**
@@ -1594,7 +1594,7 @@ class SuperadminDashboardController extends Controller
         {
             $permission = Permission::with('roles')->findOrFail($id);
             $roles = Role::all();
-            return view('dashboard.permissions.superadmin.edit', compact('permission', 'roles'));
+            return view('superadmin.permissions.edit', compact('permission', 'roles'));
         }
 
         /**
@@ -1603,7 +1603,7 @@ class SuperadminDashboardController extends Controller
         public function viewPermission($id)
         {
             $permission = Permission::with('roles')->findOrFail($id);
-            return view('dashboard.permissions.superadmin.view', compact('permission'));
+            return view('superadmin.permissions.view', compact('permission'));
         }
 
            /**
@@ -1613,7 +1613,7 @@ class SuperadminDashboardController extends Controller
           public function viewMyPermissions ($id)
         {
             $permission = Permission::with('roles')->findOrFail($id);
-            return view('dashboard.permissions.superadmin.view', compact('permission'));
+            return view('superadmin.permissions.view', compact('permission'));
         }
 
         /**
@@ -1625,7 +1625,7 @@ class SuperadminDashboardController extends Controller
         $roles = Role::with(['permissions'])->get();
         $permissions = Permission::with(['roles'])->get();
         
-        return view('dashboard.permissions.permissions', compact('roles', 'permissions'));
+        return view('superadmin.roles.all', compact('roles', 'permissions'));
     }
 
 
@@ -1638,7 +1638,233 @@ class SuperadminDashboardController extends Controller
         $roles = Role::with(['permissions'])->get();
         $permissions = Permission::with(['roles'])->get();
         
-        return view('dashboard.roles.roles', compact('roles', 'permissions'));
+        return view('superadmin.roles.all', compact('roles', 'permissions'));
+    }
+
+    /**
+     * Store a newly created role
+     */
+    public function storeRole(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255|unique:roles,name',
+            'display_name' => 'nullable|string|max:255',
+            'description' => 'nullable|string|max:500',
+            'permissions' => 'array',
+            'permissions.*' => 'exists:permissions,id'
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $role = Role::create([
+                'name' => $request->name,
+                'display_name' => $request->display_name,
+                'description' => $request->description,
+                'guard_name' => 'web',
+                'created_by' => auth()->id()
+            ]);
+
+            if ($request->has('permissions')) {
+                $role->permissions()->attach($request->permissions);
+            }
+
+            DB::commit();
+            return redirect()->route('superadmin.roles.index')
+                           ->with('success', 'Role created successfully.');
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect()->back()
+                           ->with('error', 'Error creating role: ' . $e->getMessage())
+                           ->withInput();
+        }
+    }
+
+    /**
+     * Update the specified role
+     */
+    public function updateRole(Request $request, $id)
+    {
+        $role = Role::findOrFail($id);
+
+        if ($role->is_system_role) {
+            return redirect()->route('superadmin.roles.index')
+                           ->with('error', 'Cannot edit system role: ' . $role->name);
+        }
+
+        $request->validate([
+            'name' => ['required', 'string', 'max:255', \Illuminate\Validation\Rule::unique('roles')->ignore($role->id)],
+            'display_name' => 'nullable|string|max:255',
+            'description' => 'nullable|string|max:500',
+            'permissions' => 'array',
+            'permissions.*' => 'exists:permissions,id'
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $role->update([
+                'name' => $request->name,
+                'display_name' => $request->display_name,
+                'description' => $request->description,
+            ]);
+
+            $role->permissions()->sync($request->permissions ?? []);
+
+            DB::commit();
+            return redirect()->route('superadmin.roles.index')
+                           ->with('success', 'Role updated successfully.');
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect()->back()
+                           ->with('error', 'Error updating role: ' . $e->getMessage())
+                           ->withInput();
+        }
+    }
+
+    /**
+     * Remove the specified role
+     */
+    public function destroyRole($id)
+    {
+        $role = Role::findOrFail($id);
+
+        $protectedRoles = ['superadmin', 'super_admin', 'admin', 'user'];
+        if (in_array($role->name, $protectedRoles) || $role->is_system_role) {
+            return redirect()->route('superadmin.roles.index')
+                           ->with('error', 'Cannot delete system role: ' . $role->name);
+        }
+
+        if ($role->users()->count() > 0) {
+            return redirect()->route('superadmin.roles.index')
+                           ->with('error', 'Cannot delete role that is assigned to users.');
+        }
+
+        DB::beginTransaction();
+        try {
+            $role->permissions()->detach();
+            $role->delete();
+
+            DB::commit();
+            return redirect()->route('superadmin.roles.index')
+                           ->with('success', 'Role deleted successfully.');
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect()->route('superadmin.roles.index')
+                           ->with('error', 'Error deleting role: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Store a newly created permission
+     */
+    public function storePermission(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255|unique:permissions,name',
+            'display_name' => 'required|string|max:255',
+            'description' => 'nullable|string|max:500',
+            'group' => 'required|string|max:100',
+            'roles' => 'array',
+            'roles.*' => 'exists:roles,id'
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $permission = Permission::create([
+                'name' => $request->name,
+                'display_name' => $request->display_name,
+                'description' => $request->description,
+                'group' => $request->group,
+                'guard_name' => 'web'
+            ]);
+
+            if ($request->has('roles')) {
+                $permission->roles()->attach($request->roles);
+            }
+
+            DB::commit();
+            return redirect()->route('superadmin.permissions.index')
+                           ->with('success', 'Permission created successfully.');
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect()->back()
+                           ->with('error', 'Error creating permission: ' . $e->getMessage())
+                           ->withInput();
+        }
+    }
+
+    /**
+     * Update the specified permission
+     */
+    public function updatePermission(Request $request, $id)
+    {
+        $permission = Permission::findOrFail($id);
+
+        if ($permission->is_system_permission) {
+            return redirect()->route('superadmin.permissions.index')
+                           ->with('error', 'Cannot edit system permission: ' . $permission->name);
+        }
+
+        $request->validate([
+            'name' => ['required', 'string', 'max:255', \Illuminate\Validation\Rule::unique('permissions')->ignore($permission->id)],
+            'display_name' => 'required|string|max:255',
+            'description' => 'nullable|string|max:500',
+            'group' => 'required|string|max:100',
+            'roles' => 'array',
+            'roles.*' => 'exists:roles,id'
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $permission->update([
+                'name' => $request->name,
+                'display_name' => $request->display_name,
+                'description' => $request->description,
+                'group' => $request->group,
+            ]);
+
+            $permission->roles()->sync($request->roles ?? []);
+
+            DB::commit();
+            return redirect()->route('superadmin.permissions.index')
+                           ->with('success', 'Permission updated successfully.');
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect()->back()
+                           ->with('error', 'Error updating permission: ' . $e->getMessage())
+                           ->withInput();
+        }
+    }
+
+    /**
+     * Remove the specified permission
+     */
+    public function destroyPermission($id)
+    {
+        $permission = Permission::findOrFail($id);
+
+        $protectedPermissions = [
+            'manage_users', 'manage_roles', 'manage_permissions',
+            'view_dashboard', 'manage_system_settings'
+        ];
+
+        if (in_array($permission->name, $protectedPermissions) || $permission->is_system_permission) {
+            return redirect()->route('superadmin.permissions.index')
+                           ->with('error', 'Cannot delete system permission: ' . $permission->name);
+        }
+
+        DB::beginTransaction();
+        try {
+            $permission->roles()->detach();
+            $permission->delete();
+
+            DB::commit();
+            return redirect()->route('superadmin.permissions.index')
+                           ->with('success', 'Permission deleted successfully.');
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect()->route('superadmin.permissions.index')
+                           ->with('error', 'Error deleting permission: ' . $e->getMessage());
+        }
     }
 
     // =====================================
@@ -2472,26 +2698,8 @@ class SuperadminDashboardController extends Controller
     }
 
     // =====================================
-    // MISSING ROLES AND PERMISSIONS METHODS
+    // BANK PAYMENTS SECTION
     // =====================================
-
-    /**
-     * Roles index method
-     */
-    public function rolesIndex()
-    {
-        $roles = Role::with('permissions')->get();
-        return view('dashboard.roles.superadmin.index', compact('roles'));
-    }
-
-    /**
-     * Permissions index method
-     */
-    public function permissionsIndex()
-    {
-        $permissions = Permission::all();
-        return view('dashboard.permisions.superadmin.index', compact('permissions'));
-    }
 
     /**
      * Bank payments method

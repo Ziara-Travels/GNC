@@ -66,7 +66,7 @@ Route::get('/search-flight', function () {
 // PUBLIC ROUTES
 // =====================================
 Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::get('/services', [HomeController::class, 'services'])->name('services');
+Route::get('/services', [SupportController::class, 'services'])->name('services');
 Route::get('/search', [SearchFlightController::class, 'index'])->name('search-flights');
 Route::get('/travel-insurance', [SupportController::class, 'travelInsurance'])->name('travel-insurance');
 Route::get('/about-us', [SupportController::class, 'aboutUs'])->name('aboutus');
@@ -92,13 +92,6 @@ Route::get('/achievements', [SupportController::class, 'achievements'])->name('a
 Route::get('/referral-program', [SupportController::class, 'referralProgram'])->name('referral-program');
 Route::get('/terms-of-service', [SupportController::class, 'termsOfService'])->name('terms-of-service');
 Route::get('/privacy-policy', [SupportController::class, 'privacyPolicy'])->name('privacy-policy');
-Route::get('/cookie-policy', [SupportController::class, 'cookiePolicy'])->name('cookie-policy');
-Route::get('/refund-policy', [SupportController::class, 'refundPolicy'])->name('refund-policy');
-Route::get('/cancellation-policy', [SupportController::class, 'cancellationPolicy'])->name('cancellation-policy');
-Route::get('/disclaimer', [SupportController::class, 'disclaimer'])->name('disclaimer');
-Route::get('/sitemap', [SupportController::class, 'sitemap'])->name('sitemap');
-Route::get('/sitemap.xml', [SupportController::class, 'sitemapXml'])->name('sitemap.xml');
-Route::get('/robots.txt', [SupportController::class, 'robotsTxt'])->name('robots.txt');
 Route::post('/book-flight', [App\Http\Controllers\Travel\FlightOffersController::class, 'bookDealFlight'])->name('book.deal-flight');
 
 // Deal Routes
@@ -153,7 +146,7 @@ Route::get('/api/airports/popular', [AirportController::class, 'getPopularAirpor
 // =====================================
 // Hotel search routes for all users (including non-authenticated)
 Route::get('/hotels/search', [HotelSearchController::class, 'showSearchForm'])->name('hotels.search.form');
-Route::post('/api/hotels/search', [HotelSearchController::class, '__invoke'])->name('hotels.search');
+Route::get('/api/hotels/regions', [HotelSearchController::class, 'regions'])->name('hotels.regions');
 Route::get('/hotels/results', [HotelSearchController::class, 'showResults'])->name('hotels.results');
 
 // Hotel booking routes
@@ -220,7 +213,6 @@ Route::post('/booking/process-payment', [FlightOffersController::class, 'process
 // Duplicate route removed — booking.success is defined at line 141 using OrderFlightController
 // Route::get('/booking/success/{bookingReference}', [FlightOffersController::class, 'bookingSuccess'])->name('booking.success');
 Route::get('/east-african-hotels', [HotelOffersController::class, 'getEastAfricanHotels'])->name('east-african-hotels');
-Route::post('/book-hotel', [HotelOffersController::class, 'bookHotel'])->name('book.hotel');
 
 // Activities and Destinations
 Route::get('/east-african-activities-home', [TravelActivityController::class, 'getEastAfricanActivities']);
@@ -241,20 +233,6 @@ Route::post('/custom-trip', [App\Http\Controllers\Travel\PopularDestinationContr
 // =====================================
 Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
 Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
-Route::get('/blog/category/{category}', [BlogController::class, 'category'])->name('blog.category');
-Route::get('/blog/search', [BlogController::class, 'search'])->name('blog.search');
-Route::get('/blog/tags/{tag}', [BlogController::class, 'tag'])->name('blog.tag');
-Route::get('/blog/archive', [BlogController::class, 'archive'])->name('blog.archive');
-Route::get('/blog/author/{author}', [BlogController::class, 'author'])->name('blog.author');
-Route::get('/blog/featured', [BlogController::class, 'featured'])->name('blog.featured');
-Route::get('/blog/latest', [BlogController::class, 'latest'])->name('blog.latest');
-Route::get('/blog/popular', [BlogController::class, 'popular'])->name('blog.popular');
-Route::get('/blog/archives', [BlogController::class, 'archives'])->name('blog.archives');
-Route::get('/blog/tags', [BlogController::class, 'tags'])->name('blog.tags');
-Route::get('/blog/categories', [BlogController::class, 'categories'])->name('blog.categories');
-Route::get('/blog/related/{id}', [BlogController::class, 'relatedPosts'])->name('blog.related');
-Route::get('/blog/popular-posts', [BlogController::class, 'popularPosts'])->name('blog.popular-posts');
-Route::get('/blog/featured-posts', [BlogController::class, 'featuredPosts'])->name('blog.featured-posts');
 
 // =====================================
 // API ROUTES
@@ -270,12 +248,9 @@ Route::prefix('airports')->group(function () {
     Route::get('/search', [AirportController::class, 'search']);
     Route::get('/search/iata', [AirportController::class, 'searchByIataCode']);
     Route::get('/popular', [AirportController::class, 'getPopularAirports']);
-    Route::get('/code/{iataCode}', [AirportController::class, 'getByIataCode']);
-    Route::get('/country/{country}', [AirportController::class, 'getByCountry']);
     Route::get('/city/{city}', [AirportController::class, 'getByCity'])->name('airports.city');
     Route::get('/locations/search', [AirportController::class, 'searchLocations'])->name('airports.locations.search');
     Route::get('/search/locations', [AirportController::class, 'searchLocations'])->name('airports.search.locations');
-    Route::get('/locations/{locationId}', [AirportController::class, 'getLocationById'])->name('airports.locations.show');
 });
 
 // =====================================
@@ -283,9 +258,8 @@ Route::prefix('airports')->group(function () {
 // =====================================
 Route::prefix('api')->group(function () {
     Route::post('/search', [FlightSearchController::class, '__invoke'])->name('flights.search');
-    Route::post('/hotels/search', [HotelSearchController::class, '__invoke'])->name('hotels.search');
+    Route::post('/hotels/search', [HotelSearchController::class, '__invoke'])->name('hotels.search.api');
     Route::prefix('weather')->group(function () {
-        Route::get('/search', [WeatherController::class, 'searchCities']);
     });
     Route::prefix('ai')->group(function () {
         Route::post('/price-prediction', [AIPricePredictionController::class, 'generatePrediction']);
@@ -373,19 +347,12 @@ Route::middleware(['auth'])->group(function () {
     // These routes are defined elsewhere
     // Route::get('/booking/success/{booking}', [OrderFlightController::class, 'bookingSuccess'])->name('booking.success');
     // Route::get('/booking/failure', [OrderFlightController::class, 'bookingFailure'])->name('booking.failure');
-    Route::get('/dashboard/booking', [OrderFlightController::class, 'bookingPage'])->name('dashboard.booking');
-    Route::get('/booking/confirmation', [OrderFlightController::class, 'confirmationPage'])->name('booking.confirmation');
     // Payment Routes
-    Route::post('/payment/mpesa', [PaymentController::class, 'processMpesa'])->name('payment.mpesa');
-    Route::post('/payment/bank', [PaymentController::class, 'processBank'])->name('payment.bank');
-    Route::get('/payment/success', [PaymentController::class, 'success'])->name('payment.success');
     Route::get('/payments/mpesa/check-status/{orderReference}', [OrderFlightController::class, 'checkMpesaOrderStatus'])->name('payments.mpesa.check-status');
     // Weather Routes
     Route::get('/weather/current', [WeatherController::class, 'getCurrentWeather'])->name('weather.current');
     Route::get('/weather/forecast', [WeatherController::class, 'getForecast'])->name('weather.forecast');
-    Route::get('/weather/coords', [WeatherController::class, 'getWeatherByCoords'])->name('weather.coords');
     Route::get('/weather/popular', [WeatherController::class, 'getPopularCitiesWeather'])->name('weather.popular');
-    Route::get('/weather/search', [WeatherController::class, 'searchCities'])->name('weather.search');
     
     // Dashboard Analytics Routes
     Route::get('/dashboard/business-intelligence', [DashboardController::class, 'businessIntelligence'])->name('dashboard.business-intelligence');
@@ -400,7 +367,6 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/chat', [AIChatbotController::class, 'sendMessage']);
         Route::get('/chat/history', [AIChatbotController::class, 'getChatHistory']);
         Route::post('/scan-passport', [SmartAutoFillController::class, 'scanPassport']);
-        Route::post('/booking-assistant', [AIChatbotController::class, 'bookingAssistant']);
     });
     
     // Smart Auto-Fill Routes
@@ -454,8 +420,6 @@ Route::middleware(['auth', 'role:user'])->prefix('user')->name('user.')->group(f
     Route::prefix('bookings')->name('bookings.')->group(function () {
         Route::get('/all', [UserDashboardController::class, 'allBookings'])->name('all');
         Route::get('/my', [UserDashboardController::class, 'myBookings'])->name('my');
-        Route::get('/show/{id}', [UserDashboardController::class, 'showBooking'])->name('show');
-        Route::get('/download/{id}', [UserDashboardController::class, 'downloadTicket'])->name('download');
     });
 
     // FLIGHTS MANAGEMENT SECTION
@@ -582,9 +546,6 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
         Route::get('/search/my-flight', [AdminDashboardController::class, 'searchmyflight'])->name('search.my');
         Route::get('/search/admin', [AdminDashboardController::class, 'searchFlightAdmin'])->name('search.admin');
         Route::get('/search/users', [AdminDashboardController::class, 'searchFlightUsers'])->name('search.users');
-        Route::get('/completed', [AdminDashboardController::class, 'completedFlights'])->name('completed');
-        Route::get('/failed', [AdminDashboardController::class, 'failedFlights'])->name('failed');
-        Route::get('/processing', [AdminDashboardController::class, 'processingFlights'])->name('processing');
     });
     Route::get('/search/flight/all', [AdminDashboardController::class, 'searchFlightAll'])->name('search.flight.all');
 
@@ -598,9 +559,6 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
         Route::get('/search/my-hotel', [AdminDashboardController::class, 'searchmyhotel'])->name('search.my');
         Route::get('/search/admin', [AdminDashboardController::class, 'searchHotelsAdmin'])->name('search.admin');
         Route::get('/search/users', [AdminDashboardController::class, 'searchHotelsUsers'])->name('search.users');
-        Route::get('/completed', [AdminDashboardController::class, 'completedHotels'])->name('completed');
-        Route::get('/failed', [AdminDashboardController::class, 'failedHotels'])->name('failed');
-        Route::get('/processing', [AdminDashboardController::class, 'processingHotels'])->name('processing');
     });
     Route::get('/search/hotels/all', [AdminDashboardController::class, 'searchHotelsAll'])->name('search.hotels.all');
 
@@ -627,8 +585,10 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
         Route::get('/my/{id}', [AdminDashboardController::class, 'viewMyRole'])->name('my');
         Route::get('/all', [AdminDashboardController::class, 'viewAllRolesandPermissions'])->name('all');
         Route::get('/permissions/all', [AdminDashboardController::class, 'rolesPermissionsAll'])->name('permissions.all');
+        Route::post('/', [AdminDashboardController::class, 'storeRole'])->name('store');
+        Route::put('/{id}', [AdminDashboardController::class, 'updateRole'])->name('update');
+        Route::delete('/{id}', [AdminDashboardController::class, 'destroyRole'])->name('destroy');
     });
-    Route::get('/roles/permissions/all', [AdminDashboardController::class, 'rolesPermissionsAll'])->name('roles.permissions.all');
 
     Route::prefix('permissions')->name('permissions.')->group(function () {
         Route::get('/', [AdminDashboardController::class, 'permissions'])->name('index');
@@ -637,6 +597,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
         Route::get('/view/{id}', [AdminDashboardController::class, 'viewPermission'])->name('view');
         Route::get('/my/{id}', [AdminDashboardController::class, 'viewMyPermissions'])->name('my');
         Route::get('/my-permissions/{id}', [AdminDashboardController::class, 'viewMyPermissions'])->name('my.view');
+        Route::post('/', [AdminDashboardController::class, 'storePermission'])->name('store');
+        Route::put('/{id}', [AdminDashboardController::class, 'updatePermission'])->name('update');
+        Route::delete('/{id}', [AdminDashboardController::class, 'destroyPermission'])->name('destroy');
     });
 
     // PAYMENTS MANAGEMENT SECTION
@@ -708,7 +671,6 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     });
 
     // Support route
-    Route::get('/support', [AdminDashboardController::class, 'support'])->name('support');
 
     // =====================================
     // ADVANCED ADMIN DASHBOARD FEATURES
@@ -718,151 +680,63 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::prefix('dashboard')->name('dashboard.')->group(function () {
         Route::get('/real-time', [AdminDashboardController::class, 'realTimeDashboard'])->name('real.time');
         Route::get('/real-time-data', [AdminDashboardController::class, 'getRealTimeData'])->name('real.time.data');
-        Route::get('/analytics', [AdminDashboardController::class, 'analyticsOverview'])->name('analytics');
-        Route::get('/performance', [AdminDashboardController::class, 'performanceMetrics'])->name('performance');
-        Route::get('/api-health', [AdminDashboardController::class, 'apiHealthStatus'])->name('api.health');
-        Route::get('/conversion-funnel', [AdminDashboardController::class, 'conversionFunnel'])->name('conversion.funnel');
     });
 
     // Advanced User Management System
     Route::prefix('users')->name('users.')->group(function () {
         Route::get('/management', [AdminDashboardController::class, 'advancedUserManagement'])->name('management');
-        Route::post('/bulk-operations', [AdminDashboardController::class, 'bulkUserOperations'])->name('bulk.operations');
-        Route::get('/activity-tracking', [AdminDashboardController::class, 'userActivityTracking'])->name('activity.tracking');
-        Route::get('/verification-queue', [AdminDashboardController::class, 'userVerificationQueue'])->name('verification.queue');
-        Route::post('/impersonate/{user}', [AdminDashboardController::class, 'impersonateUser'])->name('impersonate');
-        Route::post('/stop-impersonation', [AdminDashboardController::class, 'stopImpersonation'])->name('stop.impersonation');
-        Route::get('/export', [AdminDashboardController::class, 'exportUsers'])->name('export');
-        Route::post('/import', [AdminDashboardController::class, 'importUsers'])->name('import');
     });
 
     // Comprehensive Booking Management
     Route::prefix('bookings')->name('bookings.')->group(function () {
         Route::get('/management', [AdminDashboardController::class, 'comprehensiveBookingManagement'])->name('management');
-        Route::get('/real-time-monitor', [AdminDashboardController::class, 'realTimeBookingMonitor'])->name('real.time.monitor');
-        Route::post('/modify/{booking}', [AdminDashboardController::class, 'modifyBooking'])->name('modify');
-        Route::post('/cancel/{booking}', [AdminDashboardController::class, 'cancelBooking'])->name('cancel');
-        Route::get('/failed-investigation', [AdminDashboardController::class, 'failedBookingInvestigation'])->name('failed.investigation');
-        Route::get('/analytics', [AdminDashboardController::class, 'bookingAnalytics'])->name('analytics');
-        Route::post('/book-for-user', [AdminDashboardController::class, 'bookForUser'])->name('book.for.user');
-        Route::get('/payment-reconciliation', [AdminDashboardController::class, 'paymentReconciliation'])->name('payment.reconciliation');
     });
 
     // Intelligent Notification Center
     Route::prefix('notifications')->name('notifications.')->group(function () {
         Route::get('/center', [AdminDashboardController::class, 'notificationCenter'])->name('center');
-        Route::post('/broadcast', [AdminDashboardController::class, 'broadcastMessage'])->name('broadcast');
-        Route::get('/email-campaigns', [AdminDashboardController::class, 'emailCampaigns'])->name('email.campaigns');
-        Route::post('/sms-notification', [AdminDashboardController::class, 'sendSmsNotification'])->name('sms.send');
-        Route::get('/push-controls', [AdminDashboardController::class, 'pushNotificationControls'])->name('push.controls');
-        Route::get('/analytics', [AdminDashboardController::class, 'notificationAnalytics'])->name('analytics');
-        Route::get('/delivery-tracking', [AdminDashboardController::class, 'deliveryTracking'])->name('delivery.tracking');
-        Route::post('/preferences/{user}', [AdminDashboardController::class, 'updateNotificationPreferences'])->name('preferences.update');
     });
 
     // Advanced Search & Booking Tools
     Route::prefix('search')->name('search.')->group(function () {
         Route::get('/advanced', [AdminDashboardController::class, 'advancedSearchTools'])->name('advanced');
-        Route::get('/priority-flight-search', [AdminDashboardController::class, 'priorityFlightSearch'])->name('priority.flight');
-        Route::get('/bulk-booking', [AdminDashboardController::class, 'bulkBookingManagement'])->name('bulk.booking');
-        Route::get('/corporate-tools', [AdminDashboardController::class, 'corporateBookingTools'])->name('corporate.tools');
-        Route::get('/price-monitoring', [AdminDashboardController::class, 'priceMonitoring'])->name('price.monitoring');
-        Route::get('/booking-queue', [AdminDashboardController::class, 'bookingQueueManagement'])->name('booking.queue');
-        Route::post('/automated-rebooking', [AdminDashboardController::class, 'automatedRebooking'])->name('automated.rebooking');
     });
 
     // AI-Powered Analytics
     Route::prefix('analytics')->name('analytics.')->group(function () {
         Route::get('/ai', [AdminDashboardController::class, 'aiPoweredAnalytics'])->name('ai');
-        Route::get('/predictive-trends', [AdminDashboardController::class, 'predictiveBookingTrends'])->name('predictive.trends');
-        Route::get('/behavior-patterns', [AdminDashboardController::class, 'customerBehaviorPatterns'])->name('behavior.patterns');
-        Route::get('/revenue-optimization', [AdminDashboardController::class, 'revenueOptimization'])->name('revenue.optimization');
-        Route::get('/fraud-detection', [AdminDashboardController::class, 'fraudDetection'])->name('fraud.detection');
-        Route::get('/demand-forecasting', [AdminDashboardController::class, 'demandForecasting'])->name('demand.forecasting');
-        Route::get('/churn-prediction', [AdminDashboardController::class, 'churnPrediction'])->name('churn.prediction');
     });
 
     // Financial Management
     Route::prefix('finance')->name('finance.')->group(function () {
         Route::get('/management', [AdminDashboardController::class, 'financialManagement'])->name('management');
-        Route::get('/revenue-analytics', [AdminDashboardController::class, 'revenueAnalytics'])->name('revenue.analytics');
-        Route::get('/payment-gateway', [AdminDashboardController::class, 'paymentGatewayManagement'])->name('payment.gateway');
-        Route::get('/refund-processing', [AdminDashboardController::class, 'refundProcessing'])->name('refund.processing');
-        Route::get('/commission-tracking', [AdminDashboardController::class, 'commissionTracking'])->name('commission.tracking');
-        Route::get('/tax-reporting', [AdminDashboardController::class, 'taxReporting'])->name('tax.reporting');
-        Route::get('/financial-forecasting', [AdminDashboardController::class, 'financialForecasting'])->name('financial.forecasting');
-        Route::get('/audit-trail', [AdminDashboardController::class, 'auditTrail'])->name('audit.trail');
     });
 
     // System Health & Performance Monitoring
     Route::prefix('system')->name('system.')->group(function () {
         Route::get('/health', [AdminDashboardController::class, 'systemHealth'])->name('health');
-        Route::get('/performance', [AdminDashboardController::class, 'performanceMonitoring'])->name('performance');
-        Route::get('/database-optimization', [AdminDashboardController::class, 'databaseOptimization'])->name('database.optimization');
-        Route::get('/api-monitoring', [AdminDashboardController::class, 'apiMonitoring'])->name('api.monitoring');
-        Route::get('/security-threats', [AdminDashboardController::class, 'securityThreats'])->name('security.threats');
-        Route::get('/backup-recovery', [AdminDashboardController::class, 'backupRecovery'])->name('backup.recovery');
-        Route::get('/system-updates', [AdminDashboardController::class, 'systemUpdates'])->name('system.updates');
     });
 
     // Customer Support Integration
     Route::prefix('support')->name('support.')->group(function () {
         Route::get('/hub', [AdminDashboardController::class, 'supportHub'])->name('hub');
-        Route::get('/helpdesk', [AdminDashboardController::class, 'integratedHelpdesk'])->name('helpdesk');
-        Route::get('/live-chat', [AdminDashboardController::class, 'liveChatMonitoring'])->name('live.chat');
-        Route::get('/tickets', [AdminDashboardController::class, 'supportTickets'])->name('tickets');
-        Route::get('/feedback-analysis', [AdminDashboardController::class, 'customerFeedbackAnalysis'])->name('feedback.analysis');
-        Route::get('/faq-management', [AdminDashboardController::class, 'faqManagement'])->name('faq.management');
-        Route::get('/knowledge-base', [AdminDashboardController::class, 'knowledgeBase'])->name('knowledge.base');
-        Route::get('/agent-performance', [AdminDashboardController::class, 'supportAgentPerformance'])->name('agent.performance');
     });
 
     // Security & Compliance
     Route::prefix('security')->name('security.')->group(function () {
         Route::get('/compliance', [AdminDashboardController::class, 'securityCompliance'])->name('compliance');
-        Route::get('/access-control', [AdminDashboardController::class, 'accessControl'])->name('access.control');
-        Route::get('/session-management', [AdminDashboardController::class, 'sessionManagement'])->name('session.management');
-        Route::get('/audit-logs', [AdminDashboardController::class, 'securityAuditLogs'])->name('audit.logs');
-        Route::get('/threat-detection', [AdminDashboardController::class, 'threatDetection'])->name('threat.detection');
-        Route::get('/data-encryption', [AdminDashboardController::class, 'dataEncryption'])->name('data.encryption');
-        Route::get('/gdpr-compliance', [AdminDashboardController::class, 'gdprCompliance'])->name('gdpr.compliance');
-        Route::get('/data-retention', [AdminDashboardController::class, 'dataRetention'])->name('data.retention');
     });
 
     // Content Management System
     Route::prefix('content')->name('content.')->group(function () {
-        Route::get('/management', [AdminDashboardController::class, 'contentManagement'])->name('management');
-        Route::get('/landing-pages', [AdminDashboardController::class, 'landingPageCustomization'])->name('landing.pages');
-        Route::get('/promotional-banners', [AdminDashboardController::class, 'promotionalBanners'])->name('promotional.banners');
-        Route::get('/deals-discounts', [AdminDashboardController::class, 'dealsDiscounts'])->name('deals.discounts');
-        Route::get('/content-scheduling', [AdminDashboardController::class, 'contentScheduling'])->name('content.scheduling');
-        Route::get('/ab-testing', [AdminDashboardController::class, 'abTesting'])->name('ab.testing');
-        Route::get('/seo-optimization', [AdminDashboardController::class, 'seoOptimization'])->name('seo.optimization');
-        Route::get('/multi-language', [AdminDashboardController::class, 'multiLanguageContent'])->name('multi.language');
     });
 
     // Marketing Automation Hub
     Route::prefix('marketing')->name('marketing.')->group(function () {
-        Route::get('/automation', [AdminDashboardController::class, 'marketingAutomation'])->name('automation');
-        Route::get('/email-campaigns', [AdminDashboardController::class, 'emailMarketingCampaigns'])->name('email.campaigns');
-        Route::get('/social-media', [AdminDashboardController::class, 'socialMediaIntegration'])->name('social.media');
-        Route::get('/influencer-campaigns', [AdminDashboardController::class, 'influencerCampaigns'])->name('influencer.campaigns');
-        Route::get('/affiliate-program', [AdminDashboardController::class, 'affiliateProgram'])->name('affiliate.program');
-        Route::get('/customer-referrals', [AdminDashboardController::class, 'customerReferrals'])->name('customer.referrals');
-        Route::get('/loyalty-administration', [AdminDashboardController::class, 'loyaltyAdministration'])->name('loyalty.administration');
-        Route::get('/cross-selling', [AdminDashboardController::class, 'crossSellingTools'])->name('cross.selling');
     });
 
     // Partner & Vendor Management
     Route::prefix('partners')->name('partners.')->group(function () {
-        Route::get('/management', [AdminDashboardController::class, 'partnerManagement'])->name('management');
-        Route::get('/airline-partners', [AdminDashboardController::class, 'airlinePartners'])->name('airline.partners');
-        Route::get('/hotel-partners', [AdminDashboardController::class, 'hotelPartners'])->name('hotel.partners');
-        Route::get('/commission-tracking', [AdminDashboardController::class, 'partnerCommissionTracking'])->name('commission.tracking');
-        Route::get('/contract-management', [AdminDashboardController::class, 'contractManagement'])->name('contract.management');
-        Route::get('/performance-monitoring', [AdminDashboardController::class, 'partnerPerformance'])->name('performance.monitoring');
-        Route::get('/api-integration', [AdminDashboardController::class, 'apiIntegrationManagement'])->name('api.integration');
-        Route::get('/vendor-onboarding', [AdminDashboardController::class, 'vendorOnboarding'])->name('vendor.onboarding');
     });
 });
 
@@ -901,8 +775,6 @@ Route::middleware(['auth', 'role:superadmin'])->prefix('superadmin')->name('supe
     Route::get('/payments/real-time-updates', [PaymentController::class, 'realTimeUpdates'])->name('payments.real-time');
     Route::get('/payments/export', [PaymentController::class, 'exportPayments'])->name('payments.export');
     Route::get('/payments/restore-session', [PaymentController::class, 'restoreSession'])->name('payments.restore-session');
-    Route::post('/payments/{payment}/refresh-status', [PaymentController::class, 'refreshPaymentStatus'])->name('payments.refresh-status');
-    Route::get('/payments/{payment}', [PaymentController::class, 'show'])->name('payments.show');
     
     // Impersonation routes
     Route::post('/impersonate/{user}', [ImpersonationController::class, 'impersonate'])->name('impersonate');
@@ -990,12 +862,27 @@ Route::middleware(['auth', 'role:superadmin'])->prefix('superadmin')->name('supe
      // Roles & Permissions Routes
     Route::prefix('roles')->name('roles.')->group(function () {
         Route::get('/add', [SuperadminDashboardController::class, 'addRole'])->name('add');
+        Route::get('/view/{id}', [SuperadminDashboardController::class, 'viewRole'])->name('view');
+        Route::get('/edit/{id}', [SuperadminDashboardController::class, 'editRole'])->name('edit');
+        Route::get('/my/{id}', [SuperadminDashboardController::class, 'viewMyRole'])->name('my');
+        Route::get('/all', [SuperadminDashboardController::class, 'viewAllRolesandPermissions'])->name('all');
+        Route::get('/permissions/all', [SuperadminDashboardController::class, 'rolesPermissionsAll'])->name('permissions.all');
         Route::get('/', [SuperadminDashboardController::class, 'roles'])->name('index');
+        Route::post('/', [SuperadminDashboardController::class, 'storeRole'])->name('store');
+        Route::put('/{id}', [SuperadminDashboardController::class, 'updateRole'])->name('update');
+        Route::delete('/{id}', [SuperadminDashboardController::class, 'destroyRole'])->name('destroy');
     });
     
     Route::prefix('permissions')->name('permissions.')->group(function () {
         Route::get('/add', [SuperadminDashboardController::class, 'addPermission'])->name('add');
+        Route::get('/view/{id}', [SuperadminDashboardController::class, 'viewPermission'])->name('view');
+        Route::get('/edit/{id}', [SuperadminDashboardController::class, 'editPermission'])->name('edit');
+        Route::get('/my/{id}', [SuperadminDashboardController::class, 'viewMyPermissions'])->name('my');
+        Route::get('/my-permissions/{id}', [SuperadminDashboardController::class, 'viewMyPermissions'])->name('my.view');
         Route::get('/', [SuperadminDashboardController::class, 'permissions'])->name('index');
+        Route::post('/', [SuperadminDashboardController::class, 'storePermission'])->name('store');
+        Route::put('/{id}', [SuperadminDashboardController::class, 'updatePermission'])->name('update');
+        Route::delete('/{id}', [SuperadminDashboardController::class, 'destroyPermission'])->name('destroy');
     });
     
     // Payment Routes
@@ -1015,7 +902,7 @@ Route::middleware(['auth', 'role:superadmin'])->prefix('superadmin')->name('supe
     // Advanced User Management Routes
     Route::prefix('users')->name('users.')->group(function () {
         Route::get('/create', [SuperadminDashboardController::class, 'createUser'])->name('create');
-        Route::post('/store', [SuperadminDashboardController::class, 'storeUser'])->name('store');
+        Route::post('/store', [SuperadminDashboardController::class, 'storeUser'])->name('store-alt');
         Route::get('/advanced-management', [SuperadminDashboardController::class, 'advancedUserManagement'])->name('advanced-management');
         Route::get('/activity-tracking', [SuperadminDashboardController::class, 'userActivityTracking'])->name('activity-tracking');
         Route::get('/session-management', [SuperadminDashboardController::class, 'sessionManagement'])->name('session-management');
@@ -1033,10 +920,7 @@ Route::middleware(['auth', 'role:superadmin'])->prefix('superadmin')->name('supe
         Route::get('/tours', [SuperadminDashboardController::class, 'proxyTourBooking'])->name('tours');
         Route::get('/manage', [SuperadminDashboardController::class, 'manageProxyBookings'])->name('manage');
         Route::post('/book-flight', [SuperadminDashboardController::class, 'processProxyFlightBooking'])->name('book-flight');
-        Route::post('/book-hotel', [SuperadminDashboardController::class, 'processProxyHotelBooking'])->name('book-hotel');
-        Route::post('/book-tour', [SuperadminDashboardController::class, 'processProxyTourBooking'])->name('book-tour');
         Route::post('/modify/{booking}', [SuperadminDashboardController::class, 'modifyProxyBooking'])->name('modify');
-        Route::post('/cancel/{booking}', [SuperadminDashboardController::class, 'cancelProxyBooking'])->name('cancel');
     });
     
     // Advanced Analytics Routes
@@ -1052,17 +936,13 @@ Route::middleware(['auth', 'role:superadmin'])->prefix('superadmin')->name('supe
     // System Monitoring Routes
     Route::prefix('system')->name('system.')->group(function () {
         Route::get('/api-health', [SuperadminDashboardController::class, 'apiHealthMonitor'])->name('api-health');
-        Route::get('/performance', [SuperadminDashboardController::class, 'systemPerformance'])->name('performance');
-        Route::get('/maintenance', [SuperadminDashboardController::class, 'maintenanceMode'])->name('maintenance');
         Route::post('/toggle-maintenance', [SuperadminDashboardController::class, 'toggleMaintenance'])->name('toggle-maintenance');
     });
     
     // Financial Management Routes
     Route::prefix('finance')->name('finance.')->group(function () {
         Route::get('/gateway-config', [SuperadminDashboardController::class, 'paymentGatewayConfig'])->name('gateway-config');
-        Route::post('/update-gateway', [SuperadminDashboardController::class, 'updatePaymentGateway'])->name('update-gateway');
         Route::get('/refund-processing', [SuperadminDashboardController::class, 'refundProcessing'])->name('refund-processing');
-        Route::post('/process-refund/{payment}', [SuperadminDashboardController::class, 'processRefund'])->name('process-refund');
         Route::get('/commission-tracking', [SuperadminDashboardController::class, 'commissionTracking'])->name('commission-tracking');
         Route::get('/revenue-reports', [SuperadminDashboardController::class, 'revenueReports'])->name('revenue-reports');
         Route::get('/export-financial-data', [SuperadminDashboardController::class, 'exportFinancialData'])->name('export-financial-data');
@@ -1071,10 +951,6 @@ Route::middleware(['auth', 'role:superadmin'])->prefix('superadmin')->name('supe
     // Content Management Routes
     Route::prefix('content')->name('content.')->group(function () {
         Route::get('/offers', [SuperadminDashboardController::class, 'manageOffers'])->name('offers');
-        Route::post('/offers/store', [SuperadminDashboardController::class, 'storeOffer'])->name('offers.store');
-        Route::put('/offers/{offer}', [SuperadminDashboardController::class, 'updateOffer'])->name('offers.update');
-        Route::delete('/offers/{offer}', [SuperadminDashboardController::class, 'deleteOffer'])->name('offers.delete');
-        Route::get('/destinations', [SuperadminDashboardController::class, 'manageFeaturedDestinations'])->name('destinations');
         Route::get('/email-templates', [SuperadminDashboardController::class, 'manageEmailTemplates'])->name('email-templates');
         Route::get('/policies', [SuperadminDashboardController::class, 'managePolicies'])->name('policies');
     });
@@ -1084,18 +960,13 @@ Route::middleware(['auth', 'role:superadmin'])->prefix('superadmin')->name('supe
         Route::get('/broadcast', [SuperadminDashboardController::class, 'broadcastCenter'])->name('broadcast');
         Route::post('/send-broadcast', [SuperadminDashboardController::class, 'sendBroadcast'])->name('send-broadcast');
         Route::get('/email-campaigns', [SuperadminDashboardController::class, 'emailCampaigns'])->name('email-campaigns');
-        Route::post('/create-campaign', [SuperadminDashboardController::class, 'createEmailCampaign'])->name('create-campaign');
-        Route::get('/sms', [SuperadminDashboardController::class, 'smsCenter'])->name('sms');
-        Route::post('/send-sms', [SuperadminDashboardController::class, 'sendSms'])->name('send-sms');
         Route::get('/support-tickets', [SuperadminDashboardController::class, 'supportTickets'])->name('support-tickets');
     });
     
     // Security & Compliance Routes
     Route::prefix('security')->name('security.')->group(function () {
         Route::get('/two-factor', [SuperadminDashboardController::class, 'twoFactorManagement'])->name('two-factor');
-        Route::post('/toggle-2fa/{user}', [SuperadminDashboardController::class, 'toggle2FA'])->name('toggle-2fa');
         Route::get('/ip-restrictions', [SuperadminDashboardController::class, 'ipRestrictions'])->name('ip-restrictions');
-        Route::post('/add-ip-restriction', [SuperadminDashboardController::class, 'addIpRestriction'])->name('add-ip-restriction');
         Route::get('/audit-logs', [SuperadminDashboardController::class, 'securityAuditLogs'])->name('audit-logs');
         Route::get('/data-retention', [SuperadminDashboardController::class, 'dataRetentionPolicy'])->name('data-retention');
     });
@@ -1103,15 +974,11 @@ Route::middleware(['auth', 'role:superadmin'])->prefix('superadmin')->name('supe
     // Advanced Search & Reports
     Route::prefix('search')->name('search.')->group(function () {
         Route::get('/advanced', [SuperadminDashboardController::class, 'advancedSearch'])->name('advanced');
-        Route::post('/execute', [SuperadminDashboardController::class, 'executeAdvancedSearch'])->name('execute');
-        Route::get('/saved-searches', [SuperadminDashboardController::class, 'savedSearches'])->name('saved-searches');
-        Route::post('/save-search', [SuperadminDashboardController::class, 'saveSearch'])->name('save-search');
     });
     
     // Notification Center Routes
     Route::prefix('notifications')->name('notifications.')->group(function () {
         Route::get('/center', [SuperadminDashboardController::class, 'notificationCenter'])->name('center');
-        Route::get('/real-time-alerts', [SuperadminDashboardController::class, 'realTimeAlerts'])->name('real-time-alerts');
         Route::post('/mark-all-read', [SuperadminDashboardController::class, 'markAllNotificationsRead'])->name('mark-all-read');
         Route::get('/clear-all', [SuperadminDashboardController::class, 'clearAllNotifications'])->name('clear-all');
     });
@@ -1158,7 +1025,7 @@ Route::middleware(['auth', 'role:superadmin'])->prefix('superadmin')->name('supe
     Route::get('/my/profile', [SuperadminDashboardController::class, 'myProfile'])->name('my.profile');
     
     // Rewards & Loyalties
-    Route::get('/rewards-loyalties', [SuperadminDashboardController::class, 'rewardsLoyalties'])->name('rewards.index');
+    Route::get('/rewards-loyalties', [SuperadminDashboardController::class, 'rewardsLoyalties'])->name('rewards.loyalties');
     
     // Additional Missing Routes for Complete Functionality
     Route::get('/calendar', [SuperadminDashboardController::class, 'calendar'])->name('calendar');
@@ -1169,32 +1036,18 @@ Route::middleware(['auth', 'role:superadmin'])->prefix('superadmin')->name('supe
     Route::prefix('data')->name('data.')->group(function () {
         Route::get('/export', [SuperadminDashboardController::class, 'exportData'])->name('export');
         Route::get('/retention-policy', [SuperadminDashboardController::class, 'dataRetentionPolicy'])->name('retention-policy');
-        Route::post('/purge-old-data', [SuperadminDashboardController::class, 'purgeOldData'])->name('purge-old-data');
     });
     
     // System Configuration Routes
     Route::prefix('config')->name('config.')->group(function () {
-        Route::get('/email-settings', [SuperadminDashboardController::class, 'emailSettings'])->name('email-settings');
-        Route::get('/sms-settings', [SuperadminDashboardController::class, 'smsSettings'])->name('sms-settings');
-        Route::get('/api-settings', [SuperadminDashboardController::class, 'apiSettings'])->name('api-settings');
-        Route::post('/update-settings', [SuperadminDashboardController::class, 'updateSystemSettings'])->name('update-settings');
     });
     
     // Log Management Routes
     Route::prefix('logs')->name('logs.')->group(function () {
-        Route::get('/activity', [SuperadminDashboardController::class, 'activityLogs'])->name('activity');
-        Route::get('/error', [SuperadminDashboardController::class, 'errorLogs'])->name('error');
-        Route::get('/security', [SuperadminDashboardController::class, 'securityLogs'])->name('security');
-        Route::get('/api', [SuperadminDashboardController::class, 'apiLogs'])->name('api');
-        Route::post('/clear-logs', [SuperadminDashboardController::class, 'clearLogs'])->name('clear');
     });
     
     // Report Generation Routes
     Route::prefix('reports')->name('reports.')->group(function () {
-        Route::get('/generate', [SuperadminDashboardController::class, 'generateReports'])->name('generate');
-        Route::post('/custom-report', [SuperadminDashboardController::class, 'generateCustomReport'])->name('custom');
-        Route::get('/scheduled', [SuperadminDashboardController::class, 'scheduledReports'])->name('scheduled');
-        Route::post('/schedule-report', [SuperadminDashboardController::class, 'scheduleReport'])->name('schedule');
     });
 });
 
@@ -1348,9 +1201,7 @@ Route::prefix('exchange-rate')->name('exchange-rate.')->group(function () {
 // =====================================
 Route::prefix('hotels')->name('hotels.')->group(function () {
     Route::post('/search', [HotelSearchController::class, '__invoke'])->name('search');
-    Route::get('/search', function() { 
-        return view('hotels.search'); 
-    })->name('search.form');
+    Route::get('/search', [HotelSearchController::class, 'showSearchForm'])->name('search.form');
 });
 
 // =====================================
@@ -1400,7 +1251,7 @@ Route::prefix('wishlist')->name('wishlist.')->group(function () {
     Route::post('/add', [WishlistController::class, 'store'])->name('store');
     Route::delete('/{id}', [WishlistController::class, 'destroy'])->name('destroy');
     Route::post('/clear', [WishlistController::class, 'clear'])->name('clear');
-    Route::post('/check', [WishlistController::class, 'checkWishlist'])->name('check');
+    Route::post('/check', [WishlistController::class, 'checkWishlist'])->name('check-store');
     Route::get('/count', [WishlistController::class, 'getWishlistCount'])->name('count');
     
     // Guest wishlist routes
@@ -1467,7 +1318,7 @@ Route::middleware(['auth'])->group(function () {
     // Unified booking routes
     Route::get('/bookings/{id}', [OrderFlightController::class, 'show'])->name('bookings.show');
     Route::get('/bookings/{id}/download', [OrderFlightController::class, 'download'])->name('bookings.download');
-    Route::get('/bookings', [UserDashboardController::class, 'allBookings'])->name('user.bookings.all');
+    Route::get('/bookings', [UserDashboardController::class, 'allBookings'])->name('user.bookings');
     
     // Flight Booking Routes (POST only - GET is handled by the public routes above)
     Route::post('/flights/search', [FlightBookingController::class, 'searchFlights'])->name('flights.search.results');

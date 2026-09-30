@@ -1,6 +1,12 @@
 @extends('layouts.main')
 
-@section('styles')
+@section('content')
+@include('partials.ziara-page-hero', [
+    'kicker' => 'Secure Checkout',
+    'title'  => 'Complete Your <em>Payment</em>',
+    'intro'  => 'Review your trip details and choose a secure payment method to confirm your destination booking.',
+])
+
 <style>
     /* Custom animations */
     @keyframes fadeInUp {
@@ -73,56 +79,268 @@
             opacity: 0.8;
         }
     }
-</style>
-@endsection
 
-@section('content')
-<div class="bg-gray-50 min-h-screen pb-16">
+    .zchk-shell { background: var(--gold-pale); }
+    .zchk-card {
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        box-shadow: var(--shadow-sm);
+        overflow: hidden;
+    }
+    .zchk-card__body { padding: 30px 28px; }
+    .zchk-title {
+        font-family: 'Cormorant Garamond', Georgia, serif;
+        font-size: 26px;
+        font-weight: 700;
+        color: var(--maroon-deep);
+        margin: 0 0 20px;
+    }
+    .zchk-heading {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--ink);
+        margin: 0 0 14px;
+    }
+    .zchk-media { border-radius: 14px; overflow: hidden; height: 100%; min-height: 200px; background: var(--gold-pale); }
+    .zchk-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .zchk-destname {
+        font-family: 'Cormorant Garamond', Georgia, serif;
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--maroon-deep);
+        margin: 0;
+    }
+    .zchk-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; font-size: 14px; color: var(--muted); }
+    .zchk-meta i { color: var(--maroon); font-size: 15px; }
+    .zchk-dot { color: var(--gold-dim); }
+    .zchk-tagbox {
+        margin-top: 18px;
+        padding: 15px 17px;
+        background: var(--gold-pale);
+        border: 1px solid var(--gold-border);
+        border-left: 4px solid var(--gold);
+        border-radius: 10px;
+    }
+    .zchk-tagbox__title { font-size: 15px; font-weight: 700; color: var(--maroon-deep); margin: 0 0 5px; }
+    .zchk-tagbox__desc { font-size: 14px; line-height: 1.65; color: #3a322c; margin: 0; }
+    .zchk-facts { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 20px; }
+    .zchk-fact__label { font-size: 11px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+    .zchk-fact__value { font-size: 15px; font-weight: 600; color: var(--ink); }
+    .zchk-rule { border-top: 1px solid var(--line); }
+    .zchk-row { display: flex; align-items: flex-start; gap: 12px; }
+    .zchk-row + .zchk-row { margin-top: 13px; }
+    .zchk-row i { color: var(--maroon); font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    .zchk-row i.zchk-row__icon--ok { color: #167a3a; }
+    .zchk-row__text { font-size: 14.5px; line-height: 1.65; color: var(--ink); }
+    .zchk-row__text strong { color: #167a3a; }
+    .zchk-includes { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px 22px; }
+    .zchk-include { display: flex; align-items: center; gap: 11px; font-size: 14.5px; color: var(--ink); }
+    .zchk-include i { color: #167a3a; font-size: 17px; flex-shrink: 0; }
+    .zchk-secure {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        border-radius: 999px;
+        background: #eef7ef;
+        border: 1px solid rgba(22,122,58,.3);
+        color: #167a3a;
+        font-size: 12.5px;
+        font-weight: 600;
+    }
+    .zchk-method {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        padding: 15px 17px;
+        border: 1.5px solid var(--line);
+        border-radius: 12px;
+        background: #fff;
+        cursor: pointer;
+        transition: border-color .25s, background .25s;
+    }
+    .zchk-method + .zchk-method { margin-top: 13px; }
+    .zchk-method:hover { border-color: var(--gold); background: var(--gold-pale); }
+    .zchk-method:has(input:checked) { border-color: var(--maroon); background: var(--gold-pale); }
+    .zchk-method input { width: 18px; height: 18px; accent-color: var(--maroon); flex-shrink: 0; cursor: pointer; }
+    .zchk-method label { font-size: 15px; font-weight: 600; color: var(--ink); cursor: pointer; }
+    .zchk-logos { margin-left: auto; display: flex; gap: 9px; align-items: center; }
+    .zchk-logos img { height: 24px; }
+    .zchk-label {
+        display: block;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: .8px;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 8px;
+    }
+    .zchk-required {
+        display: inline-block;
+        padding: 4px 11px;
+        border-radius: 999px;
+        background: var(--gold-pale);
+        border: 1px solid var(--gold-border);
+        color: var(--maroon);
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: .6px;
+        text-transform: uppercase;
+    }
+    .zchk-hint { font-size: 12.5px; color: var(--muted); margin: 7px 0 0; }
+    .zchk-check { display: flex; align-items: flex-start; gap: 12px; }
+    .zchk-check input { width: 18px; height: 18px; accent-color: var(--maroon); margin-top: 1px; flex-shrink: 0; }
+    .zchk-check label { font-size: 14px; line-height: 1.7; color: var(--ink); }
+    .zchk-check a { color: var(--maroon); font-weight: 600; }
+    .zchk-check a:hover { color: var(--gold-dim); }
+    .zchk-pay {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        width: 100%;
+        padding: 16px 36px;
+        border: 0;
+        border-radius: 50px;
+        background: var(--maroon);
+        color: #fff;
+        font-family: var(--font-body);
+        font-size: 12.5px;
+        font-weight: 700;
+        letter-spacing: .9px;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: background .35s, color .35s, transform .35s, box-shadow .35s;
+    }
+    .zchk-pay:hover { background: var(--maroon-deep); transform: translateY(-2px); box-shadow: 0 10px 24px rgba(107,44,31,.28); }
+    .zchk-trust { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 28px; }
+    .zchk-trust__item { display: flex; align-items: center; gap: 9px; font-size: 14px; color: var(--ink); }
+    .zchk-trust__item i { color: #167a3a; font-size: 18px; }
+    .zchk-sumtitle { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 26px; font-weight: 700; color: var(--maroon-deep); margin: 0 0 20px; }
+    .zchk-pricerow { display: flex; justify-content: space-between; gap: 14px; font-size: 14.5px; color: var(--muted); }
+    .zchk-pricerow + .zchk-pricerow { margin-top: 11px; }
+    .zchk-pricerow--discount { color: #167a3a; }
+    .zchk-pricerow--total {
+        border-top: 2px solid var(--gold);
+        margin-top: 16px;
+        padding-top: 14px;
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--maroon-deep);
+    }
+    .zchk-note { font-size: 12.5px; color: var(--muted); display: flex; align-items: center; justify-content: flex-end; gap: 6px; margin-top: 8px; }
+    .zchk-policy {
+        margin-top: 24px;
+        padding: 18px 20px;
+        background: var(--gold-pale);
+        border: 1px solid var(--gold-border);
+        border-left: 4px solid var(--gold);
+        border-radius: 10px;
+    }
+    .zchk-policy p { font-size: 14px; line-height: 1.7; color: var(--ink); margin: 0; }
+    .zchk-support { margin-top: 24px; display: flex; align-items: center; justify-content: center; gap: 9px; font-size: 14px; color: var(--ink); }
+    .zchk-support i { color: var(--maroon); font-size: 18px; }
+    .zchk-support a { color: var(--maroon); font-weight: 600; }
+    .zchk-support a:hover { color: var(--gold-dim); }
+    .zchk-card input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]):not([type="submit"]),
+    .zchk-card select,
+    .zchk-card textarea,
+    .zchk-modal input:not([type="hidden"]):not([type="checkbox"]),
+    .zchk-modal select {
+        border-color: var(--line);
+        border-radius: 10px;
+        padding: 13px 15px;
+        font-family: var(--font-body);
+        font-size: 15px;
+        color: var(--ink);
+        background: #fff;
+    }
+    .zchk-card input:focus, .zchk-card select:focus, .zchk-card textarea:focus,
+    .zchk-modal input:focus, .zchk-modal select:focus {
+        outline: none;
+        border-color: var(--gold);
+        box-shadow: 0 0 0 3px var(--gold-border);
+    }
+    .zchk-card input[type="checkbox"], .zchk-modal input[type="checkbox"] { accent-color: var(--maroon); }
+    .zchk-card input[type="radio"], .zchk-method input[type="radio"] { accent-color: var(--maroon); }
+    .zchk-modal { background: #fff; border-radius: 18px; box-shadow: 0 30px 70px rgba(31,20,16,.34); overflow: hidden; }
+    .zchk-modal__body { padding: 30px 28px 20px; text-align: left; }
+    .zchk-modal__title { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 25px; font-weight: 700; color: var(--maroon-deep); margin: 0 0 12px; }
+    .zchk-modal__text { font-size: 14.5px; line-height: 1.7; color: var(--muted); margin: 0 0 20px; }
+    .zchk-modal label { display: block; font-size: 11px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+    .zchk-modal .zchk-check label { font-size: 14px; letter-spacing: 0; text-transform: none; font-weight: 500; margin-bottom: 0; }
+    .zchk-modal__foot { background: var(--gold-pale); padding: 16px 28px; display: flex; gap: 12px; }
+    .zchk-modal__foot .zchk-pay { flex: 1; width: auto; }
+    .zchk-modal__foot .zchk-ghost {
+        flex: 1;
+        padding: 15px 24px;
+        border: 1.5px solid var(--maroon);
+        border-radius: 50px;
+        background: transparent;
+        color: var(--maroon);
+        font-family: var(--font-body);
+        font-size: 12.5px;
+        font-weight: 700;
+        letter-spacing: .9px;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: background .35s, color .35s, transform .35s;
+    }
+    .zchk-modal__foot .zchk-ghost:hover { background: var(--maroon); color: #fff; transform: translateY(-2px); }
+    .zchk-loginlink { font-size: 14px; font-weight: 600; color: var(--maroon); }
+    .zchk-loginlink:hover { color: var(--gold-dim); }
+    @media (max-width: 768px) {
+        .zchk-facts, .zchk-includes { grid-template-columns: 1fr; }
+    }
+</style>
+
+<div class="zchk-shell min-h-screen pb-16">
     <!-- Booking Progress Timeline -->
-    <div class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-30">
+    <div class="bg-white shadow-sm border-b" style="border-color:var(--line)!important;position:sticky;top:0;z-index:30;">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div class="relative flex items-center justify-between">
                 <!-- Timeline Line -->
-                <div class="absolute timeline-line left-0 w-full bg-gray-200"></div>
+                <div class="absolute timeline-line left-0 w-full" style="background:var(--line);"></div>
                 
                 <!-- Step 1: Search -->
                 <div class="timeline-step completed relative z-10 flex flex-col items-center">
-                    <div class="timeline-circle w-12 h-12 rounded-full bg-gray-200 border-4 border-white flex items-center justify-center text-white">
+                    <div class="timeline-circle w-12 h-12 rounded-full border-4 flex items-center justify-center text-white" style="background:#167a3a;border-color:#fff;">
                         <i data-lucide="check" class="w-6 h-6"></i>
                     </div>
-                    <span class="timeline-text mt-2 text-sm font-medium text-gray-600">Search</span>
+                    <span class="timeline-text mt-2 text-sm font-medium" style="color:var(--ink);">Search</span>
                 </div>
                 
                 <!-- Step 2: Select -->
                 <div class="timeline-step completed relative z-10 flex flex-col items-center">
-                    <div class="timeline-circle w-12 h-12 rounded-full bg-gray-200 border-4 border-white flex items-center justify-center text-white">
+                    <div class="timeline-circle w-12 h-12 rounded-full border-4 flex items-center justify-center text-white" style="background:#167a3a;border-color:#fff;">
                         <i data-lucide="check" class="w-6 h-6"></i>
                     </div>
-                    <span class="timeline-text mt-2 text-sm font-medium text-gray-600">Select</span>
+                    <span class="timeline-text mt-2 text-sm font-medium" style="color:var(--ink);">Select</span>
                 </div>
                 
                 <!-- Step 3: Book -->
                 <div class="timeline-step completed relative z-10 flex flex-col items-center">
-                    <div class="timeline-circle w-12 h-12 rounded-full bg-gray-200 border-4 border-white flex items-center justify-center text-white">
+                    <div class="timeline-circle w-12 h-12 rounded-full border-4 flex items-center justify-center text-white" style="background:#167a3a;border-color:#fff;">
                         <i data-lucide="check" class="w-6 h-6"></i>
                     </div>
-                    <span class="timeline-text mt-2 text-sm font-medium text-gray-600">Book</span>
+                    <span class="timeline-text mt-2 text-sm font-medium" style="color:var(--ink);">Book</span>
                 </div>
                 
                 <!-- Step 4: Pay -->
                 <div class="timeline-step active relative z-10 flex flex-col items-center">
-                    <div class="timeline-circle w-12 h-12 rounded-full bg-white border-4 border-gray-300 flex items-center justify-center text-indigo-600">
-                        <i data-lucide="credit-card" class="w-6 h-6"></i>
+                    <div class="timeline-circle w-12 h-12 rounded-full border-4 flex items-center justify-center" style="background:#fff;border-color:var(--line);">
+                        <i data-lucide="credit-card" class="w-6 h-6" style="color:var(--maroon);"></i>
                     </div>
-                    <span class="timeline-text mt-2 text-sm font-medium">Pay</span>
+                    <span class="timeline-text mt-2 text-sm font-medium" style="color:var(--maroon-deep);">Pay</span>
                 </div>
                 
                 <!-- Step 5: Confirm -->
                 <div class="timeline-step relative z-10 flex flex-col items-center">
-                    <div class="timeline-circle w-12 h-12 rounded-full bg-white border-4 border-gray-300 flex items-center justify-center text-gray-400">
-                        <i data-lucide="check-circle" class="w-6 h-6"></i>
+                    <div class="timeline-circle w-12 h-12 rounded-full border-4 flex items-center justify-center" style="background:#fff;border-color:var(--line);">
+                        <i data-lucide="check-circle" class="w-6 h-6" style="color:var(--muted);"></i>
                     </div>
-                    <span class="timeline-text mt-2 text-sm font-medium text-gray-400">Confirm</span>
+                    <span class="timeline-text mt-2 text-sm font-medium" style="color:var(--muted);">Confirm</span>
                 </div>
             </div>
         </div>
@@ -134,374 +352,361 @@
             <!-- Left Column: Payment Form -->
             <div class="lg:w-2/3">
                 <!-- Destination Summary -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-8 p-6">
-                    <h2 class="text-xl font-bold text-gray-900 mb-6">Destination Summary</h2>
-                    
-                    <div class="flex flex-col md:flex-row gap-6 mb-6">
-                        <!-- Destination Image -->
-                        <div class="md:w-1/3">
-                            <div class="rounded-lg overflow-hidden">
-                                <img src="{{ asset('images/destinations/' . ($destination['image'] ?? 'destination-placeholder.jpg')) }}" alt="{{ $destination['name'] ?? 'Destination' }}" class="w-full h-full object-cover">
-                            </div>
-                        </div>
+                <div class="zchk-card mb-8">
+                    <div class="zchk-card__body">
+                        <h2 class="zchk-title">Destination Summary</h2>
                         
-                        <!-- Destination Details -->
-                        <div class="md:w-2/3">
-                            <h3 class="text-lg font-bold text-gray-900">{{ $destination['name'] ?? 'Zanzibar Beach Getaway' }}</h3>
-                            
-                            <div class="flex items-center mt-2">
-                                <div class="flex items-center text-gray-600">
-                                    <i data-lucide="map-pin" class="h-4 w-4 mr-1"></i>
-                                    {{ $destination['location'] ?? 'Zanzibar, Tanzania' }}
+                        <div class="flex flex-col md:flex-row gap-6 mb-6">
+                            <!-- Destination Image -->
+                            <div class="md:w-1/3">
+                                <div class="zchk-media">
+                                    <img src="{{ asset('images/destinations/' . ($destination['image'] ?? 'destination-placeholder.jpg')) }}" alt="{{ $destination['name'] ?? 'Destination' }}" class="w-full h-full object-cover">
                                 </div>
-                                
-                                <span class="mx-2 text-gray-300">•</span>
-                                
-                                <div class="flex items-center">
-                                    <i data-lucide="star" class="h-4 w-4 text-yellow-500 fill-current"></i>
-                                    <span class="ml-1">{{ $destination['rating'] ?? '4.8' }} ({{ $destination['review_count'] ?? '156' }} reviews)</span>
-                                </div>
-                            </div>
-                            
-                            <!-- Destination Type -->
-                            <div class="mt-4 p-3 bg-indigo-50 rounded-lg border border-indigo-100">
-                                <div class="font-semibold text-indigo-800">{{ $destination['type'] ?? 'Beach Destination' }}</div>
-                                <div class="text-gray-700 text-sm mt-1">{{ $destination['highlights'] ?? 'White sand beaches, crystal clear water, water sports and local cuisine' }}</div>
                             </div>
                             
                             <!-- Destination Details -->
-                            <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="md:w-2/3">
+                                <h3 class="zchk-destname">{{ $destination['name'] ?? 'Zanzibar Beach Getaway' }}</h3>
+                                
+                                <div class="zchk-meta mt-2">
+                                    <i data-lucide="map-pin"></i>
+                                    <span>{{ $destination['location'] ?? 'Zanzibar, Tanzania' }}</span>
+                                    
+                                    <span class="zchk-dot">•</span>
+                                    
+                                    <i data-lucide="star" style="color:var(--gold-dim);fill:currentColor;"></i>
+                                    <span>{{ $destination['rating'] ?? '4.8' }} ({{ $destination['review_count'] ?? '156' }} reviews)</span>
+                                </div>
+                            
+                            <!-- Destination Type -->
+                            <div class="zchk-tagbox">
+                                <div class="zchk-tagbox__title">{{ $destination['type'] ?? 'Beach Destination' }}</div>
+                                <div class="zchk-tagbox__desc">{{ $destination['highlights'] ?? 'White sand beaches, crystal clear water, water sports and local cuisine' }}</div>
+                            </div>
+                            
+                            <!-- Destination Details -->
+                            <div class="zchk-facts">
                                 <div>
-                                    <div class="text-sm text-gray-600">Check-in</div>
-                                    <div class="font-semibold">{{ $booking['check_in'] ?? date('D, M d, Y') }}</div>
+                                    <div class="zchk-fact__label">Check-in</div>
+                                    <div class="zchk-fact__value">{{ $booking['check_in'] ?? date('D, M d, Y') }}</div>
                                 </div>
                                 
                                 <div>
-                                    <div class="text-sm text-gray-600">Check-out</div>
-                                    <div class="font-semibold">{{ $booking['check_out'] ?? date('D, M d, Y', strtotime('+5 days')) }}</div>
+                                    <div class="zchk-fact__label">Check-out</div>
+                                    <div class="zchk-fact__value">{{ $booking['check_out'] ?? date('D, M d, Y', strtotime('+5 days')) }}</div>
                                 </div>
                                 
                                 <div>
-                                    <div class="text-sm text-gray-600">Duration</div>
-                                    <div class="font-semibold">{{ $destination['duration'] ?? '5 days, 4 nights' }}</div>
+                                    <div class="zchk-fact__label">Duration</div>
+                                    <div class="zchk-fact__value">{{ $destination['duration'] ?? '5 days, 4 nights' }}</div>
                                 </div>
                                 
                                 <div>
-                                    <div class="text-sm text-gray-600">Travelers</div>
-                                    <div class="font-semibold">{{ $booking['adults'] ?? '2' }} adults{{ ($booking['children'] ?? 0) > 0 ? ', ' . $booking['children'] . ' children' : '' }}</div>
+                                    <div class="zchk-fact__label">Travelers</div>
+                                    <div class="zchk-fact__value">{{ $booking['adults'] ?? '2' }} adults{{ ($booking['children'] ?? 0) > 0 ? ', ' . $booking['children'] . ' children' : '' }}</div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    
-                    <div class="border-t border-gray-200 pt-4 mt-4">
-                        <h3 class="font-semibold text-gray-900 mb-3">Travel Details</h3>
                         
-                        <div class="space-y-2">
-                            <div class="flex items-start">
-                                <i data-lucide="plane" class="h-5 w-5 text-indigo-600 mt-0.5 mr-2"></i>
-                                <div class="text-sm text-gray-700">
-                                    {{ $destination['flight_details'] ?? 'Flight to Zanzibar International Airport (ZNZ) included' }}
-                                </div>
-                            </div>
+                        <div class="zchk-rule pt-4 mt-4">
+                            <h3 class="zchk-heading">Travel Details</h3>
                             
-                            <div class="flex items-start">
-                                <i data-lucide="home" class="h-5 w-5 text-indigo-600 mt-0.5 mr-2"></i>
-                                <div class="text-sm text-gray-700">
-                                    {{ $destination['accommodation'] ?? 'Beach front resort accommodation (4-star)' }}
+                            <div>
+                                <div class="zchk-row">
+                                    <i data-lucide="plane"></i>
+                                    <div class="zchk-row__text">
+                                        {{ $destination['flight_details'] ?? 'Flight to Zanzibar International Airport (ZNZ) included' }}
+                                    </div>
                                 </div>
-                            </div>
-                            
-                            <div class="flex items-start">
-                                <i data-lucide="shield-check" class="h-5 w-5 text-green-600 mt-0.5 mr-2"></i>
-                                <div class="text-sm text-gray-700">
-                                    <span class="font-semibold text-green-700">{{ $destination['cancellation'] ?? 'Free cancellation' }}</span> up to 7 days before the trip starts
+                                
+                                <div class="zchk-row">
+                                    <i data-lucide="home"></i>
+                                    <div class="zchk-row__text">
+                                        {{ $destination['accommodation'] ?? 'Beach front resort accommodation (4-star)' }}
+                                    </div>
+                                </div>
+                                
+                                <div class="zchk-row">
+                                    <i data-lucide="shield-check" class="zchk-row__icon--ok"></i>
+                                    <div class="zchk-row__text">
+                                        <strong>{{ $destination['cancellation'] ?? 'Free cancellation' }}</strong> up to 7 days before the trip starts
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    
-                    <!-- Package Includes -->
-                    <div class="mt-6">
-                        <h3 class="font-semibold text-gray-900 mb-3">Package Includes</h3>
                         
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-                            @foreach($destination['included'] ?? ['Return flights', 'Airport transfers', 'Resort accommodation', 'Breakfast and dinner daily', 'Island tour', 'Snorkeling experience'] as $included)
-                                <div class="flex items-center">
-                                    <i data-lucide="check" class="h-5 w-5 text-green-500 mr-2"></i>
-                                    <span class="text-sm">{{ $included }}</span>
-                                </div>
-                            @endforeach
+                        <!-- Package Includes -->
+                        <div class="mt-6">
+                            <h3 class="zchk-heading">Package Includes</h3>
+                            
+                            <div class="zchk-includes">
+                                @foreach($destination['included'] ?? ['Return flights', 'Airport transfers', 'Resort accommodation', 'Breakfast and dinner daily', 'Island tour', 'Snorkeling experience'] as $included)
+                                    <div class="zchk-include">
+                                        <i data-lucide="check"></i>
+                                        <span>{{ $included }}</span>
+                                    </div>
+                                @endforeach
+                            </div>
                         </div>
                     </div>
                 </div>
                 
                 <!-- Payment Method -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden p-6">
-                    <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-xl font-bold text-gray-900">Payment Method</h2>
-                        
-                        <!-- Secured Payment Badge -->
-                        <div class="flex items-center px-3 py-1 bg-green-100 rounded-full">
-                            <i data-lucide="shield" class="h-4 w-4 text-green-700 mr-1 animate-pulse-slow"></i>
-                            <span class="text-xs font-medium text-green-700">Secure Payment</span>
-                        </div>
-                    </div>
-                    
-                    <!-- Payment Method Selection -->
-                    <div class="space-y-4 mb-6">
-                        <div class="flex items-center">
-                            <input id="card" name="paymentMethod" type="radio" checked class="h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500">
-                            <label for="card" class="ml-3 block font-medium text-gray-700">
-                                Credit/Debit Card
-                            </label>
+                <div class="zchk-card">
+                    <div class="zchk-card__body">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="zchk-title" style="margin:0;">Payment Method</h2>
                             
-                            <!-- Card Icons -->
-                            <div class="flex ml-auto space-x-2">
-                                <img src="{{ asset('images/payment/visa.svg') }}" alt="Visa" class="h-6">
-                                <img src="{{ asset('images/payment/mastercard.svg') }}" alt="Mastercard" class="h-6">
-                                <img src="{{ asset('images/payment/amex.svg') }}" alt="American Express" class="h-6">
+                            <!-- Secured Payment Badge -->
+                            <div class="zchk-secure">
+                                <i data-lucide="shield" class="animate-pulse-slow"></i>
+                                <span>Secure Payment</span>
                             </div>
                         </div>
                         
-                        <div class="flex items-center">
-                            <input id="mpesa" name="paymentMethod" type="radio" class="h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500">
-                            <label for="mpesa" class="ml-3 block font-medium text-gray-700">
-                                M-Pesa
-                            </label>
+                        <!-- Payment Method Selection -->
+                        <div class="mb-6">
+                            <div class="zchk-method">
+                                <input id="card" name="paymentMethod" type="radio" checked>
+                                <label for="card">
+                                    Credit/Debit Card
+                                </label>
+                                
+                                <!-- Card Icons -->
+                                <div class="zchk-logos">
+                                    <img src="{{ asset('images/payment/visa.svg') }}" alt="Visa" class="h-6">
+                                    <img src="{{ asset('images/payment/mastercard.svg') }}" alt="Mastercard" class="h-6">
+                                    <img src="{{ asset('images/payment/amex.svg') }}" alt="American Express" class="h-6">
+                                </div>
+                            </div>
                             
-                            <!-- MPesa Icon -->
-                            <div class="ml-auto">
-                                <img src="{{ asset('images/payment/mpesa.svg') }}" alt="MPesa" class="h-6">
+                            <div class="zchk-method">
+                                <input id="mpesa" name="paymentMethod" type="radio">
+                                <label for="mpesa">
+                                    M-Pesa
+                                </label>
+                                
+                                <!-- MPesa Icon -->
+                                <div class="zchk-logos">
+                                    <img src="{{ asset('images/payment/mpesa.svg') }}" alt="MPesa" class="h-6">
+                                </div>
+                            </div>
+                            
+                            <div class="zchk-method">
+                                <input id="paypal" name="paymentMethod" type="radio">
+                                <label for="paypal">
+                                    PayPal
+                                </label>
+                                
+                                <!-- PayPal Icon -->
+                                <div class="zchk-logos">
+                                    <img src="{{ asset('images/payment/paypal.svg') }}" alt="PayPal" class="h-6">
+                                </div>
                             </div>
                         </div>
                         
-                        <div class="flex items-center">
-                            <input id="paypal" name="paymentMethod" type="radio" class="h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500">
-                            <label for="paypal" class="ml-3 block font-medium text-gray-700">
-                                PayPal
-                            </label>
-                            
-                            <!-- PayPal Icon -->
-                            <div class="ml-auto">
-                                <img src="{{ asset('images/payment/paypal.svg') }}" alt="PayPal" class="h-6">
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Credit Card Form (Default active) -->
-                    <div id="cardPaymentForm" class="border-t border-gray-200 pt-6">
-                        <form action="{{ route('destinations.payment.process') }}" method="POST">
-                            @csrf
-                            <input type="hidden" name="booking_id" value="{{ $booking['id'] ?? '' }}">
-                            <input type="hidden" name="booking_type" value="destination">
-                            
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <!-- Card Holder Name -->
-                                <div class="col-span-2">
-                                    <label for="cardName" class="block text-sm font-medium text-gray-700 mb-1">Cardholder Name</label>
-                                    <input type="text" name="cardName" id="cardName" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500" placeholder="As appears on card">
-                                </div>
+                        <!-- Credit Card Form (Default active) -->
+                        <div id="cardPaymentForm" class="zchk-rule pt-6">
+                            <form action="{{ route('popular.destination.process') }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="booking_id" value="{{ $booking['id'] ?? '' }}">
+                                <input type="hidden" name="booking_type" value="destination">
                                 
-                                <!-- Card Number -->
-                                <div class="col-span-2">
-                                    <label for="cardNumber" class="block text-sm font-medium text-gray-700 mb-1">Card Number</label>
-                                    <div class="relative">
-                                        <input type="text" name="cardNumber" id="cardNumber" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 pr-10" placeholder="1234 5678 9012 3456" maxlength="19">
-                                        <div class="absolute inset-y-0 right-0 flex items-center pr-3">
-                                            <i data-lucide="credit-card" class="h-5 w-5 text-gray-400"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Expiry Date -->
-                                <div>
-                                    <label for="cardExpiry" class="block text-sm font-medium text-gray-700 mb-1">Expiry Date</label>
-                                    <input type="text" name="cardExpiry" id="cardExpiry" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500" placeholder="MM/YY" maxlength="5">
-                                </div>
-                                
-                                <!-- CVV -->
-                                <div>
-                                    <label for="cardCvv" class="block text-sm font-medium text-gray-700 mb-1">CVV</label>
-                                    <div class="relative">
-                                        <input type="text" name="cardCvv" id="cardCvv" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 pr-10" placeholder="123" maxlength="4">
-                                        <div class="absolute inset-y-0 right-0 flex items-center pr-3">
-                                            <i data-lucide="help-circle" class="h-5 w-5 text-gray-400 cursor-help" title="3 or 4 digit security code usually found on the back of your card"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Billing Address -->
-                                <div class="col-span-2">
-                                    <div class="flex items-center mb-4">
-                                        <h3 class="font-semibold text-gray-900">Billing Address</h3>
-                                        <span class="ml-2 text-xs bg-gray-100 text-gray-800 py-1 px-2 rounded">Required</span>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <!-- Card Holder Name -->
+                                    <div class="col-span-2">
+                                        <label for="cardName" class="zchk-label">Cardholder Name</label>
+                                        <input type="text" name="cardName" id="cardName" class="w-full" placeholder="As appears on card">
                                     </div>
                                     
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <!-- Country -->
-                                        <div class="col-span-2">
-                                            <label for="country" class="block text-sm font-medium text-gray-700 mb-1">Country</label>
-                                            <select name="country" id="country" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
-                                                <option value="">Select Country</option>
-                                                <option value="KE">Kenya</option>
-                                                <option value="UG">Uganda</option>
-                                                <option value="TZ">Tanzania</option>
-                                                <option value="RW">Rwanda</option>
-                                                <option value="US">United States</option>
-                                                <option value="GB">United Kingdom</option>
-                                                <!-- Add more countries as needed -->
-                                            </select>
+                                    <!-- Card Number -->
+                                    <div class="col-span-2">
+                                        <label for="cardNumber" class="zchk-label">Card Number</label>
+                                        <div class="relative">
+                                            <input type="text" name="cardNumber" id="cardNumber" class="w-full pr-10" placeholder="1234 5678 9012 3456" maxlength="19">
+                                            <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                                                <i data-lucide="credit-card" style="height:20px;width:20px;color:var(--muted);"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Expiry Date -->
+                                    <div>
+                                        <label for="cardExpiry" class="zchk-label">Expiry Date</label>
+                                        <input type="text" name="cardExpiry" id="cardExpiry" class="w-full" placeholder="MM/YY" maxlength="5">
+                                    </div>
+                                    
+                                    <!-- CVV -->
+                                    <div>
+                                        <label for="cardCvv" class="zchk-label">CVV</label>
+                                        <div class="relative">
+                                            <input type="text" name="cardCvv" id="cardCvv" class="w-full pr-10" placeholder="123" maxlength="4">
+                                            <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                                                <i data-lucide="help-circle" style="height:20px;width:20px;color:var(--muted);cursor:help;" title="3 or 4 digit security code usually found on the back of your card"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Billing Address -->
+                                    <div class="col-span-2">
+                                        <div class="flex items-center mb-4">
+                                            <h3 class="zchk-heading" style="margin:0;">Billing Address</h3>
+                                            <span class="ml-2 zchk-required">Required</span>
                                         </div>
                                         
-                                        <!-- Address -->
-                                        <div class="col-span-2">
-                                            <label for="address" class="block text-sm font-medium text-gray-700 mb-1">Street Address</label>
-                                            <input type="text" name="address" id="address" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <!-- Country -->
+                                            <div class="col-span-2">
+                                                <label for="country" class="zchk-label">Country</label>
+                                                <select name="country" id="country" class="w-full">
+                                                    <option value="">Select Country</option>
+                                                    <option value="KE">Kenya</option>
+                                                    <option value="UG">Uganda</option>
+                                                    <option value="TZ">Tanzania</option>
+                                                    <option value="RW">Rwanda</option>
+                                                    <option value="US">United States</option>
+                                                    <option value="GB">United Kingdom</option>
+                                                    <!-- Add more countries as needed -->
+                                                </select>
+                                            </div>
+                                            
+                                            <!-- Address -->
+                                            <div class="col-span-2">
+                                                <label for="address" class="zchk-label">Street Address</label>
+                                                <input type="text" name="address" id="address" class="w-full">
+                                            </div>
+                                            
+                                            <!-- City -->
+                                            <div>
+                                                <label for="city" class="zchk-label">City</label>
+                                                <input type="text" name="city" id="city" class="w-full">
+                                            </div>
+                                            
+                                            <!-- Postal Code -->
+                                            <div>
+                                                <label for="postalCode" class="zchk-label">Postal Code</label>
+                                                <input type="text" name="postalCode" id="postalCode" class="w-full">
+                                            </div>
                                         </div>
-                                        
-                                        <!-- City -->
-                                        <div>
-                                            <label for="city" class="block text-sm font-medium text-gray-700 mb-1">City</label>
-                                            <input type="text" name="city" id="city" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
-                                        </div>
-                                        
-                                        <!-- Postal Code -->
-                                        <div>
-                                            <label for="postalCode" class="block text-sm font-medium text-gray-700 mb-1">Postal Code</label>
-                                            <input type="text" name="postalCode" id="postalCode" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
+                                    </div>
+                                    
+                                    <!-- Save Card Info -->
+                                    <div class="col-span-2 mt-4">
+                                        <div class="zchk-check">
+                                            <input id="saveCardInfo" name="saveCardInfo" type="checkbox" class="h-4 w-4 rounded">
+                                            <label for="saveCardInfo">
+                                                Save my card information securely for future bookings
+                                            </label>
                                         </div>
                                     </div>
                                 </div>
                                 
-                                <!-- Save Card Info -->
-                                <div class="col-span-2 mt-4">
-                                    <div class="flex items-center">
-                                        <input id="saveCardInfo" name="saveCardInfo" type="checkbox" class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
-                                        <label for="saveCardInfo" class="ml-2 block text-sm text-gray-700">
-                                            Save my card information securely for future bookings
+                                <!-- Terms and Conditions -->
+                                <div class="mt-6">
+                                    <div class="zchk-check">
+                                        <input id="terms" name="terms" type="checkbox" required class="h-4 w-4 rounded">
+                                        <label for="terms">
+                                            I agree to the <a href="#">Terms and Conditions</a>, <a href="#">Privacy Policy</a>, and <a href="#">Cancellation Policy</a>
                                         </label>
                                     </div>
                                 </div>
-                            </div>
-                            
-                            <!-- Terms and Conditions -->
-                            <div class="mt-6">
-                                <div class="flex items-start">
-                                    <div class="flex items-center h-5">
-                                        <input id="terms" name="terms" type="checkbox" required class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
-                                    </div>
-                                    <div class="ml-3 text-sm">
-                                        <label for="terms" class="font-medium text-gray-700">
-                                            I agree to the <a href="#" class="text-indigo-600 hover:text-indigo-500">Terms and Conditions</a>, <a href="#" class="text-indigo-600 hover:text-indigo-500">Privacy Policy</a>, and <a href="#" class="text-indigo-600 hover:text-indigo-500">Cancellation Policy</a>
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Submit Button -->
-                            <div class="mt-8">
-                                <button type="submit" class="w-full px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors flex items-center justify-center">
-                                    Pay & Confirm Booking
-                                    <i data-lucide="lock" class="w-5 h-5 ml-2"></i>
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                    
-                    <!-- Mobile Money Form (Initially hidden) -->
-                    <div id="mpesaPaymentForm" class="hidden border-t border-gray-200 pt-6">
-                        <form action="{{ route('destinations.payment.process') }}" method="POST">
-                            @csrf
-                            <input type="hidden" name="payment_method" value="mpesa">
-                            <input type="hidden" name="booking_id" value="{{ $booking['id'] ?? '' }}">
-                            <input type="hidden" name="booking_type" value="destination">
-                            
-                            <!-- Phone Number -->
-                            <div class="mb-6">
-                                <label for="mpesaPhone" class="block text-sm font-medium text-gray-700 mb-1">M-Pesa Phone Number</label>
-                                <div class="relative">
-                                    <input type="tel" name="mpesaPhone" id="mpesaPhone" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g. 07XXXXXXXX">
-                                    <div class="absolute inset-y-0 right-0 flex items-center pr-3">
-                                        <i data-lucide="smartphone" class="h-5 w-5 text-gray-400"></i>
-                                    </div>
-                                </div>
-                                <p class="mt-1 text-xs text-gray-500">You will receive a payment prompt on this phone number</p>
-                            </div>
-                            
-                            <!-- Terms and Conditions -->
-                            <div class="mt-6">
-                                <div class="flex items-start">
-                                    <div class="flex items-center h-5">
-                                        <input id="mpesaTerms" name="terms" type="checkbox" required class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
-                                    </div>
-                                    <div class="ml-3 text-sm">
-                                        <label for="mpesaTerms" class="font-medium text-gray-700">
-                                            I agree to the <a href="#" class="text-indigo-600 hover:text-indigo-500">Terms and Conditions</a>, <a href="#" class="text-indigo-600 hover:text-indigo-500">Privacy Policy</a>, and <a href="#" class="text-indigo-600 hover:text-indigo-500">Cancellation Policy</a>
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Submit Button -->
-                            <div class="mt-8">
-                                <button type="submit" class="w-full px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors flex items-center justify-center">
-                                    Pay with M-Pesa
-                                    <i data-lucide="smartphone" class="w-5 h-5 ml-2"></i>
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                    
-                    <!-- PayPal Form (Initially hidden) -->
-                    <div id="paypalPaymentForm" class="hidden border-t border-gray-200 pt-6">
-                        <form action="{{ route('destinations.payment.process') }}" method="POST">
-                            @csrf
-                            <input type="hidden" name="payment_method" value="paypal">
-                            <input type="hidden" name="booking_id" value="{{ $booking['id'] ?? '' }}">
-                            <input type="hidden" name="booking_type" value="destination">
-                            
-                            <div class="text-center py-6">
-                                <p class="mb-6 text-gray-700">Click the button below to proceed to PayPal's secure payment page.</p>
                                 
-                                <button type="submit" class="px-6 py-3 bg-[#0070ba] hover:bg-[#005ea6] text-white font-medium rounded-lg transition-colors flex items-center justify-center mx-auto">
-                                    <img src="{{ asset('images/payment/paypal-white.svg') }}" alt="PayPal" class="h-5 mr-2">
-                                    Pay with PayPal
-                                </button>
-                            </div>
-                            
-                            <!-- Terms and Conditions -->
-                            <div class="mt-6">
-                                <div class="flex items-start">
-                                    <div class="flex items-center h-5">
-                                        <input id="paypalTerms" name="terms" type="checkbox" required class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
+                                <!-- Submit Button -->
+                                <div class="mt-8">
+                                    <button type="submit" class="zchk-pay">
+                                        Pay &amp; Confirm Booking
+                                        <i data-lucide="lock" class="w-5 h-5"></i>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <!-- Mobile Money Form (Initially hidden) -->
+                        <div id="mpesaPaymentForm" class="hidden zchk-rule pt-6">
+                            <form action="{{ route('popular.destination.process') }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="payment_method" value="mpesa">
+                                <input type="hidden" name="booking_id" value="{{ $booking['id'] ?? '' }}">
+                                <input type="hidden" name="booking_type" value="destination">
+                                
+                                <!-- Phone Number -->
+                                <div class="mb-6">
+                                    <label for="mpesaPhone" class="zchk-label">M-Pesa Phone Number</label>
+                                    <div class="relative">
+                                        <input type="tel" name="mpesaPhone" id="mpesaPhone" class="w-full" placeholder="e.g. 07XXXXXXXX">
+                                        <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                                            <i data-lucide="smartphone" style="height:20px;width:20px;color:var(--muted);"></i>
+                                        </div>
                                     </div>
-                                    <div class="ml-3 text-sm">
-                                        <label for="paypalTerms" class="font-medium text-gray-700">
-                                            I agree to the <a href="#" class="text-indigo-600 hover:text-indigo-500">Terms and Conditions</a>, <a href="#" class="text-indigo-600 hover:text-indigo-500">Privacy Policy</a>, and <a href="#" class="text-indigo-600 hover:text-indigo-500">Cancellation Policy</a>
+                                    <p class="zchk-hint">You will receive a payment prompt on this phone number</p>
+                                </div>
+                                
+                                <!-- Terms and Conditions -->
+                                <div class="mt-6">
+                                    <div class="zchk-check">
+                                        <input id="mpesaTerms" name="terms" type="checkbox" required class="h-4 w-4 rounded">
+                                        <label for="mpesaTerms">
+                                            I agree to the <a href="#">Terms and Conditions</a>, <a href="#">Privacy Policy</a>, and <a href="#">Cancellation Policy</a>
                                         </label>
                                     </div>
                                 </div>
-                            </div>
-                        </form>
-                    </div>
-                    
-                    <!-- Payment Security Information -->
-                    <div class="mt-8 border-t border-gray-200 pt-6">
-                        <div class="flex items-center justify-center space-x-6">
-                            <div class="flex items-center">
-                                <i data-lucide="shield" class="h-5 w-5 text-green-600 mr-2"></i>
-                                <span class="text-sm text-gray-700">Secure Payment</span>
-                            </div>
-                            
-                            <div class="flex items-center">
-                                <i data-lucide="lock" class="h-5 w-5 text-green-600 mr-2"></i>
-                                <span class="text-sm text-gray-700">Encrypted Data</span>
-                            </div>
-                            
-                            <div class="flex items-center">
-                                <i data-lucide="eye-off" class="h-5 w-5 text-green-600 mr-2"></i>
-                                <span class="text-sm text-gray-700">Privacy Protected</span>
+                                
+                                <!-- Submit Button -->
+                                <div class="mt-8">
+                                    <button type="submit" class="zchk-pay">
+                                        Pay with M-Pesa
+                                        <i data-lucide="smartphone" class="w-5 h-5"></i>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <!-- PayPal Form (Initially hidden) -->
+                        <div id="paypalPaymentForm" class="hidden zchk-rule pt-6">
+                            <form action="{{ route('popular.destination.process') }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="payment_method" value="paypal">
+                                <input type="hidden" name="booking_id" value="{{ $booking['id'] ?? '' }}">
+                                <input type="hidden" name="booking_type" value="destination">
+                                
+                                <div class="text-center py-6">
+                                    <p class="mb-6" style="color:var(--ink);">Click the button below to proceed to PayPal's secure payment page.</p>
+                                    
+                                    <button type="submit" class="zchk-pay" style="width:auto;background:#0070ba;margin:0 auto;">
+                                        <img src="{{ asset('images/payment/paypal-white.svg') }}" alt="PayPal" class="h-5 mr-2">
+                                        Pay with PayPal
+                                    </button>
+                                </div>
+                                
+                                <!-- Terms and Conditions -->
+                                <div class="mt-6">
+                                    <div class="zchk-check">
+                                        <input id="paypalTerms" name="terms" type="checkbox" required class="h-4 w-4 rounded">
+                                        <label for="paypalTerms">
+                                            I agree to the <a href="#">Terms and Conditions</a>, <a href="#">Privacy Policy</a>, and <a href="#">Cancellation Policy</a>
+                                        </label>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <!-- Payment Security Information -->
+                        <div class="mt-8 zchk-rule pt-6">
+                            <div class="zchk-trust">
+                                <div class="zchk-trust__item">
+                                    <i data-lucide="shield"></i>
+                                    <span>Secure Payment</span>
+                                </div>
+                                
+                                <div class="zchk-trust__item">
+                                    <i data-lucide="lock"></i>
+                                    <span>Encrypted Data</span>
+                                </div>
+                                
+                                <div class="zchk-trust__item">
+                                    <i data-lucide="eye-off"></i>
+                                    <span>Privacy Protected</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -510,38 +715,38 @@
             
             <!-- Right Column: Booking Summary -->
             <div class="lg:w-1/3">
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden sticky top-24">
-                    <div class="p-6">
-                        <h2 class="text-xl font-bold text-gray-900 mb-6">Trip Details</h2>
+                <div class="zchk-card sticky top-24">
+                    <div class="zchk-card__body">
+                        <h2 class="zchk-sumtitle">Trip Details</h2>
                         
                         <!-- Destination Summary -->
                         <div class="mb-6">
                             <div class="flex justify-between items-start mb-2">
                                 <div>
-                                    <h3 class="font-semibold">{{ $destination['name'] ?? 'Zanzibar Beach Getaway' }}</h3>
-                                    <p class="text-sm text-gray-600">{{ $destination['duration'] ?? '5 days, 4 nights' }}</p>
+                                    <h3 class="zchk-heading" style="margin-bottom:4px;">{{ $destination['name'] ?? 'Zanzibar Beach Getaway' }}</h3>
+                                    <p class="zchk-meta" style="font-size:13.5px;">{{ $destination['duration'] ?? '5 days, 4 nights' }}</p>
                                 </div>
                             </div>
                             
-                            <div class="text-sm text-gray-600 mt-2">
-                                <div class="flex items-center">
-                                    <i data-lucide="calendar" class="h-4 w-4 mr-1"></i>
+                            <div class="zchk-meta" style="font-size:13.5px;display:block;margin-top:10px;">
+                                <div class="zchk-row" style="margin:0 0 8px;">
+                                    <i data-lucide="calendar" style="font-size:16px;"></i>
                                     <span>{{ $booking['check_in'] ?? date('M d, Y') }} - {{ $booking['check_out'] ?? date('M d, Y', strtotime('+5 days')) }}</span>
                                 </div>
                                 
-                                <div class="flex items-center mt-1">
-                                    <i data-lucide="users" class="h-4 w-4 mr-1"></i>
+                                <div class="zchk-row" style="margin:0;">
+                                    <i data-lucide="users" style="font-size:16px;"></i>
                                     <span>{{ $booking['adults'] ?? '2' }} adults{{ ($booking['children'] ?? 0) > 0 ? ', ' . $booking['children'] . ' children' : '' }}</span>
                                 </div>
                             </div>
                         </div>
                         
                         <!-- Price Breakdown -->
-                        <div class="border-t border-b border-gray-200 py-4">
-                            <div class="space-y-3">
+                        <div class="zchk-rule" style="padding:16px 0;">
+                            <div>
                                 <!-- Package Price -->
-                                <div class="flex justify-between">
-                                    <span class="text-gray-600">Package Price ({{ $booking['adults'] ?? '2' }} × {{ $destination['currency'] ?? 'USD' }} {{ $destination['adult_price'] ?? '899' }})</span>
+                                <div class="zchk-pricerow">
+                                    <span>Package Price ({{ $booking['adults'] ?? '2' }} × {{ $destination['currency'] ?? 'USD' }} {{ $destination['adult_price'] ?? '899' }})</span>
                                     <span>
                                         @php
                                             $adultTotal = ($booking['adults'] ?? 2) * ($destination['adult_price'] ?? 899);
@@ -552,8 +757,8 @@
                                 
                                 @if(($booking['children'] ?? 0) > 0)
                                     <!-- Child Price -->
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-600">Child Price ({{ $booking['children'] }} × {{ $destination['currency'] ?? 'USD' }} {{ $destination['child_price'] ?? '499' }})</span>
+                                    <div class="zchk-pricerow">
+                                        <span>Child Price ({{ $booking['children'] }} × {{ $destination['currency'] ?? 'USD' }} {{ $destination['child_price'] ?? '499' }})</span>
                                         <span>
                                             @php
                                                 $childTotal = ($booking['children'] ?? 0) * ($destination['child_price'] ?? 499);
@@ -564,8 +769,8 @@
                                 @endif
                                 
                                 <!-- Airport Transfer -->
-                                <div class="flex justify-between">
-                                    <span class="text-gray-600">Airport transfers</span>
+                                <div class="zchk-pricerow">
+                                    <span>Airport transfers</span>
                                     <span>
                                         @php
                                             $transferFee = 50;
@@ -575,8 +780,8 @@
                                 </div>
                                 
                                 <!-- Booking Fee -->
-                                <div class="flex justify-between">
-                                    <span class="text-gray-600">Booking fee</span>
+                                <div class="zchk-pricerow">
+                                    <span>Booking fee</span>
                                     <span>
                                         @php
                                             $bookingFee = 45;
@@ -586,8 +791,8 @@
                                 </div>
                                 
                                 <!-- Taxes -->
-                                <div class="flex justify-between">
-                                    <span class="text-gray-600">Taxes (10%)</span>
+                                <div class="zchk-pricerow">
+                                    <span>Taxes (10%)</span>
                                     <span>
                                         @php
                                             $subtotal = $adultTotal + ($childTotal ?? 0) + $transferFee + $bookingFee;
@@ -600,7 +805,7 @@
                                 
                                 @if(($destination['discount'] ?? 0) > 0)
                                     <!-- Discount -->
-                                    <div class="flex justify-between text-green-600">
+                                    <div class="zchk-pricerow zchk-pricerow--discount">
                                         <span>{{ $destination['discount'] }}% Last-minute discount</span>
                                         <span>
                                             @php
@@ -616,9 +821,9 @@
                         
                         <!-- Total -->
                         <div class="pt-4">
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="font-bold text-lg">Total</span>
-                                <span class="font-bold text-lg">
+                            <div class="zchk-pricerow zchk-pricerow--total" style="margin:0;border:0;padding:0;">
+                                <span>Total</span>
+                                <span>
                                     @php
                                         $total = $subtotal + $taxes;
                                         if(($destination['discount'] ?? 0) > 0) {
@@ -630,26 +835,24 @@
                                 </span>
                             </div>
                             
-                            <div class="text-xs text-gray-600 flex items-center justify-end">
-                                <i data-lucide="info" class="h-3 w-3 mr-1"></i>
+                            <div class="zchk-note">
+                                <i data-lucide="info" style="height:13px;width:13px;"></i>
                                 Includes taxes and fees
                             </div>
                         </div>
                         
                         <!-- Cancellation Policy -->
-                        <div class="mt-6 p-4 bg-gray-50 rounded-lg">
-                            <h3 class="font-semibold text-gray-900 mb-2">Cancellation Policy</h3>
-                            <p class="text-sm text-gray-600">
+                        <div class="zchk-policy">
+                            <h3 class="zchk-heading">Cancellation Policy</h3>
+                            <p>
                                 {{ $destination['cancellation_policy'] ?? 'Free cancellation up to 7 days before arrival. If you cancel less than 7 days before arrival, 50% of the total amount will be charged. No-show: 100% of the first night will be charged.' }}
                             </p>
                         </div>
                         
                         <!-- Contact Support -->
-                        <div class="mt-6">
-                            <div class="flex items-center justify-center">
-                                <i data-lucide="headphones" class="h-5 w-5 text-indigo-600 mr-2"></i>
-                                <span class="text-sm font-medium">Need help? <a href="#" class="text-indigo-600 hover:text-indigo-500">Contact support</a></span>
-                            </div>
+                        <div class="zchk-support">
+                            <i data-lucide="headphones"></i>
+                            <span>Need help? <a href="#">Contact support</a></span>
                         </div>
                     </div>
                 </div>
@@ -664,16 +867,16 @@
             <div class="fixed inset-0 transition-opacity modal-overlay" aria-hidden="true"></div>
 
             <!-- Modal panel -->
-            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full animate-fade-in-up">
-                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+            <div class="inline-block align-bottom zchk-modal text-left transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full animate-fade-in-up">
+                <div class="zchk-modal__body">
                     <div class="sm:flex sm:items-start">
                         <div class="mt-3 text-center sm:mt-0 sm:text-left w-full">
-                            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4" id="modal-title">
+                            <h3 class="zchk-modal__title" id="modal-title">
                                 Create an Account to Continue
                             </h3>
                             
                             <div class="mb-4">
-                                <p class="text-sm text-gray-500">
+                                <p class="zchk-modal__text">
                                     Please create an account to continue with your booking. It only takes a minute!
                                 </p>
                             </div>
@@ -685,49 +888,45 @@
                                 
                                 <!-- Name -->
                                 <div class="mb-4">
-                                    <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
-                                    <input type="text" name="name" id="name" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                    <label for="name">Name</label>
+                                    <input type="text" name="name" id="name" required class="mt-1 block w-full shadow-sm sm:text-sm">
                                 </div>
                                 
                                 <!-- Email Address -->
                                 <div class="mb-4">
-                                    <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-                                    <input type="email" name="email" id="email" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                    <label for="email">Email</label>
+                                    <input type="email" name="email" id="email" required class="mt-1 block w-full shadow-sm sm:text-sm">
                                 </div>
                                 
                                 <!-- Phone Number -->
                                 <div class="mb-4">
-                                    <label for="phone" class="block text-sm font-medium text-gray-700">Phone Number</label>
-                                    <input type="tel" name="phone" id="phone" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                    <label for="phone">Phone Number</label>
+                                    <input type="tel" name="phone" id="phone" required class="mt-1 block w-full shadow-sm sm:text-sm">
                                 </div>
                                 
                                 <!-- Password -->
                                 <div class="mb-4">
-                                    <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-                                    <input type="password" name="password" id="password" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                    <label for="password">Password</label>
+                                    <input type="password" name="password" id="password" required class="mt-1 block w-full shadow-sm sm:text-sm">
                                 </div>
                                 
                                 <!-- Confirm Password -->
                                 <div class="mb-4">
-                                    <label for="password_confirmation" class="block text-sm font-medium text-gray-700">Confirm Password</label>
-                                    <input type="password" name="password_confirmation" id="password_confirmation" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                    <label for="password_confirmation">Confirm Password</label>
+                                    <input type="password" name="password_confirmation" id="password_confirmation" required class="mt-1 block w-full shadow-sm sm:text-sm">
                                 </div>
                                 
                                 <!-- Terms Checkbox -->
                                 <div class="mb-4">
-                                    <div class="flex items-start">
-                                        <div class="flex items-center h-5">
-                                            <input id="terms" name="terms" type="checkbox" required class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
-                                        </div>
-                                        <div class="ml-3 text-sm">
-                                            <label for="terms" class="font-medium text-gray-700">I agree to the <a href="#" class="text-indigo-600 hover:text-indigo-500">Terms and Conditions</a>.</label>
-                                        </div>
+                                    <div class="zchk-check">
+                                        <input id="terms" name="terms" type="checkbox" required class="h-4 w-4 rounded">
+                                        <label for="terms">I agree to the <a href="#">Terms and Conditions</a>.</label>
                                     </div>
                                 </div>
                                 
                                 <div class="flex items-center justify-between mt-6">
                                     <div class="text-sm">
-                                        <a href="{{ route('login') }}" class="font-medium text-indigo-600 hover:text-indigo-500">
+                                        <a href="{{ route('login') }}" class="zchk-loginlink">
                                             Already have an account? Login
                                         </a>
                                     </div>
@@ -736,11 +935,11 @@
                         </div>
                     </div>
                 </div>
-                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                    <button type="button" id="registerSubmitBtn" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm">
-                        Register & Continue
+                <div class="zchk-modal__foot sm:flex-row-reverse">
+                    <button type="button" id="registerSubmitBtn" class="zchk-pay">
+                        Register &amp; Continue
                     </button>
-                    <button type="button" id="modalCloseBtn" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                    <button type="button" id="modalCloseBtn" class="zchk-ghost">
                         Close
                     </button>
                 </div>
@@ -748,9 +947,7 @@
         </div>
     </div>
 </div>
-@endsection
 
-@section('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Initialize Lucide icons

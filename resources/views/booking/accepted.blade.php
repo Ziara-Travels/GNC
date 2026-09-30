@@ -1,10 +1,21 @@
 @extends('layouts.main')
 
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/ziara-booking.css') }}?v={{ (file_exists(public_path('css/ziara-booking.css')) ? filemtime(public_path('css/ziara-booking.css')) : 0) }}">
+@endpush
+
 @section('content')
-<div class="container py-5">
+<div class="ziara-bk">
+@include('partials.ziara-page-hero', [
+    'kicker' => 'Reservation',
+    'title'  => 'Booking <em>Confirmed</em>',
+    'intro'  => 'Your reservation has been processed successfully. A confirmation has been sent to your inbox.',
+])
+
+<div class="ziara-bk-body container py-5">
     <div class="row justify-content-center">
         <div class="col-md-10">
-            <div class="card shadow border-0">
+            <div class="card shadow border-0 ziara-bk-card">
                 <div class="card-body p-5 text-center">
                     <div class="mb-4">
                         <div class="avatar-lg bg-success rounded-circle mx-auto mb-4">
@@ -13,7 +24,7 @@
                         <h2 class="mb-2">Booking Confirmed!</h2>
                         <p class="text-muted">Your booking has been successfully processed.</p>
                     </div>
-                    
+
                     <div class="mb-4">
                         <h5>Booking Reference</h5>
                         <div class="bg-light p-3 rounded mb-4">
@@ -21,9 +32,9 @@
                         </div>
                         <p class="text-muted">Please keep this reference number for your records.</p>
                     </div>
-                    
-                    <div class="card mb-4">
-                        <div class="card-header">
+
+                    <div class="card mb-4 text-start">
+                        <div class="card-header ziara-bk-cta">
                             <h5 class="mb-0">Booking Details</h5>
                         </div>
                         <div class="card-body">
@@ -84,12 +95,13 @@
                     </div>
                     
                     <div class="d-flex justify-content-center gap-3">
-                        <a href="{{ route('dashboard') }}" class="btn btn-primary">Go to My Bookings</a>
-                        <a href="{{ route('home') }}" class="btn btn-outline-secondary">Back to Home</a>
+                        <a href="{{ route('dashboard') }}" class="btn btn-primary ziara-btn ziara-btn--maroon">Go to My Bookings</a>
+                        <a href="{{ route('home') }}" class="btn btn-outline-secondary ziara-btn ziara-btn--outline">Back to Home</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 </div>
 @endsection

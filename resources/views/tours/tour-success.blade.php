@@ -1,6 +1,6 @@
-@extends('layouts.main')
+﻿@extends('layouts.main')
 
-@section('styles')
+@section('content')
 <style>
     /* Custom animations */
     @keyframes fadeInUp {
@@ -55,39 +55,72 @@
     .countdown-animation {
         transition: all 1s linear;
     }
-</style>
-@endsection
 
-@section('content')
-<div class="bg-gray-50 min-h-screen py-12">
+    .ziara-flow-main { background: #fdf8eb; }
+    .ziara-flow-card { background: #fff; border: 1px solid #eadfca; border-radius: 16px; box-shadow: 0 8px 32px rgba(74,29,19,.16); }
+    .ziara-flow-hero {
+        background: radial-gradient(900px 400px at 88% -20%, rgba(201,162,39,.18), transparent 60%), linear-gradient(135deg, #4a1d13 0%, #6b2c1f 60%, #7e3425 100%);
+        border-bottom: 3px solid #c9a227;
+    }
+    .ziara-flow-hero__mark { background: #fff; color: #6b2c1f; box-shadow: 0 12px 30px rgba(28,14,10,.35); }
+    .ziara-flow-hero h1 { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 700; letter-spacing: .3px; }
+    .ziara-flow-hero p { color: #e8d5b0; }
+    .ziara-flow-ref { background: #fdf6df; border: 1px solid rgba(201,162,39,.4); border-radius: 12px; }
+    .ziara-flow-ref__label { color: #7a6a60; font-weight: 600; }
+    .ziara-flow-ref__value { color: #4a1d13; font-weight: 700; }
+    .ziara-flow-body { padding: 26px; }
+    .ziara-flow-body__divider { border-bottom: 1px solid #eadfca; }
+    .ziara-flow-body__h2 { color: #4a1d13; }
+    .ziara-flow-body__h3 { color: #4a1d13; }
+    .ziara-flow-loc__text { color: #7a6a60; }
+    .ziara-flow-media { background: #f6efe2; border-radius: 12px; overflow: hidden; }
+    .ziara-flow-loc i[data-lucide] { color: #c9a227; }
+    .ziara-flow-loc span { color: #7a6a60; }
+    .ziara-flow-label { color: #7a6a60; }
+    .ziara-flow-value { color: #1c1612; font-weight: 500; }
+    .ziara-flow-paid { color: #167a3a; font-weight: 500; display: flex; align-items: center; }
+    .ziara-flow-next { background: #fdf6df; border: 1px solid #eadfca; border-radius: 14px; }
+    .ziara-flow-next h3 { color: #6b1d15; font-weight: 600; }
+    .ziara-flow-next__title { color: #6b1d15; font-weight: 600; }
+    .ziara-flow-next__text { color: #3a322c; }
+    .ziara-flow-next i[data-lucide] { color: #c9a227; }
+    .ziara-flow-btn--primary { background: #6b2c1f; color: #fff; border-radius: 10px; }
+    .ziara-flow-btn--primary:hover { background: #4a1d13; }
+    .ziara-flow-btn--ghost { background: #fff; color: #4a1d13; border: 1px solid #eadfca; border-radius: 10px; }
+    .ziara-flow-btn--ghost:hover { background: #fdf8eb; border-color: #c9a227; }
+    .ziara-flow-note { background: #fff; border: 1px solid #eadfca; border-radius: 12px; }
+    .ziara-flow-note i[data-lucide] { color: #c9a227; }
+    .ziara-flow-note__text { color: #3a322c; }
+</style>
+<div class="ziara-flow-main min-h-screen py-12">
     <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Success Card -->
-        <div class="bg-white rounded-xl shadow-lg overflow-hidden animate-fade-in-up">
+        <div class="ziara-flow-card overflow-hidden animate-fade-in-up">
             <!-- Success Header -->
-            <div class="bg-green-500 px-6 py-8 text-center">
-                <div class="success-animation mx-auto bg-white rounded-full h-24 w-24 flex items-center justify-center mb-6">
-                    <i data-lucide="check" class="h-12 w-12 text-green-500"></i>
+            <div class="ziara-flow-hero px-6 py-8 text-center">
+                <div class="success-animation mx-auto ziara-flow-hero__mark rounded-full h-24 w-24 flex items-center justify-center mb-6">
+                    <i data-lucide="check" class="h-12 w-12 text-[#6b2c1f]"></i>
                 </div>
                 <h1 class="text-3xl font-bold text-white">Booking Successful!</h1>
-                <p class="text-green-100 mt-2">Your tour booking has been confirmed.</p>
+                <p class="mt-2">Your tour booking has been confirmed.</p>
             </div>
             
             <!-- Booking Details -->
-            <div class="p-6">
-                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg mb-6">
-                    <div class="font-medium text-gray-700">Booking Reference</div>
-                    <div class="text-lg font-bold text-gray-900">{{ $booking['reference'] ?? 'TOUR-' . strtoupper(substr(uniqid(), 0, 8)) }}</div>
+            <div class="ziara-flow-body">
+                <div class="ziara-flow-ref flex items-center justify-between p-4 mb-6">
+                    <div class="ziara-flow-ref__label">Booking Reference</div>
+                    <div class="ziara-flow-ref__value text-lg">{{ $booking['reference'] ?? 'TOUR-' . strtoupper(substr(uniqid(), 0, 8)) }}</div>
                 </div>
                 
                 <div class="space-y-6">
                     <!-- Tour Details -->
-                    <div class="border-b border-gray-200 pb-6">
-                        <h2 class="text-lg font-bold text-gray-900 mb-4">Tour Details</h2>
+                    <div class="ziara-flow-body__divider border-b pb-6">
+                        <h2 class="ziara-flow-body__h2 text-lg font-bold mb-4">Tour Details</h2>
                         
                         <div class="flex flex-col md:flex-row gap-4">
                             <!-- Tour Image -->
                             <div class="md:w-1/3">
-                                <div class="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden bg-gray-100">
+                                <div class="ziara-flow-media aspect-w-16 aspect-h-9">
                                     <img src="{{ asset('images/tours/' . ($tour['image'] ?? 'tour-placeholder.jpg')) }}" alt="{{ $tour['name'] ?? 'Tour' }}" class="w-full h-full object-cover">
                                 </div>
                             </div>
@@ -95,32 +128,32 @@
                             <!-- Tour Info -->
                             <div class="md:w-2/3 flex flex-col justify-between">
                                 <div>
-                                    <h3 class="text-lg font-bold text-gray-900">{{ $tour['name'] ?? 'Maasai Mara Safari Adventure' }}</h3>
+                                    <h3 class="ziara-flow-body__h3 text-lg font-bold">{{ $tour['name'] ?? 'Maasai Mara Safari Adventure' }}</h3>
                                     
-                                    <div class="flex items-center mt-2">
-                                        <i data-lucide="map-pin" class="h-4 w-4 text-gray-500 mr-1"></i>
-                                        <span class="text-gray-600">{{ $tour['location'] ?? 'Maasai Mara, Kenya' }}</span>
+                                    <div class="ziara-flow-loc flex items-center mt-2">
+                                        <i data-lucide="map-pin" class="h-4 w-4 mr-1"></i>
+                                        <span class="ziara-flow-loc__text">{{ $tour['location'] ?? 'Maasai Mara, Kenya' }}</span>
                                     </div>
                                     
                                     <div class="mt-4 grid grid-cols-2 gap-3">
                                         <div>
-                                            <div class="text-xs text-gray-500">Tour Date</div>
-                                            <div class="font-medium">{{ $booking['tour_date'] ?? date('D, M d, Y') }}</div>
+                                            <div class="ziara-flow-label text-xs">Tour Date</div>
+                                            <div class="ziara-flow-value">{{ $booking['tour_date'] ?? date('D, M d, Y') }}</div>
                                         </div>
                                         
                                         <div>
-                                            <div class="text-xs text-gray-500">Duration</div>
-                                            <div class="font-medium">{{ $tour['duration'] ?? '3 days' }}</div>
+                                            <div class="ziara-flow-label text-xs">Duration</div>
+                                            <div class="ziara-flow-value">{{ $tour['duration'] ?? '3 days' }}</div>
                                         </div>
                                         
                                         <div>
-                                            <div class="text-xs text-gray-500">Participants</div>
-                                            <div class="font-medium">{{ $booking['adults'] ?? '2' }} adults{{ ($booking['children'] ?? 0) > 0 ? ', ' . $booking['children'] . ' children' : '' }}</div>
+                                            <div class="ziara-flow-label text-xs">Participants</div>
+                                            <div class="ziara-flow-value">{{ $booking['adults'] ?? '2' }} adults{{ ($booking['children'] ?? 0) > 0 ? ', ' . $booking['children'] . ' children' : '' }}</div>
                                         </div>
                                         
                                         <div>
-                                            <div class="text-xs text-gray-500">Meeting Point</div>
-                                            <div class="font-medium">{{ $tour['meeting_point'] ?? 'Hotel pickup' }}</div>
+                                            <div class="ziara-flow-label text-xs">Meeting Point</div>
+                                            <div class="ziara-flow-value">{{ $tour['meeting_point'] ?? 'Hotel pickup' }}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -129,93 +162,93 @@
                     </div>
                     
                     <!-- Payment Details -->
-                    <div class="border-b border-gray-200 pb-6">
-                        <h2 class="text-lg font-bold text-gray-900 mb-4">Payment Details</h2>
+                    <div class="ziara-flow-body__divider border-b pb-6">
+                        <h2 class="ziara-flow-body__h2 text-lg font-bold mb-4">Payment Details</h2>
                         
                         <div class="grid grid-cols-2 gap-4">
                             <div>
-                                <div class="text-sm text-gray-600">Payment Method</div>
-                                <div class="font-medium">{{ $booking['payment_method'] ?? 'Credit Card' }}</div>
+                                <div class="ziara-flow-label text-sm">Payment Method</div>
+                                <div class="ziara-flow-value">{{ $booking['payment_method'] ?? 'Credit Card' }}</div>
                             </div>
                             
                             <div>
-                                <div class="text-sm text-gray-600">Payment Status</div>
-                                <div class="font-medium text-green-600 flex items-center">
+                                <div class="ziara-flow-label text-sm">Payment Status</div>
+                                <div class="ziara-flow-paid">
                                     <i data-lucide="check-circle" class="h-4 w-4 mr-1"></i>
                                     Paid
                                 </div>
                             </div>
                             
                             <div>
-                                <div class="text-sm text-gray-600">Transaction ID</div>
-                                <div class="font-medium">{{ $booking['transaction_id'] ?? 'TXN-' . rand(100000, 999999) }}</div>
+                                <div class="ziara-flow-label text-sm">Transaction ID</div>
+                                <div class="ziara-flow-value">{{ $booking['transaction_id'] ?? 'TXN-' . rand(100000, 999999) }}</div>
                             </div>
                             
                             <div>
-                                <div class="text-sm text-gray-600">Amount Paid</div>
-                                <div class="font-medium">{{ $booking['currency'] ?? 'USD' }} {{ $booking['total'] ?? '699.00' }}</div>
+                                <div class="ziara-flow-label text-sm">Amount Paid</div>
+                                <div class="ziara-flow-value">{{ $booking['currency'] ?? 'USD' }} {{ $booking['total'] ?? '699.00' }}</div>
                             </div>
                         </div>
                     </div>
                     
                     <!-- Customer Details -->
                     <div>
-                        <h2 class="text-lg font-bold text-gray-900 mb-4">Customer Details</h2>
+                        <h2 class="ziara-flow-body__h2 text-lg font-bold mb-4">Customer Details</h2>
                         
                         <div class="grid grid-cols-2 gap-4">
                             <div>
-                                <div class="text-sm text-gray-600">Name</div>
-                                <div class="font-medium">{{ Auth::user()->name ?? 'John Doe' }}</div>
+                                <div class="ziara-flow-label text-sm">Name</div>
+                                <div class="ziara-flow-value">{{ Auth::user()->name ?? 'John Doe' }}</div>
                             </div>
                             
                             <div>
-                                <div class="text-sm text-gray-600">Email</div>
-                                <div class="font-medium">{{ Auth::user()->email ?? 'john.doe@example.com' }}</div>
+                                <div class="ziara-flow-label text-sm">Email</div>
+                                <div class="ziara-flow-value">{{ Auth::user()->email ?? 'john.doe@example.com' }}</div>
                             </div>
                             
                             <div>
-                                <div class="text-sm text-gray-600">Phone</div>
-                                <div class="font-medium">{{ Auth::user()->phone ?? '+254 712 345 678' }}</div>
+                                <div class="ziara-flow-label text-sm">Phone</div>
+                                <div class="ziara-flow-value">{{ Auth::user()->phone ?? '+254 712 345 678' }}</div>
                             </div>
                         </div>
                     </div>
                 </div>
                 
                 <!-- What's Next Section -->
-                <div class="mt-8 p-5 bg-indigo-50 rounded-lg border border-indigo-100">
-                    <h3 class="font-semibold text-indigo-800 mb-3">What's Next?</h3>
+                <div class="ziara-flow-next mt-8 p-5">
+                    <h3 class="ziara-flow-next__title font-semibold mb-3">What's Next?</h3>
                     
                     <ul class="space-y-3">
                         <li class="flex items-start">
-                            <i data-lucide="mail" class="h-5 w-5 text-indigo-600 mt-0.5 mr-2"></i>
-                            <span class="text-gray-700">A confirmation email with all booking details has been sent to your email address.</span>
+                            <i data-lucide="mail" class="h-5 w-5 mt-0.5 mr-2"></i>
+                            <span class="ziara-flow-next__text">A confirmation email with all booking details has been sent to your email address.</span>
                         </li>
                         
                         <li class="flex items-start">
-                            <i data-lucide="file-text" class="h-5 w-5 text-indigo-600 mt-0.5 mr-2"></i>
-                            <span class="text-gray-700">Your e-ticket is attached to the confirmation email. Please present it at the tour starting point.</span>
+                            <i data-lucide="file-text" class="h-5 w-5 mt-0.5 mr-2"></i>
+                            <span class="ziara-flow-next__text">Your e-ticket is attached to the confirmation email. Please present it at the tour starting point.</span>
                         </li>
                         
                         <li class="flex items-start">
-                            <i data-lucide="message-square" class="h-5 w-5 text-indigo-600 mt-0.5 mr-2"></i>
-                            <span class="text-gray-700">Our customer service team will contact you 24 hours before the tour to confirm all details.</span>
+                            <i data-lucide="message-square" class="h-5 w-5 mt-0.5 mr-2"></i>
+                            <span class="ziara-flow-next__text">Our customer service team will contact you 24 hours before the tour to confirm all details.</span>
                         </li>
                     </ul>
                 </div>
                 
                 <!-- Action Buttons -->
                 <div class="mt-8 flex flex-col sm:flex-row items-center gap-4">
-                    <a href="{{ route('dashboard.bookings') }}" class="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-6 rounded-lg flex items-center justify-center transition-colors">
+                    <a href="{{ route('user.bookings.all') }}" class="w-full sm:w-auto ziara-flow-btn--primary font-medium py-3 px-6 flex items-center justify-center transition-colors">
                         <i data-lucide="layout-dashboard" class="h-5 w-5 mr-2"></i>
                         View in Dashboard
                     </a>
                     
-                    <a href="{{ route('tours.download-ticket', ['booking_id' => $booking['id'] ?? '1']) }}" class="w-full sm:w-auto bg-white hover:bg-gray-50 text-gray-700 font-medium py-3 px-6 rounded-lg border border-gray-300 flex items-center justify-center transition-colors">
+                    <a href="{{ route('bookings.download', $booking['id'] ?? 1) }}" class="w-full sm:w-auto ziara-flow-btn--ghost font-medium py-3 px-6 flex items-center justify-center transition-colors">
                         <i data-lucide="download" class="h-5 w-5 mr-2"></i>
                         Download E-Ticket
                     </a>
                     
-                    <a href="{{ route('home') }}" class="w-full sm:w-auto bg-white hover:bg-gray-50 text-gray-700 font-medium py-3 px-6 rounded-lg border border-gray-300 flex items-center justify-center transition-colors">
+                    <a href="{{ route('home') }}" class="w-full sm:w-auto ziara-flow-btn--ghost font-medium py-3 px-6 flex items-center justify-center transition-colors">
                         <i data-lucide="home" class="h-5 w-5 mr-2"></i>
                         Back to Home
                     </a>
@@ -225,16 +258,14 @@
         
         <!-- Redirect Notification -->
         <div class="mt-6 text-center animate-fade-in-up" style="animation-delay: 0.3s;">
-            <div class="p-4 bg-blue-50 rounded-lg inline-flex items-center">
-                <i data-lucide="info" class="h-5 w-5 text-blue-500 mr-2 animate-pulse-slow"></i>
-                <span class="text-gray-700">You will be redirected to the homepage in <span id="countdown" class="font-semibold countdown-animation">6</span> seconds</span>
+            <div class="ziara-flow-note p-4 inline-flex items-center">
+                <i data-lucide="info" class="h-5 w-5 mr-2 animate-pulse-slow"></i>
+                <span class="ziara-flow-note__text">You will be redirected to the homepage in <span id="countdown" class="font-semibold countdown-animation">6</span> seconds</span>
             </div>
         </div>
     </div>
 </div>
-@endsection
 
-@section('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Initialize Lucide icons

@@ -97,7 +97,7 @@
                             {{ $booking->is_paid ? 'Paid' : 'Pending' }}
                         </span> 
                         @if(!$booking->is_paid)
-                            <a href="{{ route('admin.tour.booking.pay', $booking->id) }}" class="button">Pay Now</a>    
+                            <a href="{{ route('tour.payment', $booking->id) }}" class="button">Pay Now</a>    
                         @endif
                     </td>
                 </tr>
@@ -131,7 +131,7 @@
         <p>Thank you!</p>
         <p>Best regards,<br>
         The Ziara Travels Team</p>
-        <p><a href="{{ route('admin.tour.bookings.index') }}" class="button">View All Bookings</a></p>
+        <p><a href="{{ route('admin.bookings.all') }}" class="button">View All Bookings</a></p>
     </div>
 </body>
 </html>

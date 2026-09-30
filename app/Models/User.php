@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\Booking;
 use App\Models\Permission;
@@ -151,7 +152,8 @@ class User extends Authenticatable implements MustVerifyEmail
 
      public function permissions()
     {
-        return $this->belongsToMany(Permission::class, 'user_permissions');
+        return $this->belongsToMany(Permission::class, 'model_has_permissions', 'model_id', 'permission_id')
+            ->where('model_has_permissions.model_type', self::class);
     }
 
     public function createdBy()
@@ -166,19 +168,17 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function hasPermission($permission)
     {
-        // Check direct user permissions
-        if ($this->permissions()->where('name', $permission)->exists()) {
+        if ($this->role === 'superadmin') {
             return true;
         }
 
-        // Check role-based permissions
-        $rolePermissions = \DB::table('role_permissions')
-            ->join('permissions', 'role_permissions.permission_id', '=', 'permissions.id')
-            ->where('role_permissions.role', $this->role)
-            ->where('permissions.name', $permission)
-            ->exists();
+        // Direct user permissions
+        if ($this->permissions()->where('permissions.name', $permission)->exists()) {
+            return true;
+        }
 
-        return $rolePermissions;
+        // Role-based permissions
+        return $this->rolePermissionsQuery()->where('permissions.name', $permission)->exists();
     }
 
     public function hasAnyPermission($permissions)
@@ -193,11 +193,21 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function getRolePermissions()
     {
-        return \DB::table('role_permissions')
-            ->join('permissions', 'role_permissions.permission_id', '=', 'permissions.id')
-            ->where('role_permissions.role', $this->role)
-            ->select('permissions.*')
-            ->get();
+        return $this->rolePermissionsQuery()->get();
+    }
+
+    /**
+     * Permissions granted to this user through their role.
+     */
+    protected function rolePermissionsQuery()
+    {
+        return DB::table('role_has_permissions')
+            ->join('roles', 'role_has_permissions.role_id', '=', 'roles.id')
+            ->join('permissions', 'role_has_permissions.permission_id', '=', 'permissions.id')
+            ->where('roles.name', $this->role)
+            ->whereNull('roles.deleted_at')
+            ->whereNull('permissions.deleted_at')
+            ->select('permissions.*');
     }
 
     public function canDeleteUser($targetUser)
@@ -244,12 +254,16 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function hasRole($role)
     {
-        return $this->role === $role;
+        if (is_string($role) || $role instanceof \BackedEnum) {
+            return $this->role === ($role instanceof \BackedEnum ? $role->value : $role);
+        }
+
+        return in_array($this->role, (array) $role, true);
     }
 
     public function roles()
     {
-        return $this->belongsToMany(Role::class, 'user_roles');
+        return $this->belongsTo(Role::class, 'role', 'name');
     }
 
     public function isActive()
@@ -272,18 +286,19 @@ class User extends Authenticatable implements MustVerifyEmail
     public function assignDefaultPermissions()
     {
         $defaultPermissions = [
-            'dashboard.view',
             'flights.search',
             'flights.view',
             'flights.book',
             'bookings.view_own',
-            'bookings.update_own',
-            'profile.view',
-            'profile.update'
+            'payments.view_own',
         ];
 
-        $permissions = Permission::whereIn('name', $defaultPermissions)->get();
-        $this->permissions()->sync($permissions);
+        $permissions = Permission::whereIn('name', $defaultPermissions)->pluck('id');
+
+        $this->permissions()->detach();
+        $this->permissions()->attach(
+            $permissions->mapWithKeys(fn ($id) => [$id => ['model_type' => self::class]])->all()
+        );
     }
 
      public function twoFactorAuth()

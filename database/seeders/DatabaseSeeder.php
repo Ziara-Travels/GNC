@@ -18,6 +18,9 @@ class DatabaseSeeder extends Seeder
             EastAfricanAirportsSeeder::class
         ]);
         $this->call([
+            PermissionSeeder::class,
+        ]);
+        $this->call([
             UsersTableSeeder::class,
         ]);
         $this->call([

@@ -359,7 +359,7 @@
                             </div>
                             
                             @if(auth()->user()->hasPermission('bookings.view_own'))
-                                <a href="{{ route('user.bookings.index') }}" class="block mt-4 text-center text-blue-600 hover:text-blue-800 font-medium">View All Bookings</a>
+                                <a href="{{ route('user.bookings.all') }}" class="block mt-4 text-center text-blue-600 hover:text-blue-800 font-medium">View All Bookings</a>
                             @endif
                         </div>
                     </div>

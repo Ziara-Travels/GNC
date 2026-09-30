@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('styles')
+@section('content')
 <style>
     /* Custom animations */
     @keyframes fadeInUp {
@@ -13,7 +13,7 @@
             transform: translateY(0);
         }
     }
-    
+
     @keyframes fadeOutDown {
         from {
             opacity: 1;
@@ -24,52 +24,79 @@
             transform: translateY(20px);
         }
     }
-    
+
     .animate-fade-in-up {
         animation: fadeInUp 0.3s ease-out forwards;
     }
-    
+
     .animate-fade-out-down {
         animation: fadeOutDown 0.3s ease-out forwards;
     }
-    
+
     .modal-overlay {
         background-color: rgba(0, 0, 0, 0.5);
         backdrop-filter: blur(5px);
     }
-    
+
     /* Timeline styles */
     .timeline-step.active .timeline-circle {
-        background-color: #0d9488;
-        border-color: #0d9488;
+        background-color: #6b2c1f;
+        border-color: #6b2c1f;
     }
-    
+
     .timeline-step.active .timeline-text {
-        color: #0d9488;
+        color: #6b2c1f;
         font-weight: 600;
     }
-    
+
     .timeline-step.completed .timeline-circle {
-        background-color: #22c55e;
-        border-color: #22c55e;
+        background-color: #c9a227;
+        border-color: #c9a227;
     }
-    
+
     .timeline-line {
         top: 24px;
         height: 3px;
         transform: translateY(-50%);
     }
 </style>
-@endsection
-
-@section('content')
-<div class="bg-gray-50 min-h-screen pb-16">
+    <style>
+        .ziara-flow-booking { background: #fdf8eb; }
+        .ziara-flow-booking__bar { background: #fff; border-bottom: 1px solid #eadfca; box-shadow: 0 2px 12px rgba(74,29,19,.08); }
+        .ziara-flow-booking__panel { background: #fff; border: 1px solid #eadfca; border-radius: 16px; box-shadow: 0 2px 12px rgba(74,29,19,.10); }
+        .ziara-flow-booking__head { border-bottom: 1px solid #eadfca; background: #fdf6df; }
+        .ziara-flow-booking__head h2 { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 700; color: #4a1d13; }
+        .ziara-flow-booking__head p { color: #7a6a60; }
+        .ziara-flow-booking__tag { background: #fdf6df; color: #6b1d15; border: 1px solid rgba(201,162,39,.4); }
+        .ziara-flow-booking__rating { background: #fdf6df; color: #6b1d15; border: 1px solid rgba(201,162,39,.4); }
+        .ziara-flow-booking__icon { color: #c9a227; }
+        .ziara-flow-booking__price { color: #6b2c1f; }
+        .ziara-flow-booking__secure { background: #fdf8eb; border: 1px solid #eadfca; border-radius: 14px; }
+        .ziara-flow-booking__cta { background: #6b2c1f; color: #fff; border-radius: 10px; }
+        .ziara-flow-booking__cta:hover { background: #4a1d13; }
+        .ziara-flow-booking__cta:disabled { background: #a8968a; }
+        .ziara-flow-booking__link { color: #7b2a1b; }
+        .ziara-flow-booking__link:hover { color: #a8861a; }
+        .ziara-flow-booking .border-teal-600 { border-color: #c9a227 !important; }
+        .ziara-flow-booking .bg-teal-50 { background-color: #fdf6df !important; }
+        .ziara-flow-booking .text-teal-700 { color: #6b1d15 !important; }
+        .ziara-flow-booking__title { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 700; color: #4a1d13; }
+        .ziara-flow-booking__subtitle { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 700; color: #4a1d13; }
+        .ziara-flow-booking__modal-title { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 700; color: #4a1d13; }
+        .ziara-flow-booking__btn-ghost { background: #fff; color: #4a1d13; border-color: #eadfca; }
+        .ziara-flow-booking__btn-ghost:hover { background: #fdf8eb; border-color: #c9a227; }        .ziara-flow-booking__modal { background: #fff; border: 1px solid #eadfca; border-radius: 16px; box-shadow: 0 30px 90px rgba(28,22,18,.4); }
+        .ziara-flow-booking__modal-head { background: linear-gradient(110deg, #4a1d13 0%, #6b2c1f 100%); border-bottom: 3px solid #c9a227; }
+        .ziara-flow-booking__modal-head h3 { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 700; color: #fff; }
+        .ziara-flow-booking__modal-close { color: rgba(255,255,255,.85); }
+        .ziara-flow-booking__modal-close:hover { background: rgba(255,255,255,.18); color: #fff; }
+    </style>
+<div class="ziara-flow-booking min-h-screen pb-16">
     <!-- Booking Progress Timeline -->
-    <div class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-30">
+    <div class="ziara-flow-booking__bar sticky top-0 z-30">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div class="relative flex items-center justify-between">
                 <!-- Timeline Line -->
-                <div class="absolute timeline-line left-0 w-full bg-gray-200"></div>
+                <div class="absolute timeline-line left-0 w-full"></div>
                 
                 <!-- Step 1: Search -->
                 <div class="timeline-step completed relative z-10 flex flex-col items-center">
@@ -89,7 +116,7 @@
                 
                 <!-- Step 3: Book -->
                 <div class="timeline-step active relative z-10 flex flex-col items-center">
-                    <div class="timeline-circle w-12 h-12 rounded-full bg-white border-4 border-gray-300 flex items-center justify-center text-teal-600">
+                    <div class="timeline-circle w-12 h-12 rounded-full bg-white border-4 border-gray-300 flex items-center justify-center text-[#c9a227]">
                         <i data-lucide="clipboard" class="w-6 h-6"></i>
                     </div>
                     <span class="timeline-text mt-2 text-sm font-medium">Book</span>
@@ -119,7 +146,7 @@
         <div class="flex flex-col lg:flex-row gap-8">
             <!-- Left Column: Tour Information -->
             <div class="lg:w-2/3">
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-8">
+                <div class="ziara-flow-booking__panel overflow-hidden mb-8">
                     <!-- Tour Images Gallery -->
                     <div class="relative h-80">
                         <div class="swiper-container h-full">
@@ -160,7 +187,7 @@
                             
                             <div class="flex flex-col items-end">
                                 <!-- Rating -->
-                                <div class="flex items-center px-2 py-1 bg-yellow-100 text-yellow-800 rounded-lg text-sm">
+                                <div class="ziara-flow-booking__rating flex items-center px-2 py-1 rounded-lg text-sm">
                                     <i data-lucide="star" class="w-4 h-4 fill-current mr-1"></i>
                                     <span>{{ $tour['rating'] ?? '4.5' }}</span>
                                 </div>
@@ -174,22 +201,22 @@
                         
                         <!-- Tour Type & Duration -->
                         <div class="flex flex-wrap gap-3 mb-6">
-                            <span class="px-3 py-1 bg-teal-100 text-teal-800 text-sm font-medium rounded-lg inline-flex items-center">
+                            <span class="ziara-flow-booking__tag px-3 py-1 text-sm font-medium rounded-lg inline-flex items-center">
                                 <i data-lucide="tag" class="w-4 h-4 mr-1"></i>
                                 {{ $tour['tourType'] ?? 'Adventure Tour' }}
                             </span>
                             
-                            <span class="px-3 py-1 bg-teal-100 text-teal-800 text-sm font-medium rounded-lg inline-flex items-center">
+                            <span class="ziara-flow-booking__tag px-3 py-1 text-sm font-medium rounded-lg inline-flex items-center">
                                 <i data-lucide="clock" class="w-4 h-4 mr-1"></i>
                                 {{ $tour['duration'] ?? '3 hours' }}
                             </span>
                             
-                            <span class="px-3 py-1 bg-teal-100 text-teal-800 text-sm font-medium rounded-lg inline-flex items-center">
+                            <span class="ziara-flow-booking__tag px-3 py-1 text-sm font-medium rounded-lg inline-flex items-center">
                                 <i data-lucide="users" class="w-4 h-4 mr-1"></i>
                                 Max {{ $tour['groupSize'] ?? '15' }} people
                             </span>
                             
-                            <span class="px-3 py-1 bg-teal-100 text-teal-800 text-sm font-medium rounded-lg inline-flex items-center">
+                            <span class="ziara-flow-booking__tag px-3 py-1 text-sm font-medium rounded-lg inline-flex items-center">
                                 <i data-lucide="languages" class="w-4 h-4 mr-1"></i>
                                 {{ $tour['languages'] ?? 'English' }}
                             </span>
@@ -197,13 +224,13 @@
                         
                         <!-- Tour Description -->
                         <div class="mb-8">
-                            <h2 class="text-lg font-semibold mb-3">About This Tour</h2>
+                            <h2 class="ziara-flow-booking__title text-lg font-semibold mb-3">About This Tour</h2>
                             <p class="text-gray-700 mb-4">
                                 {{ $tour['description'] ?? 'Experience the beauty and culture of this amazing destination with our expert guides. This tour offers a perfect blend of adventure, history, and natural beauty. You\'ll have the opportunity to explore iconic landmarks, learn about local traditions, and create unforgettable memories along the way.' }}
                             </p>
                             
                             <!-- Read More Button -->
-                            <button class="text-teal-600 font-medium flex items-center">
+                            <button class="ziara-flow-booking__link font-medium flex items-center">
                                 Read more
                                 <i data-lucide="chevron-down" class="w-4 h-4 ml-1"></i>
                             </button>
@@ -211,11 +238,11 @@
                         
                         <!-- Tour Highlights -->
                         <div class="mb-8">
-                            <h2 class="text-lg font-semibold mb-3">Tour Highlights</h2>
+                            <h2 class="ziara-flow-booking__title text-lg font-semibold mb-3">Tour Highlights</h2>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                                 @foreach($tour['highlights'] ?? ['Visit iconic landmarks and attractions', 'Learn about local history and culture', 'Enjoy spectacular views and photo opportunities', 'Experience authentic local cuisine'] as $highlight)
                                     <div class="flex items-start">
-                                        <i data-lucide="check-circle" class="w-5 h-5 text-teal-500 mr-2 shrink-0"></i>
+                                        <i data-lucide="check-circle" class="ziara-flow-booking__icon w-5 h-5 mr-2 shrink-0"></i>
                                         <span>{{ $highlight }}</span>
                                     </div>
                                 @endforeach
@@ -224,11 +251,11 @@
                         
                         <!-- What's Included -->
                         <div class="mb-8">
-                            <h2 class="text-lg font-semibold mb-3">What's Included</h2>
+                            <h2 class="ziara-flow-booking__title text-lg font-semibold mb-3">What's Included</h2>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                                 @foreach($tour['included'] ?? ['Expert local guide', 'All entrance fees', 'Transport during the tour', 'Bottled water'] as $included)
                                     <div class="flex items-start">
-                                        <i data-lucide="check" class="w-5 h-5 text-teal-600 mr-2 shrink-0"></i>
+                                        <i data-lucide="check" class="ziara-flow-booking__icon w-5 h-5 mr-2 shrink-0"></i>
                                         <span>{{ $included }}</span>
                                     </div>
                                 @endforeach
@@ -237,7 +264,7 @@
                         
                         <!-- What's Not Included -->
                         <div class="mb-8">
-                            <h2 class="text-lg font-semibold mb-3">Not Included</h2>
+                            <h2 class="ziara-flow-booking__title text-lg font-semibold mb-3">Not Included</h2>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                                 @foreach($tour['notIncluded'] ?? ['Hotel pickup and drop-off', 'Gratuities', 'Food and drinks, unless specified', 'Personal expenses'] as $notIncluded)
                                     <div class="flex items-start">
@@ -250,7 +277,7 @@
                         
                         <!-- Meeting & Pickup -->
                         <div class="mb-8">
-                            <h2 class="text-lg font-semibold mb-3">Meeting & Pickup</h2>
+                            <h2 class="ziara-flow-booking__title text-lg font-semibold mb-3">Meeting & Pickup</h2>
                             <div class="flex items-start mb-3">
                                 <i data-lucide="map-pin" class="w-5 h-5 text-gray-500 mr-3 shrink-0"></i>
                                 <div>
@@ -269,7 +296,7 @@
                         
                         <!-- Cancellation Policy -->
                         <div>
-                            <h2 class="text-lg font-semibold mb-3">Cancellation Policy</h2>
+                            <h2 class="ziara-flow-booking__title text-lg font-semibold mb-3">Cancellation Policy</h2>
                             <div class="p-4 border border-gray-200 rounded-lg bg-gray-50">
                                 <p class="text-gray-700">
                                     {{ $tour['cancellationPolicy'] ?? 'Free cancellation up to 24 hours before the start time for a full refund. If you cancel less than 24 hours before the experience, no refund will be issued.' }}
@@ -280,9 +307,9 @@
                 </div>
                 
                 <!-- Available Times -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-8">
+                <div class="ziara-flow-booking__panel overflow-hidden mb-8">
                     <div class="p-6">
-                        <h2 class="text-xl font-bold text-gray-900 mb-6">Available Times</h2>
+                        <h2 class="ziara-flow-booking__title text-xl font-bold mb-6">Available Times</h2>
                         
                         <!-- Date Selector -->
                         <div class="mb-6">
@@ -313,11 +340,11 @@
                 </div>
                 
                 <!-- Traveler Information -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-8">
+                <div class="ziara-flow-booking__panel overflow-hidden mb-8">
                     <div class="p-6">
-                        <h2 class="text-xl font-bold text-gray-900 mb-6">Traveler Information</h2>
+                        <h2 class="ziara-flow-booking__title text-xl font-bold mb-6">Traveler Information</h2>
                         
-                        <form id="tourBookingForm" action="{{ route('booking.proceed') }}" method="POST">
+                        <form id="tourBookingForm" action="{{ route('tours.book') }}" method="POST">
                             @csrf
                             <input type="hidden" name="booking_type" value="tour">
                             <input type="hidden" name="tour_id" value="{{ $tour['id'] ?? '' }}">
@@ -341,7 +368,7 @@
                             
                             <!-- Lead Traveler -->
                             <div class="mb-8">
-                                <h3 class="text-lg font-semibold mb-4">Lead Traveler</h3>
+                                <h3 class="ziara-flow-booking__title text-lg font-semibold mb-4">Lead Traveler</h3>
                                 
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <!-- First Name -->
@@ -372,7 +399,7 @@
                             
                             <!-- Special Requirements -->
                             <div class="mb-8">
-                                <h3 class="text-lg font-semibold mb-4">Special Requirements</h3>
+                                <h3 class="ziara-flow-booking__title text-lg font-semibold mb-4">Special Requirements</h3>
                                 
                                 <div>
                                     <label for="specialRequests" class="block text-sm font-medium text-gray-700 mb-1">Special Requests (optional)</label>
@@ -388,14 +415,14 @@
                                         <input id="terms" name="terms" type="checkbox" class="focus:ring-teal-500 h-4 w-4 text-teal-600 border-gray-300 rounded" required>
                                     </div>
                                     <div class="ml-3 text-sm">
-                                        <label for="terms" class="font-medium text-gray-700">I agree to the <a href="#" class="text-teal-600 hover:text-teal-500">Terms and Conditions</a> and <a href="#" class="text-teal-600 hover:text-teal-500">Privacy Policy</a>.</label>
+                                        <label for="terms" class="font-medium text-gray-700">I agree to the <a href="#" class="ziara-flow-booking__link">Terms and Conditions</a> and <a href="#" class="ziara-flow-booking__link">Privacy Policy</a>.</label>
                                     </div>
                                 </div>
                             </div>
                             
                             <!-- Continue to Payment -->
                             <div class="flex justify-end">
-                                <button type="submit" id="continueToPayment" class="px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white font-medium rounded-lg transition-colors flex items-center opacity-50 cursor-not-allowed" disabled>
+                                <button type="submit" id="continueToPayment" class="ziara-flow-booking__cta px-6 py-3 font-medium transition-colors flex items-center opacity-50 cursor-not-allowed" disabled>
                                     Continue to Payment
                                     <i data-lucide="chevron-right" class="w-5 h-5 ml-2"></i>
                                 </button>
@@ -407,9 +434,9 @@
             
             <!-- Right Column: Price Summary -->
             <div class="lg:w-1/3">
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden sticky top-24">
+                <div class="ziara-flow-booking__panel overflow-hidden sticky top-24">
                     <div class="p-6">
-                        <h2 class="text-xl font-bold text-gray-900 mb-6">Booking Summary</h2>
+                        <h2 class="ziara-flow-booking__title text-xl font-bold mb-6">Booking Summary</h2>
                         
                         <!-- Tour Info Summary -->
                         <div class="flex items-center mb-6">
@@ -417,13 +444,13 @@
                                 <img src="{{ asset('images/tours/' . ($tour['tourImage'] ?? 'default-tour.jpg')) }}" alt="{{ $tour['tourName'] ?? 'Tour' }}" class="w-full h-full object-cover">
                             </div>
                             <div class="ml-4">
-                                <h3 class="font-semibold text-gray-800">{{ $tour['tourName'] ?? 'Tour Name' }}</h3>
+                                <h3 class="ziara-flow-booking__subtitle font-semibold">{{ $tour['tourName'] ?? 'Tour Name' }}</h3>
                                 <p class="text-sm text-gray-600 mt-1 flex items-center">
                                     <i data-lucide="map-pin" class="w-4 h-4 mr-1"></i>
                                     {{ $tour['location'] ?? 'Location' }}
                                 </p>
                                 <div class="flex items-center mt-1">
-                                    <i data-lucide="star" class="w-4 h-4 text-yellow-500 fill-current"></i>
+                                    <i data-lucide="star" class="w-4 h-4 text-[#c9a227] fill-current"></i>
                                     <span class="ml-1 text-sm">{{ $tour['rating'] ?? '4.5' }} ({{ $tour['reviewCount'] ?? '52' }} reviews)</span>
                                 </div>
                             </div>
@@ -452,7 +479,7 @@
                         
                         <!-- Price Breakdown -->
                         <div class="mb-6">
-                            <h3 class="font-semibold mb-3">Price Details</h3>
+                            <h3 class="ziara-flow-booking__subtitle font-semibold mb-3">Price Details</h3>
                             
                             <div class="space-y-2 text-sm">
                                 <div class="flex justify-between">
@@ -496,21 +523,21 @@
                         
                         <!-- Tour Policies -->
                         <div class="mb-6">
-                            <h3 class="font-semibold mb-3">Policies</h3>
+                            <h3 class="ziara-flow-booking__subtitle font-semibold mb-3">Policies</h3>
                             
                             <div class="space-y-3 text-sm">
                                 <div class="flex items-start">
-                                    <i data-lucide="shield-check" class="w-4 h-4 text-teal-600 mr-2 shrink-0"></i>
+                                    <i data-lucide="shield-check" class="ziara-flow-booking__icon w-4 h-4 mr-2 shrink-0"></i>
                                     <span>{{ $tour['cancellationPolicySummary'] ?? 'Free cancellation up to 24 hours before' }}</span>
                                 </div>
                                 
                                 <div class="flex items-start">
-                                    <i data-lucide="calendar" class="w-4 h-4 text-teal-600 mr-2 shrink-0"></i>
+                                    <i data-lucide="calendar" class="ziara-flow-booking__icon w-4 h-4 mr-2 shrink-0"></i>
                                     <span>Reserve now, pay later</span>
                                 </div>
                                 
                                 <div class="flex items-start">
-                                    <i data-lucide="check-circle" class="w-4 h-4 text-teal-600 mr-2 shrink-0"></i>
+                                    <i data-lucide="check-circle" class="ziara-flow-booking__icon w-4 h-4 mr-2 shrink-0"></i>
                                     <span>Instant confirmation</span>
                                 </div>
                             </div>
@@ -533,11 +560,11 @@
             <div class="fixed inset-0 transition-opacity modal-overlay" aria-hidden="true"></div>
 
             <!-- Modal panel -->
-            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full animate-fade-in-up">
+            <div class="ziara-flow-booking__modal inline-block align-bottom text-left overflow-hidden transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full animate-fade-in-up">
                 <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                     <div class="sm:flex sm:items-start">
                         <div class="mt-3 text-center sm:mt-0 sm:text-left w-full">
-                            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4" id="modal-title">
+                            <h3 class="ziara-flow-booking__modal-title text-lg leading-6 font-medium mb-4" id="modal-title">
                                 Create an Account to Continue
                             </h3>
                             
@@ -589,14 +616,14 @@
                                             <input id="terms" name="terms" type="checkbox" required class="focus:ring-teal-500 h-4 w-4 text-teal-600 border-gray-300 rounded">
                                         </div>
                                         <div class="ml-3 text-sm">
-                                            <label for="terms" class="font-medium text-gray-700">I agree to the <a href="#" class="text-teal-600 hover:text-teal-500">Terms and Conditions</a>.</label>
+                                            <label for="terms" class="font-medium text-gray-700">I agree to the <a href="#" class="ziara-flow-booking__link">Terms and Conditions</a>.</label>
                                         </div>
                                     </div>
                                 </div>
                                 
                                 <div class="flex items-center justify-between mt-6">
                                     <div class="text-sm">
-                                        <a href="{{ route('login') }}" class="font-medium text-teal-600 hover:text-teal-500">
+                                        <a href="{{ route('login') }}" class="ziara-flow-booking__link font-medium">
                                             Already have an account? Login
                                         </a>
                                     </div>
@@ -606,10 +633,10 @@
                     </div>
                 </div>
                 <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                    <button type="button" id="registerSubmitBtn" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-teal-600 text-base font-medium text-white hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 sm:ml-3 sm:w-auto sm:text-sm">
+                    <button type="button" id="registerSubmitBtn" class="ziara-flow-booking__cta w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 text-base font-medium sm:ml-3 sm:w-auto sm:text-sm">
                         Register & Continue
                     </button>
-                    <button type="button" id="modalCloseBtn" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                    <button type="button" id="modalCloseBtn" class="ziara-flow-booking__btn-ghost mt-3 w-full inline-flex justify-center rounded-md border shadow-sm px-4 py-2 text-base font-medium focus:outline-none sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
                         Close
                     </button>
                 </div>
@@ -617,9 +644,7 @@
         </div>
     </div>
 </div>
-@endsection
 
-@section('scripts')
 <script>
     // Initialize Lucide icons
     document.addEventListener('DOMContentLoaded', function() {

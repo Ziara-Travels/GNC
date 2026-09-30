@@ -4,27 +4,27 @@
 
 @section('content')
 <div class="main-content transition-all flex flex-col overflow-hidden min-h-screen" id="main-content">
-    
+
     <div class="trezo-card bg-white dark:bg-[#0c1427] mb-[25px] p-[20px] md:p-[25px] rounded-md">
-        
+
         <!-- Header -->
-        <div class="trezo-card-header mb-[20px] md:mb-[25px] flex items-center justify-between">
+        <div class="trezo-card-header mb-[20px] md:mb-[25px] flex items-center justify-between flex-wrap gap-3">
             <div class="trezo-card-title">
                 <h5 class="mb-0 md:text-xl font-medium text-gray-800 dark:text-white flex items-center">
-                    <i class="ri-compass-3-line mr-2 text-blue-500"></i>
+                    <i class="ri-compass-3-line mr-2 text-[var(--maroon)]"></i>
                     Your Travel Insights
-                    <span class="ml-3 bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded-full">PERSONALIZED</span>
+                    <span class="ml-3 bg-[var(--gold-pale)] text-[var(--maroon)] text-xs font-medium px-2 py-1 rounded-full">PERSONALIZED</span>
                 </h5>
                 <p class="text-gray-600 dark:text-gray-300 text-sm mt-1">
                     Discover your travel patterns and get personalized recommendations based on your booking history
                 </p>
             </div>
             <div class="flex space-x-2">
-                <button class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors">
+                <button class="text-white px-4 py-2 rounded-md transition-colors flex items-center gap-1" style="background:linear-gradient(135deg,var(--maroon),var(--maroon-deep));">
                     <i class="ri-download-line mr-2"></i>
                     Export Report
                 </button>
-                <a href="{{ route('dashboard') }}" class="btn btn-outline-primary">
+                <a href="{{ route('dashboard') }}" class="btn btn-outline-primary text-[var(--maroon)] border-[var(--maroon)]">
                     <i class="ri-arrow-left-line mr-2"></i>
                     Back to Dashboard
                 </a>
@@ -33,120 +33,121 @@
 
         <!-- Travel Overview Stats -->
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-[25px] mb-[25px]">
-            
+
             <!-- Travel Frequency -->
-            <div class="trezo-card border border-blue-200 dark:border-blue-800 p-[20px] md:p-[25px] rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900 dark:to-blue-800">
+            <div class="trezo-card border border-[var(--gold-border)] p-[20px] md:p-[25px] rounded-xl" style="background:linear-gradient(135deg,var(--maroon-deep),var(--maroon));">
                 <div class="flex items-center justify-between mb-4">
-                    <div class="bg-blue-500 text-white rounded-full p-3">
+                    <div class="bg-[var(--gold)] text-[var(--maroon-deep)] rounded-full p-3">
                         <i class="ri-flight-takeoff-line text-xl"></i>
                     </div>
-                    <span class="text-blue-600 dark:text-blue-300 text-xs font-medium bg-blue-200 dark:bg-blue-700 px-2 py-1 rounded-full">FREQUENCY</span>
+                    <span class="text-[var(--gold-bright)] text-xs font-medium bg-white/15 px-2 py-1 rounded-full">FREQUENCY</span>
                 </div>
-                <h6 class="text-lg font-semibold text-gray-800 dark:text-white mb-2">Travel Style</h6>
-                <p class="text-2xl font-bold text-blue-600 mb-1">{{ $travelInsights['travel_frequency'] ?? 'Regular Traveler' }}</p>
-                <p class="text-sm text-gray-600 dark:text-gray-300">{{ $travelInsights['trips_per_year'] ?? 8 }} trips per year</p>
+                <h6 class="text-lg font-semibold text-white mb-2">Travel Frequency</h6>
+                <p class="text-2xl font-bold text-[var(--gold-bright)] mb-1">{{ $travelInsights['travel_frequency'] ?? 'New Traveler' }}</p>
+                <p class="text-sm text-white/80">Based on your booking history</p>
             </div>
 
             <!-- Average Trip Cost -->
-            <div class="trezo-card border border-green-200 dark:border-green-800 p-[20px] md:p-[25px] rounded-xl bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900 dark:to-green-800">
+            <div class="trezo-card border border-[var(--gold-border)] p-[20px] md:p-[25px] rounded-xl" style="background:linear-gradient(135deg,#8f4b34,#6b1d15);">
                 <div class="flex items-center justify-between mb-4">
-                    <div class="bg-green-500 text-white rounded-full p-3">
+                    <div class="bg-white text-[var(--maroon)] rounded-full p-3">
                         <i class="ri-money-dollar-circle-line text-xl"></i>
                     </div>
-                    <span class="text-green-600 dark:text-green-300 text-xs font-medium bg-green-200 dark:bg-green-700 px-2 py-1 rounded-full">BUDGET</span>
+                    <span class="text-[var(--zt-gold-bright,#f3d24a)] text-xs font-medium bg-white/15 px-2 py-1 rounded-full">BUDGET</span>
                 </div>
-                <h6 class="text-lg font-semibold text-gray-800 dark:text-white mb-2">Avg Trip Cost</h6>
-                <p class="text-2xl font-bold text-green-600 mb-1">${{ number_format($travelInsights['avg_trip_cost'] ?? 650, 0) }}</p>
-                <p class="text-sm text-gray-600 dark:text-gray-300">{{ $travelInsights['budget_category'] ?? 'Mid-range traveler' }}</p>
+                <h6 class="text-lg font-semibold text-white mb-2">Average Trip Cost</h6>
+                <p class="text-2xl font-bold text-[var(--gold-bright)] mb-1">${{ number_format($travelInsights['average_trip_cost'] ?? 0, 0) }}</p>
+                <p class="text-sm text-white/80">Average spend per booking</p>
             </div>
 
-            <!-- Favorite Season -->
-            <div class="trezo-card border border-orange-200 dark:border-orange-800 p-[20px] md:p-[25px] rounded-xl bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900 dark:to-orange-800">
+            <!-- Countries Visited -->
+            <div class="trezo-card border border-[var(--gold-border)] p-[20px] md:p-[25px] rounded-xl" style="background:linear-gradient(135deg,#a3552d,#7b2a1b);">
                 <div class="flex items-center justify-between mb-4">
-                    <div class="bg-orange-500 text-white rounded-full p-3">
-                        <i class="ri-sun-line text-xl"></i>
+                    <div class="bg-[var(--gold)] text-[var(--maroon-deep)] rounded-full p-3">
+                        <i class="ri-earth-line text-xl"></i>
                     </div>
-                    <span class="text-orange-600 dark:text-orange-300 text-xs font-medium bg-orange-200 dark:bg-orange-700 px-2 py-1 rounded-full">SEASON</span>
+                    <span class="text-[var(--gold-bright)] text-xs font-medium bg-white/15 px-2 py-1 rounded-full">FOOTPRINT</span>
                 </div>
-                <h6 class="text-lg font-semibold text-gray-800 dark:text-white mb-2">Favorite Season</h6>
-                <p class="text-2xl font-bold text-orange-600 mb-1">{{ $travelInsights['favorite_season'] ?? 'Summer' }}</p>
-                <p class="text-sm text-gray-600 dark:text-gray-300">{{ $travelInsights['season_trips'] ?? 4 }} trips in this season</p>
+                <h6 class="text-lg font-semibold text-white mb-2">Countries Visited</h6>
+                <p class="text-2xl font-bold text-[var(--gold-bright)] mb-1">{{ $travelInsights['total_countries_visited'] ?? 0 }}</p>
+                <p class="text-sm text-white/80">Unique countries explored</p>
             </div>
 
-            <!-- Carbon Footprint -->
-            <div class="trezo-card border border-purple-200 dark:border-purple-800 p-[20px] md:p-[25px] rounded-xl bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900 dark:to-purple-800">
+            <!-- Favorite Month -->
+            <div class="trezo-card border border-[var(--gold-border)] p-[20px] md:p-[25px] rounded-xl" style="background:linear-gradient(135deg,#7d3a2a,#5a1810);">
                 <div class="flex items-center justify-between mb-4">
-                    <div class="bg-purple-500 text-white rounded-full p-3">
-                        <i class="ri-leaf-line text-xl"></i>
+                    <div class="bg-white text-[var(--maroon)] rounded-full p-3">
+                        <i class="ri-calendar-2-line text-xl"></i>
                     </div>
-                    <span class="text-purple-600 dark:text-purple-300 text-xs font-medium bg-purple-200 dark:bg-purple-700 px-2 py-1 rounded-full">ECO</span>
+                    <span class="text-[var(--zt-gold-bright,#f3d24a)] text-xs font-medium bg-white/15 px-2 py-1 rounded-full">SEASON</span>
                 </div>
-                <h6 class="text-lg font-semibold text-gray-800 dark:text-white mb-2">Carbon Impact</h6>
-                <p class="text-2xl font-bold text-purple-600 mb-1">{{ $travelInsights['carbon_footprint'] ?? '2.4' }} tons</p>
-                <p class="text-sm text-gray-600 dark:text-gray-300">CO₂ from travel this year</p>
+                <h6 class="text-lg font-semibold text-white mb-2">Favorite Month</h6>
+                <p class="text-2xl font-bold text-[var(--gold-bright)] mb-1">{{ $travelInsights['favorite_month'] ?? 'N/A' }}</p>
+                <p class="text-sm text-white/80">{{ $travelInsights['total_cities_visited'] ?? 0 }} cities visited in total</p>
             </div>
 
         </div>
 
         <!-- Travel Patterns Analysis -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-[25px] mb-[25px]">
-            
+
             <!-- Booking Patterns -->
             <div class="trezo-card border border-gray-100 dark:border-[#172036] p-[20px] md:p-[25px] rounded-md">
                 <div class="trezo-card-header mb-[20px]">
                     <h5 class="mb-0 flex items-center">
-                        <i class="ri-calendar-line mr-2 text-blue-500"></i>
-                        Booking Patterns
+                        <i class="ri-line-chart-line mr-2 text-[var(--maroon)]"></i>
+                        Spending &amp; Impact
                     </h5>
                 </div>
                 <div class="trezo-card-content">
                     <div class="space-y-4">
-                        <div class="bg-blue-50 dark:bg-blue-900 p-4 rounded-lg">
-                            <h6 class="font-semibold text-gray-800 dark:text-white mb-2">Advance Booking Habit</h6>
-                            <p class="text-blue-600 text-lg font-bold">{{ $travelInsights['avg_booking_advance'] ?? '21 days' }}</p>
-                            <p class="text-sm text-gray-600 dark:text-gray-300">You typically book {{ $travelInsights['avg_booking_advance'] ?? '21 days' }} in advance</p>
+                        <div class="p-4 rounded-lg" style="background:var(--maroon-pale,#f7ece7);">
+                            <h6 class="font-semibold text-gray-800 dark:text-white mb-2">Travel Style</h6>
+                            <p class="text-lg font-bold text-[var(--maroon)]">{{ $travelInsights['travel_style'] ?? 'Balanced Traveler' }}</p>
+                            <p class="text-sm text-gray-600 dark:text-gray-300">Computed from your average spend and booking habits</p>
                         </div>
-                        
-                        <div class="bg-green-50 dark:bg-green-900 p-4 rounded-lg">
-                            <h6 class="font-semibold text-gray-800 dark:text-white mb-2">Preferred Booking Day</h6>
-                            <p class="text-green-600 text-lg font-bold">{{ $travelInsights['preferred_booking_day'] ?? 'Tuesday' }}</p>
-                            <p class="text-sm text-gray-600 dark:text-gray-300">Most of your bookings are made on this day</p>
+
+                        <div class="p-4 rounded-lg" style="background:var(--gold-pale);">
+                            <h6 class="font-semibold text-gray-800 dark:text-white mb-2">Money Saved</h6>
+                            <p class="text-lg font-bold text-[var(--maroon)]">${{ number_format($travelInsights['money_saved'] ?? 0, 2) }}</p>
+                            <p class="text-sm text-gray-600 dark:text-gray-300">Estimated savings from booking through Ziara Travel</p>
                         </div>
-                        
-                        <div class="bg-purple-50 dark:bg-purple-900 p-4 rounded-lg">
-                            <h6 class="font-semibold text-gray-800 dark:text-white mb-2">Trip Duration Preference</h6>
-                            <p class="text-purple-600 text-lg font-bold">{{ $travelInsights['avg_trip_duration'] ?? '5 days' }}</p>
-                            <p class="text-sm text-gray-600 dark:text-gray-300">Your average trip length</p>
+
+                        <div class="p-4 rounded-lg" style="background:var(--maroon-pale,#f7ece7);">
+                            <h6 class="font-semibold text-gray-800 dark:text-white mb-2">Carbon Footprint</h6>
+                            <p class="text-lg font-bold text-[var(--maroon)]">{{ $travelInsights['carbon_footprint'] ?? '0 tons CO2' }}</p>
+                            <p class="text-sm text-gray-600 dark:text-gray-300">Estimated emissions from your flight bookings</p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Destination Preferences -->
+            <!-- Destination Insights -->
             <div class="trezo-card border border-gray-100 dark:border-[#172036] p-[20px] md:p-[25px] rounded-md">
                 <div class="trezo-card-header mb-[20px]">
                     <h5 class="mb-0 flex items-center">
-                        <i class="ri-map-pin-line mr-2 text-green-500"></i>
+                        <i class="ri-map-pin-line mr-2 text-[var(--maroon)]"></i>
                         Destination Insights
                     </h5>
                 </div>
                 <div class="trezo-card-content">
-                    <div class="space-y-4">
-                        @php
-                            $destinationPrefs = [
-                                ['type' => 'Most Visited Region', 'value' => $travelInsights['favorite_region'] ?? 'East Africa', 'color' => 'blue'],
-                                ['type' => 'Preferred Climate', 'value' => $travelInsights['preferred_climate'] ?? 'Tropical', 'color' => 'orange'],
-                                ['type' => 'Destination Type', 'value' => $travelInsights['destination_type'] ?? 'Business & Leisure Mix', 'color' => 'purple'],
-                                ['type' => 'Travel Distance', 'value' => $travelInsights['avg_travel_distance'] ?? '1,200 km average', 'color' => 'green']
-                            ];
-                        @endphp
-                        
-                        @foreach($destinationPrefs as $pref)
-                        <div class="flex items-center justify-between p-3 bg-{{ $pref['color'] }}-50 dark:bg-{{ $pref['color'] }}-900 rounded-lg">
-                            <span class="font-medium text-gray-800 dark:text-white">{{ $pref['type'] }}</span>
-                            <span class="text-{{ $pref['color'] }}-600 font-semibold">{{ $pref['value'] }}</span>
-                        </div>
-                        @endforeach
+                    <div class="space-y-3">
+                        @if(empty($travelInsights['favorite_destinations']))
+                            <div class="p-4 rounded-lg" style="background:var(--gold-pale);text-align:center;">
+                                <p class="mb-1 font-semibold text-gray-800 dark:text-white">No confirmed destinations yet</p>
+                                <p class="text-sm text-gray-600 dark:text-gray-300">Your confirmed destinations will appear here once you start booking</p>
+                            </div>
+                        @else
+                            @foreach(array_slice($travelInsights['favorite_destinations'], 0, 3) as $index => $destination)
+                            <div class="flex items-center justify-between p-3 rounded-lg" style="background:{{ $index % 2 === 0 ? 'var(--gold-pale)' : 'var(--maroon-pale,#f7ece7)' }};">
+                                <span class="flex items-center gap-3">
+                                    <span class="w-8 h-8 rounded-full inline-flex items-center justify-center font-semibold text-white text-sm" style="background:linear-gradient(135deg,var(--maroon),var(--maroon-deep));">#{{ $index + 1 }}</span>
+                                    <span class="font-medium text-gray-800 dark:text-white">{{ $destination }}</span>
+                                </span>
+                                <i class="ri-map-pin-2-line text-[var(--maroon)]"></i>
+                            </div>
+                            @endforeach
+                        @endif
                     </div>
                 </div>
             </div>
@@ -157,72 +158,69 @@
         <div class="trezo-card border border-gray-100 dark:border-[#172036] p-[20px] md:p-[25px] rounded-md mb-[25px]">
             <div class="trezo-card-header mb-[20px]">
                 <h5 class="mb-0 flex items-center">
-                    <i class="ri-lightbulb-line mr-2 text-yellow-500"></i>
+                    <i class="ri-lightbulb-line mr-2 text-[var(--gold-dim)]"></i>
                     Personalized Recommendations
                 </h5>
             </div>
             <div class="trezo-card-content">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    
+
                     <!-- Based on Your Patterns -->
-                    <div class="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900 dark:to-blue-800 p-6 rounded-lg">
-                        <i class="ri-user-heart-line text-3xl text-blue-500 mb-4"></i>
-                        <h6 class="font-semibold text-gray-800 dark:text-white mb-3">For You</h6>
-                        <ul class="space-y-2 text-sm">
+                    <div class="p-6 rounded-lg recommendation-card" style="background:linear-gradient(135deg,var(--maroon-deep),var(--maroon));">
+                        <i class="ri-user-heart-line text-3xl text-[var(--gold-bright)] mb-4"></i>
+                        <h6 class="font-semibold text-white mb-3">Your Travel Style</h6>
+                        <ul class="space-y-2 text-sm list-none pl-0">
                             <li class="flex items-start">
-                                <i class="ri-check-line text-blue-500 mr-2 mt-0.5"></i>
-                                <span>{{ $travelInsights['recommendations']['personal'][0] ?? 'Consider booking flights on Tuesday for better deals' }}</span>
+                                <i class="ri-check-line text-[var(--gold-bright)] mr-2 mt-0.5"></i>
+                                <span class="text-white/90">You travel like a <strong>{{ $travelInsights['travel_style'] ?? 'Balanced Traveler' }}</strong></span>
                             </li>
                             <li class="flex items-start">
-                                <i class="ri-check-line text-blue-500 mr-2 mt-0.5"></i>
-                                <span>{{ $travelInsights['recommendations']['personal'][1] ?? 'Try extending your trips to 7-10 days for better value' }}</span>
+                                <i class="ri-check-line text-[var(--gold-bright)] mr-2 mt-0.5"></i>
+                                <span class="text-white/90">Your most active booking month is <strong>{{ $travelInsights['favorite_month'] ?? 'N/A' }}</strong></span>
                             </li>
                             <li class="flex items-start">
-                                <i class="ri-check-line text-blue-500 mr-2 mt-0.5"></i>
-                                <span>{{ $travelInsights['recommendations']['personal'][2] ?? 'Book accommodation 3 weeks in advance for optimal prices' }}</span>
+                                <i class="ri-check-line text-[var(--gold-bright)] mr-2 mt-0.5"></i>
+                                <span class="text-white/90">You have visited <strong>{{ $travelInsights['total_countries_visited'] ?? 0 }}</strong> countries so far</span>
                             </li>
                         </ul>
                     </div>
 
-                    <!-- New Destinations -->
-                    <div class="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900 dark:to-green-800 p-6 rounded-lg">
-                        <i class="ri-map-2-line text-3xl text-green-500 mb-4"></i>
-                        <h6 class="font-semibold text-gray-800 dark:text-white mb-3">Explore New</h6>
-                        <ul class="space-y-2 text-sm">
-                            @php
-                                $newDestinations = $travelInsights['recommendations']['destinations'] ?? [
-                                    'Zanzibar - Similar to your coastal preferences',
-                                    'Rwanda - Great for eco-tourism experiences',
-                                    'Seychelles - Perfect for luxury getaways'
-                                ];
-                            @endphp
-                            @foreach($newDestinations as $destination)
+                    <!-- You Might Love -->
+                    <div class="p-6 rounded-lg recommendation-card" style="background:linear-gradient(135deg,#8f4b34,#6b1d15);">
+                        <i class="ri-map-2-line text-3xl text-[var(--gold-bright)] mb-4"></i>
+                        <h6 class="font-semibold text-white mb-3">Top Destinations</h6>
+                        <ul class="space-y-2 text-sm list-none pl-0">
+                            @forelse(array_slice($travelInsights['favorite_destinations'] ?? [], 0, 3) as $destination)
                             <li class="flex items-start">
-                                <i class="ri-map-pin-line text-green-500 mr-2 mt-0.5"></i>
-                                <span>{{ $destination }}</span>
+                                <i class="ri-map-pin-line text-[var(--gold-bright)] mr-2 mt-0.5"></i>
+                                <span class="text-white/90">{{ $destination }}</span>
                             </li>
-                            @endforeach
+                            @empty
+                            <li class="flex items-start">
+                                <i class="ri-map-pin-line text-[var(--gold-bright)] mr-2 mt-0.5"></i>
+                                <span class="text-white/90">Start exploring new places once you make your first confirmed booking</span>
+                            </li>
+                            @endforelse
                         </ul>
                     </div>
 
-                    <!-- Cost Optimization -->
-                    <div class="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900 dark:to-orange-800 p-6 rounded-lg">
-                        <i class="ri-money-dollar-circle-line text-3xl text-orange-500 mb-4"></i>
-                        <h6 class="font-semibold text-gray-800 dark:text-white mb-3">Save Money</h6>
-                        <ul class="space-y-2 text-sm">
-                            @php
-                                $savingTips = $travelInsights['recommendations']['savings'] ?? [
-                                    'Travel in May-June for 30% cheaper flights',
-                                    'Use our price alerts for your favorite routes',
-                                    'Consider midweek departures for lower costs'
-                                ];
-                            @endphp
-                            @foreach($savingTips as $tip)
+                    <!-- Save Money -->
+                    <div class="p-6 rounded-lg recommendation-card" style="background:linear-gradient(135deg,#7d3a2a,#5a1810);">
+                        <i class="ri-money-dollar-circle-line text-3xl text-[var(--gold-bright)] mb-4"></i>
+                        <h6 class="font-semibold text-white mb-3">Your Savings</h6>
+                        <ul class="space-y-2 text-sm list-none pl-0">
                             <li class="flex items-start">
-                                <i class="ri-coins-line text-orange-500 mr-2 mt-0.5"></i>
-                                <span>{{ $tip }}</span>
+                                <i class="ri-coins-line text-[var(--gold-bright)] mr-2 mt-0.5"></i>
+                                <span class="text-white/90">You have saved approximately <strong>${{ number_format($travelInsights['money_saved'] ?? 0, 2) }}</strong> with Ziara</span>
                             </li>
-                            @endforeach
+                            <li class="flex items-start">
+                                <i class="ri-coins-line text-[var(--gold-bright)] mr-2 mt-0.5"></i>
+                                <span class="text-white/90">Your estimated carbon footprint is <strong>{{ $travelInsights['carbon_footprint'] ?? '0 tons CO2' }}</strong></span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="ri-coins-line text-[var(--gold-bright)] mr-2 mt-0.5"></i>
+                                <span class="text-white/90">Book bundles to unlock <strong>extra discounts</strong> on future trips</span>
+                            </li>
                         </ul>
                     </div>
 
@@ -234,41 +232,41 @@
         <div class="trezo-card border border-gray-100 dark:border-[#172036] p-[20px] md:p-[25px] rounded-md">
             <div class="trezo-card-header mb-[20px]">
                 <h5 class="mb-0 flex items-center">
-                    <i class="ri-timeline-line mr-2 text-indigo-500"></i>
+                    <i class="ri-timeline-line mr-2 text-[var(--maroon)]"></i>
                     Your Travel Journey
                 </h5>
             </div>
             <div class="trezo-card-content">
                 <div class="relative">
                     <!-- Timeline -->
-                    <div class="absolute left-4 top-0 bottom-0 w-0.5 bg-gray-200 dark:bg-gray-700"></div>
-                    
+                    <div class="absolute left-4 top-0 bottom-0 w-0.5" style="background:linear-gradient(180deg,var(--gold),var(--line));"></div>
+
                     <div class="space-y-6">
                         @php
                             $travelMilestones = [
-                                ['date' => 'Jan 2024', 'event' => 'First international trip - Dubai', 'type' => 'flight', 'color' => 'blue'],
-                                ['date' => 'Mar 2024', 'event' => 'Discovered coastal destinations - Mombasa', 'type' => 'hotel', 'color' => 'green'],
-                                ['date' => 'Jun 2024', 'event' => 'Started business travel pattern', 'type' => 'business', 'color' => 'purple'],
-                                ['date' => 'Aug 2024', 'event' => 'Became a frequent traveler (10+ trips)', 'type' => 'milestone', 'color' => 'orange']
+                                ['date' => 'First Steps', 'event' => 'Created your Ziara Travel account', 'type' => 'account', 'color' => 'maroon'],
+                                ['date' => 'Booking', 'event' => 'Made your first travel booking', 'type' => 'boat', 'color' => 'maroon'],
+                                ['date' => 'Frequency', 'event' => 'Your current travel frequency is ' . ($travelInsights['travel_frequency'] ?? 'New Traveler'), 'type' => 'milestone', 'color' => 'maroon'],
+                                ['date' => 'Your Style', 'event' => 'Detected as a ' . ($travelInsights['travel_style'] ?? 'Balanced Traveler'), 'type' => 'star', 'color' => 'maroon']
                             ];
                         @endphp
-                        
+
                         @foreach($travelMilestones as $milestone)
-                        <div class="relative flex items-start space-x-4">
-                            <div class="flex-shrink-0 w-8 h-8 bg-{{ $milestone['color'] }}-500 rounded-full flex items-center justify-center relative z-10">
-                                @if($milestone['type'] === 'flight')
-                                    <i class="ri-plane-line text-white text-sm"></i>
-                                @elseif($milestone['type'] === 'hotel')
-                                    <i class="ri-hotel-line text-white text-sm"></i>
-                                @elseif($milestone['type'] === 'business')
-                                    <i class="ri-briefcase-line text-white text-sm"></i>
+                        <div class="relative flex items-start space-x-4 timeline-item">
+                            <div class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center relative z-10" style="background:linear-gradient(135deg,var(--maroon),var(--maroon-deep));">
+                                @if($milestone['type'] === 'boat')
+                                    <i class="ri-sailboat-line text-white text-sm"></i>
+                                @elseif($milestone['type'] === 'milestone')
+                                    <i class="ri-award-line text-white text-sm"></i>
+                                @elseif($milestone['type'] === 'star')
+                                    <i class="ri-star-line text-white text-sm"></i>
                                 @else
-                                    <i class="ri-trophy-line text-white text-sm"></i>
+                                    <i class="ri-user-smile-line text-white text-sm"></i>
                                 @endif
                             </div>
                             <div class="flex-1 min-w-0">
-                                <div class="flex items-center justify-between">
-                                    <p class="text-sm font-medium text-gray-800 dark:text-white">{{ $milestone['event'] }}</p>
+                                <div class="flex items-center justify-between flex-wrap gap-2">
+                                    <p class="text-sm font-medium text-gray-800 dark:text-white mb-0">{{ $milestone['event'] }}</p>
                                     <span class="text-xs text-gray-500">{{ $milestone['date'] }}</span>
                                 </div>
                             </div>
@@ -281,38 +279,6 @@
 
     </div>
 </div>
-@endsection
-
-@section('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize travel insights features
-    console.log('Travel insights page loaded');
-    
-    // Add interactivity for recommendations
-    const recommendationCards = document.querySelectorAll('.recommendation-card');
-    recommendationCards.forEach(card => {
-        card.addEventListener('click', function() {
-            // Add click handling for recommendations
-            console.log('Recommendation clicked');
-        });
-    });
-    
-    // Timeline animations
-    const timelineItems = document.querySelectorAll('.timeline-item');
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('animate-fade-in');
-            }
-        });
-    });
-    
-    timelineItems.forEach(item => {
-        observer.observe(item);
-    });
-});
-</script>
 
 <style>
 .animate-fade-in {
@@ -341,4 +307,25 @@ document.addEventListener('DOMContentLoaded', function() {
     transform: translateY(0);
 }
 </style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize travel insights features
+    console.log('Travel insights page loaded');
+
+    // Timeline animations
+    const timelineItems = document.querySelectorAll('.timeline-item');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('animate-fade-in');
+            }
+        });
+    });
+
+    timelineItems.forEach(item => {
+        observer.observe(item);
+    });
+});
+</script>
 @endsection

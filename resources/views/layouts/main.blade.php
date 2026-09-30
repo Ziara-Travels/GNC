@@ -45,14 +45,25 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css">
     <!-- Custom CSS -->
     <link rel="stylesheet"
-        href="{{ asset('build/css/custom.css') }}?v={{ filemtime(public_path('build/css/custom.css')) }}">
+        href="{{ asset('build/css/custom.css') }}?v={{ (file_exists(public_path('build/css/custom.css')) ? filemtime(public_path('build/css/custom.css')) : 0) }}">
 
     <link rel="stylesheet" href="{{ asset('css/main.css') }}">
+
+    <link rel="stylesheet" href="{{ asset('css/site.css') }}">
 
     <!-- AOS CSS for animations -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
     <link href="{{ asset('css/flight-search.css') }}" rel="stylesheet">
+
+    <!-- Ziara Travels site-clone theme (captured and localized from ziaratravels.co.ke) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/ziara.css') }}?v={{ (file_exists(public_path('css/ziara.css')) ? filemtime(public_path('css/ziara.css')) : 0) }}">
+    <link rel="stylesheet" href="{{ asset('css/ziara-pages.css') }}?v={{ (file_exists(public_path('css/ziara-pages.css')) ? filemtime(public_path('css/ziara-pages.css')) : 0) }}">
+    <link rel="stylesheet" href="{{ asset('css/ziara-tours.css') }}?v={{ (file_exists(public_path('css/ziara-tours.css')) ? filemtime(public_path('css/ziara-tours.css')) : 0) }}">
+    <link rel="stylesheet" href="{{ asset('css/ziara-theme.css') }}?v={{ (file_exists(public_path('css/ziara-theme.css')) ? filemtime(public_path('css/ziara-theme.css')) : 0) }}">
 
     <style>
 
@@ -3768,6 +3779,10 @@ document.addEventListener('DOMContentLoaded', function() {
     <!-- Flight search redirect script -->
     <script src="{{ asset('js/flight-redirect.js') }}"></script>
     
+    {{-- Styles pushed from includes during content render are emitted
+         here as well, since the head stack renders before the content. --}}
+    @stack('styles')
+
     @stack('scripts')
 </body>
 

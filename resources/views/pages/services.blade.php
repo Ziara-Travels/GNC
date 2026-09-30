@@ -1,38 +1,40 @@
 @extends('layouts.main')
+@section('title', 'Our Services - Ziara Travel')
 
 @section('content')
 {{-- ===== HERO ===== --}}
-<section class="relative bg-slate-900 overflow-hidden">
-    <img src="https://images.unsplash.com/photo-1488085061387-422e29b40080?w=1400&h=500&fit=crop" alt="" class="absolute inset-0 w-full h-full object-cover opacity-20" loading="eager">
-    <div class="relative max-w-5xl mx-auto px-4 pt-28 pb-10 text-center">
-        <h1 class="text-2xl md:text-3xl font-bold text-white mb-1">Our <span class="text-amber-400">Services</span></h1>
-        <p class="text-xs text-gray-300">Comprehensive travel solutions for every journey</p>
-    </div>
-</section>
+@include('partials.ziara-page-hero', [
+    'kicker' => 'Our Services',
+    'title'  => 'Our <em>Services</em>',
+    'intro'  => 'Comprehensive travel solutions for every journey.',
+])
 
 {{-- ===== MAIN SERVICES ===== --}}
-<section class="py-10 bg-white">
-    <div class="max-w-5xl mx-auto px-4">
-        <div class="text-center mb-6">
-            <span class="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">What We Offer</span>
-            <h2 class="text-lg font-bold text-gray-900 mt-0.5">Everything You Need for Travel</h2>
-        </div>
+<section class="zt-section zt-section--white">
+    <div class="container">
+        @include('partials.ziara-section-head', [
+            'sub'   => 'What We Offer',
+            'title' => 'Everything You Need <em>for Travel</em>',
+            'align' => 'center',
+        ])
         @php $services = [
-            ['icon'=>'fa-plane','title'=>'Flight Booking','desc'=>'Real-time search across 500+ airlines with competitive prices and instant confirmation.','bullets'=>['Real-time pricing','Flexible dates','Instant e-ticket'],'link'=>url('/flights/search'),'color'=>'amber'],
-            ['icon'=>'fa-hotel','title'=>'Hotel Booking','desc'=>'Find 2M+ accommodations worldwide with verified reviews and best rate guarantee.','bullets'=>['Price match guarantee','Free cancellation','Verified reviews'],'link'=>url('/hotels/search'),'color'=>'blue'],
-            ['icon'=>'fa-map-marked-alt','title'=>'Tour Packages','desc'=>'Curated safari and adventure tours across East Africa's top destinations.','bullets'=>['Expert local guides','All-inclusive options','Group discounts'],'link'=>url('/tours'),'color'=>'emerald'],
-            ['icon'=>'fa-suitcase-rolling','title'=>'Package Deals','desc'=>'Save up to 30% with flight + hotel bundles, custom-built for your trip.','bullets'=>['Bundle & save','Flexible booking','One-click checkout'],'link'=>url('/'),'color'=>'purple'],
-            ['icon'=>'fa-building','title'=>'Corporate Travel','desc'=>'Tailored solutions for businesses with volume discounts and dedicated account managers.','bullets'=>['Consolidated billing','Policy compliance','Priority support'],'link'=>url('/contactus'),'color'=>'indigo'],
-            ['icon'=>'fa-shield-alt','title'=>'Travel Insurance','desc'=>'Comprehensive coverage for trip cancellations, medical emergencies, and lost baggage.','bullets'=>['Trip protection','Medical cover','24/7 claims support'],'link'=>url('/travel-insurance'),'color'=>'rose'],
+            ['icon'=>'fa-solid fa-plane','title'=>'Flight Booking','desc'=>'Real-time search across 500+ airlines with competitive prices and instant confirmation.','bullets'=>['Real-time pricing','Flexible dates','Instant e-ticket'],'link'=>url('/flights/search')],
+            ['icon'=>'fa-solid fa-hotel','title'=>'Hotel Booking','desc'=>'Find 2M+ accommodations worldwide with verified reviews and best rate guarantee.','bullets'=>['Price match guarantee','Free cancellation','Verified reviews'],'link'=>url('/hotels/search')],
+            ['icon'=>'fa-solid fa-map-location-dot','title'=>'Tour Packages','desc'=>'Curated safari and adventure tours across East Africa\'s top destinations.','bullets'=>['Expert local guides','All-inclusive options','Group discounts'],'link'=>url('/tours')],
+            ['icon'=>'fa-solid fa-suitcase-rolling','title'=>'Package Deals','desc'=>'Save up to 30% with flight + hotel bundles, custom-built for your trip.','bullets'=>['Bundle & save','Flexible booking','One-click checkout'],'link'=>url('/')],
+            ['icon'=>'fa-solid fa-building','title'=>'Corporate Travel','desc'=>'Tailored solutions for businesses with volume discounts and dedicated account managers.','bullets'=>['Consolidated billing','Policy compliance','Priority support'],'link'=>url('/contactus')],
+            ['icon'=>'fa-solid fa-shield-halved','title'=>'Travel Insurance','desc'=>'Comprehensive coverage for trip cancellations, medical emergencies, and lost baggage.','bullets'=>['Trip protection','Medical cover','24/7 claims support'],'link'=>url('/travel-insurance')],
         ]; @endphp
-        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
+        <div class="ziara-features">
             @foreach($services as $s)
-            <div class="bg-gray-50 rounded-xl p-4 hover:shadow-md transition-shadow border border-gray-100 group">
-                <div class="w-8 h-8 bg-{{ $s['color'] }}-100 rounded-lg flex items-center justify-center mb-2 group-hover:scale-110 transition-transform"><i class="fas {{ $s['icon'] }} text-{{ $s['color'] }}-600 text-xs"></i></div>
-                <h3 class="text-xs font-bold text-gray-900 mb-1">{{ $s['title'] }}</h3>
-                <p class="text-[10px] text-gray-500 leading-relaxed mb-2">{{ $s['desc'] }}</p>
-                <ul class="space-y-0.5 mb-2">@foreach($s['bullets'] as $b)<li class="flex items-center gap-1.5 text-[10px] text-gray-600"><i class="fas fa-check text-emerald-500 text-[8px]"></i>{{ $b }}</li>@endforeach</ul>
-                <a href="{{ $s['link'] }}" class="text-[10px] font-semibold text-{{ $s['color'] }}-600 hover:underline">Learn More →</a>
+            <div class="ziara-feature">
+                <span class="ziara-feature__icon"><i class="{{ $s['icon'] }}" aria-hidden="true"></i></span>
+                <h3 class="ziara-feature__title">{{ $s['title'] }}</h3>
+                <p class="ziara-feature__desc">{{ $s['desc'] }}</p>
+                <ul class="ziara-feature__list">
+                    @foreach($s['bullets'] as $b)<li><i class="fa-solid fa-circle-check" aria-hidden="true"></i>{{ $b }}</li>@endforeach
+                </ul>
+                <a href="{{ $s['link'] }}" class="ziara-feature__link">Learn More <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
             </div>
             @endforeach
         </div>
@@ -40,21 +42,25 @@
 </section>
 
 {{-- ===== ADDITIONAL SERVICES ===== --}}
-<section class="py-10 bg-gray-50">
-    <div class="max-w-5xl mx-auto px-4">
-        <h2 class="text-lg font-bold text-gray-900 text-center mb-6">Additional Services</h2>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-            @php $extras = [
-                ['icon'=>'fa-exchange-alt','title'=>'Currency Exchange','desc'=>'Competitive forex rates for your travels'],
-                ['icon'=>'fa-passport','title'=>'Visa Assistance','desc'=>'Hassle-free visa application support'],
-                ['icon'=>'fa-car','title'=>'Airport Transfers','desc'=>'Reliable pickup & drop-off services'],
-                ['icon'=>'fa-headset','title'=>'24/7 Support','desc'=>'Round-the-clock customer assistance'],
-            ]; @endphp
+<section class="zt-section zt-section--pale">
+    <div class="container">
+        @include('partials.ziara-section-head', [
+            'sub'   => 'More Ways We Help',
+            'title' => 'Additional <em>Services</em>',
+            'align' => 'center',
+        ])
+        @php $extras = [
+            ['icon'=>'fa-solid fa-arrow-right-arrow-left','title'=>'Currency Exchange','desc'=>'Competitive forex rates for your travels'],
+            ['icon'=>'fa-solid fa-passport','title'=>'Visa Assistance','desc'=>'Hassle-free visa application support'],
+            ['icon'=>'fa-solid fa-car','title'=>'Airport Transfers','desc'=>'Reliable pickup & drop-off services'],
+            ['icon'=>'fa-solid fa-headset','title'=>'24/7 Support','desc'=>'Round-the-clock customer assistance'],
+        ]; @endphp
+        <div class="ziara-minifeatures">
             @foreach($extras as $e)
-            <div class="bg-white rounded-xl p-3 text-center border border-gray-100 hover:shadow-sm transition-shadow">
-                <div class="w-8 h-8 bg-emerald-50 rounded-lg flex items-center justify-center mx-auto mb-2"><i class="fas {{ $e['icon'] }} text-emerald-600 text-xs"></i></div>
-                <h3 class="text-xs font-bold text-gray-900 mb-0.5">{{ $e['title'] }}</h3>
-                <p class="text-[10px] text-gray-400">{{ $e['desc'] }}</p>
+            <div class="ziara-minifeature">
+                <span class="ziara-minifeature__icon"><i class="{{ $e['icon'] }}" aria-hidden="true"></i></span>
+                <h3 class="ziara-minifeature__title">{{ $e['title'] }}</h3>
+                <p class="ziara-minifeature__desc">{{ $e['desc'] }}</p>
             </div>
             @endforeach
         </div>
@@ -62,17 +68,22 @@
 </section>
 
 {{-- ===== CTA ===== --}}
-<section class="py-10 bg-white">
-    <div class="max-w-5xl mx-auto px-4">
-        <div class="flex flex-col md:flex-row items-center gap-6 bg-gray-50 rounded-xl overflow-hidden border border-gray-100">
-            <div class="md:w-1/2"><img src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=600&h=400&fit=crop" alt="Travel" class="w-full h-48 md:h-56 object-cover" loading="lazy"></div>
-            <div class="md:w-1/2 p-5">
-                <span class="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">Get Started</span>
-                <h2 class="text-lg font-bold text-gray-900 mt-1 mb-2">Ready to Plan Your Trip?</h2>
-                <p class="text-xs text-gray-500 leading-relaxed mb-4">Whether it's a quick domestic flight or an international adventure, we have the tools and expertise to make it seamless.</p>
-                <div class="flex gap-2">
-                    <a href="{{ url('/flights/search') }}" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors">Book a Flight</a>
-                    <a href="{{ url('/contactus') }}" class="border border-gray-200 text-gray-700 text-xs font-semibold px-4 py-2 rounded-lg hover:bg-white transition-colors">Contact Us</a>
+<section class="zt-section zt-section--white">
+    <div class="container">
+        <div class="ziara-split">
+            <div><img src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=600&h=400&fit=crop" alt="Travel" style="width:100%;border-radius:20px;box-shadow:0 24px 60px rgba(10,5,3,.18);" loading="lazy"></div>
+            <div>
+                @include('partials.ziara-section-head', [
+                    'sub'   => 'Get Started',
+                    'title' => 'Ready to Plan <em>Your Trip?</em>',
+                    'align' => 'left',
+                ])
+                <div class="ziara-prose" style="margin-top:-30px;">
+                    <p>Whether it's a quick domestic flight or an international adventure, we have the tools and expertise to make it seamless.</p>
+                </div>
+                <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:20px;">
+                    <a href="{{ url('/flights/search') }}" class="ziara-btn ziara-btn--gold">Book a Flight</a>
+                    <a href="{{ url('/contactus') }}" class="ziara-btn ziara-btn--outline">Contact Us</a>
                 </div>
             </div>
         </div>
@@ -80,20 +91,24 @@
 </section>
 
 {{-- ===== WHY CHOOSE US ===== --}}
-<section class="py-10 bg-gray-50">
-    <div class="max-w-5xl mx-auto px-4">
-        <h2 class="text-lg font-bold text-gray-900 text-center mb-6">Why Choose Ziara Travels?</h2>
-        <div class="grid md:grid-cols-3 gap-3">
-            @php $why = [
-                ['icon'=>'fa-tag','title'=>'Best Prices','desc'=>'We negotiate directly with airlines and hotels to guarantee the best rates.'],
-                ['icon'=>'fa-lock','title'=>'Secure Payments','desc'=>'M-Pesa, STK Push, bank transfer, and cards — all protected with end-to-end encryption.'],
-                ['icon'=>'fa-heart','title'=>'Dedicated Support','desc'=>'Our team of travel experts is available 24/7 to help you at every step of your journey.'],
-            ]; @endphp
+<section class="zt-section zt-section--pale">
+    <div class="container">
+        @include('partials.ziara-section-head', [
+            'sub'   => 'Why Choose Ziara Travels?',
+            'title' => 'Reasons to <em>Travel With Us</em>',
+            'align' => 'center',
+        ])
+        @php $why = [
+            ['icon'=>'fa-solid fa-tag','title'=>'Best Prices','desc'=>'We negotiate directly with airlines and hotels to guarantee the best rates.'],
+            ['icon'=>'fa-solid fa-lock','title'=>'Secure Payments','desc'=>'M-Pesa, STK Push, bank transfer, and cards — all protected with end-to-end encryption.'],
+            ['icon'=>'fa-solid fa-heart','title'=>'Dedicated Support','desc'=>'Our team of travel experts is available 24/7 to help you at every step of your journey.'],
+        ]; @endphp
+        <div class="ziara-features">
             @foreach($why as $w)
-            <div class="bg-white rounded-xl p-4 border border-gray-100 text-center">
-                <div class="w-8 h-8 bg-amber-50 rounded-lg flex items-center justify-center mx-auto mb-2"><i class="fas {{ $w['icon'] }} text-amber-600 text-xs"></i></div>
-                <h3 class="text-xs font-bold text-gray-900 mb-1">{{ $w['title'] }}</h3>
-                <p class="text-[10px] text-gray-500 leading-relaxed">{{ $w['desc'] }}</p>
+            <div class="ziara-feature">
+                <span class="ziara-feature__icon"><i class="{{ $w['icon'] }}" aria-hidden="true"></i></span>
+                <h3 class="ziara-feature__title">{{ $w['title'] }}</h3>
+                <p class="ziara-feature__desc">{{ $w['desc'] }}</p>
             </div>
             @endforeach
         </div>
@@ -101,9 +116,13 @@
 </section>
 
 {{-- ===== FAQ ===== --}}
-<section class="py-10 bg-white">
-    <div class="max-w-2xl mx-auto px-4">
-        <h2 class="text-lg font-bold text-gray-900 text-center mb-6">Services FAQs</h2>
+<section class="zt-section zt-section--white">
+    <div class="container">
+        @include('partials.ziara-section-head', [
+            'sub'   => 'Everything You Need to Know',
+            'title' => 'Services <em>FAQs</em>',
+            'align' => 'center',
+        ])
         @php $faqs = [
             ['q'=>'What destinations do you cover?','a'=>'We offer flights to 190+ countries and hotels in major cities worldwide, with a focus on East African destinations.'],
             ['q'=>'Do you offer group booking discounts?','a'=>'Yes! Groups of 10+ travelers receive volume discounts. Contact our corporate team for a custom quote.'],
@@ -111,35 +130,10 @@
             ['q'=>'Can I cancel and get a refund?','a'=>'Cancellation and refund policies depend on the specific booking type and fare rules. Flexible rates generally allow free cancellation.'],
             ['q'=>'Do you provide travel insurance?','a'=>'Yes, we offer comprehensive travel insurance covering trip cancellations, medical emergencies, lost luggage, and more.'],
         ]; @endphp
-        <div class="space-y-2">
-            @foreach($faqs as $faq)
-            <div class="border border-gray-200 rounded-lg bg-gray-50 overflow-hidden">
-                <button class="faq-toggle w-full flex items-center justify-between p-3 text-left hover:bg-gray-100 transition-colors" onclick="toggleFaq(this)">
-                    <span class="text-xs font-semibold text-gray-900 pr-3">{{ $faq['q'] }}</span>
-                    <i class="fas fa-chevron-down text-gray-300 text-[10px] transition-transform duration-200 shrink-0"></i>
-                </button>
-                <div class="faq-content hidden px-3 pb-3"><p class="text-[11px] text-gray-500 leading-relaxed">{{ $faq['a'] }}</p></div>
-            </div>
-            @endforeach
-        </div>
+        @include('partials.ziara-faqs', ['faqs' => $faqs])
     </div>
 </section>
 
 {{-- ===== NEWSLETTER ===== --}}
-<section class="py-10 bg-emerald-600">
-    <div class="max-w-xl mx-auto px-4 text-center">
-        <h2 class="text-base font-bold text-white mb-1">Stay Informed</h2>
-        <p class="text-[11px] text-emerald-100 mb-4">Get updates on new services, exclusive deals, and travel tips.</p>
-        <form class="flex gap-2" onsubmit="event.preventDefault(); alert('Subscribed!'); this.reset();">
-            <input type="email" placeholder="Your email" class="flex-1 px-3 py-2 rounded-lg text-xs text-gray-800 focus:ring-2 focus:ring-amber-400 focus:outline-none" required>
-            <button type="submit" class="bg-amber-500 hover:bg-amber-600 text-white text-xs font-semibold px-5 py-2 rounded-lg transition-colors whitespace-nowrap">Subscribe</button>
-        </form>
-    </div>
-</section>
+@include('partials.ziara-newsletter', ['title' => 'Stay Informed'])
 @endsection
-
-@push('scripts')
-<script>
-function toggleFaq(btn){var c=btn.nextElementSibling,ic=btn.querySelector('i'),open=!c.classList.contains('hidden');document.querySelectorAll('.faq-content').forEach(function(x){x.classList.add('hidden');});document.querySelectorAll('.faq-toggle i').forEach(function(x){x.style.transform='rotate(0)';});if(!open){c.classList.remove('hidden');ic.style.transform='rotate(180deg)';}}
-</script>
-@endpush

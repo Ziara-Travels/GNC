@@ -191,7 +191,12 @@
 
         var wrap = input.closest('.relative');
         var sug = wrap.querySelector('.airport-suggestions') || wrap.parentElement.querySelector('.airport-suggestions');
-        var hidden = wrap.parentElement.querySelector('input[type="hidden"]') || wrap.querySelector('input[type="hidden"]');
+        var hidden = wrap.parentElement.querySelector('input[type="hidden"][name$="_iata"], input[type="hidden"][name$="_iata[]"]')
+            || wrap.parentElement.querySelector('input[type="hidden"]')
+            || wrap.querySelector('input[type="hidden"]');
+        var entityHidden = wrap.parentElement.querySelector('input[type="hidden"][name*="_entity"]')
+            || wrap.querySelector('input[type="hidden"][name*="_entity"]')
+            || null;
         var to;
 
         input.addEventListener('input', function () {
@@ -199,10 +204,10 @@
             var q = this.value.trim();
             if (q.length < 2) { sug.classList.add('hidden'); return; }
             to = setTimeout(function () {
-                if (airportCache[q]) { renderSuggestions(airportCache[q], sug, input, hidden); return; }
+                if (airportCache[q]) { renderSuggestions(airportCache[q], sug, input, hidden, entityHidden); return; }
                 fetch('/api/airports/search?q=' + encodeURIComponent(q))
                     .then(function (r) { return r.json(); })
-                    .then(function (d) { airportCache[q] = d; renderSuggestions(d, sug, input, hidden); })
+                    .then(function (d) { airportCache[q] = d; renderSuggestions(d, sug, input, hidden, entityHidden); })
                     .catch(function () { sug.classList.add('hidden'); });
             }, 200);
         });
@@ -212,7 +217,7 @@
         });
     }
 
-    function renderSuggestions(data, container, input, hidden) {
+    function renderSuggestions(data, container, input, hidden, entityHidden) {
         if (!data || !data.length) { container.classList.add('hidden'); return; }
         container.innerHTML = '';
         data.slice(0, 6).forEach(function (item) {
@@ -226,6 +231,7 @@
             d.addEventListener('click', function () {
                 input.value = name + ' (' + code + ')';
                 hidden.value = code;
+                if (entityHidden) entityHidden.value = item.entity_id || item.sky_id || code;
                 container.classList.add('hidden');
             });
             container.appendChild(d);
@@ -249,6 +255,7 @@
                         '<i class="fas fa-plane-departure absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-300 text-[10px]"></i>' +
                         '<input type="text" class="w-full pl-7 pr-2 py-2 border border-gray-200 rounded-lg text-xs text-gray-800 airport-autocomplete" placeholder="City or Airport" autocomplete="off" required>' +
                         '<input type="hidden" name="from_iata[]">' +
+                        '<input type="hidden" name="from_entity[]">' +
                     '</div>' +
                     '<div class="airport-suggestions absolute z-50 w-full bg-white border border-gray-200 rounded-lg shadow-xl mt-1 hidden max-h-48 overflow-y-auto"></div>' +
                 '</div>' +
@@ -258,6 +265,7 @@
                         '<i class="fas fa-plane-arrival absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-300 text-[10px]"></i>' +
                         '<input type="text" class="w-full pl-7 pr-2 py-2 border border-gray-200 rounded-lg text-xs text-gray-800 airport-autocomplete" placeholder="City or Airport" autocomplete="off" required>' +
                         '<input type="hidden" name="to_iata[]">' +
+                        '<input type="hidden" name="to_entity[]">' +
                     '</div>' +
                     '<div class="airport-suggestions absolute z-50 w-full bg-white border border-gray-200 rounded-lg shadow-xl mt-1 hidden max-h-48 overflow-y-auto"></div>' +
                 '</div>' +

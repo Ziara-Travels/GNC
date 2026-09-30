@@ -1,139 +1,108 @@
 @extends('layouts.main')
 
+@section('title', 'Hotel Search Results - Ziara Travel')
+
 @section('content')
 @php
-    // Normalize variable naming — HotelBookingController passes search_params, HotelSearchController passes searchParams
     $searchParams = $searchParams ?? $search_params ?? [];
-
-    // Normalize hotels data — HotelBookingController may pass full response with 'data' key
-    if (isset($hotels['data'])) {
-        $hotels = $hotels['data'];
-    }
     $hotels = $hotels ?? [];
+    $bookingUrls = $bookingUrls ?? [];
 
-    // Extract unique star ratings and price range for filters
+    $nights = 1;
+    if (!empty($searchParams['checkin']) && !empty($searchParams['checkout'])) {
+        $nights = max(1, (int) \Carbon\Carbon::parse($searchParams['checkin'])->diffInDays(\Carbon\Carbon::parse($searchParams['checkout'])));
+    }
+
     $starRatings = [];
-    $allPrices = [];
-    $allAmenities = [];
+    $minPrice = null;
+    $maxPrice = null;
     foreach ($hotels as $h) {
-        $rating = intval($h['hotel']['rating'] ?? 0);
-        if ($rating > 0) $starRatings[$rating] = $rating;
-        $price = floatval($h['offers'][0]['price']['total'] ?? 0);
-        if ($price > 0) $allPrices[] = $price;
-        foreach ($h['hotel']['amenities'] ?? [] as $a) {
-            $key = str_replace('_', ' ', $a);
-            $allAmenities[$key] = ($allAmenities[$key] ?? 0) + 1;
+        $s = intval($h['starRating'] ?? 0);
+        if ($s > 0) $starRatings[$s] = $s;
+        $p = floatval($h['price'] ?? 0);
+        if ($p > 0) {
+            if ($minPrice === null || $p < $minPrice) $minPrice = $p;
+            if ($maxPrice === null || $p > $maxPrice) $maxPrice = $p;
         }
     }
-    arsort($allAmenities);
-    $topAmenities = array_slice(array_keys($allAmenities), 0, 8);
     krsort($starRatings);
-    $minPrice = !empty($allPrices) ? floor(min($allPrices)) : 0;
-    $maxPrice = !empty($allPrices) ? ceil(max($allPrices)) : 1000;
-    $nights = 1;
-    if (!empty($searchParams['check_in_date']) && !empty($searchParams['check_out_date'])) {
-        $nights = \Carbon\Carbon::parse($searchParams['check_in_date'])->diffInDays(\Carbon\Carbon::parse($searchParams['check_out_date']));
-    }
+    $minPrice = $minPrice !== null ? floor($minPrice) : 1000;
+    $maxPrice = $maxPrice !== null ? ceil($maxPrice) : 50000;
+    $destLabel = $searchParams['destination_label'] ?? ($searchParams['destination'] ?? 'Hotels');
+    $currency = $currency ?? 'KES';
 @endphp
 
-<div class="bg-gray-50 min-h-screen">
-    {{-- Search Summary Header --}}
-    <div class="bg-gradient-to-r from-slate-800 to-slate-900 text-white py-5">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-wrap items-center justify-between gap-4">
-                <div>
-                    <p class="text-slate-400 text-sm">Hotel search results</p>
-                    <h1 class="text-2xl font-bold mt-1">{{ $searchParams['destination'] ?? 'Hotels' }}</h1>
-                </div>
-                <div class="flex flex-wrap items-center gap-2 text-sm">
-                    @if(!empty($searchParams['check_in_date']))
-                        <span class="bg-white/10 backdrop-blur px-3 py-1.5 rounded-full">
-                            <i class="far fa-calendar-alt mr-1"></i>
-                            {{ \Carbon\Carbon::parse($searchParams['check_in_date'])->format('M d') }} &ndash; {{ \Carbon\Carbon::parse($searchParams['check_out_date'])->format('M d, Y') }}
-                        </span>
-                    @endif
-                    @if(!empty($searchParams['rooms']))
-                        <span class="bg-white/10 backdrop-blur px-3 py-1.5 rounded-full">
-                            <i class="fas fa-door-open mr-1"></i>
-                            {{ $searchParams['rooms'] }} {{ $searchParams['rooms'] > 1 ? 'rooms' : 'room' }}
-                        </span>
-                    @endif
-                    @if(!empty($searchParams['adults']))
-                        <span class="bg-white/10 backdrop-blur px-3 py-1.5 rounded-full">
-                            <i class="fas fa-user mr-1"></i>
-                            {{ $searchParams['adults'] }} {{ $searchParams['adults'] > 1 ? 'guests' : 'guest' }}
-                        </span>
-                    @endif
-                    <span class="bg-white/10 backdrop-blur px-3 py-1.5 rounded-full">
-                        <i class="fas fa-moon mr-1"></i>
-                        {{ $nights }} {{ $nights > 1 ? 'nights' : 'night' }}
-                    </span>
-                </div>
-                <a href="{{ route('hotels.search.form') }}" class="inline-flex items-center bg-white text-slate-800 px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-100 transition">
-                    <i class="fas fa-search mr-2"></i> Modify Search
-                </a>
-            </div>
-        </div>
-    </div>
+<style>
+.ziara-hotel-results .ziara-archive__hero { --zt-maroon:#7b2a1b;--zt-maroon-deep:#6b1d15;--zt-gold:#d9a561;--zt-gold-bright:#f3d24a; }
+.ziara-hotel-results .ziara-deals { grid-template-columns:1fr;gap:20px; }
+.ziara-hotel-results .ziara-deal { flex-direction:column;border-color:var(--gold-border); }
+@media (min-width:768px) { .ziara-hotel-results .ziara-deal { flex-direction:row; } }
+.ziara-hotel-results .ziara-hotel-results__media { background:linear-gradient(135deg,#f6efe6,#efe3d2); }
+.ziara-hotel-results .ziara-hotel-results__score { background:#7b2a1b;color:#f3d24a;border-radius:10px;padding:6px 10px;text-align:center;line-height:1.1; }
+.ziara-hotel-results .ziara-hotel-results__amenity { background:var(--gold-pale);color:var(--maroon);border:1px solid var(--gold-border);border-radius:999px;padding:2px 10px;font-size:12px;font-weight:600; }
+.ziara-hotel-results .ziara-hotel-results__amenity + .ziara-hotel-results__amenity { margin-left:6px; }
+.ziara-hotel-results .ziara-sort-tab.active { background:#7b2a1b;border-color:#7b2a1b;color:#f3d24a; }
+.ziara-hotel-results .ziara-sort-tab:hover { border-color:#d9a561;color:#7b2a1b; }
+.ziara-hotel-results #filter-price { accent-color:#7b2a1b; }
+.ziara-hotel-results .filter-star, .ziara-hotel-results .filter-score { accent-color:#7b2a1b; }
+</style>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        {{-- Results Count & Sort --}}
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-3">
-            <h2 class="text-xl font-bold text-gray-900">
-                <span id="results-count">{{ count($hotels) }}</span> hotels found
-                <span class="text-sm font-normal text-gray-500">in {{ $searchParams['destination'] ?? 'your area' }}</span>
-            </h2>
-            <div class="flex items-center gap-2">
-                <label for="sort-by" class="text-sm text-gray-600 whitespace-nowrap">Sort by:</label>
-                <select id="sort-by" class="border border-gray-300 rounded-lg text-sm py-2 px-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white">
-                    <option value="recommended">Recommended</option>
-                    <option value="price_low">Price: Low → High</option>
-                    <option value="price_high">Price: High → Low</option>
-                    <option value="rating_high">Stars: High → Low</option>
-                    <option value="name_asc">Name: A → Z</option>
-                </select>
-            </div>
+@include('partials.ziara-page-hero', [
+    'kicker' => 'Hotel Search Results',
+    'title'  => '<em>' . e($destLabel) . '</em>',
+    'intro'  => 'Compare available stays, refine your filters and continue to the property that suits your trip.',
+    'crumbs' => [
+        ['label' => 'Home', 'url' => route('home')],
+        ['label' => 'Hotels', 'url' => route('hotels.search.form')],
+        ['label' => 'Results', 'url' => route('hotels.search.form')],
+    ],
+])
+
+<div class="zt-section zt-section--pale ziara-hotel-results" style="--maroon:#7b2a1b;--maroon-deep:#6b1d15;--gold:#d9a561;--gold-bright:#f3d24a;">
+    <div class="container">
+        <div class="ziara-panel" style="padding:20px 24px;margin-bottom:26px;display:flex;flex-wrap:wrap;align-items:center;gap:14px;">
+            <span style="display:inline-flex;align-items:center;gap:8px;font-size:14px;color:var(--muted);">
+                <i class="far fa-calendar-alt" aria-hidden="true" style="color:var(--gold);"></i>
+                @if(!empty($searchParams['checkin']))
+                    {{ \Carbon\Carbon::parse($searchParams['checkin'])->format('M d') }} &ndash; {{ \Carbon\Carbon::parse($searchParams['checkout'])->format('M d, Y') }}
+                    &middot; {{ $nights }} {{ $nights > 1 ? 'nights' : 'night' }}
+                @else
+                    Add dates to see nightly totals
+                @endif
+            </span>
+            <span style="display:inline-flex;align-items:center;gap:8px;font-size:14px;color:var(--muted);">
+                <i class="fas fa-user" aria-hidden="true" style="color:var(--gold);"></i> {{ $searchParams['adults'] ?? 2 }} guests &middot; {{ $searchParams['rooms'] ?? 1 }} room
+            </span>
+            <a href="{{ route('hotels.search.form') }}" class="ziara-btn ziara-btn--outline" style="margin-left:auto;">
+                <i class="fas fa-sliders-h" aria-hidden="true"></i> Modify Search
+            </a>
         </div>
 
         <div class="flex flex-col lg:flex-row gap-6">
-            {{-- Filters Sidebar --}}
             <aside class="w-full lg:w-72 shrink-0">
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden lg:sticky lg:top-24">
-                    <div class="bg-slate-800 text-white px-5 py-3 flex justify-between items-center">
+                <div class="ziara-card ziara-panel overflow-hidden lg:sticky lg:top-24 ziara-filter-card" style="padding:0;">
+                    <div class="ziara-filter-head px-5 py-3 flex justify-between items-center">
                         <span class="font-semibold text-sm"><i class="fas fa-sliders-h mr-2"></i>Filters</span>
-                        <button id="clear-filters" class="text-xs text-slate-300 hover:text-white transition">Clear all</button>
+                        <button id="clear-filters" class="text-xs text-blue-300 hover:text-white transition">Clear all</button>
                     </div>
-
                     <div class="p-5 space-y-6">
-                        {{-- Price Range --}}
                         <div>
-                            <h4 class="text-sm font-semibold text-gray-700 mb-3">Price per stay</h4>
-                            <div class="flex gap-2 items-center">
-                                <div class="flex-1">
-                                    <label class="text-xs text-gray-500">Min</label>
-                                    <input type="number" id="filter-price-min" value="{{ $minPrice }}" min="0"
-                                        class="w-full border border-gray-300 rounded-lg text-sm py-1.5 px-2 mt-0.5 focus:ring-indigo-500 focus:border-indigo-500">
-                                </div>
-                                <span class="text-gray-400 mt-4">&ndash;</span>
-                                <div class="flex-1">
-                                    <label class="text-xs text-gray-500">Max</label>
-                                    <input type="number" id="filter-price-max" value="{{ $maxPrice }}" min="0"
-                                        class="w-full border border-gray-300 rounded-lg text-sm py-1.5 px-2 mt-0.5 focus:ring-indigo-500 focus:border-indigo-500">
-                                </div>
+                            <h4 class="ziara-panel__title" style="font-size:16px;margin-bottom:12px;">Max price / night</h4>
+                            <input type="range" id="filter-price" class="w-full accent-blue-600" min="{{ $minPrice }}" max="{{ $maxPrice }}" value="{{ $maxPrice }}" step="500">
+                            <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                <span>{{ number_format($minPrice, 0) }}</span>
+                                <span class="font-semibold text-blue-600" data-price-label>Up to {{ number_format($maxPrice, 0) }}</span>
                             </div>
                         </div>
 
-                        {{-- Star Rating --}}
                         @if(!empty($starRatings))
                         <div>
-                            <h4 class="text-sm font-semibold text-gray-700 mb-3">Star Rating</h4>
+                            <h4 class="ziara-panel__title" style="font-size:16px;margin-bottom:12px;">Star rating</h4>
                             <div class="space-y-2">
                                 @foreach($starRatings as $stars)
                                     <label class="flex items-center gap-2 cursor-pointer group">
-                                        <input type="checkbox" class="filter-star rounded text-indigo-600 focus:ring-indigo-500 h-4 w-4" value="{{ $stars }}">
-                                        <span class="text-yellow-400 text-sm tracking-tight">
-                                            @for($s = 0; $s < $stars; $s++) ★ @endfor
-                                        </span>
+                                        <input type="checkbox" class="filter-star rounded text-blue-600 focus:ring-blue-500 h-4 w-4" value="{{ $stars }}" checked>
+                                        <span class="text-amber-400 text-sm tracking-tight">@for($s = 0; $s < $stars; $s++)★@endfor</span>
                                         <span class="text-gray-400 text-xs group-hover:text-gray-600">{{ $stars }}-star</span>
                                     </label>
                                 @endforeach
@@ -141,158 +110,140 @@
                         </div>
                         @endif
 
-                        {{-- Amenities --}}
-                        @if(!empty($topAmenities))
                         <div>
-                            <h4 class="text-sm font-semibold text-gray-700 mb-3">Amenities</h4>
-                            <div class="space-y-2">
-                                @foreach($topAmenities as $amenity)
-                                    <label class="flex items-center gap-2 cursor-pointer">
-                                        <input type="checkbox" class="filter-amenity rounded text-indigo-600 focus:ring-indigo-500 h-4 w-4" value="{{ $amenity }}">
-                                        <span class="text-gray-700 text-sm">{{ ucwords(strtolower($amenity)) }}</span>
-                                    </label>
-                                @endforeach
-                            </div>
+                            <h4 class="ziara-panel__title" style="font-size:16px;margin-bottom:12px;">Review score</h4>
+                            <label class="flex items-center gap-2">
+                                <input type="checkbox" class="filter-score rounded text-blue-600 focus:ring-blue-500 h-4 w-4" value="8" checked>
+                                <span class="text-gray-700 text-sm">8+ Fabulous</span>
+                            </label>
+                            <label class="flex items-center gap-2 mt-2">
+                                <input type="checkbox" class="filter-score rounded text-blue-600 focus:ring-blue-500 h-4 w-4" value="7">
+                                <span class="text-gray-700 text-sm">7+ Good</span>
+                            </label>
                         </div>
-                        @endif
                     </div>
                 </div>
             </aside>
 
-            {{-- Hotel Cards --}}
             <div class="flex-1 min-w-0">
-                <div class="space-y-5" id="hotel-results">
-                    @forelse($hotels as $hotel)
-                        @php
-                            $hotelData = $hotel['hotel'] ?? [];
-                            $hotelName = $hotelData['name'] ?? 'Unknown Hotel';
-                            $hotelRating = intval($hotelData['rating'] ?? 0);
-                            $hotelCity = $hotelData['address']['cityName'] ?? ($hotelData['address']['lines'][0] ?? '');
-                            $hotelAmenities = $hotelData['amenities'] ?? [];
-                            $hotelMedia = $hotelData['media'] ?? [];
-                            $hotelId = $hotelData['hotelId'] ?? '';
-                            $offer = $hotel['offers'][0] ?? [];
-                            $price = floatval($offer['price']['total'] ?? 0);
-                            $currency = $offer['price']['currency'] ?? 'USD';
-                            $offerId = $offer['id'] ?? '';
-                            $roomDesc = $offer['room']['description']['text'] ?? '';
-                            $roomType = $offer['room']['typeEstimated']['category'] ?? '';
-                            $amenityStr = implode(',', array_map(function($a){ return str_replace('_',' ',$a); }, $hotelAmenities));
-                        @endphp
-                        <div class="hotel-card bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow"
-                             data-price="{{ $price }}"
-                             data-rating="{{ $hotelRating }}"
-                             data-name="{{ strtolower($hotelName) }}"
-                             data-amenities="{{ strtolower($amenityStr) }}">
-                            <div class="flex flex-col md:flex-row">
-                                {{-- Image --}}
-                                <div class="md:w-72 relative shrink-0">
-                                    @if(!empty($hotelMedia))
-                                        <img src="{{ $hotelMedia[0]['uri'] ?? '' }}"
-                                             alt="{{ $hotelName }}"
-                                             class="w-full h-52 md:h-full object-cover"
-                                             loading="lazy"
-                                             onerror="this.onerror=null;this.src='https://placehold.co/600x400/e2e8f0/94a3b8?text=No+Image';">
-                                    @else
-                                        <div class="w-full h-52 md:h-full bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center">
-                                            <i class="fas fa-hotel text-slate-300 text-5xl"></i>
-                                        </div>
-                                    @endif
-                                    @if($hotelRating >= 4)
-                                        <span class="absolute top-3 left-3 bg-amber-500 text-white text-xs font-bold px-2 py-1 rounded-md shadow">
-                                            <i class="fas fa-star mr-0.5"></i> {{ $hotelRating }}-Star
-                                        </span>
-                                    @endif
-                                </div>
+                <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+                    <h2 class="ziara-panel__title" style="font-size:22px;"><span id="results-count">{{ count($hotels) }}</span> stays found</h2>
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <button class="ziara-sort-tab active text-xs px-4 py-2" data-sort="recommended">Recommended</button>
+                        <button class="ziara-sort-tab text-xs px-4 py-2" data-sort="price_low">Price ↑</button>
+                        <button class="ziara-sort-tab text-xs px-4 py-2" data-sort="price_high">Price ↓</button>
+                        <button class="ziara-sort-tab text-xs px-4 py-2" data-sort="rating_high">Top rated</button>
+                    </div>
+                </div>
 
-                                {{-- Details --}}
-                                <div class="flex-1 p-5 flex flex-col">
-                                    <div class="flex-1">
-                                        <div class="flex justify-between items-start gap-3">
-                                            <div class="min-w-0">
-                                                <h3 class="font-bold text-lg text-gray-900 truncate">{{ $hotelName }}</h3>
-                                                <div class="flex items-center gap-2 mt-1 text-sm">
-                                                    @if($hotelRating > 0)
-                                                        <span class="text-yellow-400">
-                                                            @for($s = 0; $s < $hotelRating; $s++) ★ @endfor
-                                                        </span>
-                                                    @endif
-                                                    @if($hotelCity)
-                                                        <span class="text-gray-500"><i class="fas fa-map-marker-alt text-indigo-400 mr-1"></i>{{ $hotelCity }}</span>
-                                                    @endif
-                                                </div>
+                <div id="hotel-results" class="ziara-deals">
+                    @forelse($hotels as $i => $hotel)
+                        @php
+                            $name = $hotel['name'] ?? 'Unknown Hotel';
+                            $stars = intval($hotel['starRating'] ?? 0);
+                            $score = floatval($hotel['reviewScore'] ?? 0);
+                            $reviews = intval($hotel['reviewCount'] ?? 0);
+                            $price = floatval($hotel['price'] ?? 0);
+                            $total = floatval($hotel['totalPrice'] ?? 0);
+                            $image = $hotel['imageUrl'] ?? null;
+                            $amenities = $hotel['amenities'] ?? [];
+                            $url = $bookingUrls[$i] ?? '#';
+                            $id = $hotel['propertyId'] ?? '';
+                        @endphp
+                        <div class="hotel-card ziara-card ziara-deal overflow-hidden flex flex-col md:flex-row"
+                             data-price="{{ $price }}"
+                             data-rating="{{ $stars }}"
+                             data-score="{{ $score }}"
+                             data-name="{{ strtolower($name) }}">
+                            <div class="md:w-72 relative shrink-0 ziara-hotel-results__media bg-gray-100">
+                                @if($image)
+                                    <img src="{{ $image }}" alt="{{ $name }}" class="w-full h-52 md:h-full object-cover" loading="lazy"
+                                         onerror="this.onerror=null;this.src='https://placehold.co/600x400/e2e8f0/94a3b8?text=No+Image';">
+                                @else
+                                    <div class="w-full h-52 md:h-full flex items-center justify-center">
+                                        <i class="fas fa-hotel text-gray-300 text-5xl"></i>
+                                    </div>
+                                @endif
+                                @if($stars >= 4)
+                                    <span class="ziara-deal__badge">
+                                        <i class="fas fa-star mr-0.5"></i> {{ $stars }}-Star
+                                    </span>
+                                @endif
+                            </div>
+
+                            <div class="flex-1 p-5 flex flex-col">
+                                <div class="flex-1">
+                                    <div class="flex justify-between items-start gap-3">
+                                        <div class="min-w-0">
+                                            <h3 class="ziara-deal__title" style="font-size:23px;">{{ $name }}</h3>
+                                            <div class="flex items-center gap-2 mt-1 text-sm">
+                                                @if($stars > 0)
+                                                    <span class="text-amber-400">@for($s = 0; $s < $stars; $s++)★@endfor</span>
+                                                @endif
+                                                @if(!empty($hotel['city']))
+                                                    <span class="text-gray-500"><i class="fas fa-map-marker-alt text-blue-400 mr-1"></i>{{ $hotel['city'] }}</span>
+                                                @endif
                                             </div>
-                                            @if($hotelRating > 0)
-                                                <div class="bg-indigo-600 text-white rounded-lg px-3 py-2 text-center shrink-0">
-                                                    <div class="text-lg font-bold leading-tight">{{ $hotelRating }}.0</div>
-                                                    <div class="text-[10px] opacity-80">
-                                                        @if($hotelRating >= 5) Excellent
-                                                        @elseif($hotelRating >= 4) Very Good
-                                                        @elseif($hotelRating >= 3) Good
-                                                        @else Average
+                                        </div>
+                                        @if($score > 0)
+                                            <div class="flex items-center gap-2 shrink-0">
+                                                <div class="ziara-hotel-results__score">
+                                                    <div class="text-sm font-bold leading-tight">{{ number_format($score, 1) }}</div>
+                                                </div>
+                                                <div class="text-left">
+                                                    <div class="text-sm font-bold text-gray-800">
+                                                        @if($score >= 8.5) Excellent
+                                                        @elseif($score >= 8) Very good
+                                                        @elseif($score >= 7) Good
+                                                        @else Okay
                                                         @endif
                                                     </div>
+                                                    @if($reviews > 0)<div class="text-[11px] text-gray-400">{{ $reviews }} reviews</div>@endif
                                                 </div>
-                                            @endif
-                                        </div>
-
-                                        {{-- Room Type --}}
-                                        @if($roomType || $roomDesc)
-                                            <p class="text-sm text-gray-500 mt-2">
-                                                <i class="fas fa-bed text-gray-400 mr-1"></i>
-                                                {{ $roomType ? ucwords(strtolower(str_replace('_', ' ', $roomType))) : '' }}
-                                                @if($roomDesc) &mdash; {{ \Illuminate\Support\Str::limit($roomDesc, 80) }} @endif
-                                            </p>
-                                        @endif
-
-                                        {{-- Amenities --}}
-                                        @if(!empty($hotelAmenities))
-                                            <div class="flex flex-wrap gap-1.5 mt-3">
-                                                @foreach(array_slice($hotelAmenities, 0, 5) as $amenity)
-                                                    <span class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded text-xs font-medium">
-                                                        {{ ucwords(strtolower(str_replace('_', ' ', $amenity))) }}
-                                                    </span>
-                                                @endforeach
-                                                @if(count($hotelAmenities) > 5)
-                                                    <span class="bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded text-xs font-medium">
-                                                        +{{ count($hotelAmenities) - 5 }} more
-                                                    </span>
-                                                @endif
                                             </div>
                                         @endif
                                     </div>
 
-                                    {{-- Price & CTA --}}
-                                    <div class="mt-4 pt-4 border-t border-gray-100 flex justify-between items-end">
-                                        <div>
-                                            <p class="text-xs text-gray-500">
-                                                {{ $searchParams['rooms'] ?? 1 }} room &middot; {{ $nights }} {{ $nights > 1 ? 'nights' : 'night' }}
-                                            </p>
-                                            <div class="flex items-baseline gap-1 mt-0.5">
-                                                <span class="text-2xl font-extrabold text-gray-900">${{ number_format($price, 2) }}</span>
-                                                <span class="text-sm text-gray-500">{{ $currency }}</span>
-                                            </div>
-                                            <p class="text-xs text-gray-400">Includes taxes &amp; fees</p>
+                                    @if(!empty($amenities))
+                                        <div class="flex flex-wrap gap-1.5 mt-3">
+                                            @foreach(array_slice($amenities, 0, 5) as $amenity)
+                                                <span class="ziara-hotel-results__amenity">{{ $amenity }}</span>
+                                            @endforeach
                                         </div>
-                                        @if($hotelId)
-                                            <a href="{{ route('hotels.show', $hotelId) }}"
-                                               class="inline-flex items-center bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-lg text-sm font-semibold transition shadow-sm">
-                                                View Deal <i class="fas fa-arrow-right ml-2"></i>
+                                    @endif
+                                </div>
+
+                                <div class="mt-4 pt-4 border-t border-gray-100 flex flex-wrap items-end justify-between gap-3">
+                                    <div>
+                                        <p class="text-xs text-gray-500">{{ $nights }} {{ $nights > 1 ? 'nights' : 'night' }} &middot; {{ number_format($total, 2) }} total</p>
+                                        <div class="flex items-baseline gap-1 mt-0.5">
+                                            <span class="ziara-price ziara-deal__price" style="font-size:26px;">{{ number_format($total, 0) }}</span>
+                                            <span class="text-sm text-gray-500">{{ $currency }}</span>
+                                        </div>
+                                        <p class="text-xs text-gray-400">&asymp; {{ number_format($price, 0) }}/night</p>
+                                    </div>
+                                    <div class="flex items-center gap-2 flex-wrap">
+                                        @if($id)
+                                            <a href="{{ route('hotels.show', $id) }}" class="ziara-btn ziara-btn--outline">
+                                                Details <i class="fas fa-chevron-right text-xs" aria-hidden="true"></i>
                                             </a>
                                         @endif
+                                        <a href="{{ $url }}" target="_blank" rel="nofollow noopener" class="ziara-btn ziara-btn--gold">
+                                            <i class="fas fa-book-open" aria-hidden="true"></i> See availability
+                                        </a>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     @empty
-                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-12 text-center">
-                            <div class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <i class="fas fa-hotel text-slate-400 text-3xl"></i>
+                        <div class="ziara-card ziara-panel p-12 text-center">
+                            <div class="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4" style="background:var(--gold-pale);color:var(--maroon);">
+                                <i class="fas fa-bed text-3xl"></i>
                             </div>
-                            <h3 class="text-xl font-bold text-gray-900 mb-2">No hotels found</h3>
-                            <p class="text-gray-500 mb-6">We couldn't find any hotels matching your criteria. Try adjusting your search.</p>
-                            <a href="{{ route('hotels.search.form') }}" class="inline-flex items-center bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-lg text-sm font-semibold transition">
-                                <i class="fas fa-arrow-left mr-2"></i> Modify Search
+                            <h3 class="ziara-panel__title" style="font-size:24px;">No hotels found</h3>
+                            <p class="text-gray-500 mb-6">We couldn't find any hotels matching that search. Try another destination or dates.</p>
+                            <a href="{{ route('hotels.search.form') }}" class="ziara-btn ziara-btn--gold">
+                                <i class="fas fa-arrow-left" aria-hidden="true"></i> Modify Search
                             </a>
                         </div>
                     @endforelse
@@ -305,51 +256,49 @@
 
 @push('scripts')
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const container = document.getElementById('hotel-results');
-    const countEl = document.getElementById('results-count');
+document.addEventListener('DOMContentLoaded', function () {
+    var container = document.getElementById('hotel-results');
+    var countEl = document.getElementById('results-count');
 
-    function getCards() {
-        return Array.from(container.querySelectorAll('.hotel-card'));
-    }
+    function getCards() { return Array.from(container.querySelectorAll('.hotel-card')); }
 
-    // --- Sorting ---
-    document.getElementById('sort-by').addEventListener('change', function() {
-        const cards = getCards();
-        const val = this.value;
-        cards.sort(function(a, b) {
-            if (val === 'price_low') return parseFloat(a.dataset.price) - parseFloat(b.dataset.price);
-            if (val === 'price_high') return parseFloat(b.dataset.price) - parseFloat(a.dataset.price);
-            if (val === 'rating_high') return parseInt(b.dataset.rating) - parseInt(a.dataset.rating);
-            if (val === 'name_asc') return a.dataset.name.localeCompare(b.dataset.name);
-            return 0;
+    document.querySelectorAll('.ziara-sort-tab').forEach(function (tab) {
+        tab.addEventListener('click', function () {
+            document.querySelectorAll('.ziara-sort-tab').forEach(function (t) { t.classList.remove('active'); });
+            tab.classList.add('active');
+            var cards = getCards();
+            var val = tab.dataset.sort;
+            cards.sort(function (a, b) {
+                if (val === 'price_low') return parseFloat(a.dataset.price) - parseFloat(b.dataset.price);
+                if (val === 'price_high') return parseFloat(b.dataset.price) - parseFloat(a.dataset.price);
+                if (val === 'rating_high') return (parseFloat(b.dataset.score) || 0) - (parseFloat(a.dataset.score) || 0);
+                return 0;
+            });
+            cards.forEach(function (card) { container.appendChild(card); });
+            applyFilters();
         });
-        cards.forEach(function(card) { container.appendChild(card); });
     });
 
-    // --- Filtering ---
+    var maxP = {!! json_encode($maxPrice) !!};
+    var priceRange = document.getElementById('filter-price');
+
     function applyFilters() {
         var cards = getCards();
-        var pMin = parseFloat(document.getElementById('filter-price-min').value) || 0;
-        var pMax = parseFloat(document.getElementById('filter-price-max').value) || Infinity;
-        var checkedStars = Array.from(document.querySelectorAll('.filter-star:checked')).map(function(el){ return el.value; });
-        var checkedAmenities = Array.from(document.querySelectorAll('.filter-amenity:checked')).map(function(el){ return el.value.toLowerCase(); });
+        var pMax = priceRange ? parseFloat(priceRange.value) : Infinity;
+        var checkedStars = Array.from(document.querySelectorAll('.filter-star:checked')).map(function (el) { return el.value; });
+        var checkedScores = Array.from(document.querySelectorAll('.filter-score:checked')).map(function (el) { return parseFloat(el.value); });
         var visible = 0;
 
-        cards.forEach(function(card) {
-            var price = parseFloat(card.dataset.price);
+        cards.forEach(function (card) {
+            var price = parseFloat(card.dataset.price) || 0;
             var rating = card.dataset.rating;
-            var amenities = card.dataset.amenities;
-            var show = true;
-
-            if (price < pMin || price > pMax) show = false;
+            var score = parseFloat(card.dataset.score) || 0;
+            var show = price <= pMax;
             if (checkedStars.length > 0 && checkedStars.indexOf(rating) === -1) show = false;
-            if (checkedAmenities.length > 0) {
-                for (var i = 0; i < checkedAmenities.length; i++) {
-                    if (amenities.indexOf(checkedAmenities[i]) === -1) { show = false; break; }
-                }
+            if (checkedScores.length > 0) {
+                var ok = checkedScores.some(function (min) { return score >= min; });
+                if (!ok) show = false;
             }
-
             card.style.display = show ? '' : 'none';
             if (show) visible++;
         });
@@ -357,17 +306,19 @@ document.addEventListener('DOMContentLoaded', function() {
         if (countEl) countEl.textContent = visible;
     }
 
-    document.querySelectorAll('.filter-star, .filter-amenity').forEach(function(el) {
+    priceRange.addEventListener('input', function () {
+        var label = document.querySelector('[data-price-label]');
+        if (label) label.textContent = Number(this.value).toLocaleString();
+        applyFilters();
+    });
+
+    document.querySelectorAll('.filter-star, .filter-score').forEach(function (el) {
         el.addEventListener('change', applyFilters);
     });
-    document.getElementById('filter-price-min').addEventListener('input', applyFilters);
-    document.getElementById('filter-price-max').addEventListener('input', applyFilters);
 
-    // --- Clear Filters ---
-    document.getElementById('clear-filters').addEventListener('click', function() {
-        document.querySelectorAll('.filter-star, .filter-amenity').forEach(function(el) { el.checked = false; });
-        document.getElementById('filter-price-min').value = '{{ $minPrice }}';
-        document.getElementById('filter-price-max').value = '{{ $maxPrice }}';
+    document.getElementById('clear-filters').addEventListener('click', function () {
+        document.querySelectorAll('.filter-star, .filter-score').forEach(function (el) { el.checked = false; });
+        if (priceRange) { priceRange.value = maxP; }
         applyFilters();
     });
 });

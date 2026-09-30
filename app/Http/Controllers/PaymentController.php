@@ -159,7 +159,7 @@ class PaymentController extends Controller
         $bookingDetails = $request->session()->get('booking_details', []);
         
         if (empty($bookingDetails)) {
-            return redirect()->route('superadmin.bookings.index')
+            return redirect()->route('superadmin.bookings.all')
                 ->with('error', 'No booking details found. Please start a new booking.');
         }
 

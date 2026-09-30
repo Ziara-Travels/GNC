@@ -181,7 +181,7 @@ class UserPaymentController extends Controller
                 ->first();
 
             if (!$booking) {
-                return redirect()->route('user.payments.index')
+                return redirect()->route('user.payments.my')
                     ->with('error', 'Booking not found.');
             }
         }

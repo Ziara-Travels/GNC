@@ -48,7 +48,7 @@ class AdminDashboardController extends Controller
 
         // Redirect regular users to user dashboard
         if ($user->hasRole('user')) {
-            return redirect()->route('dashboard.index');
+            return redirect()->route('admin.dashboard');
         }
 
         if (!$user->hasRole('admin')) {
@@ -127,9 +127,10 @@ class AdminDashboardController extends Controller
                 ->get();
 
             // Popular destinations and analytics
-            $topDestinations = Booking::join('flights', 'bookings.flight_id', '=', 'flights.id')
-                ->select('flights.destination_city', \DB::raw('count(*) as bookings_count'))
-                ->groupBy('flights.destination_city')
+            $topDestinations = Booking::join('flights', 'bookings.flight_number', '=', 'flights.flight_number')
+                ->join('airports', 'flights.arrival_airport_id', '=', 'airports.id')
+                ->select('airports.city as destination_city', \DB::raw('count(*) as bookings_count'))
+                ->groupBy('airports.city')
                 ->orderByDesc('bookings_count')
                 ->take(5)
                 ->get();
@@ -181,9 +182,6 @@ class AdminDashboardController extends Controller
             // Admin-specific metrics
             $adminMetrics = [
                 'pending_user_verifications' => User::where('email_verified_at', null)->count(),
-                'reported_issues' => \DB::table('support_tickets')->where('status', 'open')->count(),
-                'system_alerts' => \DB::table('system_alerts')->where('status', 'active')->count(),
-                'maintenance_tasks' => \DB::table('maintenance_tasks')->where('status', 'pending')->count(),
             ];
 
             // Compile all data for the admin dashboard
@@ -270,7 +268,9 @@ class AdminDashboardController extends Controller
                 'trace' => $e->getTraceAsString()
             ]);
 
-            // Return a safe fallback dashboard with minimal data
+            // Return a safe fallback dashboard with minimal data. This mirrors
+            // the full key set of $dashboardData so the view never hits an
+            // undefined variable.
             $fallbackData = [
                 'user' => $user,
                 'role' => 'admin',
@@ -280,15 +280,32 @@ class AdminDashboardController extends Controller
                 'processingBookings' => 0,
                 'cancelledBookings' => 0,
                 'totalFlights' => 0,
+                'activeFlights' => 0,
+                'totalFlightBookings' => 0,
+                'flightRevenue' => 0,
                 'totalHotels' => 0,
+                'activeHotels' => 0,
+                'totalHotelBookings' => 0,
+                'hotelRevenue' => 0,
                 'totalUsers' => 0,
+                'newUsersThisMonth' => 0,
                 'totalAdmins' => 0,
+                'activeUsersToday' => 0,
                 'totalRevenue' => 0,
+                'successfulPayments' => 0,
+                'failedPayments' => 0,
+                'pendingPayments' => 0,
                 'recentBookings' => collect(),
                 'recentUsers' => collect(),
+                'recentFlightBookings' => collect(),
+                'flight_bookings' => collect(),
+                'recentHotelBookings' => collect(),
                 'recentActivities' => collect(),
-                'notifications' => collect(),
                 'topDestinations' => collect(),
+                'monthlyBookings' => [],
+                'monthlyRevenue' => [],
+                'userGrowthData' => collect(),
+                'notifications' => collect(),
                 'chartData' => [
                     'bookingStatus' => ['completed' => 0, 'processing' => 0, 'pending' => 0, 'cancelled' => 0],
                     'revenueByType' => ['flights' => 0, 'hotels' => 0],
@@ -302,9 +319,6 @@ class AdminDashboardController extends Controller
                 ],
                 'adminMetrics' => [
                     'pending_user_verifications' => 0,
-                    'reported_issues' => 0,
-                    'system_alerts' => 0,
-                    'maintenance_tasks' => 0,
                 ],
             ];
 
@@ -357,7 +371,7 @@ class AdminDashboardController extends Controller
     public function allUsers()
     {
         $users = User::with('roles')->paginate(15);
-        return view('superadmin.users.all', compact('users'));
+        return view('dashboard.users.superadmin.index', compact('users'));
     }
 
     // =====================================
@@ -1325,6 +1339,232 @@ class AdminDashboardController extends Controller
         return view('superadmin.roles.all', compact('roles', 'permissions'));
     }
 
+    /**
+     * Store a newly created role
+     */
+    public function storeRole(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255|unique:roles,name',
+            'display_name' => 'nullable|string|max:255',
+            'description' => 'nullable|string|max:500',
+            'permissions' => 'array',
+            'permissions.*' => 'exists:permissions,id'
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $role = Role::create([
+                'name' => $request->name,
+                'display_name' => $request->display_name,
+                'description' => $request->description,
+                'guard_name' => 'web',
+                'created_by' => auth()->id()
+            ]);
+
+            if ($request->has('permissions')) {
+                $role->permissions()->attach($request->permissions);
+            }
+
+            DB::commit();
+            return redirect()->route('admin.roles.index')
+                           ->with('success', 'Role created successfully.');
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect()->back()
+                           ->with('error', 'Error creating role: ' . $e->getMessage())
+                           ->withInput();
+        }
+    }
+
+    /**
+     * Update the specified role
+     */
+    public function updateRole(Request $request, $id)
+    {
+        $role = Role::findOrFail($id);
+
+        if ($role->is_system_role) {
+            return redirect()->route('admin.roles.index')
+                           ->with('error', 'Cannot edit system role: ' . $role->name);
+        }
+
+        $request->validate([
+            'name' => ['required', 'string', 'max:255', \Illuminate\Validation\Rule::unique('roles')->ignore($role->id)],
+            'display_name' => 'nullable|string|max:255',
+            'description' => 'nullable|string|max:500',
+            'permissions' => 'array',
+            'permissions.*' => 'exists:permissions,id'
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $role->update([
+                'name' => $request->name,
+                'display_name' => $request->display_name,
+                'description' => $request->description,
+            ]);
+
+            $role->permissions()->sync($request->permissions ?? []);
+
+            DB::commit();
+            return redirect()->route('admin.roles.index')
+                           ->with('success', 'Role updated successfully.');
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect()->back()
+                           ->with('error', 'Error updating role: ' . $e->getMessage())
+                           ->withInput();
+        }
+    }
+
+    /**
+     * Remove the specified role
+     */
+    public function destroyRole($id)
+    {
+        $role = Role::findOrFail($id);
+
+        $protectedRoles = ['superadmin', 'super_admin', 'admin', 'user'];
+        if (in_array($role->name, $protectedRoles) || $role->is_system_role) {
+            return redirect()->route('admin.roles.index')
+                           ->with('error', 'Cannot delete system role: ' . $role->name);
+        }
+
+        if ($role->users()->count() > 0) {
+            return redirect()->route('admin.roles.index')
+                           ->with('error', 'Cannot delete role that is assigned to users.');
+        }
+
+        DB::beginTransaction();
+        try {
+            $role->permissions()->detach();
+            $role->delete();
+
+            DB::commit();
+            return redirect()->route('admin.roles.index')
+                           ->with('success', 'Role deleted successfully.');
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect()->route('admin.roles.index')
+                           ->with('error', 'Error deleting role: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Store a newly created permission
+     */
+    public function storePermission(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255|unique:permissions,name',
+            'display_name' => 'required|string|max:255',
+            'description' => 'nullable|string|max:500',
+            'group' => 'required|string|max:100',
+            'roles' => 'array',
+            'roles.*' => 'exists:roles,id'
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $permission = Permission::create([
+                'name' => $request->name,
+                'display_name' => $request->display_name,
+                'description' => $request->description,
+                'group' => $request->group,
+                'guard_name' => 'web'
+            ]);
+
+            if ($request->has('roles')) {
+                $permission->roles()->attach($request->roles);
+            }
+
+            DB::commit();
+            return redirect()->route('admin.permissions.index')
+                           ->with('success', 'Permission created successfully.');
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect()->back()
+                           ->with('error', 'Error creating permission: ' . $e->getMessage())
+                           ->withInput();
+        }
+    }
+
+    /**
+     * Update the specified permission
+     */
+    public function updatePermission(Request $request, $id)
+    {
+        $permission = Permission::findOrFail($id);
+
+        if ($permission->is_system_permission) {
+            return redirect()->route('admin.permissions.index')
+                           ->with('error', 'Cannot edit system permission: ' . $permission->name);
+        }
+
+        $request->validate([
+            'name' => ['required', 'string', 'max:255', \Illuminate\Validation\Rule::unique('permissions')->ignore($permission->id)],
+            'display_name' => 'required|string|max:255',
+            'description' => 'nullable|string|max:500',
+            'group' => 'required|string|max:100',
+            'roles' => 'array',
+            'roles.*' => 'exists:roles,id'
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $permission->update([
+                'name' => $request->name,
+                'display_name' => $request->display_name,
+                'description' => $request->description,
+                'group' => $request->group,
+            ]);
+
+            $permission->roles()->sync($request->roles ?? []);
+
+            DB::commit();
+            return redirect()->route('admin.permissions.index')
+                           ->with('success', 'Permission updated successfully.');
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect()->back()
+                           ->with('error', 'Error updating permission: ' . $e->getMessage())
+                           ->withInput();
+        }
+    }
+
+    /**
+     * Remove the specified permission
+     */
+    public function destroyPermission($id)
+    {
+        $permission = Permission::findOrFail($id);
+
+        $protectedPermissions = [
+            'manage_users', 'manage_roles', 'manage_permissions',
+            'view_dashboard', 'manage_system_settings'
+        ];
+
+        if (in_array($permission->name, $protectedPermissions) || $permission->is_system_permission) {
+            return redirect()->route('admin.permissions.index')
+                           ->with('error', 'Cannot delete system permission: ' . $permission->name);
+        }
+
+        DB::beginTransaction();
+        try {
+            $permission->roles()->detach();
+            $permission->delete();
+
+            DB::commit();
+            return redirect()->route('admin.permissions.index')
+                           ->with('success', 'Permission deleted successfully.');
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect()->route('admin.permissions.index')
+                           ->with('error', 'Error deleting permission: ' . $e->getMessage());
+        }
+    }
+
     // =====================================
     // PAYMENTS MANAGEMENT SECTION
     // =====================================
@@ -1662,7 +1902,7 @@ class AdminDashboardController extends Controller
             'completed_referrals' => Referral::where('status', 'completed')->count(),
         ];
         
-        return view('superadmin.referrals.index', compact('referrals', 'stats'));
+        return view('dashboard.referral.user.index', compact('referrals', 'stats'));
     }
 
     // =====================================

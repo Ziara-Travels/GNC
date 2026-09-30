@@ -3,29 +3,37 @@
 
 @section('content')
 {{-- ===== HERO ===== --}}
-<section class="relative bg-slate-900 overflow-hidden">
-    <img src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=1400&h=500&fit=crop" alt="" class="absolute inset-0 w-full h-full object-cover opacity-20" loading="eager">
-    <div class="relative max-w-5xl mx-auto px-4 pt-28 pb-10 text-center">
-        <h1 class="text-2xl md:text-3xl font-bold text-white mb-1">Frequently Asked <span class="text-amber-400">Questions</span></h1>
-        <p class="text-xs text-gray-300 mb-4">Find answers to common questions about our services</p>
-        <div class="max-w-md mx-auto relative">
-            <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-300 text-[10px]"></i>
-            <input type="text" id="faqSearch" placeholder="Search FAQs..." class="w-full pl-8 pr-3 py-2 rounded-lg text-xs text-gray-800 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
-        </div>
-    </div>
-</section>
+@push('styles')
+<style>
+    .ziara-faq-search{max-width:480px;margin:0 auto;}
+    .ziara-faq-search .ziara-faq-search__wrap{position:relative;}
+    .ziara-faq-search i{position:absolute;left:18px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:14px;z-index:2;}
+    .ziara-faq-search input{width:100%;padding:15px 20px 15px 46px;font-size:15px;color:rgba(255,255,255,.95);background:rgba(255,255,255,.10);border:1.5px solid rgba(255,255,255,.18);border-radius:50px;outline:none;transition:border-color .3s, background .3s;}
+    .ziara-faq-search input:focus{border-color:var(--gold);background:rgba(255,255,255,.16);}
+    .ziara-faq-search input::placeholder{color:rgba(255,255,255,.6);}
+</style>
+@endpush
+@php
+    $faqSearch = '<div class="ziara-faq-search"><div class="ziara-faq-search__wrap"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><input type="text" id="faqSearch" placeholder="Search FAQs..." aria-label="Search FAQs"></div></div>';
+@endphp
+@include('partials.ziara-page-hero', [
+    'kicker' => 'FAQ',
+    'title'  => 'Frequently Asked <em>Questions</em>',
+    'intro'  => 'Find answers to common questions about our services.',
+    'extra'  => $faqSearch,
+])
 
 {{-- ===== FAQ CATEGORIES ===== --}}
-<section class="py-10 bg-white">
-    <div class="max-w-3xl mx-auto px-4">
+<section class="zt-section zt-section--white" style="padding-top:64px;">
+    <div class="container" style="max-width:820px;">
         {{-- Category tabs --}}
-        <div class="flex flex-wrap gap-1.5 justify-center mb-6">
-            <button class="faq-cat-btn active bg-emerald-600 text-white text-[10px] font-semibold px-3 py-1.5 rounded-full transition-colors" data-cat="all">All</button>
-            <button class="faq-cat-btn bg-gray-100 text-gray-600 text-[10px] font-semibold px-3 py-1.5 rounded-full hover:bg-gray-200 transition-colors" data-cat="booking">Booking</button>
-            <button class="faq-cat-btn bg-gray-100 text-gray-600 text-[10px] font-semibold px-3 py-1.5 rounded-full hover:bg-gray-200 transition-colors" data-cat="payment">Payment</button>
-            <button class="faq-cat-btn bg-gray-100 text-gray-600 text-[10px] font-semibold px-3 py-1.5 rounded-full hover:bg-gray-200 transition-colors" data-cat="flights">Flights</button>
-            <button class="faq-cat-btn bg-gray-100 text-gray-600 text-[10px] font-semibold px-3 py-1.5 rounded-full hover:bg-gray-200 transition-colors" data-cat="hotels">Hotels</button>
-            <button class="faq-cat-btn bg-gray-100 text-gray-600 text-[10px] font-semibold px-3 py-1.5 rounded-full hover:bg-gray-200 transition-colors" data-cat="account">Account</button>
+        <div class="ziara-tabs" style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-bottom:36px;">
+            <button class="faq-cat-btn active bg-emerald-600 text-white text-[10px] font-semibold px-3 py-1.5 rounded-full transition-colors" style="padding:9px 20px;font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;border-radius:50px;border:1.5px solid var(--gold);background:var(--gold);color:var(--maroon-deep);cursor:pointer;" data-cat="all">All</button>
+            <button class="faq-cat-btn bg-gray-100 text-gray-600 text-[10px] font-semibold px-3 py-1.5 rounded-full transition-colors" style="padding:9px 20px;font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;border-radius:50px;border:1.5px solid var(--line);background:#fff;color:var(--muted);cursor:pointer;" data-cat="booking">Booking</button>
+            <button class="faq-cat-btn bg-gray-100 text-gray-600 text-[10px] font-semibold px-3 py-1.5 rounded-full transition-colors" style="padding:9px 20px;font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;border-radius:50px;border:1.5px solid var(--line);background:#fff;color:var(--muted);cursor:pointer;" data-cat="payment">Payment</button>
+            <button class="faq-cat-btn bg-gray-100 text-gray-600 text-[10px] font-semibold px-3 py-1.5 rounded-full transition-colors" style="padding:9px 20px;font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;border-radius:50px;border:1.5px solid var(--line);background:#fff;color:var(--muted);cursor:pointer;" data-cat="flights">Flights</button>
+            <button class="faq-cat-btn bg-gray-100 text-gray-600 text-[10px] font-semibold px-3 py-1.5 rounded-full transition-colors" style="padding:9px 20px;font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;border-radius:50px;border:1.5px solid var(--line);background:#fff;color:var(--muted);cursor:pointer;" data-cat="hotels">Hotels</button>
+            <button class="faq-cat-btn bg-gray-100 text-gray-600 text-[10px] font-semibold px-3 py-1.5 rounded-full transition-colors" style="padding:9px 20px;font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;border-radius:50px;border:1.5px solid var(--line);background:#fff;color:var(--muted);cursor:pointer;" data-cat="account">Account</button>
         </div>
 
         @php $faqs = [
@@ -49,69 +57,73 @@
             ['cat'=>'account','q'=>'How do I earn loyalty points?','a'=>'Points are earned automatically on every booking. 1 KES spent = 1 point. Points can be redeemed for discounts on future bookings.'],
         ]; @endphp
 
-        <div class="space-y-2" id="faqList">
+        <div class="ziara-faqs" id="faqList" style="gap:14px;">
             @foreach($faqs as $faq)
-            <div class="faq-item border border-gray-200 rounded-lg bg-gray-50 overflow-hidden" data-cat="{{ $faq['cat'] }}">
-                <button class="faq-toggle w-full flex items-center justify-between p-3 text-left hover:bg-gray-100 transition-colors" onclick="toggleFaq(this)">
-                    <span class="text-xs font-semibold text-gray-900 pr-3 faq-question">{{ $faq['q'] }}</span>
-                    <i class="fas fa-chevron-down text-gray-300 text-[10px] transition-transform duration-200 shrink-0"></i>
+            <div class="ziara-faq faq-item" data-cat="{{ $faq['cat'] }}">
+                <button type="button" class="ziara-faq__q faq-toggle" onclick="toggleFaq(this)">
+                    <span class="faq-question">{{ $faq['q'] }}</span>
+                    <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
                 </button>
-                <div class="faq-content hidden px-3 pb-3"><p class="text-[11px] text-gray-500 leading-relaxed">{{ $faq['a'] }}</p></div>
+                <div class="ziara-faq__a faq-content"><p style="margin:0;">{{ $faq['a'] }}</p></div>
             </div>
             @endforeach
         </div>
 
-        <p class="text-[10px] text-gray-400 text-center mt-4" id="noResults" style="display:none;">No matching questions found.</p>
+        <p class="text-[10px] text-gray-400 text-center mt-4" style="font-size:14px;color:var(--muted);display:none;" id="noResults">No matching questions found.</p>
     </div>
 </section>
 
 {{-- ===== STILL NEED HELP ===== --}}
-<section class="py-10 bg-gray-50">
-    <div class="max-w-5xl mx-auto px-4 text-center">
-        <h2 class="text-lg font-bold text-gray-900 mb-2">Still Need Help?</h2>
-        <p class="text-xs text-gray-500 mb-4">Our support team is available 24/7 to assist you.</p>
-        <div class="flex justify-center gap-2">
-            <a href="{{ url('/contactus') }}" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-5 py-2 rounded-lg transition-colors"><i class="fas fa-envelope mr-1 text-[10px]"></i>Contact Us</a>
-            <a href="{{ url('/live-chat') }}" class="border border-gray-200 text-gray-700 text-xs font-semibold px-5 py-2 rounded-lg hover:bg-white transition-colors"><i class="fas fa-comments mr-1 text-[10px]"></i>Live Chat</a>
-            <a href="tel:+254700123456" class="border border-gray-200 text-gray-700 text-xs font-semibold px-5 py-2 rounded-lg hover:bg-white transition-colors"><i class="fas fa-phone mr-1 text-[10px]"></i>Call Us</a>
+<section class="zt-section zt-section--pale">
+    <div class="container" style="text-align:center;">
+        @include('partials.ziara-section-head', [
+            'sub'   => 'Still Need Help?',
+            'title' => 'We\'re Here <em>for You</em>',
+            'align' => 'center',
+        ])
+        <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:-16px;">
+            <a href="{{ url('/contactus') }}" class="ziara-btn ziara-btn--gold"><i class="fa-solid fa-envelope" aria-hidden="true"></i>Contact Us</a>
+            <a href="{{ url('/live-chat') }}" class="ziara-btn ziara-btn--outline"><i class="fa-solid fa-comments" aria-hidden="true"></i>Live Chat</a>
+            <a href="tel:+254700123456" class="ziara-btn ziara-btn--outline"><i class="fa-solid fa-phone" aria-hidden="true"></i>Call Us</a>
         </div>
     </div>
 </section>
 
-<section class="py-10 bg-emerald-600">
-    <div class="max-w-xl mx-auto px-4 text-center">
-        <h2 class="text-base font-bold text-white mb-1">Get Travel Tips</h2>
-        <p class="text-[11px] text-emerald-100 mb-4">Subscribe for helpful tips, FAQs, and exclusive deals.</p>
-        <form class="flex gap-2" onsubmit="event.preventDefault();alert('Subscribed!');this.reset();"><input type="email" placeholder="Your email" class="flex-1 px-3 py-2 rounded-lg text-xs text-gray-800 focus:ring-2 focus:ring-amber-400 focus:outline-none" required><button type="submit" class="bg-amber-500 hover:bg-amber-600 text-white text-xs font-semibold px-5 py-2 rounded-lg transition-colors whitespace-nowrap">Subscribe</button></form>
-    </div>
-</section>
+{{-- ===== NEWSLETTER ===== --}}
+@include('partials.ziara-newsletter', ['title' => 'Get Travel Tips'])
 @endsection
 
 @push('scripts')
 <script>
-function toggleFaq(btn){var c=btn.nextElementSibling,ic=btn.querySelector('i'),open=!c.classList.contains('hidden');document.querySelectorAll('.faq-content').forEach(function(x){x.classList.add('hidden');});document.querySelectorAll('.faq-toggle i').forEach(function(x){x.style.transform='rotate(0)';});if(!open){c.classList.remove('hidden');ic.style.transform='rotate(180deg)';}}
+function toggleFaq(btn){var item=btn.closest('.ziara-faq');var isOpen=item.classList.contains('is-open');document.querySelectorAll('.ziara-faq').forEach(function(el){el.classList.remove('is-open');el.querySelector('.ziara-faq__a').style.display='none';el.querySelector('.faq-toggle i').style.transform='rotate(0)';});if(!isOpen){item.classList.add('is-open');item.querySelector('.ziara-faq__a').style.display='block';item.querySelector('.faq-toggle i').style.transform='rotate(180deg)';}}
 
 document.addEventListener('DOMContentLoaded',function(){
+    function resetTabs(){
+        document.querySelectorAll('.faq-cat-btn').forEach(function(b){b.style.background='#fff';b.style.color='var(--muted)';b.style.borderColor='var(--line)';});
+    }
     // Category filter
     document.querySelectorAll('.faq-cat-btn').forEach(function(btn){
         btn.addEventListener('click',function(){
-            document.querySelectorAll('.faq-cat-btn').forEach(function(b){b.className='faq-cat-btn bg-gray-100 text-gray-600 text-[10px] font-semibold px-3 py-1.5 rounded-full hover:bg-gray-200 transition-colors';});
-            this.className='faq-cat-btn active bg-emerald-600 text-white text-[10px] font-semibold px-3 py-1.5 rounded-full transition-colors';
-            var cat=this.dataset.cat;
-            document.querySelectorAll('.faq-item').forEach(function(item){item.style.display=(cat==='all'||item.dataset.cat===cat)?'':'none';});
-            document.getElementById('noResults').style.display=document.querySelectorAll('.faq-item[style=""],.faq-item:not([style])').length?'none':'block';
+            resetTabs();
+            this.style.background='var(--gold)';this.style.color='var(--maroon-deep)';this.style.borderColor='var(--gold)';
+            var cat=this.dataset.cat, visible=0;
+            document.querySelectorAll('.faq-item').forEach(function(item){
+                var show=(cat==='all'||item.dataset.cat===cat);item.style.display=show?'':'none';if(show)visible++;
+            });
+            document.getElementById('noResults').style.display=visible?'none':'block';
+            if(visible)document.getElementById('noResults').style.display='none';
         });
     });
     // Search filter
     document.getElementById('faqSearch').addEventListener('input',function(){
-        var q=this.value.toLowerCase();
+        var q=this.value.toLowerCase(), visible=0;
         document.querySelectorAll('.faq-item').forEach(function(item){
             var text=item.querySelector('.faq-question').textContent.toLowerCase();
-            item.style.display=text.includes(q)?'':'none';
+            var show=text.includes(q);item.style.display=show?'':'none';if(show)visible++;
         });
-        document.querySelectorAll('.faq-cat-btn').forEach(function(b){b.className='faq-cat-btn bg-gray-100 text-gray-600 text-[10px] font-semibold px-3 py-1.5 rounded-full hover:bg-gray-200 transition-colors';});
-        document.querySelector('.faq-cat-btn[data-cat="all"]').className='faq-cat-btn active bg-emerald-600 text-white text-[10px] font-semibold px-3 py-1.5 rounded-full transition-colors';
-        document.getElementById('noResults').style.display=document.querySelectorAll('.faq-item[style=""],.faq-item:not([style])').length?'none':'block';
+        resetTabs();
+        document.querySelector('.faq-cat-btn[data-cat="all"]').style.background='var(--gold)';document.querySelector('.faq-cat-btn[data-cat="all"]').style.color='var(--maroon-deep)';document.querySelector('.faq-cat-btn[data-cat="all"]').style.borderColor='var(--gold)';
+        document.getElementById('noResults').style.display=visible?'none':'block';
     });
 });
 </script>

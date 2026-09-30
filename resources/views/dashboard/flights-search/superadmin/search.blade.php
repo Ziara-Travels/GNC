@@ -112,7 +112,7 @@
                     </div>
                     
                     <div class="p-8">
-                        <form action="{{ route('flights.search.process') }}" method="POST" id="flightSearchForm">
+                        <form action="{{ route('superadmin.flights.search.process') }}" method="POST" id="flightSearchForm">
                             @csrf
                             
                             <!-- User Selection for SuperAdmin -->

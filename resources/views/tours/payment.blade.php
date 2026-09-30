@@ -1,19 +1,19 @@
-
+﻿
 @extends('layouts.main')
 
 @section('title', 'Payment - ' . $booking->tour->name)
 
 @section('content')
-<div class="container py-5">
+<div class="container ziara-pay-shell">
     <div class="row">
         <!-- Booking Summary -->
         <div class="col-lg-4">
-            <div class="card shadow-sm">
+            <div class="card ziara-pay-card">
                 <div class="card-header">
                     <h5 class="mb-0">Booking Summary</h5>
                 </div>
                 <div class="card-body">
-                    <h6>{{ $booking->tour->name }}</h6>
+                    <h6 class="ziara-pay-tour">{{ $booking->tour->name }}</h6>
                     <p class="text-muted small">
                         <i class="fas fa-map-marker-alt me-1"></i>
                         {{ $booking->tour->city }}, {{ $booking->tour->country }}
@@ -24,7 +24,7 @@
                     <div class="booking-details">
                         <div class="d-flex justify-content-between mb-2">
                             <span>Booking Reference:</span>
-                            <strong>{{ $booking->booking_reference }}</strong>
+                            <strong class="ziara-pay-ref">{{ $booking->booking_reference }}</strong>
                         </div>
                         <div class="d-flex justify-content-between mb-2">
                             <span>Tour Date:</span>
@@ -43,7 +43,7 @@
                         
                         <div class="d-flex justify-content-between">
                             <strong>Total Amount:</strong>
-                            <strong class="text-success">{{ $booking->currency }} {{ number_format($booking->total_amount, 2) }}</strong>
+                            <strong class="ziara-pay-total">{{ $booking->currency }} {{ number_format($booking->total_amount, 2) }}</strong>
                         </div>
                     </div>
                 </div>
@@ -52,9 +52,9 @@
 
         <!-- Payment Form -->
         <div class="col-lg-8">
-            <div class="card shadow-sm">
+            <div class="card ziara-pay-card">
                 <div class="card-body">
-                    <h3 class="card-title mb-4">Complete Your Payment</h3>
+                    <h3 class="card-title ziara-pay-title mb-4">Complete Your Payment</h3>
                     
                     <form action="{{ route('tour.payment.process') }}" method="POST">
                         @csrf
@@ -88,8 +88,8 @@
                                             <p class="text-muted small mb-0">Visa, Mastercard, American Express</p>
                                         </div>
                                         <div>
-                                            <i class="fab fa-cc-visa text-primary me-1" style="font-size: 1.5rem;"></i>
-                                            <i class="fab fa-cc-mastercard text-warning me-1" style="font-size: 1.5rem;"></i>
+                                            <i class="fab fa-cc-visa ziara-pay-brand me-1" style="font-size: 1.5rem;"></i>
+                                            <i class="fab fa-cc-mastercard ziara-pay-card-brand me-1" style="font-size: 1.5rem;"></i>
                                         </div>
                                     </div>
                                 </label>
@@ -104,7 +104,7 @@
                                             <strong>Bank Transfer</strong>
                                             <p class="text-muted small mb-0">Direct bank transfer</p>
                                         </div>
-                                        <i class="fas fa-university text-primary" style="font-size: 1.5rem;"></i>
+                                        <i class="fas fa-university ziara-pay-brand" style="font-size: 1.5rem;"></i>
                                     </div>
                                 </label>
                             </div>
@@ -153,7 +153,7 @@
 
                         <!-- Bank Transfer Details -->
                         <div class="payment-details" id="bankDetails" style="display: none;">
-                            <div class="alert alert-info">
+                            <div class="alert ziara-pay-alert">
                                 <h6>Bank Transfer Instructions</h6>
                                 <p class="mb-2"><strong>Bank:</strong> Example Bank</p>
                                 <p class="mb-2"><strong>Account Name:</strong> Ziara Travels</p>
@@ -165,7 +165,7 @@
 
                         <!-- Submit Button -->
                         <div class="d-grid mt-4">
-                            <button type="submit" class="btn btn-success btn-lg" id="paymentButton" disabled>
+                            <button type="submit" class="btn ziara-pay-cta btn-lg" id="paymentButton" disabled>
                                 <i class="fas fa-lock me-2"></i>
                                 Complete Payment
                             </button>
@@ -178,22 +178,77 @@
 </div>
 
 <style>
-.payment-option {
-    border: 2px solid #e9ecef;
-    border-radius: 8px;
-    padding: 15px;
-    transition: all 0.3s ease;
-}
+    .ziara-pay-shell { padding-top: 40px; padding-bottom: 56px; }
+    .ziara-pay-card {
+        background: #fff;
+        border: 1px solid #eadfca;
+        border-radius: 16px;
+        box-shadow: 0 10px 34px rgba(74,29,19,.10);
+    }
+    .ziara-pay-card .card-header {
+        background: linear-gradient(110deg, #4a1d13 0%, #6b2c1f 100%);
+        border-bottom: 3px solid #c9a227;
+        border-radius: 15px 15px 0 0;
+        padding: 16px 24px;
+    }
+    .ziara-pay-card .card-header h5 {
+        font-family: 'Cormorant Garamond', Georgia, serif;
+        font-weight: 700;
+        color: #fff;
+        font-size: 1.25rem;
+    }
+    .ziara-pay-card .card-body { padding: 24px; }
+    .ziara-pay-title,
+    .ziara-pay-tour {
+        font-family: 'Cormorant Garamond', Georgia, serif;
+        font-weight: 700;
+        color: #4a1d13;
+    }
+    .ziara-pay-tour { font-size: 1.2rem; }
+    .ziara-pay-card .text-muted { color: #7a6a60; }
+    .ziara-pay-card hr { border-color: #eadfca; opacity: 1; }
+    .ziara-pay-total { color: #6b2d15; font-weight: 700; }
+    .ziara-pay-ref { color: #4a1d13; font-weight: 700; }
+    .ziara-pay-brand { color: #7b2a1b; }
+    .ziara-pay-card-brand { color: #c9a227; }
+    .ziara-pay-cta {
+        background: #6b2c1f;
+        border: 1px solid #6b2c1f;
+        color: #fff;
+        font-weight: 600;
+        letter-spacing: .3px;
+        border-radius: 10px;
+    }
+    .ziara-pay-cta:hover,
+    .ziara-pay-cta:focus {
+        background: #4a1d13;
+        border-color: #4a1d13;
+        color: #fff;
+    }
+    .ziara-pay-cta:disabled { background: #a8968a; border-color: #a8968a; color: #fff; }
+    .ziara-pay-alert {
+        background: #fdf6df;
+        border: 1px solid rgba(201,162,39,.45);
+        color: #3a322c;
+        border-radius: 12px;
+    }
+    .ziara-pay-alert h6 { color: #6b1d15; font-weight: 700; }
+    .payment-option {
+        border: 2px solid #eadfca;
+        border-radius: 10px;
+        padding: 15px;
+        transition: all 0.3s ease;
+    }
 
-.payment-option:hover {
-    border-color: #28a745;
-    background-color: #f8f9fa;
-}
+    .payment-option:hover {
+        border-color: #c9a227;
+        background-color: #fdf8eb;
+    }
 
-.payment-option input[type="radio"]:checked + label {
-    border-color: #28a745;
-    background-color: #e6ffed;
-}
+    .payment-option input[type="radio"]:checked + label {
+        border-color: #c9a227;
+        background-color: #fdf6df;
+    }
 </style>
 
 <script>

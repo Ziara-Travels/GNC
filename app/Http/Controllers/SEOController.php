@@ -7,7 +7,6 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use App\Models\Flight;
-use App\Models\Hotel;
 use App\Models\Booking;
 use App\Models\User;
 use Carbon\Carbon;
@@ -310,7 +309,7 @@ class SEOController extends Controller
                 'priority' => '0.5'
             ],
             [
-                'url' => route('blogs'),
+                'url' => route('blog.index'),
                 'lastmod' => Carbon::now()->toAtomString(),
                 'changefreq' => 'daily',
                 'priority' => '0.8'

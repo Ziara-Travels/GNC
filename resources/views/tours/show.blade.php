@@ -1,453 +1,352 @@
-<!-- filepath: c:\xampp\htdocs\GNC\resources\views\tours\show.blade.php -->
-
 @extends('layouts.main')
 
 @section('title', $tour->name)
 
 @section('content')
-<div class="tour-header" style="background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('{{ $tour->main_image }}') center/cover no-repeat; padding: 120px 0; color: white;">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-8">
-                <h1 class="display-4 fw-bold mb-3">{{ $tour->name }}</h1>
-                <div class="d-flex align-items-center mb-4">
-                    <span class="me-3">
-                        <i class="fas fa-map-marker-alt me-2"></i>
-                        {{ $tour->city }}, {{ $tour->country }}
-                    </span>
-                    <span class="me-3">
-                        <i class="fas fa-clock me-2"></i>
-                        {{ $tour->duration }}
-                    </span>
-                    <span class="me-3">
-                        <i class="fas fa-star text-warning me-1"></i>
-                        {{ number_format($tour->rating, 1) }}
-                        <small>({{ $tour->review_count }} reviews)</small>
-                    </span>
-                </div>
-                <div>
-                    <span class="badge bg-success px-3 py-2 rounded-pill mb-3">{{ $tour->category }}</span>
-                    @if($tour->free_cancellation)
-                        <span class="badge bg-info px-3 py-2 rounded-pill mb-3 ms-2">Free Cancellation</span>
-                    @endif
-                    @if($tour->hotel_pickup)
-                        <span class="badge bg-primary px-3 py-2 rounded-pill mb-3 ms-2">Hotel Pickup</span>
-                    @endif
-                </div>
-            </div>
-            <div class="col-lg-4 text-lg-end">
-                <div class="card bg-dark bg-opacity-75 text-white">
-                    <div class="card-body p-4">
-                        <div class="fs-3 fw-bold mb-2">
-                            @if($tour->has_discount)
-                                <span class="text-decoration-line-through text-muted me-2" style="font-size: 1.25rem">
-                                    {{ $tour->currency }} {{ number_format($tour->original_price, 2) }}
-                                </span>
-                                <span class="badge bg-danger">{{ $tour->discount_percent }}% OFF</span>
-                            @endif
-                            <div class="mt-1">
-                                <span class="display-6 text-success">{{ $tour->currency }} {{ number_format($tour->price, 2) }}</span>
-                                <span class="fs-6">per person</span>
-                            </div>
-                        </div>
-                        <a href="{{ route('tours.booking', $tour->slug) }}" class="btn btn-success btn-lg w-100 mt-3">
-                            <i class="fas fa-ticket-alt me-2"></i>Book Now
-                        </a>
+<style>
+.ziara-single__tags { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+.ziara-single__tag { padding: 6px 15px; border-radius: 50px; font-size: 10.5px; font-weight: 700; letter-spacing: 1.1px; text-transform: uppercase; }
+.ziara-single__tag--gold { background: var(--gold-bright); color: var(--maroon-deep); box-shadow: 0 4px 12px rgba(243,210,74,.4); }
+.ziara-single__tag--line { background: rgba(255,255,255,.14); color: #fff; border: 1px solid rgba(201,162,39,.6); }
+.ziara-single__meta { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 26px; margin-top: 18px; }
+.ziara-hero__price {
+    background: rgba(28,14,10,.72);
+    border: 1px solid rgba(201,162,39,.5);
+    border-radius: 18px;
+    padding: 26px 24px;
+    backdrop-filter: blur(6px);
+    text-align: center;
+}
+.ziara-hero__price .ziara-single__tag--gold { display: inline-block; margin-bottom: 14px; }
+.ziara-hero__price s { display: block; font-size: 15px; color: rgba(255,255,255,.62); }
+.ziara-hero__price .amt { display: block; font-family: var(--font-display); font-size: 40px; font-weight: 700; line-height: 1; color: var(--gold-bright); }
+.ziara-hero__price .per { display: block; margin-top: 8px; font-size: 12.5px; letter-spacing: 1px; text-transform: uppercase; color: rgba(255,255,255,.72); }
+.ziara-rate-row { display: flex; align-items: center; gap: 14px; font-size: 14px; }
+.ziara-rate-row b { width: 62px; font-weight: 600; color: var(--muted); }
+.ziara-rate-row i { flex: 1; height: 8px; border-radius: 999px; background: var(--gold-pale); overflow: hidden; display: block; }
+.ziara-rate-row i span { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--maroon) 0%, var(--gold) 100%); }
+.ziara-rate-row em { width: 46px; text-align: right; font-style: normal; color: var(--muted); }
+.ziara-review__head { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+.ziara-review__head img { width: 50px; height: 50px; border-radius: 50%; flex-shrink: 0; }
+.ziara-review__head strong { display: block; font-size: 15px; color: var(--ink); }
+.ziara-review__head small { color: var(--muted); font-size: 13px; }
+.ziara-review__stars { margin-left: auto; color: var(--gold); font-size: 14px; letter-spacing: 2px; }
+.ziara-review__quote { font-family: var(--font-display); font-size: 20px; font-weight: 600; color: var(--maroon-deep); margin: 0 0 8px; }
+.ziara-review__text { font-size: 14.5px; line-height: 1.75; color: var(--muted); margin: 0; }
+.ziara-related { display: flex; gap: 14px; align-items: stretch; padding: 14px 0; border-bottom: 1px dashed var(--line); }
+.ziara-related:last-child { border-bottom: 0; padding-bottom: 0; }
+.ziara-related img { width: 104px; height: 78px; border-radius: 10px; object-fit: cover; flex-shrink: 0; }
+.ziara-related h6 { font-family: var(--font-display); font-size: 17px; font-weight: 700; color: var(--maroon-deep); margin: 0 0 3px; }
+.ziara-related .ziara-related__stars { color: var(--gold); font-size: 12px; letter-spacing: 1px; }
+.ziara-related__price { font-weight: 700; color: var(--maroon); font-size: 14.5px; }
+a.ziara-related:hover h6 { color: var(--gold-dim); }
+</style>
+
+<div class="ziara-single">
+    <section class="ziara-single__hero" style="background-image: linear-gradient(180deg, rgba(28,22,18,.30) 0%, rgba(74,29,19,.86) 100%), url('{{ $tour->main_image }}'); background-size: cover; background-position: center;">
+        <div class="ziara-single__hero-overlay"></div>
+        <div class="ziara-single__hero-inner">
+            <nav class="ziara-breadcrumb" aria-label="Breadcrumb">
+                <a href="{{ url('/') }}">Home</a>
+                <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+                <a href="{{ route('tours.index') }}">Tours</a>
+                <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+                <span aria-current="page">{{ $tour->name }}</span>
+            </nav>
+            <div style="display: flex; flex-wrap: wrap; gap: 40px; align-items: flex-end; justify-content: space-between;">
+                <div style="flex: 1 1 460px;">
+                    <div class="ziara-single__kicker">{{ $tour->category }}</div>
+                    <h1 class="ziara-single__title">{{ $tour->name }}</h1>
+                    <div class="ziara-single__meta">
+                        <p class="ziara-single__loc">
+                            <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
+                            {{ $tour->city }}, {{ $tour->country }}
+                        </p>
+                        <p class="ziara-single__loc">
+                            <i class="fa-regular fa-clock" aria-hidden="true"></i>
+                            {{ $tour->duration }}
+                        </p>
+                        <p class="ziara-single__loc">
+                            <i class="fa-solid fa-star" aria-hidden="true"></i>
+                            {{ number_format($tour->rating, 1) }}
+                            <small>({{ $tour->review_count }} reviews)</small>
+                        </p>
                     </div>
+                    <div class="ziara-single__tags">
+                        <span class="ziara-single__tag ziara-single__tag--gold">{{ $tour->category }}</span>
+                        @if($tour->free_cancellation)
+                            <span class="ziara-single__tag ziara-single__tag--line">Free Cancellation</span>
+                        @endif
+                        @if($tour->hotel_pickup)
+                            <span class="ziara-single__tag ziara-single__tag--line">Hotel Pickup</span>
+                        @endif
+                    </div>
+                </div>
+                <div class="ziara-hero__price" style="flex: 0 0 280px;">
+                    @if($tour->has_discount)
+                        <span class="ziara-single__tag ziara-single__tag--gold">{{ $tour->discount_percent }}% OFF</span>
+                        <s>{{ $tour->currency }} {{ number_format($tour->original_price, 2) }}</s>
+                    @endif
+                    <span class="amt">{{ $tour->currency }} {{ number_format($tour->price, 2) }}</span>
+                    <span class="per">per person</span>
+                    <a href="{{ route('tours.booking', $tour->slug) }}" class="ziara-single__btn" style="margin-top: 18px;">
+                        <i class="fa-solid fa-ticket" aria-hidden="true"></i> Book Now
+                    </a>
                 </div>
             </div>
         </div>
-    </div>
-</div>
+    </section>
 
-<div class="container py-5">
-    <div class="row">
-        <!-- Main Content -->
-        <div class="col-lg-8 pe-lg-5">
-            <!-- Tour Gallery -->
+    <div class="ziara-single__wrap">
+        <article class="ziara-single__content">
             @if($tour->images && count($tour->images) > 1)
-            <div class="mb-5">
-                <h4 class="mb-4">Gallery</h4>
-                <div class="row g-3">
-                    @foreach(array_slice($tour->images, 0, 6) as $index => $image)
-                        <div class="col-md-4 col-6">
-                            <a href="{{ $image }}" data-fancybox="gallery">
-                                <img src="{{ $image }}" alt="{{ $tour->name }} - Image {{ $index + 1 }}" class="img-fluid rounded shadow-sm" style="width: 100%; height: 160px; object-fit: cover;">
+                <div class="ziara-block">
+                    <h2 class="ziara-block__title">Gallery</h2>
+                    <div class="ziara-gallery">
+                        @foreach(array_slice($tour->images, 0, 6) as $index => $image)
+                            <a href="{{ $image }}" data-fancybox="gallery" class="ziara-gallery__item">
+                                <img src="{{ $image }}" alt="{{ $tour->name }} - Image {{ $index + 1 }}">
                             </a>
-                        </div>
-                    @endforeach
+                        @endforeach
+                    </div>
                 </div>
-            </div>
             @endif
-            
-            <!-- Tour Description -->
-            <div class="mb-5">
-                <h4 class="mb-4">Tour Description</h4>
-                <div class="tour-description">
+
+            <div class="ziara-block">
+                <h2 class="ziara-block__title">Tour Description</h2>
+                <div class="ziara-prose">
                     <p>{{ $tour->full_description ?? $tour->short_description }}</p>
                 </div>
             </div>
-            
-            <!-- Highlights -->
+
             @if($tour->highlights)
-            <div class="mb-5">
-                <h4 class="mb-4">Highlights</h4>
-                <div class="row">
-                    @foreach($tour->highlights as $highlight)
-                        <div class="col-md-6 mb-3">
-                            <div class="d-flex align-items-start">
-                                <i class="fas fa-check-circle text-success mt-1 me-3" style="font-size: 1.2rem;"></i>
+                <div class="ziara-block">
+                    <h2 class="ziara-block__title">Highlights</h2>
+                    <ul class="ziara-checklist">
+                        @foreach($tour->highlights as $highlight)
+                            <li class="ziara-checklist__item">
+                                <span class="ziara-checklist__icon"><i class="fa-solid fa-check" aria-hidden="true"></i></span>
                                 <span>{{ $highlight }}</span>
-                            </div>
-                        </div>
-                    @endforeach
+                            </li>
+                        @endforeach
+                    </ul>
                 </div>
-            </div>
-            @endif
-            
-            <!-- Inclusions -->
-            @if($tour->included_services)
-            <div class="mb-5">
-                <h4 class="mb-4">What's Included</h4>
-                <div class="row">
-                    @foreach($tour->included_services as $service)
-                        <div class="col-md-6 mb-3">
-                            <div class="d-flex align-items-start">
-                                <i class="fas fa-check text-success mt-1 me-3"></i>
-                                <span>{{ $service }}</span>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
             @endif
 
-            <!-- Important Information -->
-            <div class="mb-5">
-                <h4 class="mb-4">Important Information</h4>
-                
-                <div class="card mb-3 border-0 shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title">
-                            <i class="fas fa-info-circle text-info me-2"></i>Tour Details
-                        </h5>
-                        <ul class="list-unstyled mb-0">
-                            <li class="mb-3">
-                                <div class="d-flex">
-                                    <div style="width: 120px;">
-                                        <strong>Duration:</strong>
-                                    </div>
-                                    <div>{{ $tour->duration }}</div>
-                                </div>
+            @if($tour->included_services)
+                <div class="ziara-block">
+                    <h2 class="ziara-block__title">What's Included</h2>
+                    <ul class="ziara-checklist">
+                        @foreach($tour->included_services as $service)
+                            <li class="ziara-checklist__item">
+                                <span class="ziara-checklist__icon"><i class="fa-solid fa-check" aria-hidden="true"></i></span>
+                                <span>{{ $service }}</span>
                             </li>
-                            <li class="mb-3">
-                                <div class="d-flex">
-                                    <div style="width: 120px;">
-                                        <strong>Difficulty:</strong>
-                                    </div>
-                                    <div>{{ $tour->difficulty_level }}</div>
-                                </div>
-                            </li>
-                            <li class="mb-3">
-                                <div class="d-flex">
-                                    <div style="width: 120px;">
-                                        <strong>Group Size:</strong>
-                                    </div>
-                                    <div>Maximum {{ $tour->max_participants ?? 20 }} people</div>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="d-flex">
-                                    <div style="width: 120px;">
-                                        <strong>Languages:</strong>
-                                    </div>
-                                    <div>English</div>
-                                </div>
-                            </li>
-                        </ul>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            <div class="ziara-block">
+                <h2 class="ziara-block__title">Important Information</h2>
+
+                <div class="ziara-panel">
+                    <h3 class="ziara-panel__title"><i class="fa-solid fa-circle-info" style="color: var(--gold);" aria-hidden="true"></i> Tour Details</h3>
+                    <ul class="ziara-single__facts">
+                        <li>
+                            <i class="fa-regular fa-clock" aria-hidden="true"></i>
+                            <span>Duration</span>
+                            <b>{{ $tour->duration }}</b>
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-mountain-sun" aria-hidden="true"></i>
+                            <span>Difficulty</span>
+                            <b>{{ $tour->difficulty_level }}</b>
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-users" aria-hidden="true"></i>
+                            <span>Group Size</span>
+                            <b>Maximum {{ $tour->max_participants ?? 20 }} people</b>
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-language" aria-hidden="true"></i>
+                            <span>Languages</span>
+                            <b>English</b>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="ziara-panel">
+                    <h3 class="ziara-panel__title"><i class="fa-regular fa-calendar-xmark" style="color: var(--gold);" aria-hidden="true"></i> Cancellation Policy</h3>
+                    <div class="ziara-note">
+                        {{ $tour->cancellation_policy ?? 'Free cancellation up to 24 hours before the tour starts. If you cancel less than 24 hours before the tour, you will not be eligible for a refund.' }}
                     </div>
                 </div>
-                
-                <div class="card mb-3 border-0 shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title">
-                            <i class="fas fa-calendar-alt text-warning me-2"></i>Cancellation Policy
-                        </h5>
-                        <p class="card-text">{{ $tour->cancellation_policy ?? 'Free cancellation up to 24 hours before the tour starts. If you cancel less than 24 hours before the tour, you will not be eligible for a refund.' }}</p>
-                    </div>
-                </div>
-                
-                <div class="card border-0 shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title">
-                            <i class="fas fa-clipboard-list text-primary me-2"></i>What to Bring
-                        </h5>
-                        <ul>
-                            <li>Comfortable walking shoes</li>
-                            <li>Sunscreen and hat</li>
-                            <li>Water bottle</li>
-                            <li>Camera</li>
-                            <li>Weather-appropriate clothing</li>
-                        </ul>
-                    </div>
+
+                <div class="ziara-panel">
+                    <h3 class="ziara-panel__title"><i class="fa-solid fa-suitcase-rolling" style="color: var(--gold);" aria-hidden="true"></i> What to Bring</h3>
+                    <ul class="ziara-amenities">
+                        <li><i class="fa-solid fa-shoe-prints" aria-hidden="true"></i> Comfortable walking shoes</li>
+                        <li><i class="fa-solid fa-sun" aria-hidden="true"></i> Sunscreen and hat</li>
+                        <li><i class="fa-solid fa-bottle-droplet" aria-hidden="true"></i> Water bottle</li>
+                        <li><i class="fa-solid fa-camera" aria-hidden="true"></i> Camera</li>
+                        <li><i class="fa-solid fa-shirt" aria-hidden="true"></i> Weather-appropriate clothing</li>
+                    </ul>
                 </div>
             </div>
-            
-            <!-- Reviews Section -->
-            <div class="mb-5">
-                <h4 class="mb-4">Reviews</h4>
-                
-                <div class="card border-0 shadow-sm mb-4">
-                    <div class="card-body">
-                        <div class="row align-items-center">
-                            <div class="col-md-4 text-center border-end">
-                                <div class="display-4 fw-bold text-success">{{ number_format($tour->rating, 1) }}</div>
-                                <div class="text-muted mb-2">out of 5</div>
-                                <div>
+
+            <div class="ziara-block">
+                <h2 class="ziara-block__title">Reviews</h2>
+
+                <div class="ziara-panel">
+                    <div style="display: flex; flex-wrap: wrap; gap: 34px; align-items: center;">
+                        <div style="text-align: center; min-width: 150px;">
+                            <div style="font-family: var(--font-display); font-size: 54px; font-weight: 700; line-height: 1; color: var(--maroon);">
+                                {{ number_format($tour->rating, 1) }}
+                            </div>
+                            <div class="ziara-single__loc" style="justify-content: center; margin: 8px 0; color: var(--muted);">out of 5</div>
+                            <div style="color: var(--gold); letter-spacing: 2px;">
+                                @for($i = 1; $i <= 5; $i++)
+                                    @if($i <= round($tour->rating))
+                                        <i class="fa-solid fa-star" aria-hidden="true"></i>
+                                    @else
+                                        <i class="fa-regular fa-star" aria-hidden="true"></i>
+                                    @endif
+                                @endfor
+                            </div>
+                            <div style="margin-top: 10px; font-size: 14px; color: var(--muted);">{{ $tour->review_count }} reviews</div>
+                        </div>
+                        <div style="flex: 1 1 280px; display: grid; gap: 10px;">
+                            <div class="ziara-rate-row"><b>5 stars</b><i><span style="width: 70%"></span></i><em>70%</em></div>
+                            <div class="ziara-rate-row"><b>4 stars</b><i><span style="width: 20%"></span></i><em>20%</em></div>
+                            <div class="ziara-rate-row"><b>3 stars</b><i><span style="width: 7%"></span></i><em>7%</em></div>
+                            <div class="ziara-rate-row"><b>2 stars</b><i><span style="width: 2%"></span></i><em>2%</em></div>
+                            <div class="ziara-rate-row"><b>1 star</b><i><span style="width: 1%"></span></i><em>1%</em></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ziara-panel">
+                    <div class="ziara-review__head">
+                        <img src="https://ui-avatars.com/api/?name=John+D&background=random" alt="John D.">
+                        <div>
+                            <strong>John D.</strong>
+                            <small>Traveled last month</small>
+                        </div>
+                        <div class="ziara-review__stars">
+                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                        </div>
+                    </div>
+                    <h3 class="ziara-review__quote">"Absolutely amazing experience!"</h3>
+                    <p class="ziara-review__text">This tour exceeded all my expectations. The guide was knowledgeable and friendly, and we saw so much wildlife. Definitely the highlight of our trip to East Africa!</p>
+                </div>
+
+                <div class="ziara-panel">
+                    <div class="ziara-review__head">
+                        <img src="https://ui-avatars.com/api/?name=Sarah+M&background=random" alt="Sarah M.">
+                        <div>
+                            <strong>Sarah M.</strong>
+                            <small>Traveled 2 months ago</small>
+                        </div>
+                        <div class="ziara-review__stars">
+                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i>
+                        </div>
+                    </div>
+                    <h3 class="ziara-review__quote">"Great tour, worth the price"</h3>
+                    <p class="ziara-review__text">We had a wonderful time on this tour. The only reason for 4 stars instead of 5 is that we felt slightly rushed at some points. But overall, it was a great experience and I would recommend it.</p>
+                </div>
+
+                <div style="text-align: center; margin-top: 28px;">
+                    <button class="ziara-btn ziara-btn--outline">
+                        <i class="fa-solid fa-comments" aria-hidden="true"></i> View All Reviews
+                    </button>
+                </div>
+            </div>
+        </article>
+
+        <aside class="ziara-single__aside">
+            <div class="ziara-single__box">
+                <h2 class="ziara-panel__title">Book this tour</h2>
+
+                <div class="ziara-single__price">
+                    <div>
+                        @if($tour->has_discount)
+                            <s style="display: block; font-size: 14px; color: var(--muted);">
+                                {{ $tour->currency }} {{ number_format($tour->original_price, 2) }}
+                            </s>
+                            <span class="ziara-card__badge" style="position: static; display: inline-block; margin-bottom: 8px;">{{ $tour->discount_percent }}% OFF</span>
+                        @endif
+                        <strong style="display: block;">{{ $tour->currency }} {{ number_format($tour->price, 2) }}</strong>
+                        <span>per person</span>
+                    </div>
+                </div>
+
+                <a href="{{ route('tours.booking', $tour->slug) }}" class="ziara-single__btn">
+                    <i class="fa-solid fa-ticket" aria-hidden="true"></i> Book Now
+                </a>
+
+                <ul class="ziara-single__facts" style="margin-top: 24px;">
+                    <li>
+                        <i class="fa-regular fa-calendar-check" aria-hidden="true"></i>
+                        <span>Available daily</span>
+                        <b>Subject to availability</b>
+                    </li>
+                    @if($tour->instant_confirmation)
+                        <li>
+                            <i class="fa-solid fa-bolt" aria-hidden="true"></i>
+                            <span>Instant confirmation</span>
+                            <b>Receive confirmation immediately</b>
+                        </li>
+                    @endif
+                    @if($tour->free_cancellation)
+                        <li>
+                            <i class="fa-solid fa-circle-xmark" aria-hidden="true"></i>
+                            <span>Free cancellation</span>
+                            <b>Up to 24 hours before</b>
+                        </li>
+                    @endif
+                    @if($tour->hotel_pickup)
+                        <li>
+                            <i class="fa-solid fa-car" aria-hidden="true"></i>
+                            <span>Hotel pickup available</span>
+                            <b>For most city hotels</b>
+                        </li>
+                    @endif
+                </ul>
+            </div>
+
+            @if(count($relatedTours) > 0)
+                <div class="ziara-panel" style="margin-top: 24px;">
+                    <h2 class="ziara-panel__title">You Might Also Like</h2>
+                    @foreach($relatedTours as $relatedTour)
+                        <a href="{{ route('tours.show', $relatedTour->slug) }}" class="ziara-related">
+                            <img src="{{ $relatedTour->main_image }}" alt="{{ $relatedTour->name }}">
+                            <div>
+                                <h6>{{ Str::limit($relatedTour->name, 40) }}</h6>
+                                <div class="ziara-related__stars">
                                     @for($i = 1; $i <= 5; $i++)
-                                        @if($i <= round($tour->rating))
-                                            <i class="fas fa-star text-warning"></i>
+                                        @if($i <= round($relatedTour->rating))
+                                            <i class="fa-solid fa-star" aria-hidden="true"></i>
                                         @else
-                                            <i class="far fa-star text-warning"></i>
+                                            <i class="fa-regular fa-star" aria-hidden="true"></i>
                                         @endif
                                     @endfor
                                 </div>
-                                <div class="mt-2">{{ $tour->review_count }} reviews</div>
-                            </div>
-                            <div class="col-md-8">
-                                <div class="px-md-4">
-                                    <!-- 5 Star -->
-                                    <div class="d-flex align-items-center mb-2">
-                                        <div style="width: 60px;">5 stars</div>
-                                        <div class="progress flex-grow-1" style="height: 10px;">
-                                            <div class="progress-bar bg-success" style="width: 70%"></div>
-                                        </div>
-                                        <div style="width: 40px;" class="ps-2">70%</div>
-                                    </div>
-                                    
-                                    <!-- 4 Star -->
-                                    <div class="d-flex align-items-center mb-2">
-                                        <div style="width: 60px;">4 stars</div>
-                                        <div class="progress flex-grow-1" style="height: 10px;">
-                                            <div class="progress-bar bg-success" style="width: 20%"></div>
-                                        </div>
-                                        <div style="width: 40px;" class="ps-2">20%</div>
-                                    </div>
-                                    
-                                    <!-- 3 Star -->
-                                    <div class="d-flex align-items-center mb-2">
-                                        <div style="width: 60px;">3 stars</div>
-                                        <div class="progress flex-grow-1" style="height: 10px;">
-                                            <div class="progress-bar bg-warning" style="width: 7%"></div>
-                                        </div>
-                                        <div style="width: 40px;" class="ps-2">7%</div>
-                                    </div>
-                                    
-                                    <!-- 2 Star -->
-                                    <div class="d-flex align-items-center mb-2">
-                                        <div style="width: 60px;">2 stars</div>
-                                        <div class="progress flex-grow-1" style="height: 10px;">
-                                            <div class="progress-bar bg-warning" style="width: 2%"></div>
-                                        </div>
-                                        <div style="width: 40px;" class="ps-2">2%</div>
-                                    </div>
-                                    
-                                    <!-- 1 Star -->
-                                    <div class="d-flex align-items-center">
-                                        <div style="width: 60px;">1 star</div>
-                                        <div class="progress flex-grow-1" style="height: 10px;">
-                                            <div class="progress-bar bg-danger" style="width: 1%"></div>
-                                        </div>
-                                        <div style="width: 40px;" class="ps-2">1%</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Review Examples -->
-                <div class="review-list">
-                    <div class="card border-0 shadow-sm mb-3">
-                        <div class="card-body">
-                            <div class="d-flex mb-3">
-                                <img src="https://ui-avatars.com/api/?name=John+D&background=random" alt="John D." class="rounded-circle me-3" width="50" height="50">
-                                <div>
-                                    <h6 class="mb-1">John D.</h6>
-                                    <div class="text-muted small">Traveled last month</div>
-                                </div>
-                                <div class="ms-auto">
-                                    <div class="text-warning">
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                    </div>
-                                </div>
-                            </div>
-                            <h6>"Absolutely amazing experience!"</h6>
-                            <p>This tour exceeded all my expectations. The guide was knowledgeable and friendly, and we saw so much wildlife. Definitely the highlight of our trip to East Africa!</p>
-                        </div>
-                    </div>
-                    
-                    <div class="card border-0 shadow-sm mb-3">
-                        <div class="card-body">
-                            <div class="d-flex mb-3">
-                                <img src="https://ui-avatars.com/api/?name=Sarah+M&background=random" alt="Sarah M." class="rounded-circle me-3" width="50" height="50">
-                                <div>
-                                    <h6 class="mb-1">Sarah M.</h6>
-                                    <div class="text-muted small">Traveled 2 months ago</div>
-                                </div>
-                                <div class="ms-auto">
-                                    <div class="text-warning">
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="far fa-star"></i>
-                                    </div>
-                                </div>
-                            </div>
-                            <h6>"Great tour, worth the price"</h6>
-                            <p>We had a wonderful time on this tour. The only reason for 4 stars instead of 5 is that we felt slightly rushed at some points. But overall, it was a great experience and I would recommend it.</p>
-                        </div>
-                    </div>
-                    
-                    <!-- View More Reviews Button -->
-                    <div class="text-center">
-                        <button class="btn btn-outline-success px-4">
-                            <i class="fas fa-comments me-2"></i>View All Reviews
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Sidebar -->
-        <div class="col-lg-4">
-            <!-- Booking Card -->
-            <div class="card border-0 shadow sticky-top" style="top: 20px; z-index: 1;">
-                <div class="card-body">
-                    <h5 class="card-title mb-4">Book this tour</h5>
-                    
-                    <div class="price-summary mb-4">
-                        <div class="fs-3 fw-bold mb-2">
-                            @if($tour->has_discount)
-                                <span class="text-decoration-line-through text-muted me-2" style="font-size: 1.25rem">
-                                    {{ $tour->currency }} {{ number_format($tour->original_price, 2) }}
-                                </span>
-                                <span class="badge bg-danger">{{ $tour->discount_percent }}% OFF</span>
-                            @endif
-                            <div class="mt-1">
-                                <span class="text-success">{{ $tour->currency }} {{ number_format($tour->price, 2) }}</span>
-                                <span class="fs-6">per person</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="d-grid">
-                        <a href="{{ route('tours.booking', $tour->slug) }}" class="btn btn-success btn-lg mb-3">
-                            <i class="fas fa-ticket-alt me-2"></i>Book Now
-                        </a>
-                    </div>
-                    
-                    <div class="tour-features mt-4">
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="flex-shrink-0">
-                                <i class="fas fa-calendar-check text-success"></i>
-                            </div>
-                            <div class="ms-3">
-                                <strong>Available daily</strong>
-                                <div class="text-muted small">Subject to availability</div>
-                            </div>
-                        </div>
-                        
-                        @if($tour->instant_confirmation)
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="flex-shrink-0">
-                                <i class="fas fa-bolt text-success"></i>
-                            </div>
-                            <div class="ms-3">
-                                <strong>Instant confirmation</strong>
-                                <div class="text-muted small">Receive confirmation immediately</div>
-                            </div>
-                        </div>
-                        @endif
-                        
-                        @if($tour->free_cancellation)
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="flex-shrink-0">
-                                <i class="fas fa-times-circle text-success"></i>
-                            </div>
-                            <div class="ms-3">
-                                <strong>Free cancellation</strong>
-                                <div class="text-muted small">Up to 24 hours before</div>
-                            </div>
-                        </div>
-                        @endif
-                        
-                        @if($tour->hotel_pickup)
-                        <div class="d-flex align-items-center">
-                            <div class="flex-shrink-0">
-                                <i class="fas fa-car text-success"></i>
-                            </div>
-                            <div class="ms-3">
-                                <strong>Hotel pickup available</strong>
-                                <div class="text-muted small">For most city hotels</div>
-                            </div>
-                        </div>
-                        @endif
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Similar Tours -->
-            @if(count($relatedTours) > 0)
-            <div class="card border-0 shadow mt-4">
-                <div class="card-body">
-                    <h5 class="card-title mb-4">You Might Also Like</h5>
-                    
-                    @foreach($relatedTours as $relatedTour)
-                    <div class="related-tour mb-3 pb-3 {{ !$loop->last ? 'border-bottom' : '' }}">
-                        <a href="{{ route('tours.show', $relatedTour->slug) }}" class="text-decoration-none">
-                            <div class="row g-0">
-                                <div class="col-4">
-                                    <img src="{{ $relatedTour->main_image }}" class="img-fluid rounded" alt="{{ $relatedTour->name }}" style="height: 70px; width: 100%; object-fit: cover;">
-                                </div>
-                                <div class="col-8 ps-3">
-                                    <h6 class="mb-1 text-dark">{{ Str::limit($relatedTour->name, 40) }}</h6>
-                                    <div class="text-warning small mb-1">
-                                        @for($i = 1; $i <= 5; $i++)
-                                            @if($i <= round($relatedTour->rating))
-                                                <i class="fas fa-star"></i>
-                                            @else
-                                                <i class="far fa-star"></i>
-                                            @endif
-                                        @endfor
-                                    </div>
-                                    <div class="text-success fw-bold">{{ $relatedTour->currency }} {{ number_format($relatedTour->price, 2) }}</div>
-                                </div>
+                                <div class="ziara-related__price">{{ $relatedTour->currency }} {{ number_format($relatedTour->price, 2) }}</div>
                             </div>
                         </a>
-                    </div>
                     @endforeach
                 </div>
-            </div>
             @endif
-        </div>
+        </aside>
     </div>
 </div>
-@endsection
 
-@section('scripts')
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.css" />
 <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.umd.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Initialize Fancybox for gallery
         Fancybox.bind("[data-fancybox='gallery']", {
-            // Options here
         });
     });
 </script>

@@ -371,7 +371,7 @@ function updateSelectAllState() {
 function applyFilters() {
     const formData = $('#filter-form').serialize();
     $.ajax({
-        url: '{{ route('notifications.filter') }}',
+        url: '{{ route('user.notifications.my') }}',
         method: 'GET',
         data: formData,
         beforeSend: function() {

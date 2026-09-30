@@ -216,17 +216,17 @@
                                         </button>
                                         <ul class="dropdown-menu dropdown-menu-end">
                                             <li>
-                                                <a class="dropdown-item" href="{{ route('admin.users.view', $admin->id) }}">
+                                                <a class="dropdown-item" href="{{ route('admin.users.admin') }}">
                                                     <i class="fas fa-eye me-2"></i>View Profile
                                                 </a>
                                             </li>
                                             <li>
-                                                <a class="dropdown-item" href="{{ route('admin.users.edit', $admin->id) }}">
+                                                <a class="dropdown-item" href="{{ route('admin.users.all') }}">
                                                     <i class="fas fa-edit me-2"></i>Edit Details
                                                 </a>
                                             </li>
                                             <li>
-                                                <a class="dropdown-item" href="{{ route('admin.users.permissions', $admin->id) }}">
+                                                <a class="dropdown-item" href="{{ route('admin.roles.permissions.all') }}">
                                                     <i class="fas fa-key me-2"></i>Manage Permissions
                                                 </a>
                                             </li>

@@ -142,7 +142,7 @@
                     Complete My Booking Now
                 </a>
                 <br>
-                <a href="{{ route('search') }}" class="button">
+                <a href="{{ route('flights.public.search') }}" class="button">
                     Search Different Options
                 </a>
             </div>
@@ -177,7 +177,7 @@
                 This is an automated email. Please do not reply to this message.
             </p>
             <p style="font-size: 11px; color: #a0aec0; margin-top: 15px;">
-                Don't want to receive these emails? <a href="{{ route('unsubscribe', $draft->session_id) }}" style="color: #a0aec0;">Unsubscribe here</a>
+                Don't want to receive these emails? <a href="{{ route('newsletter.unsubscribe') }}" style="color: #a0aec0;">Unsubscribe here</a>
             </p>
         </div>
     </div>

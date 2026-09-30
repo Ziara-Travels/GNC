@@ -3,7 +3,6 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
@@ -11,23 +10,18 @@ class SupportConfirmation extends Mailable
 {
     use Queueable, SerializesModels;
 
-    /**
-     * Create a new message instance.
-     *
-     * @return void
-     */
-    public function __construct()
+    public $supportData;
+
+    public function __construct($supportData)
     {
-        //
+        $this->supportData = $supportData;
     }
 
-    /**
-     * Build the message.
-     *
-     * @return $this
-     */
     public function build()
     {
-        return $this->view('view.name');
+        $type = ucfirst(str_replace('_', ' ', $this->supportData['type'] ?? 'support request'));
+
+        return $this->subject($this->supportData['subject'] ?? $type . ' Received')
+                    ->view('emails.support-confirmation');
     }
 }

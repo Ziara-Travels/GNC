@@ -33,20 +33,41 @@ return [
         'api_key' => env('EXCHANGE_RATE_API_KEY'),
     ],
     'jenga' => [
-    'base_url' => env('JENGA_BASE_URL', 'https://api.finserve.africa/v3-apis/account-api/v3.0/'),
-    'merchant_code' => env('JENGA_MERCHANT_CODE'),
-    'api_key' => env('JENGA_API_KEY'),
-    'consumer_secret' => env('Consumer_Secret'),
-    'callback_url' => env('JENGA_CALLBACK_URL', 'https://your-domain.com/api/payments/jenga/callback'),
-],
-    
-    'amadeus' => [
-        'client_id' => env('AMADEUS_API_KEY'),
-        'client_secret' => env('AMADEUS_API_SECRET'),
-        'base_url' => env('AMADEUS_BASE_URL', 'https://test.api.amadeus.com/v1'),
-        'test_mode' => env('AMADEUS_TEST_MODE', true),
-         'token_url' => env('AMADEUS_TOKEN_URL', 'https://test.api.amadeus.com/v1/security/oauth2/token'),
+        'base_url' => env('JENGA_BASE_URL', 'https://api.finserve.africa/v3-apis/account-api/v3.0/'),
+        'merchant_code' => env('JENGA_MERCHANT_CODE'),
+        'api_key' => env('JENGA_API_KEY'),
+        'consumer_secret' => env('Consumer_Secret'),
+        'callback_url' => env('JENGA_CALLBACK_URL', 'https://your-domain.com/api/payments/jenga/callback'),
+    ],
 
+    'skyscanner' => [
+        'api_key' => env('RAPIDAPI_KEY'),
+        'host' => env('RAPIDAPI_HOST_FLIGHTS', 'flights-sky.p.rapidapi.com'),
+        'market' => env('SKYSCANNER_MARKET', 'KE'),
+        'locale' => env('SKYSCANNER_LOCALE', 'en-KE'),
+        'currency' => env('SKYSCANNER_CURRENCY', 'KES'),
+        'mock' => env('SKYSCANNER_MOCK', env('RAPIDAPI_MOCK', false)),
+        'timeout' => env('SKYSCANNER_TIMEOUT', 30),
+    ],
+
+    'hotels' => [
+        'api_key' => env('RAPIDAPI_KEY'),
+        'host' => env('RAPIDAPI_HOST_HOTELS', 'hotels-com6.p.rapidapi.com'),
+        'locale' => env('HOTELS_LOCALE', 'en_US'),
+        'currency' => env('HOTELS_CURRENCY', 'KES'),
+        'mock' => env('HOTELS_MOCK', env('RAPIDAPI_MOCK', false)),
+        'timeout' => env('HOTELS_TIMEOUT', 35),
+    ],
+
+    'booking' => [
+        'api_key' => env('RAPIDAPI_KEY'),
+        'host' => env('RAPIDAPI_HOST_BOOKING', 'booking-com18.p.rapidapi.com'),
+        'locale' => env('BOOKING_LOCALE', 'en-gb'),
+        'currency' => env('BOOKING_CURRENCY', 'KES'),
+        'affiliate_id' => env('BOOKINGCOM_AFFILIATE_ID'),
+        'deeplink' => env('BOOKINGCOM_DEEPLINK', 'https://www.booking.com'),
+        'mock' => env('BOOKING_MOCK', env('RAPIDAPI_MOCK', false)),
+        'timeout' => env('BOOKING_TIMEOUT', 35),
     ],
     'openweathermap' => [
     'key' => env('OPENWEATHERMAP_API_KEY'),

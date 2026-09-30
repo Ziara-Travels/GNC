@@ -1,6 +1,8 @@
 @extends('layouts.main')
 
-@section('styles')
+@section('title', 'Complete Your Booking - Ziara Travel')
+
+@section('content')
 <style>
     /* Custom animations */
     @keyframes fadeInUp {
@@ -40,32 +42,97 @@
     
     /* Timeline styles */
     .timeline-step.active .timeline-circle {
-        background-color: #4f46e5;
-        border-color: #4f46e5;
+        background-color: #7b2a1b;
+        border-color: #6b1d15;
     }
     
     .timeline-step.active .timeline-text {
-        color: #4f46e5;
+        color: #7b2a1b;
         font-weight: 600;
     }
     
     .timeline-step.completed .timeline-circle {
-        background-color: #22c55e;
-        border-color: #22c55e;
+        background-color: #d9a561;
+        border-color: #d9a561;
     }
-    
+
     .timeline-line {
         top: 24px;
         height: 3px;
         transform: translateY(-50%);
     }
-</style>
-@endsection
 
-@section('content')
-<div class="bg-gray-50 min-h-screen pb-16">
+    .ziara-hotel-booking {
+        --maroon: #7b2a1b;
+        --maroon-deep: #6b1d15;
+        --gold: #d9a561;
+        --gold-bright: #f3d24a;
+        background: linear-gradient(180deg, #faf6f1 0%, #f4ece1 100%);
+    }
+
+    .ziara-hotel-booking .ziara-hotel-booking__band {
+        border-bottom: 2px solid var(--gold);
+    }
+
+    .ziara-hotel-booking .ziara-hotel-booking__title {
+        font-family: "Cormorant Garamond", Georgia, serif;
+        color: var(--maroon);
+        letter-spacing: 0.5px;
+    }
+
+    .ziara-hotel-booking .ziara-hotel-booking__heading {
+        font-family: "Cormorant Garamond", Georgia, serif;
+        color: var(--maroon);
+        font-weight: 700;
+    }
+
+    .ziara-hotel-booking .ziara-hotel-booking__price {
+        color: var(--maroon);
+    }
+
+    .ziara-hotel-booking .ziara-hotel-booking__card {
+        border-color: rgba(217, 165, 97, 0.55);
+        box-shadow: 0 14px 34px -26px rgba(107, 29, 21, 0.55);
+    }
+
+    .ziara-hotel-booking .ziara-hotel-booking__meta {
+        background: rgba(217, 165, 97, 0.18);
+        border: 1px solid rgba(217, 165, 97, 0.45);
+        color: var(--maroon);
+    }
+
+    .ziara-hotel-booking a[class*="indigo"],
+    .ziara-hotel-booking i[class*="indigo"],
+    .ziara-hotel-booking .ziara-hotel-booking__price {
+        color: var(--maroon);
+    }
+
+    .ziara-hotel-booking [class*="hover:border-indigo"]:hover {
+        border-color: var(--gold);
+    }
+
+    .ziara-hotel-booking [class*="focus:ring-indigo"]:focus,
+    .ziara-hotel-booking [class*="focus:border-indigo"]:focus {
+        border-color: var(--gold);
+        --tw-ring-color: rgba(217, 165, 97, 0.35);
+    }
+
+    .ziara-hotel-booking button[class*="bg-indigo"] {
+        background-color: #7b2a1b !important;
+        border: 1px solid #6b1d15;
+    }
+
+    .ziara-hotel-booking button[class*="hover:bg-indigo"]:hover {
+        background-color: #6b1d15 !important;
+    }
+
+    .ziara-hotel-booking input[type="checkbox"] {
+        accent-color: #7b2a1b;
+    }
+</style>
+<div class="ziara-hotel-booking bg-gray-50 min-h-screen pb-16">
     <!-- Booking Progress Timeline -->
-    <div class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-30">
+    <div class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-30 ziara-hotel-booking__band">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div class="relative flex items-center justify-between">
                 <!-- Timeline Line -->
@@ -119,7 +186,7 @@
         <div class="flex flex-col lg:flex-row gap-8">
             <!-- Left Column: Hotel Information -->
             <div class="lg:w-2/3">
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-8">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-8 ziara-hotel-booking__card">
                     <!-- Hotel Images Gallery -->
                     <div class="relative h-80">
                         <div class="swiper-container h-full">
@@ -151,7 +218,7 @@
                         <!-- Hotel Name and Rating -->
                         <div class="flex justify-between items-start mb-4">
                             <div>
-                                <h1 class="text-2xl font-bold text-gray-900">{{ $hotel['hotelName'] ?? 'Hotel Name' }}</h1>
+                                <h1 class="text-2xl font-bold text-gray-900 ziara-hotel-booking__title">{{ $hotel['hotelName'] ?? 'Hotel Name' }}</h1>
                                 <p class="text-gray-600 flex items-center mt-1">
                                     <i data-lucide="map-pin" class="w-4 h-4 mr-1"></i>
                                     {{ $hotel['location'] ?? 'Location' }}, {{ $hotel['city'] ?? 'City' }}, {{ $hotel['country'] ?? 'Country' }}
@@ -177,7 +244,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                             <!-- Property Highlights -->
                             <div>
-                                <h3 class="text-lg font-semibold mb-3">Property Highlights</h3>
+                                <h3 class="text-lg font-semibold mb-3 ziara-hotel-booking__heading">Property Highlights</h3>
                                 <ul class="space-y-2">
                                     <li class="flex items-start">
                                         <i data-lucide="check-circle" class="w-5 h-5 text-green-500 mr-2 shrink-0"></i>
@@ -200,7 +267,7 @@
                             
                             <!-- Room Amenities -->
                             <div>
-                                <h3 class="text-lg font-semibold mb-3">Room Amenities</h3>
+                                <h3 class="text-lg font-semibold mb-3 ziara-hotel-booking__heading">Room Amenities</h3>
                                 <ul class="space-y-2">
                                     <li class="flex items-start">
                                         <i data-lucide="check" class="w-5 h-5 text-indigo-600 mr-2 shrink-0"></i>
@@ -224,7 +291,7 @@
                         
                         <!-- Description -->
                         <div class="mb-8">
-                            <h3 class="text-lg font-semibold mb-3">Description</h3>
+                            <h3 class="text-lg font-semibold mb-3 ziara-hotel-booking__heading">Description</h3>
                             <p class="text-gray-700">
                                 {{ $hotel['description'] ?? 'Located in the heart of the city, this premium hotel offers luxurious accommodations with modern amenities. Guests can enjoy breathtaking views, world-class dining, and exceptional service throughout their stay. The property features a fitness center, spa, and swimming pool for relaxation and recreation. With its prime location, guests have easy access to major attractions, shopping districts, and business centers.' }}
                             </p>
@@ -232,7 +299,7 @@
                         
                         <!-- Hotel Policies -->
                         <div>
-                            <h3 class="text-lg font-semibold mb-3">Hotel Policies</h3>
+                            <h3 class="text-lg font-semibold mb-3 ziara-hotel-booking__heading">Hotel Policies</h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div class="flex items-center">
                                     <i data-lucide="clock" class="w-5 h-5 text-gray-500 mr-3"></i>
@@ -268,14 +335,14 @@
                 </div>
                 
                 <!-- Room Type Selection -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-8">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-8 ziara-hotel-booking__card">
                     <div class="p-6">
-                        <h2 class="text-xl font-bold text-gray-900 mb-6">Available Room Types</h2>
+                        <h2 class="text-xl font-bold text-gray-900 mb-6 ziara-hotel-booking__heading">Available Room Types</h2>
                         
                         <!-- Room Options -->
                         <div class="space-y-6">
                             <!-- Room Option 1 -->
-                            <div class="border border-gray-200 rounded-lg overflow-hidden hover:border-indigo-500 transition-colors">
+                            <div class="border border-gray-200 rounded-lg overflow-hidden hover:border-indigo-500 transition-colors ziara-hotel-booking__card">
                                 <div class="flex flex-col md:flex-row">
                                     <!-- Room Image -->
                                     <div class="md:w-1/3 h-48 md:h-auto">
@@ -318,11 +385,11 @@
                                         <div class="flex items-center justify-between mt-4 pt-4 border-t border-gray-200">
                                             <div>
                                                 <p class="text-gray-500 text-sm line-through">{{ $hotel['currency'] ?? 'KES' }} {{ number_format(($hotel['originalPrice'] ?? 15000)) }}</p>
-                                                <p class="text-xl font-bold text-indigo-600">{{ $hotel['currency'] ?? 'KES' }} {{ number_format(($hotel['price'] ?? 12000)) }}</p>
+                                                <p class="text-xl font-bold text-indigo-600 ziara-hotel-booking__price">{{ $hotel['currency'] ?? 'KES' }} {{ number_format(($hotel['price'] ?? 12000)) }}</p>
                                                 <p class="text-gray-500 text-sm">per night, includes taxes</p>
                                             </div>
                                             
-                                            <button type="button" class="roomSelectBtn px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors" data-room-type="standard" data-room-price="{{ $hotel['price'] ?? 12000 }}">
+                                            <button type="button" class="roomSelectBtn ziara-btn ziara-btn--gold px-6 py-2" data-room-type="standard" data-room-price="{{ $hotel['price'] ?? 12000 }}">
                                                 Select
                                             </button>
                                         </div>
@@ -331,7 +398,7 @@
                             </div>
                             
                             <!-- Room Option 2 -->
-                            <div class="border border-gray-200 rounded-lg overflow-hidden hover:border-indigo-500 transition-colors">
+                            <div class="border border-gray-200 rounded-lg overflow-hidden hover:border-indigo-500 transition-colors ziara-hotel-booking__card">
                                 <div class="flex flex-col md:flex-row">
                                     <!-- Room Image -->
                                     <div class="md:w-1/3 h-48 md:h-auto">
@@ -378,11 +445,11 @@
                                         <div class="flex items-center justify-between mt-4 pt-4 border-t border-gray-200">
                                             <div>
                                                 <p class="text-gray-500 text-sm line-through">{{ $hotel['currency'] ?? 'KES' }} {{ number_format(($hotel['originalPrice'] ?? 20000) + 5000) }}</p>
-                                                <p class="text-xl font-bold text-indigo-600">{{ $hotel['currency'] ?? 'KES' }} {{ number_format(($hotel['price'] ?? 12000) + 5000) }}</p>
+                                                <p class="text-xl font-bold text-indigo-600 ziara-hotel-booking__price">{{ $hotel['currency'] ?? 'KES' }} {{ number_format(($hotel['price'] ?? 12000) + 5000) }}</p>
                                                 <p class="text-gray-500 text-sm">per night, includes taxes</p>
                                             </div>
                                             
-                                            <button type="button" class="roomSelectBtn px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors" data-room-type="deluxe" data-room-price="{{ ($hotel['price'] ?? 12000) + 5000 }}">
+                                            <button type="button" class="roomSelectBtn ziara-btn ziara-btn--gold px-6 py-2" data-room-type="deluxe" data-room-price="{{ ($hotel['price'] ?? 12000) + 5000 }}">
                                                 Select
                                             </button>
                                         </div>
@@ -396,9 +463,9 @@
                 <!-- Booking Form -->
                 <div id="bookingForm" class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden" style="display: none;">
                     <div class="p-6">
-                        <h2 class="text-xl font-bold text-gray-900 mb-6">Guest Information</h2>
+                        <h2 class="text-xl font-bold text-gray-900 mb-6 ziara-hotel-booking__heading">Guest Information</h2>
                         
-                        <form id="hotelBookingForm" action="{{ route('booking.proceed') }}" method="POST">
+                        <form id="hotelBookingForm" action="{{ route('hotels.book') }}" method="POST">
                             @csrf
                             <input type="hidden" name="booking_type" value="hotel">
                             <input type="hidden" name="hotel_id" value="{{ $hotel['id'] ?? '' }}">
@@ -408,7 +475,7 @@
                             
                             <!-- Guest Details -->
                             <div class="mb-8">
-                                <h3 class="text-lg font-semibold mb-4">Primary Guest</h3>
+                                <h3 class="text-lg font-semibold mb-4 ziara-hotel-booking__heading">Primary Guest</h3>
                                 
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <!-- First Name -->
@@ -439,7 +506,7 @@
                             
                             <!-- Special Requests -->
                             <div class="mb-8">
-                                <h3 class="text-lg font-semibold mb-4">Special Requests</h3>
+                                <h3 class="text-lg font-semibold mb-4 ziara-hotel-booking__heading">Special Requests</h3>
                                 
                                 <div>
                                     <label for="specialRequests" class="block text-sm font-medium text-gray-700 mb-1">Special Requests (optional)</label>
@@ -476,7 +543,7 @@
             <div class="lg:w-1/3">
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden sticky top-24">
                     <div class="p-6">
-                        <h2 class="text-xl font-bold text-gray-900 mb-6">Booking Summary</h2>
+                        <h2 class="text-xl font-bold text-gray-900 mb-6 ziara-hotel-booking__heading">Booking Summary</h2>
                         
                         <!-- Hotel Info Summary -->
                         <div class="flex items-center mb-6">
@@ -484,7 +551,7 @@
                                 <img src="{{ asset('images/hotels/' . ($hotel['hotelImage'] ?? 'default-hotel.jpg')) }}" alt="{{ $hotel['hotelName'] ?? 'Hotel' }}" class="w-full h-full object-cover">
                             </div>
                             <div class="ml-4">
-                                <h3 class="font-semibold text-gray-800">{{ $hotel['hotelName'] ?? 'Hotel Name' }}</h3>
+                                <h3 class="font-semibold text-gray-800 ziara-hotel-booking__heading">{{ $hotel['hotelName'] ?? 'Hotel Name' }}</h3>
                                 <div class="flex items-center mt-1">
                                     @for($i = 0; $i < ($hotel['stars'] ?? 5); $i++)
                                         <i data-lucide="star" class="w-4 h-4 text-yellow-500 fill-current"></i>
@@ -529,7 +596,7 @@
                         
                         <!-- Price Breakdown -->
                         <div class="mb-6" id="priceBreakdown" style="display: none;">
-                            <h3 class="font-semibold mb-2">Price Details</h3>
+                            <h3 class="font-semibold mb-2 ziara-hotel-booking__heading">Price Details</h3>
                             
                             <div class="space-y-2 text-sm">
                                 <div class="flex justify-between">
@@ -592,7 +659,7 @@
                 <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                     <div class="sm:flex sm:items-start">
                         <div class="mt-3 text-center sm:mt-0 sm:text-left w-full">
-                            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4" id="modal-title">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4 ziara-hotel-booking__heading" id="modal-title">
                                 Create an Account to Continue
                             </h3>
                             
@@ -672,9 +739,6 @@
         </div>
     </div>
 </div>
-@endsection
-
-@section('scripts')
 <script>
     // Initialize Lucide icons
     document.addEventListener('DOMContentLoaded', function() {

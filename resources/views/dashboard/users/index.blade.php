@@ -648,7 +648,7 @@
                                         </button>
                                         <ul class="dropdown-menu dropdown-menu-end">
                                             <li>
-                                                <a class="dropdown-item" href="{{ route('superadmin.users.view', $user->id) }}">
+                                                <a class="dropdown-item" href="{{ route('superadmin.users.edit', $user->id) }}">
                                                     <i class="fas fa-eye me-2"></i>View Profile
                                                 </a>
                                             </li>
@@ -664,7 +664,7 @@
                                             </li>
                                             <li><hr class="dropdown-divider"></li>
                                             <li>
-                                                <a class="dropdown-item" href="{{ route('superadmin.activity.user', $user->id) }}">
+                                                <a class="dropdown-item" href="{{ route('superadmin.users.activity-tracking', ['user' => $user->id]) }}">
                                                     <i class="fas fa-history me-2"></i>Activity Log
                                                 </a>
                                             </li>

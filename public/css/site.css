@@ -1,0 +1,222 @@
+/* =====================================================================
+   Ziara Travels - Skyscanner-style public pages
+   Palette: deep navy + amber/gold (ziaratravels.co.ke brand) with the
+   clean, search-centric UX of Skyscanner.
+
+   Navy:   #0a1f44 (dark) / #0b2545 / #123a6b
+   Blue:   #2563eb (primary accent)
+   Amber:  #e8b923 / #f5c518 (accent)
+   Paper:  #f4f6fb background, white cards
+   ===================================================================== */
+
+:root {
+    --ziara-navy: #0a1f44;
+    --ziara-navy-2: #0b2545;
+    --ziara-navy-3: #123a6b;
+    --ziara-blue: #2563eb;
+    --ziara-blue-dark: #1d4ed8;
+    --ziara-amber: #e8b923;
+    --ziara-amber-light: #f5c518;
+    --ziara-paper: #f4f6fb;
+    --ziara-ink: #111827;
+    --ziara-muted: #6b7280;
+}
+
+/* ---------- Hero / headlines ---------- */
+.ziara-hero {
+    background-color: var(--ziara-navy);
+    background-image:
+        radial-gradient(1100px 520px at 78% -10%, rgba(37, 99, 235, 0.45), transparent 62%),
+        radial-gradient(900px 480px at 8% 115%, rgba(232, 185, 35, 0.16), transparent 60%),
+        linear-gradient(150deg, #0a1f44 0%, #0b2545 55%, #123a6b 100%);
+    color: #fff;
+}
+
+.ziara-hero-eyebrow {
+    letter-spacing: .28em;
+    text-transform: uppercase;
+    font-size: .72rem;
+    font-weight: 600;
+    color: var(--ziara-amber-light);
+}
+
+.ziara-hero-title {
+    font-weight: 800;
+    line-height: 1.08;
+    letter-spacing: -0.01em;
+    color: #fff;
+    text-shadow: 0 2px 24px rgba(10, 31, 68, .35);
+}
+
+.ziara-hero-title em {
+    font-style: italic;
+    font-family: "Jost", "Script MT Bold", serif;
+    font-weight: 600;
+    background: linear-gradient(120deg, var(--ziara-amber) 0%, var(--ziara-amber-light) 55%, #ffd75e 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.ziara-hero-sub {
+    color: rgba(255, 255, 255, .82);
+}
+
+/* ---------- Search card (Skyscanner-style) ---------- */
+.ziara-search-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 24px 60px -18px rgba(10, 31, 68, .45);
+}
+
+.ziara-search-tab {
+    color: var(--ziara-muted);
+    border-bottom: 2px solid transparent;
+    font-weight: 600;
+}
+
+.ziara-search-tab.active {
+    color: var(--ziara-blue);
+    border-bottom-color: var(--ziara-blue);
+    background: #eff6ff;
+}
+
+.ziara-search-tab:hover:not(.active) {
+    background: #f9fafb;
+}
+
+.ziara-cta {
+    background: linear-gradient(180deg, var(--ziara-blue) 0%, var(--ziara-blue-dark) 100%);
+    color: #fff;
+    font-weight: 700;
+    border: none;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .25), 0 10px 24px -10px rgba(37, 99, 235, .65);
+}
+
+.ziara-cta:hover {
+    filter: brightness(1.06);
+    color: #fff;
+}
+
+.ziara-cta-amber {
+    background: linear-gradient(180deg, var(--ziara-amber-light) 0%, var(--ziara-amber) 100%);
+    color: #321f00;
+    border: none;
+    font-weight: 700;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .45), 0 10px 24px -12px rgba(232, 185, 35, .7);
+}
+
+.ziara-cta-amber:hover {
+    filter: brightness(1.05);
+    color: #321f00;
+}
+
+.ziara-section-title {
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    color: var(--ziara-navy);
+}
+
+.ziara-section-title em {
+    font-style: italic;
+    font-family: "Jost", "Script MT Bold", serif;
+    font-weight: 600;
+    color: #b8860b;
+}
+
+/* ---------- Cards / sections ---------- */
+.ziara-paper {
+    background: var(--ziara-paper);
+}
+
+.ziara-card {
+    background: #fff;
+    border: 1px solid #e6eaf3;
+    border-radius: 14px;
+    transition: box-shadow .18s ease, transform .18s ease, border-color .18s ease;
+}
+
+.ziara-card:hover {
+    box-shadow: 0 12px 32px -14px rgba(10, 31, 68, .22);
+    border-color: #dbe2f0;
+    transform: translateY(-2px);
+}
+
+.ziara-pill {
+    background: rgba(37, 99, 235, .08);
+    color: var(--ziara-blue);
+    font-weight: 600;
+}
+
+/* ---------- Buttons / links ---------- */
+.ziara-link {
+    color: var(--ziara-blue);
+    font-weight: 600;
+}
+
+.ziara-link:hover {
+    color: var(--ziara-blue-dark);
+}
+
+/* ---------- Results page (Skyscanner-style results) ---------- */
+.ziara-results-band {
+    background: linear-gradient(160deg, #0a1f44 0%, #0b2545 62%, #123a6b 100%);
+    color: #fff;
+}
+
+.ziara-result-count {
+    color: var(--ziara-amber-light);
+    font-weight: 800;
+}
+
+.ziara-price {
+    color: var(--ziara-blue);
+    font-weight: 800;
+}
+
+.ziara-card .ziara-price {
+    color: #1d4ed8;
+}
+
+/* Filters sidebar */
+.ziara-filter-card .ziara-filter-head {
+    background: var(--ziara-navy);
+    color: #fff;
+}
+
+.ziara-airline-chip {
+    background: #f0f4ff;
+    color: var(--ziara-navy);
+    border: 1px solid #d9e2f8;
+    border-radius: 999px;
+    padding: .2rem .6rem;
+    font-size: .68rem;
+    font-weight: 700;
+}
+
+/* Sort tabs */
+.ziara-sort-tab {
+    color: var(--ziara-muted);
+    border: 1px solid #e4e8f2;
+    background: #fff;
+    border-radius: 10px;
+    font-weight: 700;
+}
+
+.ziara-sort-tab.active {
+    background: var(--ziara-navy);
+    color: #fff;
+    border-color: var(--ziara-navy);
+}
+
+/* ---------- Misc ---------- */
+.ziara-rule {
+    border-top: 2px solid var(--ziara-amber);
+    width: 3.5rem;
+}
+
+body {
+    font-family: "Inter", -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--ziara-paper);
+    color: var(--ziara-ink);
+}

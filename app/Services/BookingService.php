@@ -2,237 +2,375 @@
 
 namespace App\Services;
 
-use App\Models\Booking;
-use App\Models\Payment;
-use App\Models\User;
-use App\Models\Notification;
-use App\Mail\BookingConfirmation;
-use App\Mail\PendingPaymentNotification;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
+use Illuminate\Support\Facades\Log;
 
+/**
+ * RapidAPI Booking.com client.
+ *
+ * Talks to https://booking-com18.p.rapidapi.com - the "Booking COM" provider
+ * by ntd119 (https://rapidapi.com/ntd119/api/booking-com18). Endpoints used:
+ *   GET /web/stays/destinations       -> resolve destination text
+ *   GET /web/stays/search             -> search stays (tolerant read)
+ *   GET /web/stays/details-by-url     -> enrich a Booking.com property by url
+ *
+ * Booking.com is the actual booking channel. This service builds the
+ * affiliate deeplink (with aid from config) that the "Book on Booking.com"
+ * buttons open. It is a marker/metasearch partner: booking happens on the
+ * Booking.com site via the deeplink.
+ *
+ * When no RAPIDAPI_KEY is configured (or RAPIDAPI_MOCK=true) the service
+ * returns mock responses so the flow stays testable.
+ */
 class BookingService
 {
-    /**
-     * Create a booking for user, admin, or bulk users
-     */
-    public function createBooking($bookingData, $bookedBy, $bookFor = null)
+    protected $client;
+
+    protected $apiKey;
+
+    protected $host;
+
+    protected $locale;
+
+    protected $currency;
+
+    protected $mock;
+
+    protected $affiliateId;
+
+    protected $deeplink;
+
+    public function __construct()
     {
-        return DB::transaction(function () use ($bookingData, $bookedBy, $bookFor) {
-            $booking = new Booking();
-            $booking->fill($bookingData);
-            $booking->booking_reference = $this->generateBookingReference();
-            $booking->booked_by = $bookedBy->id;
-            
-            // If booking for someone else (admin/superadmin booking for others)
-            $booking->user_id = $bookFor ? $bookFor->id : $bookedBy->id;
-            $booking->payment_status = 'pending';
-            // 'pending' is the valid enum value on bookings.status; 'pending_payment'
-            // is not and would fail the insert.
-            $booking->status = 'pending';
-            
-            $booking->save();
+        $this->apiKey = (string) config('services.booking.api_key', '');
+        $this->host = (string) config('services.booking.host', 'booking-com18.p.rapidapi.com');
+        $this->locale = (string) config('services.booking.locale', 'en-gb');
+        $this->currency = (string) config('services.booking.currency', 'KES');
+        $this->affiliateId = (string) config('services.booking.affiliate_id', '');
+        $this->deeplink = (string) config('services.booking.deeplink', 'https://www.booking.com');
+        $this->mock = (bool) config('services.booking.mock', false);
 
-            // Create payment record
-            $payment = $this->createPaymentRecord($booking, $bookedBy, $bookFor);
+        if ($this->apiKey === '') {
+            $this->apiKey = (string) config('services.skyscanner.api_key', '');
+        }
 
-            // Notifications are a best-effort side effect (admin alert, pending-payment
-            // email) — a failure here (e.g. a mail/notification misconfiguration) must
-            // never roll back an otherwise-successful booking.
-            try {
-                $this->sendBookingNotifications($booking, $bookedBy, $bookFor);
-            } catch (\Throwable $e) {
-                \Illuminate\Support\Facades\Log::error('Booking notification failed', [
-                    'booking_id' => $booking->id,
-                    'error' => $e->getMessage(),
+        $this->client = new Client([
+            'base_uri' => 'https://' . $this->host . '/',
+            'timeout' => 35,
+            'http_errors' => false,
+        ]);
+    }
+
+    public function isMock()
+    {
+        return $this->mock || empty($this->apiKey);
+    }
+
+    protected function headers()
+    {
+        return [
+            'X-RapidAPI-Key' => $this->apiKey,
+            'X-RapidAPI-Host' => $this->host,
+            'Accept' => 'application/json',
+        ];
+    }
+
+    protected function request($method, $endpoint, $options = [])
+    {
+        $options['headers'] = array_merge($this->headers(), $options['headers'] ?? []);
+
+        try {
+            $response = $this->client->request($method, $endpoint, $options);
+            $body = (string) $response->getBody();
+            $decoded = json_decode($body, true);
+
+            $statusCode = $response->getStatusCode();
+            if ($statusCode >= 400 || ($decoded === null && $body !== 'null')) {
+                Log::warning('Booking request failed', [
+                    'endpoint' => $endpoint,
+                    'status' => $statusCode,
+                    'body' => mb_substr($body, 0, 500),
                 ]);
+                return null;
             }
 
-            return [
-                'booking' => $booking,
-                'payment' => $payment
-            ];
-        });
+            return $decoded;
+        } catch (GuzzleException $e) {
+            Log::warning('Booking request exception', ['endpoint' => $endpoint, 'error' => $e->getMessage()]);
+            return null;
+        }
+    }
+
+    // ---------------------------------------------------------------------
+    // Booking.com deeplink
+    // ---------------------------------------------------------------------
+
+    /**
+     * Build a Booking.com searchresults deeplink for a hotel search.
+     * Always points to the real booking.com page; the affiliate id (aid)
+     * is appended when configured.
+     */
+    public function bookingUrl(array $params, $featuredHotelUrl = null)
+    {
+        $base = $this->deeplink;
+
+        if (is_string($featuredHotelUrl) && $featuredHotelUrl !== '' && strpos($featuredHotelUrl, 'booking.com/hotel/') !== false) {
+            $url = preg_replace('/[?#&]*$/', '', $featuredHotelUrl);
+        } else {
+            $url = $base . '/searchresults.html';
+            $query = array_filter([
+                'ss' => $params['destination_name'] ?? $params['dest_id'] ?? '',
+                'dest_id' => $params['dest_id'] ?? null,
+                'dest_type' => $params['dest_type'] ?? 'city',
+                'checkin' => $params['checkin'] ?? null,
+                'checkout' => $params['checkout'] ?? null,
+                'group_adults' => (int) ($params['adults'] ?? 2),
+                'no_rooms' => (int) ($params['rooms'] ?? 1),
+                'group_children' => (int) ($params['children'] ?? 0),
+                'selected_currency' => strtoupper($this->currency),
+            ], function ($v) {
+                return $v !== null && $v !== '';
+            });
+            $url .= '?' . http_build_query($query);
+        }
+
+        if ($this->affiliateId !== '') {
+            $separator = strpos($url, '?') !== false ? '&' : '?';
+            $url .= $separator . 'aid=' . urlencode($this->affiliateId);
+        }
+
+        return $url;
     }
 
     /**
-     * Create booking for bulk users
+     * Build a deep link straight to a single property on Booking.com.
      */
-    public function createBulkBookings($bookingData, $bookedBy, $userIds)
+    public function propertyUrl($hotelUrl, array $params = [])
     {
-        $bookings = [];
-        $payments = [];
+        $url = (string) $hotelUrl;
+        if ($url === '' || strpos($url, 'http') !== 0) {
+            return $this->bookingUrl($params);
+        }
 
-        DB::transaction(function () use ($bookingData, $bookedBy, $userIds, &$bookings, &$payments) {
-            foreach ($userIds as $userId) {
-                $user = User::find($userId);
-                if ($user) {
-                    $result = $this->createBooking($bookingData, $bookedBy, $user);
-                    $bookings[] = $result['booking'];
-                    $payments[] = $result['payment'];
-                }
+        if ($this->affiliateId !== '') {
+            $separator = strpos($url, '?') !== false ? '&' : '?';
+            $url .= $separator . 'aid=' . urlencode($this->affiliateId);
+        }
+
+        return $url;
+    }
+
+    // ---------------------------------------------------------------------
+    // /web/stays/* endpoints (tolerant - degrade gracefully)
+    // ---------------------------------------------------------------------
+
+    public function destinations($text)
+    {
+        $text = trim($text);
+        if ($text === '') {
+            return [];
+        }
+
+        if ($this->isMock()) {
+            return $this->mockDestinations($text);
+        }
+
+        $data = $this->request('get', '/web/stays/destinations', ['query' => ['text' => $text]]);
+
+        $items = [];
+        if (is_array($data)) {
+            if (isset($data['data']) && is_array($data['data'])) {
+                $items = $data['data'];
+            } elseif (is_array($data)) {
+                $items = $data;
             }
+        }
+
+        $normalized = [];
+        foreach ($items as $item) {
+            $destId = $item['dest_id'] ?? ($item['id'] ?? null);
+            $name = $item['name'] ?? ($item['label'] ?? '');
+            if ($destId === null && $name === '') {
+                continue;
+            }
+            $normalized[] = [
+                'dest_id' => (string) $destId,
+                'dest_type' => (string) ($item['dest_type'] ?? 'city'),
+                'name' => (string) $name,
+                'country' => (string) ($item['country'] ?? ''),
+                'label' => (string) ($item['label'] ?? ''),
+            ];
+        }
+
+        return $normalized;
+    }
+
+    /**
+     * /web/stays/search - tolerant search across booking.com stays.
+     * Returns [] on failure; otherwise a normalized list of stays.
+     * Used as a secondary/fallback source for the hotel results page.
+     */
+    public function search(array $params)
+    {
+        if ($this->isMock()) {
+            return $this->mockSearch($params);
+        }
+
+        $query = array_filter([
+            'dest_id' => $params['dest_id'] ?? null,
+            'dest_type' => $params['dest_type'] ?? 'city',
+            'checkin' => $params['checkin'] ?? null,
+            'checkout' => $params['checkout'] ?? null,
+            'adults' => (int) ($params['adults'] ?? 2),
+            'no_rooms' => (int) ($params['rooms'] ?? 1),
+            'children' => (int) ($params['children'] ?? 0),
+            'page_number' => 0,
+            'page_size' => 25,
+            'currency' => strtoupper($params['currency'] ?? $this->currency),
+            'locale' => $this->locale,
+            'filter_by_currency' => strtoupper($params['currency'] ?? $this->currency),
+        ], function ($v) {
+            return $v !== null && $v !== '';
         });
 
+        $data = $this->request('get', '/web/stays/search', ['query' => $query]);
+        if (!is_array($data)) {
+            return [];
+        }
+
+        $items = [];
+        if (isset($data['data']['result']) && is_array($data['data']['result'])) {
+            $items = $data['data']['result'];
+        } elseif (isset($data['data']['hotels']) && is_array($data['data']['hotels'])) {
+            $items = $data['data']['hotels'];
+        }
+
+        $results = [];
+        foreach ($items as $stay) {
+            $hotel = $this->normalizeStay($stay, $params);
+            if ($hotel !== null) {
+                $results[] = $hotel;
+            }
+        }
+
+        return $results;
+    }
+
+    protected function normalizeStay(array $stay, array $params)
+    {
+        $hotelName = $stay['hotel_name'] ?? ($stay['name'] ?? '');
+        $hotelId = $stay['hotel_id'] ?? ($stay['id'] ?? null);
+        if ($hotelName === '' && $hotelId === null) {
+            return null;
+        }
+
+        $priceInfo = $stay['price_breakdown'] ?? ($stay['price'] ?? []);
+        $price = 0;
+        if (is_array($priceInfo)) {
+            $price = (float) ($priceInfo['gross_amount'] ?? ($priceInfo['value'] ?? 0));
+        } elseif (is_numeric($priceInfo)) {
+            $price = (float) $priceInfo;
+        }
+
+        $url = $stay['url'] ?? null;
+        $imageUrl = $stay['photo_uri'] ?? ($stay['image_url'] ?? null);
+
         return [
-            'bookings' => $bookings,
-            'payments' => $payments
+            'propertyId' => (string) $hotelId,
+            'name' => (string) $hotelName,
+            'city' => (string) ($params['destination_name'] ?? ($stay['city_name'] ?? '')),
+            'address' => (string) ($stay['addressstring'] ?? ''),
+            'price' => $price,
+            'totalPrice' => $price,
+            'currency' => (string) ($stay['currencycode'] ?? ($params['currency'] ?? $this->currency)),
+            'starRating' => (int) ($stay['class_is_estimated'] ?? ($stay['class'] ?? 0)),
+            'reviewScore' => (float) ($stay['review_score'] ?? 0),
+            'reviewCount' => (int) ($stay['review_nr'] ?? 0),
+            'imageUrl' => is_string($imageUrl) ? $imageUrl : null,
+            'amenities' => [],
+            'latitude' => isset($stay['latitude']) ? (float) $stay['latitude'] : null,
+            'longitude' => isset($stay['longitude']) ? (float) $stay['longitude'] : null,
+            'url' => $url,
         ];
     }
 
     /**
-     * Process payment for booking
+     * /web/stays/details-by-url - enrich a property from its booking.com url.
      */
-    public function processPayment($booking, $paymentData, $paidBy)
+    public function detailsByUrl($url)
     {
-        return DB::transaction(function () use ($booking, $paymentData, $paidBy) {
-            $payment = Payment::where('booking_id', $booking->id)->first();
-            
-            if (!$payment) {
-                throw new \Exception('Payment record not found for booking');
-            }
-
-            $payment->update([
-                'payment_method' => $paymentData['payment_method'],
-                'provider_transaction_id' => $paymentData['transaction_id'] ?? null,
-                'provider_response' => $paymentData['provider_response'] ?? null,
-                'status' => 'completed',
-                'processed_by' => $paidBy->id,
-                'processed_at' => now(),
-                'verified_at' => now(),
-                'payment_details' => $paymentData
-            ]);
-
-            $booking->update([
-                'payment_status' => 'paid',
-                'status' => 'confirmed',
-                'paid_amount' => $payment->amount,
-                'transaction_id' => $paymentData['transaction_id'] ?? null
-            ]);
-
-            // Confirmation emails are a best-effort side effect — a broken template or
-            // mail-server hiccup must never roll back a payment that already succeeded.
-            try {
-                Mail::to($booking->user->email)->send(new BookingConfirmation($booking));
-
-                // Notify admin who booked if different from user
-                if ($booking->booked_by && $booking->booked_by !== $booking->user_id) {
-                    $bookedBy = User::find($booking->booked_by);
-                    if ($bookedBy) {
-                        Mail::to($bookedBy->email)->send(new BookingConfirmation($booking));
-                    }
-                }
-            } catch (\Throwable $e) {
-                \Illuminate\Support\Facades\Log::error('Booking confirmation email failed', [
-                    'booking_id' => $booking->id,
-                    'error' => $e->getMessage(),
-                ]);
-            }
-
-            return $payment;
-        });
-    }
-
-    /**
-     * Generate unique booking reference
-     */
-    private function generateBookingReference()
-    {
-        do {
-            $reference = 'ZT' . strtoupper(Str::random(8));
-        } while (Booking::where('booking_reference', $reference)->exists());
-        
-        return $reference;
-    }
-
-    /**
-     * Create payment record for booking
-     */
-    private function createPaymentRecord($booking, $bookedBy, $bookFor)
-    {
-        $payment = Payment::create([
-            'user_id' => $booking->user_id,
-            'booking_id' => $booking->id,
-            'payment_reference' => 'PAY' . strtoupper(Str::random(8)),
-            'amount' => $booking->total_amount,
-            'currency' => $booking->currency,
-            'status' => 'pending',
-            'payment_method' => null,
-            'processed_by' => null
-        ]);
-
-        return $payment;
-    }
-
-    /**
-     * Send booking notifications
-     */
-    private function sendBookingNotifications($booking, $bookedBy, $bookFor)
-    {
-        // If admin/superadmin booked for someone else
-        if ($bookFor && $bookFor->id !== $bookedBy->id) {
-            // Notify the user about pending payment
-            $bookFor->notifications()->create([
-                'type' => 'pending_payment',
-                'data' => [
-                    'booking_id' => $booking->id,
-                    'booking_reference' => $booking->booking_reference,
-                    'amount' => $booking->total_amount,
-                    'currency' => $booking->currency,
-                    'booked_by' => $bookedBy->name,
-                    'booking_type' => $booking->booking_type,
-                    'message' => "A {$booking->booking_type} booking has been made for you by {$bookedBy->name}. Please complete the payment to confirm your booking."
-                ]
-            ]);
-
-            // Send email notification
-            Mail::to($bookFor->email)->send(new PendingPaymentNotification($booking, $bookedBy));
+        $url = trim((string) $url);
+        if ($url === '') {
+            return null;
         }
 
-        // Notify admins/superadmins about new booking. This project uses a
-        // plain 'role' string column on users (like the rest of the
-        // codebase), not the unused spatie/laravel-permission roles()
-        // relationship, whose 'user_roles' pivot table doesn't even exist.
-        $admins = User::whereIn('role', ['admin', 'superadmin'])->get();
-
-        foreach ($admins as $admin) {
-            if ($admin->id !== $bookedBy->id) {
-                $admin->notifications()->create([
-                    'type' => 'new_booking',
-                    'data' => [
-                        'booking_id' => $booking->id,
-                        'booking_reference' => $booking->booking_reference,
-                        'user_name' => $booking->user->name,
-                        'booked_by' => $bookedBy->name,
-                        'booking_type' => $booking->booking_type,
-                        'amount' => $booking->total_amount
-                    ]
-                ]);
-            }
+        if ($this->isMock()) {
+            return ['is_mock' => true, 'data' => ['url' => $url]];
         }
+
+        $data = $this->request('get', '/web/stays/details-by-url', ['query' => ['url' => $url]]);
+        if (!is_array($data)) {
+            return null;
+        }
+
+        if (isset($data['data']) && is_array($data['data'])) {
+            return $data['data'];
+        }
+
+        return $data;
     }
 
-    /**
-     * Get user's pending payments
-     */
-    public function getUserPendingPayments($userId)
+    // ---------------------------------------------------------------------
+    // Mock mode
+    // ---------------------------------------------------------------------
+
+    protected function mockDestinations($text)
     {
-        return Booking::with('payment')
-            ->where('user_id', $userId)
-            ->where('payment_status', 'pending')
-            ->orderBy('created_at', 'desc')
-            ->get();
+        // Reuse the same city pool as HotelService so results stay consistent.
+        $service = app(HotelService::class);
+        $regions = $service->regions($text);
+
+        $out = [];
+        foreach ($regions as $region) {
+            $out[] = [
+                'dest_id' => $region['dest_id'],
+                'dest_type' => $region['dest_type'],
+                'name' => $region['name'],
+                'country' => $region['country'],
+                'label' => $region['name'] . ', ' . $region['country'],
+            ];
+        }
+
+        return $out;
     }
 
-    /**
-     * Get bookings made by admin/superadmin
-     */
-    public function getBookingsMadeBy($userId)
+    protected function mockSearch(array $params)
     {
-        return Booking::with(['user', 'payment'])
-            ->where('booked_by', $userId)
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $service = app(HotelService::class);
+        $hotels = $service->searchHotels($params);
+
+        $out = [];
+        foreach ($hotels as $hotel) {
+            $out[] = [
+                'propertyId' => $hotel['propertyId'],
+                'name' => $hotel['name'],
+                'city' => $hotel['city'],
+                'address' => $hotel['address'],
+                'price' => $hotel['price'],
+                'totalPrice' => $hotel['totalPrice'],
+                'currency' => $hotel['currency'],
+                'starRating' => $hotel['starRating'],
+                'reviewScore' => $hotel['reviewScore'],
+                'reviewCount' => $hotel['reviewCount'],
+                'imageUrl' => $hotel['imageUrl'],
+                'amenities' => $hotel['amenities'],
+                'latitude' => $hotel['latitude'],
+                'longitude' => $hotel['longitude'],
+                'url' => null,
+            ];
+        }
+
+        return $out;
     }
 }

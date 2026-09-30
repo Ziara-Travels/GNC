@@ -282,7 +282,7 @@ class UserDashboardController extends Controller
 
         $this->logActivity('view_bookings', 'Viewed my bookings');
 
-        return view('user.bookings.index', compact('bookings', 'stats', 'filter'));
+        return view('dashboard.bookings.user.bookings', compact('bookings', 'stats', 'filter'));
     }
 
    
@@ -879,7 +879,7 @@ class UserDashboardController extends Controller
             'completed_referrals' => Referral::where('status', 'completed')->count(),
         ];
         
-        return view('superadmin.referrals.index', compact('referrals', 'stats'));
+        return view('dashboard.referral.user.index', compact('referrals', 'stats'));
     }
 
     // =====================================
@@ -2172,7 +2172,7 @@ class UserDashboardController extends Controller
             ->latest()
             ->paginate(10);
             
-        return view('dashboard.user.bookings', [
+        return view('dashboard.bookings.user.bookings', [
             'bookings' => $bookings,
             'user' => $user
         ]);

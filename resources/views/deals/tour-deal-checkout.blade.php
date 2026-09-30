@@ -1,25 +1,47 @@
 @extends('layouts.main')
 
 @section('content')
+@include('partials.ziara-page-hero', [
+    'kicker' => 'Secure Checkout',
+    'title'  => 'Complete Your <em>Payment</em>',
+    'intro'  => 'Encrypted end-to-end. Choose how you would like to settle your tour.',
+    'crumbs' => [
+        ['label' => 'Home', 'url' => route('home')],
+        ['label' => 'Tour Deals', 'url' => route('deal.tour.results')],
+        ['label' => 'Payment'],
+    ],
+])
+
     <!-- Include required CSS and JS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 
     <style>
+        .ztc-checkout {
+            background:
+                radial-gradient(900px 420px at 12% -8%, rgba(201,162,39,.14), transparent 62%),
+                linear-gradient(180deg, var(--gold-pale) 0%, #fffdf8 100%);
+            padding: 56px 0 88px;
+        }
         .checkout-container {
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-            border-radius: 15px;
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            box-shadow: var(--shadow-md);
             padding: 2rem;
             margin-bottom: 2rem;
         }
-        
+
         .section-title {
             position: relative;
             padding-bottom: 10px;
             margin-bottom: 20px;
-            font-weight: 600;
+            font-weight: 700;
+            font-family: var(--font-display);
+            font-size: 26px;
+            color: var(--maroon-deep);
         }
-        
+
         .section-title::after {
             content: '';
             position: absolute;
@@ -27,34 +49,104 @@
             left: 0;
             width: 50px;
             height: 3px;
-            background: #8f95d3;
+            background: var(--gold);
             border-radius: 3px;
         }
-        
+
         .booking-summary {
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            background-color: #fff;
+            border: 1px solid var(--gold-border);
+            border-radius: 16px;
+            box-shadow: var(--shadow-sm);
             transition: all 0.3s ease;
         }
-        
+
         .price-summary {
-            background-color: #f8f9ff;
-            border-radius: 10px;
-            border-left: 4px solid #8f95d3;
+            background-color: #fff;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            border-left: 4px solid var(--gold);
+            box-shadow: var(--shadow-sm);
         }
-        
+
+        .price-summary span { color: var(--muted); }
+        .price-summary .fw-bold { color: var(--maroon-deep) !important; }
+        .price-summary .fw-bold.fs-4 {
+            font-family: var(--font-display);
+            color: var(--maroon) !important;
+        }
+        .price-summary hr { border-top-color: var(--gold-border); opacity: 1; }
+        .price-summary .text-success { color: var(--gold-dim) !important; }
+
         .checkout-form label {
-            font-weight: 500;
-            color: #495057;
+            font-weight: 600;
+            font-size: 12.5px;
+            letter-spacing: .4px;
+            text-transform: uppercase;
+            color: var(--muted);
         }
-        
+
+        .ztc-checkout .form-control,
+        .ztc-checkout .form-select {
+            border-color: var(--gold-border);
+            border-radius: 10px;
+            padding: 12px 14px;
+            font-size: 14.5px;
+            color: var(--ink);
+            background-color: #fff;
+        }
+
+        .ztc-checkout .form-control:focus,
+        .ztc-checkout .form-select:focus {
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(201,162,39,.18);
+        }
+
+        .ztc-checkout .input-group-text {
+            background: var(--gold-pale);
+            border-color: var(--gold-border);
+            color: var(--maroon);
+        }
+
+        .ztc-checkout .form-check-input { border-color: var(--gold-border); }
+        .ztc-checkout .form-check-input:checked {
+            background-color: var(--maroon);
+            border-color: var(--maroon);
+        }
+        .ztc-checkout .form-check-input:focus {
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px var(--gold-border);
+        }
+        .ztc-checkout .form-check-label { color: var(--ink); }
+
+        .ztc-checkout .card {
+            border: 1px solid var(--line) !important;
+            border-radius: 16px;
+            box-shadow: var(--shadow-sm) !important;
+        }
+
+        .ztc-checkout .card-body { padding: 22px; }
+        .ztc-checkout .card-title {
+            font-family: var(--font-display);
+            font-weight: 700;
+            color: var(--maroon-deep);
+        }
+
+        .ztc-checkout .booking-summary h5,
+        .ztc-checkout .booking-summary h6 {
+            font-family: var(--font-display);
+            font-weight: 700;
+            color: var(--maroon-deep);
+        }
+
+        .ztc-checkout .booking-summary .img-fluid { border: 1px solid var(--line); }
+
         .booking-steps {
             display: flex;
             justify-content: space-between;
             margin-bottom: 30px;
         }
-        
+
         .step {
             display: flex;
             flex-direction: column;
@@ -62,96 +154,128 @@
             position: relative;
             z-index: 1;
         }
-        
+
         .step-number {
-            width: 30px;
-            height: 30px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
-            background-color: #e9ecef;
-            color: #6c757d;
+            background-color: #fff;
+            border: 1.5px solid var(--gold-border);
+            color: var(--muted);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
+            font-weight: 700;
             margin-bottom: 8px;
         }
-        
+
         .step.active .step-number {
-            background-color: #8f95d3;
-            color: white;
+            background-color: var(--maroon);
+            border-color: var(--maroon);
+            color: var(--gold-bright);
+            box-shadow: 0 0 0 4px rgba(201,162,39,.2);
         }
-        
+
         .step-title {
-            font-size: 14px;
-            color: #6c757d;
+            font-size: 13px;
+            color: var(--muted);
             text-align: center;
             max-width: 120px;
         }
-        
+
         .step.active .step-title {
-            color: #495057;
-            font-weight: 600;
+            color: var(--maroon-deep);
+            font-weight: 700;
         }
-        
+
         .step-line {
             position: absolute;
-            top: 15px;
+            top: 17px;
             height: 2px;
             width: 100%;
-            background-color: #e9ecef;
+            background-color: var(--gold-border);
             z-index: -1;
         }
-        
+
         .payment-method {
-            border: 2px solid #dee2e6;
-            border-radius: 10px;
-            padding: 15px;
+            border: 1.5px solid var(--gold-border);
+            border-radius: 14px;
+            padding: 15px 18px;
             margin-bottom: 20px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            background: #fff;
+            transition: all .3s ease;
         }
-        
+
         .payment-method:hover {
-            border-color: #8f95d3;
-            background-color: #f8f9ff;
+            border-color: var(--gold);
+            background-color: var(--gold-pale);
         }
-        
+
         .payment-method.active {
-            border-color: #8f95d3;
-            background-color: #f8f9ff;
+            border-color: var(--maroon);
+            background-color: var(--gold-pale);
+            box-shadow: 0 0 0 1px var(--maroon) inset;
         }
-        
+
         .payment-method img {
             height: 30px;
             object-fit: contain;
         }
-        
+
         .card-element {
             padding: 10px;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
-            background-color: white;
+            border: 1px solid var(--gold-border);
+            border-radius: 10px;
+            background-color: #fff;
         }
-        
+
         .secure-badge {
             display: flex;
             align-items: center;
-            font-size: 14px;
-            color: #6c757d;
+            font-size: 13px;
+            color: var(--muted);
         }
-        
+
         .secure-badge i {
-            color: #28a745;
+            color: var(--gold-dim);
             margin-right: 5px;
         }
-        
+
         .currency-divider {
             font-weight: 500;
-            color: #6c757d;
+            color: var(--gold-border);
             margin: 0 5px;
+        }
+
+        .ztc-checkout .text-muted { color: var(--muted) !important; }
+        .ztc-checkout .text-danger { color: #b3261e !important; }
+        .ztc-checkout h4.h5 {
+            font-family: var(--font-display);
+            font-weight: 700;
+            color: var(--maroon-deep);
+        }
+
+        .ztc-checkout .btn-outline-secondary {
+            background: #fff;
+            color: var(--maroon);
+            border: 1.5px solid var(--gold-border);
+            border-radius: 50px;
+            padding: 12px 26px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .ztc-checkout .btn-outline-secondary:hover {
+            background: var(--gold-pale);
+            border-color: var(--gold);
+            color: var(--maroon-deep);
         }
     </style>
 
+    <div class="ztc-checkout">
     <div class="container py-5">
         <!-- Booking Progress Steps -->
         <div class="booking-steps position-relative">
@@ -173,23 +297,23 @@
                 <div class="step-title">Confirmation</div>
             </div>
         </div>
-        
+
         <!-- Page Title -->
         <div class="text-center mb-5">
             <h1 class="h2 fw-bold">Secure Checkout</h1>
             <p class="text-muted">Complete your tour booking by providing payment details</p>
         </div>
-        
+
         <div class="row g-4">
             <!-- Payment Information Section -->
             <div class="col-md-8">
                 <div class="checkout-container">
                     <h3 class="section-title">Payment Method</h3>
-                    
-                    <form method="POST" action="{{ route('process-tour-payment') }}" class="checkout-form">
+
+                    <form method="POST" action="{{ route('deal.tour.payment', $booking->booking_reference ?? '') }}" class="checkout-form">
                         @csrf
                         <input type="hidden" name="booking_data" value="{{ json_encode($booking ?? []) }}">
-                        
+
                         <!-- Payment Method Selection -->
                         <div class="mb-4">
                             <div class="payment-method active" onclick="selectPaymentMethod('card')">
@@ -208,7 +332,7 @@
                                     </label>
                                 </div>
                             </div>
-                            
+
                             <div class="payment-method" onclick="selectPaymentMethod('mpesa')">
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="payment_method" id="payment_mpesa" value="mpesa">
@@ -223,7 +347,7 @@
                                     </label>
                                 </div>
                             </div>
-                            
+
                             <div class="payment-method" onclick="selectPaymentMethod('paypal')">
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="payment_method" id="payment_paypal" value="paypal">
@@ -239,11 +363,11 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <!-- Credit Card Form -->
                         <div id="card-payment-form">
                             <h4 class="h5 mb-3">Card Details</h4>
-                            
+
                             <div class="row g-3 mb-4">
                                 <div class="col-12">
                                     <label for="card_name" class="form-label">Name on Card</label>
@@ -273,11 +397,11 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <!-- M-PESA Form -->
                         <div id="mpesa-payment-form" class="d-none">
                             <h4 class="h5 mb-3">M-PESA Details</h4>
-                            
+
                             <div class="mb-4">
                                 <label for="mpesa_phone" class="form-label">M-PESA Phone Number</label>
                                 <div class="input-group">
@@ -287,12 +411,12 @@
                                 <small class="text-muted">You will receive an M-PESA payment prompt on this number</small>
                             </div>
                         </div>
-                        
+
                         <!-- PayPal Form -->
                         <div id="paypal-payment-form" class="d-none">
                             <p class="mb-4">You will be redirected to PayPal to complete your payment securely.</p>
                         </div>
-                        
+
                         <!-- Currency Selection -->
                         <div class="mb-4">
                             <h4 class="h5 mb-3">Currency Preference</h4>
@@ -305,10 +429,10 @@
                                 <label class="form-check-label" for="currency_kes">KES (KSh)</label>
                             </div>
                         </div>
-                        
+
                         <!-- Billing Address -->
                         <h4 class="h5 mb-3 mt-4">Billing Address</h4>
-                        
+
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
                                 <label for="billing_country" class="form-label">Country</label>
@@ -344,28 +468,28 @@
                                 <input type="text" class="form-control" id="billing_postal_code" name="billing[postal_code]" required>
                             </div>
                         </div>
-                        
+
                         <!-- Terms and Privacy -->
                         <div class="mb-4">
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="terms_agree" name="terms_agree" required>
                                 <label class="form-check-label" for="terms_agree">
-                                    I agree to the <a href="#" style="color: #8f95d3;">Terms and Conditions</a> and <a href="#" style="color: #8f95d3;">Privacy Policy</a>
+                                    I agree to the <a href="#" style="color: var(--gold-dim);">Terms and Conditions</a> and <a href="#" style="color: var(--gold-dim);">Privacy Policy</a>
                                 </label>
                             </div>
                         </div>
-                        
+
                         <!-- Form Buttons -->
                         <div class="d-flex justify-content-between mt-4">
                             <a href="javascript:history.back()" class="btn btn-outline-secondary">
                                 <i class="fas fa-arrow-left me-2"></i>Back to Traveler Information
                             </a>
-                            <button type="submit" class="btn px-5" style="background-color: #8f95d3; color: white;">
+                            <button type="submit" class="btn px-5" style="background-color: var(--maroon); color: var(--gold-bright); border: 1px solid var(--maroon); border-radius: 50px; padding: 13px 34px; font-size: 12px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase;">
                                 Complete Payment<i class="fas fa-check ms-2"></i>
                             </button>
                         </div>
                     </form>
-                    
+
                     <!-- Security Badges -->
                     <div class="d-flex flex-wrap justify-content-center mt-4">
                         <img src="{{ asset('images/payment/security-badge-1.png') }}" alt="Secure Payment" class="m-2" style="height: 40px;" onerror="this.src='https://via.placeholder.com/80x40?text=Secure+SSL'">
@@ -374,36 +498,36 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Booking Summary Section -->
             <div class="col-md-4">
                 <div class="checkout-container sticky-top" style="top: 100px;">
                     <h3 class="section-title">Booking Summary</h3>
-                    
+
                     <!-- Tour Summary -->
                     <div class="booking-summary p-4 mb-4">
                         <h5 class="mb-3">Tour Details</h5>
-                        
+
                         <div class="mb-4">
-                            <img 
-                                src="{{ asset('images/tours/' . strtolower(str_replace(' ', '-', $booking->tour->tourName ?? 'maasai-mara-safari')) . '.jpg') }}" 
-                                class="img-fluid rounded mb-3 w-100" 
+                            <img
+                                src="{{ asset('images/tours/' . strtolower(str_replace(' ', '-', $booking->tour->tourName ?? 'maasai-mara-safari')) . '.jpg') }}"
+                                class="img-fluid rounded mb-3 w-100"
                                 style="height: 120px; object-fit: cover;"
                                 alt="{{ $booking->tour->tourName ?? 'Tour' }}"
                                 onerror="this.src='{{ asset('images/tours/default-tour.jpg') }}'">
-                            
+
                             <h6 class="fw-bold mb-1">{{ $booking->tour->tourName ?? 'Maasai Mara Safari Adventure' }}</h6>
                             <p class="text-muted small mb-2">{{ $booking->tour->location ?? 'Narok County' }}, {{ $booking->tour->country ?? 'Kenya' }}</p>
                             <div class="d-flex align-items-center mb-2">
-                                <i class="fas fa-calendar-alt me-2" style="color: #8f95d3;"></i>
+                                <i class="fas fa-calendar-alt me-2" style="color: var(--gold);"></i>
                                 <span>{{ date('D, M j, Y', strtotime($booking->start_date ?? 'now +7 days')) }}</span>
                             </div>
                             <div class="d-flex align-items-center">
-                                <i class="fas fa-users me-2" style="color: #8f95d3;"></i>
+                                <i class="fas fa-users me-2" style="color: var(--gold);"></i>
                                 <span>{{ $booking->num_travelers ?? 2 }} {{ ($booking->num_travelers ?? 2) > 1 ? 'Travelers' : 'Traveler' }}</span>
                             </div>
                         </div>
-                        
+
                         <div class="mb-3">
                             <div class="d-flex justify-content-between mb-2">
                                 <span>Tour Package</span>
@@ -419,11 +543,11 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Price Summary -->
                     <div class="price-summary p-4 mb-4">
                         <h5 class="mb-3">Price Details</h5>
-                        
+
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <span>Base Price (per person)</span>
                             <div>
@@ -432,12 +556,12 @@
                                 <span id="base-price-kes">KES {{ $booking->tour->priceKes ?? 5814 }}</span>
                             </div>
                         </div>
-                        
+
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <span>Number of Travelers</span>
                             <span>{{ $booking->num_travelers ?? 2 }}</span>
                         </div>
-                        
+
                         @if(isset($booking->addons) && count($booking->addons ?? []) > 0)
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <span>Add-ons</span>
@@ -448,7 +572,7 @@
                             </div>
                         </div>
                         @endif
-                        
+
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <span>Taxes & Fees</span>
                             <div>
@@ -457,7 +581,7 @@
                                 <span id="taxes-price-kes">KES {{ number_format((($booking->tour->priceKes ?? 5814) * ($booking->num_travelers ?? 2) + ($booking->addons_total_kes ?? 0)) * 0.1, 0) }}</span>
                             </div>
                         </div>
-                        
+
                         @if(isset($booking->tour->discountPercent) && $booking->tour->discountPercent > 0)
                         <div class="d-flex justify-content-between align-items-center mb-3 text-success">
                             <span>Discount ({{ $booking->tour->discountPercent ?? 25 }}%)</span>
@@ -468,9 +592,9 @@
                             </div>
                         </div>
                         @endif
-                        
+
                         <hr class="my-3">
-                        
+
                         <div class="d-flex justify-content-between align-items-center">
                             <span class="fw-bold">Total Price</span>
                             <div class="text-end">
@@ -478,7 +602,7 @@
                                 <div class="fw-bold" id="total-price-kes">KES {{ number_format(($booking->tour->priceKes ?? 5814) * ($booking->num_travelers ?? 2) + ($booking->addons_total_kes ?? 0) + ((($booking->tour->priceKes ?? 5814) * ($booking->num_travelers ?? 2) + ($booking->addons_total_kes ?? 0)) * 0.1), 0) }}</div>
                             </div>
                         </div>
-                        
+
                         @if(isset($booking->tour->originalPriceUsd))
                         <div class="d-flex justify-content-end align-items-center">
                             <div class="text-end">
@@ -488,39 +612,38 @@
                         </div>
                         @endif
                     </div>
-                    
+
                     <!-- Contact Information -->
                     <div class="card border-0 shadow-sm mb-4">
                         <div class="card-body">
                             <h5 class="card-title">Contact Information</h5>
-                            <p class="card-text small mb-1"><i class="fas fa-envelope me-2" style="color: #8f95d3;"></i>{{ $booking->contact_email ?? 'john.doe@example.com' }}</p>
-                            <p class="card-text small mb-0"><i class="fas fa-phone me-2" style="color: #8f95d3;"></i>{{ $booking->contact_phone ?? '+254 712 345 678' }}</p>
+                            <p class="card-text small mb-1"><i class="fas fa-envelope me-2" style="color: var(--gold);"></i>{{ $booking->contact_email ?? 'john.doe@example.com' }}</p>
+                            <p class="card-text small mb-0"><i class="fas fa-phone me-2" style="color: var(--gold);"></i>{{ $booking->contact_phone ?? '+254 712 345 678' }}</p>
                         </div>
                     </div>
-                    
+
                     <!-- Tour Policies -->
                     <div class="card border-0 shadow-sm mb-4">
                         <div class="card-body">
                             <h5 class="card-title">Tour Policies</h5>
                             <p class="card-text small mb-2"><i class="fas fa-ban me-1 text-danger"></i> <strong>Cancellation Policy:</strong> Free cancellation up to 7 days before tour start.</p>
-                            <p class="card-text small mb-0"><i class="fas fa-child me-1" style="color: #8f95d3;"></i> <strong>Child Policy:</strong> Children under 3 are free. Children 3-12 pay 50% of adult rate.</p>
+                            <p class="card-text small mb-0"><i class="fas fa-child me-1" style="color: var(--gold);"></i> <strong>Child Policy:</strong> Children under 3 are free. Children 3-12 pay 50% of adult rate.</p>
                         </div>
                     </div>
-                    
+
                     <!-- Need Help? -->
                     <div class="mt-4 text-center">
                         <h5 class="mb-3">Need Help?</h5>
-                        <p class="mb-2"><i class="fas fa-headset me-2" style="color: #8f95d3;"></i>Customer Support</p>
-                        <p class="mb-0"><a href="tel:+254712345678" style="color: #8f95d3; text-decoration: none;">+254 712 345 678</a></p>
+                        <p class="mb-2"><i class="fas fa-headset me-2" style="color: var(--gold);"></i>Customer Support</p>
+                        <p class="mb-0"><a href="tel:+254712345678" style="color: var(--gold-dim); text-decoration: none;">+254 712 345 678</a></p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-@endsection
+    </div>
 
-@section('scripts')
-<script>
+    <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Initialize tooltips
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))

@@ -1025,7 +1025,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-[25px] mb-[25px]">
                 
                 <!-- Travel Insights Card -->
-                <div class="trezo-card border border-blue-200 dark:border-blue-800 p-[20px] md:p-[25px] rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900 dark:to-blue-800 hover:shadow-lg transition-all cursor-pointer" onclick="window.location.href='{{ route('travel.insights') }}'">
+                <div class="trezo-card border border-blue-200 dark:border-blue-800 p-[20px] md:p-[25px] rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900 dark:to-blue-800 hover:shadow-lg transition-all cursor-pointer" onclick="window.location.href='{{ route('user.dashboard.travel.insights') }}'">
                     <div class="flex items-center justify-between mb-4">
                         <div class="bg-blue-500 text-white rounded-full p-3">
                             <i class="ri-compass-3-line text-xl"></i>

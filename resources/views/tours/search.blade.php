@@ -1,256 +1,238 @@
-<!-- filepath: c:\xampp\htdocs\GNC\resources\views\tours\search.blade.php -->
-
 @extends('layouts.main')
 
 @section('title', 'Search Tours: ' . $searchTerm)
 
 @section('content')
-<div class="container py-5">
-    <!-- Search Header -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <div class="row align-items-center">
-                        <div class="col-md-8">
-                            <h1 class="fw-bold mb-2">Tour Search Results</h1>
-                            <p class="text-muted mb-md-0">
-                                @if($searchTerm)
-                                    Showing results for "<strong>{{ $searchTerm }}</strong>"
-                                @else
-                                    All tours matching your filters
-                                @endif
-                                
-                                <!-- Display active filters -->
-                                @if(request('city') || request('category') || request('price_min') || request('price_max'))
-                                    <span class="ms-2">|</span>
-                                    <span class="ms-2">Filters:</span>
-                                    
-                                    @if(request('city'))
-                                        <span class="badge bg-info ms-1">{{ request('city') }}</span>
-                                    @endif
-                                    
-                                    @if(request('category'))
-                                        <span class="badge bg-info ms-1">{{ request('category') }}</span>
-                                    @endif
-                                    
-                                    @if(request('price_min') || request('price_max'))
-                                        <span class="badge bg-info ms-1">
-                                            Price: 
-                                            {{ request('price_min') ? '$' . request('price_min') : '$0' }} 
-                                            -
-                                            {{ request('price_max') ? '$' . request('price_max') : '+' }}
-                                        </span>
-                                    @endif
-                                @endif
-                            </p>
-                        </div>
-                        <div class="col-md-4">
-                            <form method="GET" action="{{ route('tours.search') }}" class="d-flex">
-                                <input type="text" name="q" class="form-control" placeholder="Search tours..." value="{{ $searchTerm }}">
-                                <button type="submit" class="btn btn-primary ms-2">
-                                    <i class="fas fa-search"></i>
-                                </button>
-                            </form>
+<style>
+.ziara-filter__field { margin-bottom: 18px; }
+.ziara-filter__field label { display: block; font-size: 11px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+.ziara-filter__field select,
+.ziara-filter__field input {
+    width: 100%;
+    padding: 12px 14px;
+    font-family: var(--font-body);
+    font-size: 14.5px;
+    color: var(--ink);
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+}
+.ziara-filter__field select:focus,
+.ziara-filter__field input:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px var(--gold-border); }
+.ziara-filter__price { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.ziara-searchbar { display: flex; gap: 10px; }
+.ziara-searchbar input {
+    flex: 1;
+    padding: 14px 16px;
+    font-family: var(--font-body);
+    font-size: 15px;
+    color: var(--ink);
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 50px;
+}
+.ziara-searchbar input:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px var(--gold-border); }
+.ziara-results__bar { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; justify-content: space-between; background: var(--gold-pale); border: 1px solid var(--gold-border); border-radius: 14px; padding: 16px 22px; }
+.ziara-results__bar strong { color: var(--maroon-deep); }
+.ziara-results__bar select { padding: 10px 14px; font-size: 14px; color: var(--ink); background: #fff; border: 1px solid var(--line); border-radius: 10px; }
+.ziara-filter-chip { display: inline-block; margin: 4px 4px 0 0; padding: 5px 14px; border-radius: 50px; background: var(--maroon); color: #fff; font-size: 12px; font-weight: 600; letter-spacing: .4px; }
+.ziara-archive__pagination .pagination { gap: 8px; flex-wrap: wrap; justify-content: center; }
+.ziara-archive__pagination .page-link { border: 1px solid var(--line); border-radius: 8px; color: var(--maroon-deep); font-weight: 600; padding: 10px 15px; margin: 0; }
+.ziara-archive__pagination .page-item.active .page-link { background: var(--maroon); border-color: var(--maroon); color: #fff; }
+.ziara-archive__pagination .page-item.disabled .page-link { color: var(--muted); }
+</style>
+
+<div class="ziara-archive">
+    @include('partials.ziara-page-hero', [
+        'title' => 'Tour <em>Search</em> Results',
+        'kicker' => 'Tours & Activities',
+        'intro' => 'Discover amazing experiences for your journey across East Africa.',
+        'crumbs' => [
+            ['label' => 'Home', 'url' => url('/')],
+            ['label' => 'Tours', 'url' => route('tours.index')],
+            ['label' => 'Search', 'url' => route('tours.search')],
+        ],
+    ])
+
+    <div style="display: flex; flex-wrap: wrap; gap: 30px; align-items: flex-start;">
+        <aside style="flex: 0 0 290px; width: 100%;">
+            <div class="ziara-panel" style="position: sticky; top: 24px;">
+                <h2 class="ziara-panel__title">Filter Tours</h2>
+                <form method="GET" action="{{ route('tours.search') }}" id="filterForm">
+                    @if($searchTerm)
+                        <input type="hidden" name="q" value="{{ $searchTerm }}">
+                    @endif
+
+                    <div class="ziara-filter__field">
+                        <label for="filterCity">Destination</label>
+                        <select name="city" id="filterCity" class="filter-select">
+                            <option value="">All Cities</option>
+                            @foreach($cities as $city)
+                                <option value="{{ $city }}" {{ request('city') == $city ? 'selected' : '' }}>
+                                    {{ $city }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="ziara-filter__field">
+                        <label for="filterCategory">Tour Category</label>
+                        <select name="category" id="filterCategory" class="filter-select">
+                            <option value="">All Categories</option>
+                            @foreach($categories as $category)
+                                <option value="{{ $category }}" {{ request('category') == $category ? 'selected' : '' }}>
+                                    {{ ucwords($category) }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="ziara-filter__field">
+                        <label for="filterPriceMin">Price Range</label>
+                        <div class="ziara-filter__price">
+                            <input type="number" name="price_min" id="filterPriceMin" class="filter-input" placeholder="Min $" value="{{ request('price_min') }}">
+                            <input type="number" name="price_max" class="filter-input" placeholder="Max $" value="{{ request('price_max') }}">
                         </div>
                     </div>
-                </div>
+
+                    <div class="ziara-filter__field">
+                        <label for="filterSort">Sort By</label>
+                        <select name="sort" id="filterSort" class="filter-select">
+                            <option value="featured" {{ request('sort') == 'featured' ? 'selected' : '' }}>Featured</option>
+                            <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>Price (Low to High)</option>
+                            <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>Price (High to Low)</option>
+                            <option value="rating" {{ request('sort') == 'rating' ? 'selected' : '' }}>Highest Rated</option>
+                            <option value="duration" {{ request('sort') == 'duration' ? 'selected' : '' }}>Duration</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="ziara-btn ziara-btn--maroon" style="width: 100%;">
+                        <i class="fa-solid fa-filter" aria-hidden="true"></i> Apply Filters
+                    </button>
+                    <a href="{{ route('tours.search', ['q' => $searchTerm]) }}" class="ziara-btn ziara-btn--outline" style="width: 100%; margin-top: 10px;">
+                        <i class="fa-solid fa-xmark" aria-hidden="true"></i> Clear Filters
+                    </a>
+                </form>
             </div>
-        </div>
-    </div>
-    
-    <!-- Main Content -->
-    <div class="row">
-        <!-- Filters Sidebar -->
-        <div class="col-lg-3 mb-4">
-            <div class="card shadow-sm">
-                <div class="card-header bg-white">
-                    <h5 class="mb-0">Filter Tours</h5>
-                </div>
-                <div class="card-body">
-                    <form method="GET" action="{{ route('tours.search') }}" id="filterForm">
-                        <!-- Preserve search term if any -->
-                        @if($searchTerm)
-                            <input type="hidden" name="q" value="{{ $searchTerm }}">
+        </aside>
+
+        <div style="flex: 1 1 560px; min-width: 0;">
+            <div class="ziara-panel" style="margin-bottom: 24px;">
+                @if($searchTerm)
+                    <p style="margin: 0 0 6px; font-family: var(--font-display); font-size: 30px; font-weight: 700; color: var(--maroon-deep);">
+                        Showing results for &ldquo;<strong>{{ $searchTerm }}</strong>&rdquo;
+                    </p>
+                @else
+                    <p style="margin: 0 0 6px; font-family: var(--font-display); font-size: 30px; font-weight: 700; color: var(--maroon-deep);">
+                        All tours matching your filters
+                    </p>
+                @endif
+
+                @if(request('city') || request('category') || request('price_min') || request('price_max'))
+                    <div style="font-size: 13px; letter-spacing: .8px; text-transform: uppercase; color: var(--muted); font-weight: 600;">Filters</div>
+                    <div>
+                        @if(request('city'))
+                            <span class="ziara-filter-chip">{{ request('city') }}</span>
                         @endif
-                        
-                        <!-- City Filter -->
-                        <div class="mb-3">
-                            <label class="fw-bold mb-2">Destination</label>
-                            <select name="city" class="form-select filter-select">
-                                <option value="">All Cities</option>
-                                @foreach($cities as $city)
-                                    <option value="{{ $city }}" {{ request('city') == $city ? 'selected' : '' }}>
-                                        {{ $city }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                        
-                        <!-- Category Filter -->
-                        <div class="mb-3">
-                            <label class="fw-bold mb-2">Tour Category</label>
-                            <select name="category" class="form-select filter-select">
-                                <option value="">All Categories</option>
-                                @foreach($categories as $category)
-                                    <option value="{{ $category }}" {{ request('category') == $category ? 'selected' : '' }}>
-                                        {{ ucwords($category) }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                        
-                        <!-- Price Range -->
-                        <div class="mb-3">
-                            <label class="fw-bold mb-2">Price Range</label>
-                            <div class="row">
-                                <div class="col-6">
-                                    <div class="input-group">
-                                        <span class="input-group-text">$</span>
-                                        <input type="number" name="price_min" class="form-control filter-input" placeholder="Min" value="{{ request('price_min') }}">
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="input-group">
-                                        <span class="input-group-text">$</span>
-                                        <input type="number" name="price_max" class="form-control filter-input" placeholder="Max" value="{{ request('price_max') }}">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Sort Order -->
-                        <div class="mb-3">
-                            <label class="fw-bold mb-2">Sort By</label>
-                            <select name="sort" class="form-select filter-select">
-                                <option value="featured" {{ request('sort') == 'featured' ? 'selected' : '' }}>Featured</option>
-                                <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>Price (Low to High)</option>
-                                <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>Price (High to Low)</option>
-                                <option value="rating" {{ request('sort') == 'rating' ? 'selected' : '' }}>Highest Rated</option>
-                                <option value="duration" {{ request('sort') == 'duration' ? 'selected' : '' }}>Duration</option>
-                            </select>
-                        </div>
-                        
-                        <!-- Filter Actions -->
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-filter me-1"></i>Apply Filters
-                            </button>
-                            <a href="{{ route('tours.search', ['q' => $searchTerm]) }}" class="btn btn-outline-secondary">
-                                <i class="fas fa-times me-1"></i>Clear Filters
-                            </a>
-                        </div>
-                    </form>
-                </div>
+                        @if(request('category'))
+                            <span class="ziara-filter-chip">{{ request('category') }}</span>
+                        @endif
+                        @if(request('price_min') || request('price_max'))
+                            <span class="ziara-filter-chip">
+                                Price:
+                                {{ request('price_min') ? '$' . request('price_min') : '$0' }}
+                                -
+                                {{ request('price_max') ? '$' . request('price_max') : '+' }}
+                            </span>
+                        @endif
+                    </div>
+                @endif
+
+                <form method="GET" action="{{ route('tours.search') }}" class="ziara-searchbar" style="margin-top: 18px;">
+                    <input type="text" name="q" placeholder="Search tours..." value="{{ $searchTerm }}">
+                    <button type="submit" class="ziara-btn ziara-btn--maroon">
+                        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                    </button>
+                </form>
             </div>
-        </div>
-        
-        <!-- Search Results -->
-        <div class="col-lg-9">
+
             @if(count($tours) > 0)
-                <div class="row mb-3">
-                    <div class="col-12">
-                        <div class="bg-light p-3 rounded-3 d-flex justify-content-between align-items-center">
-                            <div>
-                                Showing <strong>{{ $tours->firstItem() ?? 0 }}</strong> - <strong>{{ $tours->lastItem() ?? 0 }}</strong> 
-                                of <strong>{{ $tours->total() }}</strong> tours
-                            </div>
-                            <div>
-                                <select class="form-select form-select-sm" style="width: auto;" id="results-per-page">
-                                    <option value="12" {{ request('per_page') == 12 ? 'selected' : '' }}>12 per page</option>
-                                    <option value="24" {{ request('per_page') == 24 ? 'selected' : '' }}>24 per page</option>
-                                    <option value="48" {{ request('per_page') == 48 ? 'selected' : '' }}>48 per page</option>
-                                </select>
-                            </div>
-                        </div>
+                <div class="ziara-results__bar" style="margin-bottom: 26px;">
+                    <div>
+                        Showing <strong>{{ $tours->firstItem() ?? 0 }}</strong> - <strong>{{ $tours->lastItem() ?? 0 }}</strong>
+                        of <strong>{{ $tours->total() }}</strong> tours
+                    </div>
+                    <div>
+                        <select id="results-per-page" aria-label="Results per page">
+                            <option value="12" {{ request('per_page') == 12 ? 'selected' : '' }}>12 per page</option>
+                            <option value="24" {{ request('per_page') == 24 ? 'selected' : '' }}>24 per page</option>
+                            <option value="48" {{ request('per_page') == 48 ? 'selected' : '' }}>48 per page</option>
+                        </select>
                     </div>
                 </div>
-                
-                <div class="row g-4">
+
+                <div class="ziara-tours" style="--ziara-cols: 2;">
                     @foreach($tours as $tour)
-                        <div class="col-md-6 col-lg-4">
-                            <div class="card h-100 shadow-sm tour-card">
-                                <div class="position-relative">
-                                    <img src="{{ $tour->main_image }}" class="card-img-top" alt="{{ $tour->name }}" style="height: 200px; object-fit: cover;">
-                                    
-                                    @if($tour->has_discount)
-                                        <span class="position-absolute top-0 end-0 m-2 badge bg-danger">
-                                            {{ $tour->discount_percent }}% OFF
-                                        </span>
-                                    @endif
-                                    
-                                    @if($tour->featured)
-                                        <span class="position-absolute top-0 start-0 m-2 badge bg-warning text-dark">
-                                            <i class="fas fa-star me-1"></i>Featured
-                                        </span>
-                                    @endif
-                                    
-                                    <div class="position-absolute bottom-0 start-0 w-100 p-3" style="background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);">
-                                        <div class="d-flex justify-content-between">
-                                            <div>
-                                                <span class="badge bg-success">{{ ucwords($tour->category) }}</span>
-                                                <small class="text-white ms-2">{{ $tour->city }}, {{ $tour->country }}</small>
-                                            </div>
-                                            <div>
-                                                <span class="badge bg-light text-dark">
-                                                    <i class="fas fa-star text-warning me-1"></i>{{ $tour->rating }}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
+                        <article class="ziara-card">
+                            <a href="{{ route('tours.show', $tour->slug) }}" class="ziara-card__media">
+                                <img src="{{ $tour->main_image }}" class="ziara-card__img" alt="{{ $tour->name }}">
+                                <span class="ziara-card__shade"></span>
+                                @if($tour->has_discount)
+                                    <span class="ziara-card__badge">{{ $tour->discount_percent }}% OFF</span>
+                                @endif
+                                @if($tour->featured)
+                                    <span class="ziara-deal__tag"><i class="fa-solid fa-star" aria-hidden="true"></i> Featured</span>
+                                @endif
+                                <span class="ziara-card__loc">
+                                    <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
+                                    {{ $tour->city }}, {{ $tour->country }}
+                                    <span style="margin-left: auto; display: inline-flex; align-items: center; gap: 5px;">
+                                        <i class="fa-solid fa-star" aria-hidden="true"></i>{{ $tour->rating }}
+                                    </span>
+                                </span>
+                            </a>
+                            <div class="ziara-card__body">
+                                <h3 class="ziara-card__title">
+                                    <a href="{{ route('tours.show', $tour->slug) }}">{{ $tour->name }}</a>
+                                </h3>
+                                <p class="ziara-card__desc">{{ Str::limit($tour->short_description, 100) }}</p>
+                                <div class="ziara-card__meta">
+                                    <span><i class="fa-regular fa-clock" aria-hidden="true"></i>{{ $tour->duration }}</span>
+                                    <span><i class="fa-solid fa-mountain-sun" aria-hidden="true"></i>{{ ucwords($tour->difficulty_level) }}</span>
+                                    <span><i class="fa-solid fa-tag" aria-hidden="true"></i>{{ ucwords($tour->category) }}</span>
                                 </div>
-                                
-                                <div class="card-body d-flex flex-column">
-                                    <h5 class="card-title">{{ $tour->name }}</h5>
-                                    <p class="card-text text-muted small mb-3">{{ Str::limit($tour->short_description, 100) }}</p>
-                                    
-                                    <div class="d-flex justify-content-between text-muted small mb-3">
-                                        <span><i class="fas fa-clock me-1"></i>{{ $tour->duration }}</span>
-                                        <span><i class="fas fa-signal me-1"></i>{{ ucwords($tour->difficulty_level) }}</span>
+                                <div class="ziara-card__foot">
+                                    <div class="ziara-card__price">
+                                        @if($tour->has_discount)
+                                            <span class="ziara-card__price-prefix" style="text-decoration: line-through;">
+                                                ${{ number_format($tour->original_price, 2) }}
+                                            </span>
+                                        @endif
+                                        <span class="ziara-card__price-amount">${{ number_format($tour->price, 2) }}</span>
+                                        <span class="ziara-card__price-prefix">per person</span>
                                     </div>
-                                    
-                                    <div class="mt-auto">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <div>
-                                                @if($tour->has_discount)
-                                                    <span class="text-muted text-decoration-line-through small">
-                                                        ${{ number_format($tour->original_price, 2) }}
-                                                    </span>
-                                                @endif
-                                                <div class="h5 mb-0 text-success">
-                                                    ${{ number_format($tour->price, 2) }}
-                                                    <small class="text-muted">per person</small>
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <a href="{{ route('tours.show', $tour->slug) }}" class="btn btn-outline-primary btn-sm">
-                                                    View Details
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <a href="{{ route('tours.show', $tour->slug) }}" class="ziara-card__btn">
+                                        View Details <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                                    </a>
                                 </div>
                             </div>
-                        </div>
+                        </article>
                     @endforeach
                 </div>
-                
-                <!-- Pagination -->
-                <div class="d-flex justify-content-center mt-5">
+
+                <div class="ziara-archive__pagination">
                     {{ $tours->appends(request()->query())->links() }}
                 </div>
             @else
-                <div class="card shadow-sm">
-                    <div class="card-body p-5 text-center">
-                        <i class="fas fa-search fa-3x text-muted mb-3"></i>
-                        <h3>No Tours Found</h3>
-                        <p class="text-muted">
-                            We couldn't find any tours matching your search criteria. Try adjusting your filters or search term.
-                        </p>
-                        <a href="{{ route('tours.index') }}" class="btn btn-primary">
-                            <i class="fas fa-globe me-1"></i>Browse All Tours
-                        </a>
-                    </div>
+                <div class="ziara-panel" style="text-align: center; padding: 60px 30px;">
+                    <i class="fa-solid fa-magnifying-glass" style="font-size: 48px; color: var(--gold);" aria-hidden="true"></i>
+                    <h2 class="ziara-panel__title" style="display: inline-block; margin-top: 18px;">No Tours Found</h2>
+                    <p style="font-size: 15.5px; line-height: 1.75; color: var(--muted); max-width: 520px; margin: 0 auto 26px;">
+                        We couldn't find any tours matching your search criteria. Try adjusting your filters or search term.
+                    </p>
+                    <a href="{{ route('tours.index') }}" class="ziara-btn ziara-btn--maroon">
+                        <i class="fa-solid fa-globe" aria-hidden="true"></i> Browse All Tours
+                    </a>
                 </div>
             @endif
         </div>
@@ -259,15 +241,13 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Auto-submit form when filters change
     const filterSelects = document.querySelectorAll('.filter-select');
     filterSelects.forEach(select => {
         select.addEventListener('change', function() {
             document.getElementById('filterForm').submit();
         });
     });
-    
-    // Handle results per page change
+
     const resultsPerPage = document.getElementById('results-per-page');
     if (resultsPerPage) {
         resultsPerPage.addEventListener('change', function() {

@@ -760,11 +760,6 @@
                     </a>
                 </li>
                 <li class="sidemenu-item mb-[4px] last:mb-0">
-                    <a href="{{ route('superadmin.content.destinations') }}" class="sidemenu-link rounded-md flex items-center relative transition-all font-medium text-gray-500 dark:text-gray-400 py-[9px] ltr:pl-[38px] ltr:pr-[30px] rtl:pr-[38px] rtl:pl-[30px] hover:text-primary-500 hover:bg-primary-50 w-full text-left dark:hover:bg-[#15203c]">
-                        Featured Destinations
-                    </a>
-                </li>
-                <li class="sidemenu-item mb-[4px] last:mb-0">
                     <a href="{{ route('superadmin.content.email-templates') }}" class="sidemenu-link rounded-md flex items-center relative transition-all font-medium text-gray-500 dark:text-gray-400 py-[9px] ltr:pl-[38px] ltr:pr-[30px] rtl:pr-[38px] rtl:pl-[30px] hover:text-primary-500 hover:bg-primary-50 w-full text-left dark:hover:bg-[#15203c]">
                         Email Templates
                     </a>
@@ -800,11 +795,6 @@
                 <li class="sidemenu-item mb-[4px] last:mb-0">
                     <a href="{{ route('superadmin.communications.email-campaigns') }}" class="sidemenu-link rounded-md flex items-center relative transition-all font-medium text-gray-500 dark:text-gray-400 py-[9px] ltr:pl-[38px] ltr:pr-[30px] rtl:pr-[38px] rtl:pl-[30px] hover:text-primary-500 hover:bg-primary-50 w-full text-left dark:hover:bg-[#15203c]">
                         Email Campaigns
-                    </a>
-                </li>
-                <li class="sidemenu-item mb-[4px] last:mb-0">
-                    <a href="{{ route('superadmin.communications.sms') }}" class="sidemenu-link rounded-md flex items-center relative transition-all font-medium text-gray-500 dark:text-gray-400 py-[9px] ltr:pl-[38px] ltr:pr-[30px] rtl:pr-[38px] rtl:pl-[30px] hover:text-primary-500 hover:bg-primary-50 w-full text-left dark:hover:bg-[#15203c]">
-                        SMS Notifications
                     </a>
                 </li>
                 <li class="sidemenu-item mb-[4px] last:mb-0">
@@ -879,7 +869,7 @@
                     
                     <!-- Standalone menu items -->
                     <div class="accordion-item rounded-md text-black dark:text-white mb-[5px] whitespace-nowrap">
-                        <a href="{{ route('superadmin.referrals') }}" class="accordion-button flex items-center transition-all py-[9px] ltr:pl-[14px] ltr:pr-[28px] rtl:pr-[14px] rtl:pl-[28px] rounded-md font-medium w-full relative hover:bg-gray-50 text-left dark:hover:bg-[#15203c]">
+                        <a href="{{ route('superadmin.referrals.index') }}" class="accordion-button flex items-center transition-all py-[9px] ltr:pl-[14px] ltr:pr-[28px] rtl:pr-[14px] rtl:pl-[28px] rounded-md font-medium w-full relative hover:bg-gray-50 text-left dark:hover:bg-[#15203c]">
                             <i class="material-symbols-outlined transition-all text-gray-500 dark:text-gray-400 ltr:mr-[7px] rtl:ml-[7px] !text-[22px] leading-none relative -top-px">
                                 people_alt
                             </i>
@@ -1119,7 +1109,7 @@
                                 @endforelse
                             </ul>
                             <div class="text-center">
-                                <a href="{{ route('superadmin.notifications') }}" class="inline-block font-medium relative text-primary-500 transition-all hover:underline">
+                                <a href="{{ route('superadmin.notifications.index') }}" class="inline-block font-medium relative text-primary-500 transition-all hover:underline">
                                     See All Notifications
                                 </a>
                             </div>

@@ -163,6 +163,17 @@ class SupportController extends Controller
             'travelers' => $request->travelers,
             'preferences' => $request->preferences,
             'special_requirements' => $request->special_requirements,
+            // The support email templates render these keys, so they are
+            // derived here rather than left to a Blade-level fallback.
+            'subject' => 'Trip planning request: ' . $request->destination,
+            'message' => implode("\n", array_filter([
+                'Destination: ' . $request->destination,
+                'Travel dates: ' . $request->travel_dates,
+                'Budget: ' . ($request->budget ?: 'Not specified'),
+                'Travelers: ' . $request->travelers,
+                'Preferences: ' . ($request->preferences ?: 'None'),
+                'Special requirements: ' . ($request->special_requirements ?: 'None'),
+            ])),
             'submitted_at' => now(),
             'type' => 'trip_planning'
         ];
@@ -223,6 +234,17 @@ class SupportController extends Controller
             'travelers' => $request->travelers,
             'medical_conditions' => $request->medical_conditions,
             'additional_info' => $request->additional_info,
+            // The support email templates render these keys, so they are
+            // derived here rather than left to a Blade-level fallback.
+            'subject' => 'Insurance inquiry: ' . $request->coverage_type,
+            'message' => implode("\n", array_filter([
+                'Destination: ' . $request->destination,
+                'Travel dates: ' . $request->travel_dates,
+                'Coverage type: ' . $request->coverage_type,
+                'Travelers: ' . $request->travelers,
+                'Medical conditions: ' . ($request->medical_conditions ?: 'None'),
+                'Additional info: ' . ($request->additional_info ?: 'None'),
+            ])),
             'submitted_at' => now(),
             'type' => 'insurance_inquiry'
         ];

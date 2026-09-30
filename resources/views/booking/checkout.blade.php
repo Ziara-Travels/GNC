@@ -51,12 +51,13 @@
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/flight-flow.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/ziara-booking.css') }}?v={{ (file_exists(public_path('css/ziara-booking.css')) ? filemtime(public_path('css/ziara-booking.css')) : 0) }}">
 @endpush
 
 @section('content')
-    <div class="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
+    <div class="ziara-bk min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
         <!-- Enhanced Hero Section -->
-        <div class="relative bg-gradient-to-br from-blue-800 via-indigo-900 to-purple-900 py-24 overflow-hidden">
+        <div class="ziara-bk-hero relative bg-gradient-to-br from-blue-800 via-indigo-900 to-purple-900 py-24 overflow-hidden">
             <!-- Animated Background Elements -->
             <div class="absolute inset-0">
                 <div class="absolute top-20 left-10 w-72 h-72 bg-blue-400/20 rounded-full blur-3xl animate-pulse"></div>
@@ -179,7 +180,7 @@
         </div>
 
         <!-- Main Checkout Content -->
-        <div class="container mx-auto px-4 py-12 -mt-16 relative z-10">
+        <div class="ziara-bk-body container mx-auto px-4 py-12 -mt-16 relative z-10">
             <div class="max-w-7xl mx-auto">
                 <div class="flex flex-col xl:flex-row gap-8">
                     <!-- Left Column - Payment Methods -->
@@ -194,8 +195,8 @@
                             <input type="hidden" name="booking_data" value="{{ json_encode($flightData) }}">
 
                             <!-- Payment Method Selection -->
-                            <div class="bg-white rounded-3xl shadow-xl border border-gray-200 mb-8 overflow-hidden">
-                                <div class="bg-gradient-to-r from-green-600 to-teal-600 p-6 text-white">
+                            <div class="bg-white rounded-3xl shadow-xl border border-gray-200 mb-8 overflow-hidden ziara-bk-card">
+                                <div class="bg-gradient-to-r from-green-600 to-teal-600 p-6 text-white ziara-bk-cta">
                                     <div class="flex items-center gap-4">
                                         <div class="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
                                             <i data-lucide="credit-card" class="h-6 w-6"></i>
@@ -852,7 +853,7 @@
         </div>
 
         <!-- Footer Section -->
-        <div class="bg-gray-100 border-t border-gray-200 mt-12 py-12">
+        <div class="ziara-bk-cta bg-gray-100 border-t border-gray-200 mt-12 py-12">
             <div class="container mx-auto px-4">
                 <div class="max-w-7xl mx-auto">
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -918,9 +919,7 @@
             </div>
         </div>
     </div>
-@endsection
 
-@section('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Payment tab handling

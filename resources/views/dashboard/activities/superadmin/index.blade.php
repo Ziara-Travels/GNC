@@ -141,10 +141,10 @@
                             <span class="text-sm font-medium text-amber-600">Read-Only</span>
                         </div>
                         <div class="flex items-center gap-2">
-                            <a href="{{ route('admin.payments.flights') }}" class="px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors">
+                            <a href="{{ route('superadmin.payments.flights') }}" class="px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors">
                                 Flight Payments
                             </a>
-                            <a href="{{ route('admin.payments.hotels') }}" class="px-4 py-2 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors">
+                            <a href="{{ route('superadmin.payments.hotels') }}" class="px-4 py-2 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors">
                                 Hotel Payments
                             </a>
                         </div>

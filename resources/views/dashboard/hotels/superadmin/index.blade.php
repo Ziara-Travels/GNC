@@ -51,7 +51,7 @@
                     <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addSuperadminModal">
                         <i class="fas fa-plus me-1"></i> Add Superadmin
                     </button>
-                    <a href="{{ route('superadmin.users.filter', ['role' => 'superadmin']) }}" class="text-decoration-none">View All</a>
+                    <a href="{{ route('superadmin.users.index', ['role' => 'superadmin']) }}" class="text-decoration-none">View All</a>
                 </div>
             </div>
         </div>
@@ -77,7 +77,7 @@
                     <button class="btn btn-sm btn-outline-info" data-bs-toggle="modal" data-bs-target="#addAdminModal">
                         <i class="fas fa-plus me-1"></i> Add Admin
                     </button>
-                    <a href="{{ route('superadmin.users.filter', ['role' => 'admin']) }}" class="text-decoration-none">View All</a>
+                    <a href="{{ route('superadmin.users.index', ['role' => 'admin']) }}" class="text-decoration-none">View All</a>
                 </div>
             </div>
         </div>
@@ -103,7 +103,7 @@
                     <button class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#addUserModal">
                         <i class="fas fa-plus me-1"></i> Add User
                     </button>
-                    <a href="{{ route('superadmin.users.filter', ['role' => 'user']) }}" class="text-decoration-none">View All</a>
+                    <a href="{{ route('superadmin.users.index', ['role' => 'user']) }}" class="text-decoration-none">View All</a>
                 </div>
             </div>
         </div>
@@ -428,7 +428,7 @@
                                         </button>
                                         <ul class="dropdown-menu dropdown-menu-end">
                                             <li>
-                                                <a class="dropdown-item" href="{{ route('superadmin.users.view', $user->id) }}">
+                                                <a class="dropdown-item" href="{{ route('superadmin.users.edit', $user->id) }}">
                                                     <i class="fas fa-eye me-2"></i>View Profile
                                                 </a>
                                             </li>
@@ -444,7 +444,7 @@
                                             </li>
                                             <li><hr class="dropdown-divider"></li>
                                             <li>
-                                                <a class="dropdown-item" href="{{ route('superadmin.activity.user', $user->id) }}">
+                                                <a class="dropdown-item" href="{{ route('superadmin.users.activity-tracking', ['user' => $user->id]) }}">
                                                     <i class="fas fa-history me-2"></i>Activity Log
                                                 </a>
                                             </li>
@@ -516,7 +516,7 @@
         <div class="card shadow-sm">
             <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">Recent Registrations</h5>
-                <a href="{{ route('superadmin.users.recent') }}" class="text-decoration-none">View All</a>
+                <a href="{{ route('superadmin.users.index') }}" class="text-decoration-none">View All</a>
             </div>
             <div class="card-body p-0">
                 <div class="list-group list-group-flush">

@@ -1,5 +1,9 @@
 @extends('layouts.main')
 
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/ziara-booking.css') }}?v={{ (file_exists(public_path('css/ziara-booking.css')) ? filemtime(public_path('css/ziara-booking.css')) : 0) }}">
+@endpush
+
 @section('content')
     @php
         // Determine currency display
@@ -20,7 +24,7 @@
     @endphp
 
     <!-- Enhanced Hero Section -->
-    <div class="relative bg-gradient-to-br from-green-600 via-emerald-700 to-teal-800 py-24 overflow-hidden">
+    <div class="ziara-bk ziara-bk-hero relative bg-gradient-to-br from-green-600 via-emerald-700 to-teal-800 py-24 overflow-hidden">
         <!-- Animated Background Elements -->
         <div class="absolute inset-0">
             <div class="absolute top-20 left-10 w-72 h-72 bg-green-400/20 rounded-full blur-3xl animate-pulse"></div>
@@ -123,11 +127,11 @@
     </div>
 
     <!-- Main Content -->
-    <div class="container mx-auto px-4 py-12 -mt-16 relative z-10">
+    <div class="ziara-bk ziara-bk-body container mx-auto px-4 py-12 -mt-16 relative z-10">
         <div class="max-w-4xl mx-auto">
             <!-- Booking Details Card -->
-            <div class="bg-white rounded-3xl shadow-2xl border border-gray-200 overflow-hidden mb-8">
-                <div class="bg-gradient-to-r from-green-600 to-emerald-600 p-8 text-white">
+            <div class="bg-white rounded-3xl shadow-2xl border border-gray-200 overflow-hidden mb-8 ziara-bk-card">
+                <div class="bg-gradient-to-r from-green-600 to-emerald-600 p-8 text-white ziara-bk-cta">
                     <div class="flex items-center gap-4">
                         <div class="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
                             <i data-lucide="file-text" class="h-8 w-8"></i>

@@ -116,7 +116,7 @@ class ProfileController extends Controller
         $users = $query->orderBy('created_at', 'desc')->paginate(20);
         $countries = User::distinct()->pluck('country')->filter();
 
-        return view('dashboard.profile.admin.users', compact('users', 'countries'));
+        return view('dashboard.profile.admin.manage-users', compact('users', 'countries'));
     }
 
     // Superadmin Profile Methods
@@ -165,7 +165,7 @@ class ProfileController extends Controller
         $users = $query->orderBy('created_at', 'desc')->paginate(20);
         $countries = User::distinct()->pluck('country')->filter();
 
-        return view('dashboard.profile.superadmin.users', compact('users', 'countries'));
+        return view('dashboard.profile.superadmin.manage-users', compact('users', 'countries'));
     }
 
     // Common Methods
@@ -220,7 +220,7 @@ class ProfileController extends Controller
                 'address' => $user->address,
                 'bio' => $user->bio,
                 'profile_image' => $user->profile_image ? asset('storage/profile_images/' . $user->profile_image) : null,
-                'role' => $user->roles->first()->name ?? 'user',
+                'role' => $user->role,
                 'status' => $user->status,
                 'created_at' => $user->created_at->format('M d, Y'),
                 'completion_percentage' => $this->calculateProfileCompletion($user)

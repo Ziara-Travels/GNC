@@ -15,16 +15,18 @@ class Notification extends Model
         'title',
         'message',
         'type',
+        'priority',
         'data',
         'read_at',
+        'opened_at',
         'action_url',
-        'priority',
         'expires_at'
     ];
 
     protected $casts = [
         'data' => 'array',
         'read_at' => 'datetime',
+        'opened_at' => 'datetime',
         'expires_at' => 'datetime',
     ];
 
@@ -62,6 +64,25 @@ class Notification extends Model
     public function markAsRead()
     {
         $this->update(['read_at' => now()]);
+    }
+
+    public function markAsOpened()
+    {
+        $this->update(['opened_at' => now()]);
+    }
+
+    /**
+     * Font Awesome icon for the notification type, used by the notification
+     * list views via $notification->type_icon.
+     */
+    public function getTypeIconAttribute()
+    {
+        return match ($this->type) {
+            'success' => 'fa-check-circle',
+            'warning' => 'fa-exclamation-triangle',
+            'error' => 'fa-times-circle',
+            default => 'fa-bell',
+        };
     }
 
     public function isRead()

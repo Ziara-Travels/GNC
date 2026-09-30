@@ -12,7 +12,7 @@
                         <i class="material-symbols-outlined me-2">admin_panel_settings</i>
                         Roles Management
                     </h4>
-                    <a href="{{ route('superadmin.roles.create') }}" class="btn btn-primary">
+                    <a href="{{ route('superadmin.roles.add') }}" class="btn btn-primary">
                         <i class="material-symbols-outlined me-1">add</i>
                         Add New Role
                     </a>
@@ -79,7 +79,7 @@
                                     <td>{{ $role->created_at->format('M d, Y') }}</td>
                                     <td>
                                         <div class="btn-group btn-group-sm" role="group">
-                                            <a href="{{ route('superadmin.roles.show', $role) }}" 
+                                            <a href="{{ route('superadmin.roles.view', $role) }}" 
                                                class="btn btn-outline-info" title="View">
                                                 <i class="material-symbols-outlined">visibility</i>
                                             </a>

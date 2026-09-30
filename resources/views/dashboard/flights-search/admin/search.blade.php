@@ -100,7 +100,7 @@
                     </div>
                     
                     <div class="p-8">
-                        <form action="{{ route('admin.flights.search.process') }}" method="POST" id="flightSearchForm">
+                        <form action="{{ route('user.flights.search.process') }}" method="POST" id="flightSearchForm">
                             @csrf
                             
                             <!-- User Selection for Admin -->
@@ -358,7 +358,7 @@
                             </div>
                         </a>
                         
-                        <a href="{{ route('admin.users.index') }}" class="block p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl hover:from-green-100 hover:to-emerald-100 transition-colors">
+                        <a href="{{ route('admin.users.all') }}" class="block p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl hover:from-green-100 hover:to-emerald-100 transition-colors">
                             <div class="flex items-center gap-3">
                                 <i data-lucide="users" class="h-5 w-5 text-green-600"></i>
                                 <span class="font-medium text-gray-800">Manage Users</span>

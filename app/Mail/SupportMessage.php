@@ -6,7 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class SupportConfirmation extends Mailable
+class SupportMessage extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -19,7 +19,9 @@ class SupportConfirmation extends Mailable
 
     public function build()
     {
-        return $this->subject('Support Request Received - ' . $this->supportData['subject'])
-                    ->view('emails.support-confirmation');
+        $type = ucfirst(str_replace('_', ' ', $this->supportData['type'] ?? 'support request'));
+
+        return $this->subject($this->supportData['subject'] ?? 'New ' . $type)
+                    ->view('emails.support-message');
     }
 }

@@ -1,267 +1,417 @@
 @extends('layouts.main')
 
 @section('content')
-    <!-- Include required CSS and JS -->
+@include('partials.ziara-page-hero', [
+    'kicker' => 'Hotel Deals',
+    'title'  => '<em>Handpicked</em> Hotel Deals',
+    'intro'  => 'Signature stays and lodges across East Africa, with negotiated rates and instant confirmation.',
+    'crumbs' => [
+        ['label' => 'Home', 'url' => route('home')],
+        ['label' => 'Hotel Deals', 'url' => route('deal.hotel.results')],
+    ],
+])
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 
     <style>
-        .hotel-deal-card {
-            transition: all 0.3s ease;
+        .zh-results {
+            background: var(--gold-pale);
+            padding: 64px 0 88px;
         }
-        
-        .hotel-deal-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-        }
-        
-        .no-deals-container {
-            background: linear-gradient(135deg, #6a75ca 0%, #8f95d3 100%);
-            min-height: 60vh;
+        .zh-results__head {
             display: flex;
+            flex-wrap: wrap;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
+            gap: 22px;
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            box-shadow: var(--shadow-sm);
+            padding: 28px 30px;
+            margin-bottom: 26px;
         }
-        
-        .search-again-btn {
-            background: linear-gradient(45deg, #6a75ca, #8f95d3);
-            border: none;
-            color: white;
-            font-weight: 600;
-            padding: 12px 30px;
-            border-radius: 25px;
-            transition: all 0.3s ease;
+        .zh-results__title {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 34px;
+            line-height: 1.15;
+            color: var(--maroon-deep);
+            margin: 0 0 6px;
         }
-        
-        .search-again-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(106, 117, 202, 0.4);
+        .zh-results__count {
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            color: var(--gold-dim);
+            margin: 0;
         }
-        
-        .results-header {
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-            border-radius: 15px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .filter-active {
-            background-color: #6a75ca;
-            color: white;
-            font-weight: 600;
-        }
-
-        .stars-container {
-            color: #ffc107;
-        }
-        
-        .price-slider {
-            -webkit-appearance: none;
-            width: 100%;
-            height: 8px;
-            border-radius: 5px;
-            background: #d7dcdf;
-            outline: none;
-            opacity: 0.7;
-            -webkit-transition: .2s;
-            transition: opacity .2s;
-        }
-
-        .price-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            background: #6a75ca;
+        .zh-actions { display: flex; align-items: center; gap: 12px; }
+        .zh-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 10px 20px;
+            font-family: var(--font-body);
+            font-size: 11.5px;
+            font-weight: 700;
+            letter-spacing: .8px;
+            text-transform: uppercase;
+            color: var(--maroon);
+            background: #fff;
+            border: 1.5px solid var(--gold-border);
+            border-radius: 50px;
             cursor: pointer;
+            transition: background .3s, color .3s, border-color .3s, transform .3s;
         }
-
-        .wishlist-btn {
-            background-color: white;
+        .zh-chip:hover { border-color: var(--gold); background: var(--gold-pale); transform: translateY(-2px); }
+        .zh-chip.filter-active {
+            background: var(--maroon);
+            border-color: var(--maroon);
+            color: var(--gold-bright);
+        }
+        .zh-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            box-shadow: var(--shadow-sm);
+            padding: 18px 22px;
+            margin-bottom: 34px;
+        }
+        .zh-deals > .hotel-deal-card { display: block; height: 100%; }
+        .zh-deals > .hotel-deal-card > .ziara-deal { height: 100%; }
+        .zh-overlay {
+            position: absolute;
+            inset: auto 0 0 0;
+            z-index: 2;
+            padding: 18px 18px 16px;
+            background: linear-gradient(to top, rgba(74,29,19,.92) 0%, rgba(74,29,19,.45) 55%, transparent 100%);
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        .zh-overlay__name {
+            font-family: var(--font-display);
+            font-size: 21px;
+            font-weight: 700;
+            color: #fff;
+            margin: 0;
+            line-height: 1.2;
+        }
+        .zh-overlay__place {
+            display: block;
+            font-size: 11.5px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,.72);
+        }
+        .zh-overlay__stars {
+            display: inline-flex;
+            align-items: center;
+            gap: 2px;
+            padding: 6px 11px;
+            border-radius: 50px;
+            background: var(--gold-bright);
+            color: var(--maroon-deep);
+            font-size: 10.5px;
+            white-space: nowrap;
+        }
+        .zh-wishlist {
+            position: absolute;
+            top: 14px;
+            left: 14px;
+            z-index: 3;
+            width: 38px;
+            height: 38px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 0;
             border-radius: 50%;
-            width: 36px;
-            height: 36px;
+            background: rgba(255,255,255,.94);
+            color: var(--maroon);
+            font-size: 15px;
+            cursor: pointer;
+            box-shadow: 0 6px 18px rgba(74,29,19,.22);
+            transition: background .25s, color .25s, transform .25s;
+        }
+        .zh-wishlist:hover { background: #fff; transform: scale(1.08); }
+        .zh-wishlist.active { background: var(--maroon); color: var(--gold-bright); }
+        .zh-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 20px;
+            padding: 14px 0;
+            margin-bottom: 14px;
+            border-top: 1px dashed var(--line);
+            border-bottom: 1px dashed var(--line);
+        }
+        .zh-meta__item {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 13px;
+            color: var(--muted);
+        }
+        .zh-meta__item i { color: var(--gold); font-size: 12px; }
+        .zh-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 12px;
+            font-size: 10.5px;
+            font-weight: 700;
+            letter-spacing: .7px;
+            text-transform: uppercase;
+            border-radius: 50px;
+        }
+        .zh-tag--soft { color: var(--maroon); background: var(--gold-pale); border: 1px solid var(--gold-border); }
+        .zh-tag--type { color: #fff; background: var(--maroon); }
+        .zh-stars { color: var(--gold); }
+        .zh-empty {
+            grid-column: 1 / -1;
+            background: #fff;
+            border: 1px dashed var(--gold-border);
+            border-radius: 16px;
+            padding: 56px 30px;
+            text-align: center;
+        }
+        .zh-empty h3 {
+            font-family: var(--font-display);
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--maroon-deep);
+            margin: 0 0 8px;
+        }
+        .zh-empty p { color: var(--muted); font-size: 14.5px; margin: 0; }
+        .zh-empty__icon { font-size: 40px; color: var(--gold); margin-bottom: 14px; }
+        .zh-none {
+            background:
+                radial-gradient(760px 340px at 82% -10%, rgba(201,162,39,.18), transparent 62%),
+                linear-gradient(135deg, var(--maroon-deep) 0%, var(--maroon) 100%);
+            min-height: 58vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            transition: all 0.2s ease;
+            text-align: center;
         }
-
-        .wishlist-btn:hover {
-            background-color: #f8f9fa;
-            transform: scale(1.05);
+        .zh-none__icon {
+            width: 108px;
+            height: 108px;
+            margin: 0 auto 24px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(255,255,255,.08);
+            border: 1px solid rgba(243,210,74,.34);
+            font-size: 40px;
+            color: var(--gold-bright);
         }
-
-        .wishlist-btn.active {
-            background-color: #ff5a5f;
-            color: white;
+        .zh-none h2 {
+            font-family: var(--font-display);
+            font-size: 40px;
+            font-weight: 700;
+            color: #fff;
+            margin: 0 0 12px;
         }
-
-        .wishlist-btn.active:hover {
-            background-color: #ff3b41;
+        .zh-none p { color: rgba(255,255,255,.78); font-size: 16.5px; margin: 0 0 30px; }
+        .zh-results .dropdown-menu {
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            box-shadow: var(--shadow-md);
+            padding: 8px;
+        }
+        .zh-results .dropdown-item {
+            border-radius: 10px;
+            font-size: 14px;
+            color: var(--ink);
+            padding: 10px 14px;
+        }
+        .zh-results .dropdown-item:hover,
+        .zh-results .dropdown-item:focus {
+            background: var(--gold-pale);
+            color: var(--maroon-deep);
+        }
+        .zh-results .price-slider { background: var(--gold-border); opacity: 1; }
+        .zh-results .price-slider::-webkit-slider-thumb { background: var(--maroon); }
+        .zh-results .price-slider::-moz-range-thumb { background: var(--maroon); }
+        .zh-results .form-check-input { border-color: var(--gold-border); }
+        .zh-results .form-check-input:checked {
+            background-color: var(--maroon);
+            border-color: var(--maroon);
+        }
+        .zh-results .form-check-input:focus {
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px var(--gold-border);
+        }
+        .zh-results .form-check-label { color: var(--ink); }
+        .zh-results .form-range { accent-color: var(--maroon); }
+        .zh-results .modal-content {
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+        }
+        .zh-results .modal-header {
+            background: var(--maroon-deep);
+            border-bottom: 0;
+            padding: 20px 26px;
+        }
+        .zh-results .modal-title {
+            font-family: var(--font-display);
+            font-size: 24px;
+            font-weight: 700;
+            color: #fff;
+        }
+        .zh-results .modal-body { padding: 26px; }
+        .zh-results .modal-footer {
+            background: var(--gold-pale);
+            border-top: 1px solid var(--line);
+            padding: 18px 26px;
+        }
+        .zh-results .modal-body .form-label {
+            font-size: 11.5px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+        .zh-results .modal-footer .btn-secondary {
+            background: #fff;
+            color: var(--maroon);
+            border: 1.5px solid var(--gold-border);
+        }
+        .zh-results .modal-footer .btn-primary {
+            background: var(--maroon);
+            border-color: var(--maroon);
         }
     </style>
 
     @if(isset($noDealsFound) && $noDealsFound)
         <!-- No Deals Found Section -->
-        <div class="no-deals-container">
-            <div class="container text-center py-5 text-white">
-                <div class="mb-4">
-                    <i class="fas fa-hotel text-white-50" style="font-size: 5rem;"></i>
-                </div>
-                <h2 class="display-4 fw-bold mb-4">No Hotel Deals Found</h2>
-                <p class="lead mb-4">We couldn't find any hotel deals matching your criteria.</p>
-                <div class="mt-5">
-                    <a href="{{ route('home') }}" class="search-again-btn">
-                        <i class="fas fa-search me-2"></i>Search Again
-                    </a>
-                </div>
+        <div class="zh-none">
+            <div class="container">
+                <div class="zh-none__icon"><i class="fas fa-hotel"></i></div>
+                <h2>No Hotel Deals Found</h2>
+                <p>We couldn't find any hotel deals matching your criteria.</p>
+                <a href="{{ route('home') }}" class="ziara-btn ziara-btn--gold">
+                    <i class="fas fa-search" aria-hidden="true"></i>Search Again
+                </a>
             </div>
         </div>
     @else
         <!-- Hotel Deals Results Found -->
-        <div class="container py-5">
-            <div class="results-header">
-                <div class="row align-items-center">
-                    <div class="col-md-8">
-                        <h1 class="h3 fw-bold mb-2">{{ $pageTitle ?? 'Hotel Deals' }}</h1>
-                        <p class="text-muted">{{ isset($deals) ? count($deals) : 0 }} hotels found</p>
+        <section class="zh-results">
+            <div class="container">
+                <div class="zh-results__head">
+                    <div>
+                        <h1 class="zh-results__title">{{ $pageTitle ?? 'Hotel Deals' }}</h1>
+                        <p class="zh-results__count">{{ isset($deals) ? count($deals) : 0 }} hotels found</p>
                     </div>
-                    <div class="col-md-4 text-md-end">
-                        <div class="d-flex justify-content-md-end align-items-center">
-                            <div class="me-3">
-                                <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#filterModal">
-                                    <i class="fas fa-filter me-1"></i>Filter
-                                </button>
-                            </div>
-                            <div class="dropdown">
-                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="fas fa-sort me-1"></i>Sort by
-                                </button>
-                                <ul class="dropdown-menu" aria-labelledby="sortDropdown">
-                                    <li><a class="dropdown-item" href="#" data-sort="price">Price (Low to High)</a></li>
-                                    <li><a class="dropdown-item" href="#" data-sort="price-desc">Price (High to Low)</a></li>
-                                    <li><a class="dropdown-item" href="#" data-sort="stars-desc">Stars (High to Low)</a></li>
-                                    <li><a class="dropdown-item" href="#" data-sort="discount">Highest Discount</a></li>
-                                </ul>
-                            </div>
+                    <div class="zh-actions">
+                        <button class="zh-chip" data-bs-toggle="modal" data-bs-target="#filterModal">
+                            <i class="fas fa-sliders" aria-hidden="true"></i>Filter
+                        </button>
+                        <div class="dropdown">
+                            <button class="zh-chip" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-arrow-down-a-z" aria-hidden="true"></i>Sort by
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="sortDropdown">
+                                <li><a class="dropdown-item" href="#" data-sort="price">Price (Low to High)</a></li>
+                                <li><a class="dropdown-item" href="#" data-sort="price-desc">Price (High to Low)</a></li>
+                                <li><a class="dropdown-item" href="#" data-sort="stars-desc">Stars (High to Low)</a></li>
+                                <li><a class="dropdown-item" href="#" data-sort="discount">Highest Discount</a></li>
+                            </ul>
                         </div>
                     </div>
                 </div>
-            </div>
-            
-            <!-- Filter Pills Row -->
-            <div class="row mb-4">
-                <div class="col-12">
-                    <div class="p-3 bg-white rounded-3 shadow-sm">
-                        <div class="d-flex flex-wrap gap-2">
-                            <button class="btn btn-sm filter-active" data-filter="all">All Properties</button>
-                            <button class="btn btn-sm btn-outline-secondary" data-filter="luxury">Luxury</button>
-                            <button class="btn btn-sm btn-outline-secondary" data-filter="boutique">Boutique</button>
-                            <button class="btn btn-sm btn-outline-secondary" data-filter="resort">Resort</button>
-                            <button class="btn btn-sm btn-outline-secondary" data-filter="business">Business</button>
-                        </div>
-                    </div>
+
+                <!-- Filter Pills Row -->
+                <div class="zh-filters">
+                    <button class="zh-chip filter-active" data-filter="all">All Properties</button>
+                    <button class="zh-chip" data-filter="luxury">Luxury</button>
+                    <button class="zh-chip" data-filter="boutique">Boutique</button>
+                    <button class="zh-chip" data-filter="resort">Resort</button>
+                    <button class="zh-chip" data-filter="business">Business</button>
                 </div>
-            </div>
-            
-            <!-- Hotel Deals Cards -->
-            <div class="row g-4 deals-results">
-                @forelse($deals ?? [] as $deal)
-                <div class="col-md-4 mb-4 hotel-deal-card" 
-                     data-type="{{ strtolower($deal->hotelType ?? '') }}" 
-                     data-price="{{ $deal->price ?? 0 }}" 
-                     data-stars="{{ $deal->stars ?? 0 }}"
-                     data-discount="{{ $deal->discountPercent ?? 0 }}">
-                    <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100">
-                        <div class="position-relative">
-                            <img src="{{ asset('images/travel/' . strtolower(str_replace(' ', '-', $deal->city ?? 'default')) . '.jpg') }}" 
-                                class="card-img-top" 
-                                alt="{{ $deal->hotelName ?? 'Hotel' }}" 
-                                style="height: 200px; object-fit: cover;"
-                                onerror="this.src='{{ asset('images/travel/destination-default.jpg') }}'">
-                            <div class="position-absolute top-0 end-0 m-3">
-                                <span class="badge rounded-pill px-3 py-2" style="background-color: #e74c3c;">{{ $deal->discountPercent ?? 0 }}% OFF</span>
-                            </div>
-                            <div class="position-absolute top-0 start-0 m-3">
-                                <button class="wishlist-btn" onclick="toggleWishlist(this)">
+
+                <!-- Hotel Deals Cards -->
+                <div class="ziara-deals zh-deals deals-results">
+                    @forelse($deals ?? [] as $deal)
+                    <div class="hotel-deal-card"
+                         data-type="{{ strtolower($deal->hotelType ?? '') }}"
+                         data-price="{{ $deal->price ?? 0 }}"
+                         data-stars="{{ $deal->stars ?? 0 }}"
+                         data-discount="{{ $deal->discountPercent ?? 0 }}">
+                        <div class="ziara-deal">
+                            <div class="ziara-deal__media">
+                                <img src="{{ asset('images/travel/' . strtolower(str_replace(' ', '-', $deal->city ?? 'default')) . '.jpg') }}"
+                                    alt="{{ $deal->hotelName ?? 'Hotel' }}"
+                                    onerror="this.src='{{ asset('images/travel/destination-default.jpg') }}'">
+                                <span class="ziara-deal__badge">{{ $deal->discountPercent ?? 0 }}% OFF</span>
+                                <button class="zh-wishlist" onclick="toggleWishlist(this)">
                                     <i class="fas fa-heart"></i>
                                 </button>
-                            </div>
-                            <div class="position-absolute bottom-0 start-0 w-100 p-3" style="background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);">
-                                <div class="d-flex justify-content-between">
+                                <div class="zh-overlay">
                                     <div>
-                                        <h5 class="text-white mb-0">{{ $deal->hotelName ?? 'Hotel Name' }}</h5>
-                                        <small class="text-white-50">{{ $deal->city ?? 'City' }}, {{ $deal->country ?? 'Country' }}</small>
+                                        <h5 class="zh-overlay__name">{{ $deal->hotelName ?? 'Hotel Name' }}</h5>
+                                        <small class="zh-overlay__place">{{ $deal->city ?? 'City' }}, {{ $deal->country ?? 'Country' }}</small>
                                     </div>
-                                    <div class="text-end">
-                                        <span class="badge rounded-pill" style="background-color: #8f95d3;">
-                                            @for($i = 0; $i < ($deal->stars ?? 0); $i++)
-                                            <i class="fas fa-star"></i>
-                                            @endfor
-                                        </span>
-                                    </div>
+                                    <span class="zh-overlay__stars">
+                                        @for($i = 0; $i < ($deal->stars ?? 0); $i++)
+                                        <i class="fas fa-star"></i>
+                                        @endfor
+                                    </span>
                                 </div>
                             </div>
-                        </div>
-                        <div class="card-body p-4">
-                            <div class="d-flex align-items-center justify-content-between mb-2">
-                                <span class="badge text-dark" style="background-color: rgba(143, 149, 211, 0.3);">
-                                    <i class="fas fa-award me-1"></i> {{ $deal->highlight ?? 'Highlight' }}
-                                </span>
-                                <span class="badge text-white" style="background-color: #27ae60;">{{ $deal->hotelType ?? 'Hotel Type' }}</span>
-                            </div>
-                            
-                            <div class="mb-3">
-                                <div class="d-flex align-items-center justify-content-between">
-                                    <div>
-                                        <span class="fs-6 fw-semibold text-muted">{{ $deal->location ?? 'Location' }}</span>
-                                    </div>
-                                    <small class="text-muted">From {{ $deal->availableDate ?? 'Today' }}</small>
+                            <div class="ziara-deal__body">
+                                <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:16px;">
+                                    <span class="zh-tag zh-tag--soft"><i class="fas fa-award" aria-hidden="true"></i>{{ $deal->highlight ?? 'Highlight' }}</span>
+                                    <span class="zh-tag zh-tag--type">{{ $deal->hotelType ?? 'Hotel Type' }}</span>
                                 </div>
-                                <div class="d-flex align-items-center mt-1">
-                                    <div class="d-flex align-items-center me-3">
-                                        <i class="fas fa-utensils text-muted me-1" style="font-size: 12px;"></i>
-                                        <small class="text-muted">{{ $deal->meals ?? 'Meals' }}</small>
-                                    </div>
-                                    <div class="d-flex align-items-center">
-                                        <i class="fas fa-wifi text-muted me-1" style="font-size: 12px;"></i>
-                                        <small class="text-muted">{{ $deal->wifi ?? 'WiFi' }}</small>
-                                    </div>
+
+                                <div class="zh-meta">
+                                    <span class="zh-meta__item"><i class="fas fa-location-dot" aria-hidden="true"></i><strong>{{ $deal->location ?? 'Location' }}</strong></span>
+                                    <span class="zh-meta__item"><i class="fas fa-calendar-alt" aria-hidden="true"></i>From {{ $deal->availableDate ?? 'Today' }}</span>
+                                    <span class="zh-meta__item"><i class="fas fa-utensils" aria-hidden="true"></i>{{ $deal->meals ?? 'Meals' }}</span>
+                                    <span class="zh-meta__item"><i class="fas fa-wifi" aria-hidden="true"></i>{{ $deal->wifi ?? 'WiFi' }}</span>
                                 </div>
-                            </div>
-                            
-                            <p class="card-text text-muted small mb-3">{{ $deal->description ?? 'No description available.' }}</p>
-                            
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <span class="fs-4 fw-bold" style="color: #8f95d3;">{{ $deal->currency ?? 'KES' }} {{ number_format($deal->price ?? 0) }}</span>
-                                    <small class="text-muted text-decoration-line-through ms-2">{{ $deal->currency ?? 'KES' }} {{ number_format($deal->originalPrice ?? 0) }}</small>
+
+                                <p class="ziara-deal__desc">{{ $deal->description ?? 'No description available.' }}</p>
+
+                                <div class="ziara-deal__price">
+                                    <strong>{{ $deal->currency ?? 'KES' }} {{ number_format($deal->price ?? 0) }}</strong>
+                                    <s>{{ $deal->currency ?? 'KES' }} {{ number_format($deal->originalPrice ?? 0) }}</s>
                                 </div>
-                                <form method="POST" action="{{ route('book.deal-hotel') }}">
+
+                                <form method="POST" action="{{ route('deal.hotel.book') }}">
                                     @csrf
                                     <input type="hidden" name="hotel_data" value="{{ json_encode($deal) }}">
-                                    <button type="submit" class="btn rounded-pill px-4" style="background-color: #8f95d3; color: white;">
-                                        <i class="fas fa-key me-1"></i>Book Now
+                                    <button type="submit" class="ziara-deal__btn" style="width:100%;">
+                                        <i class="fas fa-key" aria-hidden="true"></i>Book Now
                                     </button>
                                 </form>
                             </div>
                         </div>
                     </div>
-                </div>
-                @empty
-                <div class="col-12 text-center py-5">
-                    <div class="p-5 bg-light rounded-3">
+                    @empty
+                    <div class="zh-empty">
+                        <div class="zh-empty__icon"><i class="fas fa-hotel" aria-hidden="true"></i></div>
                         <h3>No hotel deals available at the moment</h3>
-                        <p class="text-muted">Please check back later or try different search criteria.</p>
+                        <p>Please check back later or try different search criteria.</p>
                     </div>
+                    @endforelse
                 </div>
-                @endforelse
             </div>
-        </div>
-        
+        </section>
+
         <!-- Filter Modal -->
         <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
@@ -281,7 +431,7 @@
                                     <span id="maxPrice">KES 100,000</span>
                                 </div>
                             </div>
-                            
+
                             <!-- Star Rating -->
                             <div class="mb-4">
                                 <label class="form-label fw-bold">Star Rating</label>
@@ -289,7 +439,7 @@
                                     <div class="form-check form-check-inline">
                                         <input class="form-check-input" type="checkbox" id="star5" value="5">
                                         <label class="form-check-label" for="star5">
-                                            <div class="stars-container">
+                                            <div class="stars-container zh-stars">
                                                 <i class="fas fa-star"></i>
                                                 <i class="fas fa-star"></i>
                                                 <i class="fas fa-star"></i>
@@ -301,7 +451,7 @@
                                     <div class="form-check form-check-inline">
                                         <input class="form-check-input" type="checkbox" id="star4" value="4">
                                         <label class="form-check-label" for="star4">
-                                            <div class="stars-container">
+                                            <div class="stars-container zh-stars">
                                                 <i class="fas fa-star"></i>
                                                 <i class="fas fa-star"></i>
                                                 <i class="fas fa-star"></i>
@@ -312,7 +462,7 @@
                                     <div class="form-check form-check-inline">
                                         <input class="form-check-input" type="checkbox" id="star3" value="3">
                                         <label class="form-check-label" for="star3">
-                                            <div class="stars-container">
+                                            <div class="stars-container zh-stars">
                                                 <i class="fas fa-star"></i>
                                                 <i class="fas fa-star"></i>
                                                 <i class="fas fa-star"></i>
@@ -321,7 +471,7 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <!-- Hotel Type -->
                             <div class="mb-4">
                                 <label class="form-label fw-bold">Hotel Type</label>
@@ -344,7 +494,7 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <!-- Meals -->
                             <div class="mb-4">
                                 <label class="form-label fw-bold">Meals</label>
@@ -367,7 +517,7 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <!-- Cities/Countries -->
                             <div class="mb-4">
                                 <label class="form-label fw-bold">Destination</label>
@@ -394,16 +544,14 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" onclick="applyFilters()" style="background-color: #6a75ca; border-color: #6a75ca;">Apply Filters</button>
+                        <button type="button" class="btn btn-primary" onclick="applyFilters()" style="background-color: var(--maroon); border-color: var(--maroon);">Apply Filters</button>
                     </div>
                 </div>
             </div>
         </div>
     @endif
-@endsection
 
-@section('scripts')
-<script>
+    <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Handle price range slider
         const priceRange = document.getElementById('priceRange');

@@ -40,16 +40,16 @@ class DashboardController extends Controller
     /**
      * Permissions index
      */
-    public function permissionsIndex(Request $request)
+    public function permissionsIndex()
     {
-        return app(AdminDashboardController::class)->rolesPermissionsAll($request);
+        return app(AdminDashboardController::class)->rolesPermissionsAll();
     }
 
     /**
      * Show a specific permission
      */
-    public function showPermission(Request $request, $id)
+    public function showPermission($id)
     {
-        return app(AdminDashboardController::class)->viewPermission($request, $id);
+        return app(AdminDashboardController::class)->viewPermission($id);
     }
 }

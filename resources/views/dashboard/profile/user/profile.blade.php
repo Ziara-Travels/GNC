@@ -133,7 +133,7 @@
 
             <!-- Profile Form Section -->
             <div class="lg:col-span-2">
-                <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('user.profile.update') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
                     

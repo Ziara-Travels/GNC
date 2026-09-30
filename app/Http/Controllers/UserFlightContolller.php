@@ -86,7 +86,7 @@ class UserFlightContolller extends Controller
                 ];
             });
 
-        return view('dashboard.flights.user.search', compact('userStats', 'recentSearches', 'recentBookings'));
+        return view('dashboard.flights-search.user.search', compact('userStats', 'recentSearches', 'recentBookings'));
     }
 
     public function processSearch(Request $request)
@@ -180,7 +180,7 @@ class UserFlightContolller extends Controller
             return redirect()->route('user.flights.search')->with('error', 'Access denied. Please search again.');
         }
 
-        return view('dashboard.flights.user.flight-results', compact('flights', 'searchParams', 'metadata'));
+        return view('dashboard.flights-search.user.flight-results', compact('flights', 'searchParams', 'metadata'));
     }
 
     public function selectFlight(Request $request)

@@ -1,251 +1,360 @@
 @extends('layouts.main')
 
 @section('content')
-    <!-- Include required CSS and JS -->
+@include('partials.ziara-page-hero', [
+    'kicker' => 'Flight Deals',
+    'title'  => '<em>Curated</em> Flight Deals',
+    'intro'  => 'Hand-picked fares from trusted carriers, ready to sort, filter and reserve in a few clicks.',
+    'crumbs' => [
+        ['label' => 'Home', 'url' => route('home')],
+        ['label' => 'Flight Deals', 'url' => route('deal.flight.results')],
+    ],
+])
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 
     <style>
-        .deal-card {
-            transition: all 0.3s ease;
+        .zf-results {
+            background: var(--gold-pale);
+            padding: 64px 0 88px;
         }
-        
-        .deal-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        .zf-results__head {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 22px;
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            box-shadow: var(--shadow-sm);
+            padding: 28px 30px;
+            margin-bottom: 26px;
         }
-        
-        .no-deals-container {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 60vh;
+        .zf-results__title {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 34px;
+            line-height: 1.15;
+            color: var(--maroon-deep);
+            margin: 0 0 6px;
+        }
+        .zf-results__count {
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            color: var(--gold-dim);
+            margin: 0;
+        }
+        .zf-actions { display: flex; align-items: center; gap: 12px; }
+        .zf-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 10px 20px;
+            font-family: var(--font-body);
+            font-size: 11.5px;
+            font-weight: 700;
+            letter-spacing: .8px;
+            text-transform: uppercase;
+            color: var(--maroon);
+            background: #fff;
+            border: 1.5px solid var(--gold-border);
+            border-radius: 50px;
+            cursor: pointer;
+            transition: background .3s, color .3s, border-color .3s, transform .3s;
+        }
+        .zf-chip:hover { border-color: var(--gold); background: var(--gold-pale); transform: translateY(-2px); }
+        .zf-chip.filter-active {
+            background: var(--maroon);
+            border-color: var(--maroon);
+            color: var(--gold-bright);
+        }
+        .zf-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            box-shadow: var(--shadow-sm);
+            padding: 18px 22px;
+            margin-bottom: 34px;
+        }
+        .zf-deals > .deal-card { display: block; height: 100%; }
+        .zf-deals > .deal-card > .ziara-deal { height: 100%; }
+        .zf-overlay {
+            position: absolute;
+            inset: auto 0 0 0;
+            z-index: 2;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 18px 18px 16px;
+            background: linear-gradient(to top, rgba(74,29,19,.92) 0%, rgba(74,29,19,.45) 55%, transparent 100%);
+        }
+        .zf-overlay__city {
+            font-family: var(--font-display);
+            font-size: 21px;
+            font-weight: 700;
+            color: #fff;
+            margin: 0;
+            line-height: 1.2;
+        }
+        .zf-overlay__country {
+            display: block;
+            font-size: 11.5px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,.72);
+        }
+        .zf-overlay__airline {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            font-size: 10.5px;
+            font-weight: 700;
+            letter-spacing: .8px;
+            text-transform: uppercase;
+            color: var(--maroon-deep);
+            background: var(--gold-bright);
+            border-radius: 50px;
+            white-space: nowrap;
+        }
+        .zf-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 20px;
+            padding: 14px 0;
+            margin-bottom: 14px;
+            border-top: 1px dashed var(--line);
+            border-bottom: 1px dashed var(--line);
+        }
+        .zf-meta__item {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 13px;
+            color: var(--muted);
+        }
+        .zf-meta__item i { color: var(--gold); font-size: 12px; }
+        .zf-meta__item strong { color: var(--ink); font-weight: 600; }
+        .zf-route {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            font-family: var(--font-display);
+            font-size: 19px;
+            font-weight: 700;
+            color: var(--maroon-deep);
+        }
+        .zf-route i { color: var(--gold); font-size: 13px; }
+        .zf-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 12px;
+            font-size: 10.5px;
+            font-weight: 700;
+            letter-spacing: .7px;
+            text-transform: uppercase;
+            border-radius: 50px;
+        }
+        .zf-tag--soft { color: var(--maroon); background: var(--gold-pale); border: 1px solid var(--gold-border); }
+        .zf-tag--cabin { color: #fff; background: var(--maroon); }
+        .zf-empty {
+            grid-column: 1 / -1;
+            background: #fff;
+            border: 1px dashed var(--gold-border);
+            border-radius: 16px;
+            padding: 56px 30px;
+            text-align: center;
+        }
+        .zf-empty h3 {
+            font-family: var(--font-display);
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--maroon-deep);
+            margin: 0 0 8px;
+        }
+        .zf-empty p { color: var(--muted); font-size: 14.5px; margin: 0; }
+        .zf-empty__icon { font-size: 40px; color: var(--gold); margin-bottom: 14px; }
+        .zf-none {
+            background:
+                radial-gradient(760px 340px at 82% -10%, rgba(201,162,39,.18), transparent 62%),
+                linear-gradient(135deg, var(--maroon-deep) 0%, var(--maroon) 100%);
+            min-height: 58vh;
             display: flex;
             align-items: center;
             justify-content: center;
+            text-align: center;
         }
-        
-        .search-again-btn {
-            background: linear-gradient(45deg, #ffc107, #ffeb3b);
-            border: none;
-            color: #212529;
-            font-weight: 600;
-            padding: 12px 30px;
-            border-radius: 25px;
-            transition: all 0.3s ease;
+        .zf-none__icon {
+            width: 108px;
+            height: 108px;
+            margin: 0 auto 24px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(255,255,255,.08);
+            border: 1px solid rgba(243,210,74,.34);
+            font-size: 40px;
+            color: var(--gold-bright);
         }
-        
-        .search-again-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255, 193, 7, 0.4);
-            color: #212529;
+        .zf-none h2 {
+            font-family: var(--font-display);
+            font-size: 40px;
+            font-weight: 700;
+            color: #fff;
+            margin: 0 0 12px;
         }
-        
-        .loading-airplane {
-            animation: fly 2s ease-in-out infinite alternate;
-        }
-        
-        @keyframes fly {
+        .zf-none p { color: rgba(255,255,255,.78); font-size: 16.5px; margin: 0 0 30px; }
+        .zf-loading { animation: zf-fly 2.4s ease-in-out infinite alternate; }
+        @keyframes zf-fly {
             0% { transform: translateX(-10px) rotate(-5deg); }
             100% { transform: translateX(10px) rotate(5deg); }
         }
-        
-        .results-header {
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-            border-radius: 15px;
-            padding: 2rem;
-            margin-bottom: 2rem;
+        .zf-results .dropdown-menu {
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            box-shadow: var(--shadow-md);
+            padding: 8px;
         }
-
-        .flight-deal-card {
-            transition: transform 0.2s, box-shadow 0.2s;
+        .zf-results .dropdown-item {
+            border-radius: 10px;
+            font-size: 14px;
+            color: var(--ink);
+            padding: 10px 14px;
         }
-        
-        .flight-deal-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-        }
-        
-        .flight-deal-badge {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: linear-gradient(45deg, #e53935, #ff5252);
-            color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 0.8rem;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-        }
-        
-        @keyframes pulse-deal {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-        
-        .pulse-animation {
-            animation: pulse-deal 2s infinite ease-in-out;
-        }
-
-        .filter-active {
-            background-color: #ffc107;
-            color: #212529;
-            font-weight: 600;
+        .zf-results .dropdown-item:hover,
+        .zf-results .dropdown-item:focus {
+            background: var(--gold-pale);
+            color: var(--maroon-deep);
         }
     </style>
 
     @if(isset($noDealsFound) && $noDealsFound)
         <!-- No Deals Found Section -->
-        <div class="no-deals-container">
-            <div class="container text-center py-5 text-white">
-                <div class="mb-4">
-                    <i class="fas fa-plane text-white-50" style="font-size: 5rem;"></i>
-                </div>
-                <h2 class="display-4 fw-bold mb-4">No Flight Deals Found</h2>
-                <p class="lead mb-4">We couldn't find any flight deals matching your criteria.</p>
-                <div class="mt-5">
-                    <a href="{{ route('home') }}" class="search-again-btn">
-                        <i class="fas fa-search me-2"></i>Search Again
-                    </a>
-                </div>
+        <div class="zf-none">
+            <div class="container">
+                <div class="zf-none__icon zf-loading"><i class="fas fa-plane-departure"></i></div>
+                <h2>No Flight Deals Found</h2>
+                <p>We couldn't find any flight deals matching your criteria.</p>
+                <a href="{{ route('home') }}" class="ziara-btn ziara-btn--gold">
+                    <i class="fas fa-search" aria-hidden="true"></i>Search Again
+                </a>
             </div>
         </div>
     @else
         <!-- Flight Deals Results Found -->
-        <div class="container py-5">
-            <div class="results-header">
-                <div class="row align-items-center">
-                    <div class="col-md-8">
-                        <h1 class="h3 fw-bold mb-2">{{ $pageTitle ?? 'Flight Deals' }}</h1>
-                        <p class="text-muted">{{ isset($deals) ? count($deals) : 0 }} deals found</p>
+        <section class="zf-results">
+            <div class="container">
+                <div class="zf-results__head">
+                    <div>
+                        <h1 class="zf-results__title">{{ $pageTitle ?? 'Flight Deals' }}</h1>
+                        <p class="zf-results__count">{{ isset($deals) ? count($deals) : 0 }} deals found</p>
                     </div>
-                    <div class="col-md-4 text-md-end">
-                        <div class="d-flex justify-content-md-end align-items-center">
-                            <div class="me-3">
-                                <button class="btn btn-sm btn-outline-secondary" onclick="modifySearch()">
-                                    <i class="fas fa-filter me-1"></i>Filter
-                                </button>
-                            </div>
-                            <div class="dropdown">
-                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="fas fa-sort me-1"></i>Sort by
-                                </button>
-                                <ul class="dropdown-menu" aria-labelledby="sortDropdown">
-                                    <li><a class="dropdown-item" href="#" data-sort="price">Price (Low to High)</a></li>
-                                    <li><a class="dropdown-item" href="#" data-sort="price-desc">Price (High to Low)</a></li>
-                                    <li><a class="dropdown-item" href="#" data-sort="discount">Highest Discount</a></li>
-                                </ul>
-                            </div>
+                    <div class="zf-actions">
+                        <button class="zf-chip" onclick="modifySearch()">
+                            <i class="fas fa-sliders" aria-hidden="true"></i>Filter
+                        </button>
+                        <div class="dropdown">
+                            <button class="zf-chip" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-arrow-down-a-z" aria-hidden="true"></i>Sort by
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="sortDropdown">
+                                <li><a class="dropdown-item" href="#" data-sort="price">Price (Low to High)</a></li>
+                                <li><a class="dropdown-item" href="#" data-sort="price-desc">Price (High to Low)</a></li>
+                                <li><a class="dropdown-item" href="#" data-sort="discount">Highest Discount</a></li>
+                            </ul>
                         </div>
                     </div>
                 </div>
-            </div>
-            
-            <!-- Filter Row -->
-            <div class="row mb-4">
-                <div class="col-12">
-                    <div class="p-3 bg-white rounded-3 shadow-sm">
-                        <div class="d-flex flex-wrap gap-2">
-                            <button class="btn btn-sm filter-active" data-filter="all">All Destinations</button>
-                            <button class="btn btn-sm btn-outline-secondary" data-filter="kenya">Kenya</button>
-                            <button class="btn btn-sm btn-outline-secondary" data-filter="tanzania">Tanzania</button>
-                            <button class="btn btn-sm btn-outline-secondary" data-filter="uganda">Uganda</button>
-                            <button class="btn btn-sm btn-outline-secondary" data-filter="rwanda">Rwanda</button>
-                            <button class="btn btn-sm btn-outline-secondary" data-filter="ethiopia">Ethiopia</button>
-                        </div>
-                    </div>
+
+                <!-- Filter Row -->
+                <div class="zf-filters">
+                    <button class="zf-chip filter-active" data-filter="all">All Destinations</button>
+                    <button class="zf-chip" data-filter="kenya">Kenya</button>
+                    <button class="zf-chip" data-filter="tanzania">Tanzania</button>
+                    <button class="zf-chip" data-filter="uganda">Uganda</button>
+                    <button class="zf-chip" data-filter="rwanda">Rwanda</button>
+                    <button class="zf-chip" data-filter="ethiopia">Ethiopia</button>
                 </div>
-            </div>
-            
-            <!-- Deals Cards -->
-            <div class="row g-4 deals-results">
-                @forelse($deals ?? [] as $deal)
-                <div class="col-md-4 mb-4 deal-card" 
-                     data-country="{{ strtolower($deal->destinationCountry ?? '') }}" 
-                     data-price="{{ $deal->price ?? 0 }}" 
-                     data-discount="{{ $deal->discountPercent ?? 0 }}">
-                    <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100">
-                        <div class="position-relative">
-                            <img src="{{ asset('images/travel/' . strtolower(str_replace(' ', '-', $deal->destinationCity ?? 'default')) . '.jpg') }}" 
-                                class="card-img-top" 
-                                alt="{{ $deal->destinationCity ?? 'Destination' }}" 
-                                style="height: 200px; object-fit: cover;"
-                                onerror="this.src='{{ asset('images/travel/destination-default.jpg') }}'">
-                            <div class="position-absolute top-0 end-0 m-3">
-                                <span class="badge bg-danger rounded-pill px-3 py-2 discount-badge">{{ $deal->discountPercent ?? 0 }}% OFF</span>
-                            </div>
-                            <div class="position-absolute bottom-0 start-0 w-100 p-3" style="background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);">
-                                <div class="d-flex justify-content-between">
+
+                <!-- Deals Cards -->
+                <div class="ziara-deals zf-deals deals-results">
+                    @forelse($deals ?? [] as $deal)
+                    <div class="deal-card"
+                         data-country="{{ strtolower($deal->destinationCountry ?? '') }}"
+                         data-price="{{ $deal->price ?? 0 }}"
+                         data-discount="{{ $deal->discountPercent ?? 0 }}">
+                        <div class="ziara-deal">
+                            <div class="ziara-deal__media">
+                                <img src="{{ asset('images/travel/' . strtolower(str_replace(' ', '-', $deal->destinationCity ?? 'default')) . '.jpg') }}"
+                                    alt="{{ $deal->destinationCity ?? 'Destination' }}"
+                                    onerror="this.src='{{ asset('images/travel/destination-default.jpg') }}'">
+                                <span class="ziara-deal__badge">{{ $deal->discountPercent ?? 0 }}% OFF</span>
+                                <div class="zf-overlay">
                                     <div>
-                                        <h5 class="text-white mb-0">{{ $deal->destinationCity ?? 'City' }}</h5>
-                                        <small class="text-white-50">{{ $deal->destinationCountry ?? 'Country' }}</small>
+                                        <h5 class="zf-overlay__city">{{ $deal->destinationCity ?? 'City' }}</h5>
+                                        <small class="zf-overlay__country">{{ $deal->destinationCountry ?? 'Country' }}</small>
                                     </div>
-                                    <div class="text-end">
-                                        <span class="badge bg-primary rounded-pill">{{ $deal->airline ?? 'Airline' }}</span>
-                                    </div>
+                                    <span class="zf-overlay__airline"><i class="fas fa-plane" aria-hidden="true"></i>{{ $deal->airline ?? 'Airline' }}</span>
                                 </div>
                             </div>
-                        </div>
-                        <div class="card-body p-4">
-                            <div class="d-flex align-items-center justify-content-between mb-2">
-                                <span class="badge bg-light text-dark"><i class="fas fa-map-marker-alt me-1"></i> {{ $deal->highlight ?? 'Highlight' }}</span>
-                                <span class="badge bg-success text-white">{{ $deal->cabin ?? 'Economy' }}</span>
-                            </div>
-                            
-                            <div class="mb-3">
-                                <div class="d-flex align-items-center justify-content-between">
-                                    <div>
-                                        <span class="fs-6 fw-semibold">{{ $deal->originCity ?? 'Origin' }}</span>
-                                        <i class="fas fa-arrow-right mx-1 text-muted" style="font-size: 12px;"></i>
-                                        <span class="fs-6 fw-semibold">{{ $deal->destinationCity ?? 'Destination' }}</span>
-                                    </div>
-                                    <small class="text-muted">{{ $deal->departureDate ?? 'Date' }}</small>
+                            <div class="ziara-deal__body">
+                                <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:16px;">
+                                    <span class="zf-tag zf-tag--soft"><i class="fas fa-map-marker-alt" aria-hidden="true"></i>{{ $deal->highlight ?? 'Highlight' }}</span>
+                                    <span class="zf-tag zf-tag--cabin">{{ $deal->cabin ?? 'Economy' }}</span>
                                 </div>
-                                <div class="d-flex align-items-center mt-1">
-                                    <div class="d-flex align-items-center me-3">
-                                        <i class="fas fa-clock text-muted me-1" style="font-size: 12px;"></i>
-                                        <small class="text-muted">{{ $deal->duration ?? 'Duration' }}</small>
-                                    </div>
-                                    <div class="d-flex align-items-center">
-                                        <i class="fas fa-plane-arrival text-muted me-1" style="font-size: 12px;"></i>
-                                        <small class="text-muted">{{ isset($deal->stops) && $deal->stops == 0 ? 'Direct' : $deal->stops . ' Stop(s)' }}</small>
-                                    </div>
+
+                                <div class="zf-route">
+                                    <span>{{ $deal->originCity ?? 'Origin' }}</span>
+                                    <i class="fas fa-arrow-right-long" aria-hidden="true"></i>
+                                    <span>{{ $deal->destinationCity ?? 'Destination' }}</span>
                                 </div>
-                            </div>
-                            
-                            <p class="card-text text-muted small mb-3">{{ $deal->description ?? 'No description available.' }}</p>
-                            
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <span class="fs-4 fw-bold text-warning">{{ $deal->currency ?? 'KES' }} {{ number_format($deal->price ?? 0) }}</span>
-                                    <small class="text-muted text-decoration-line-through ms-2">{{ $deal->currency ?? 'KES' }} {{ number_format($deal->originalPrice ?? 0) }}</small>
+
+                                <div class="zf-meta">
+                                    <span class="zf-meta__item"><i class="fas fa-calendar-alt" aria-hidden="true"></i><strong>{{ $deal->departureDate ?? 'Date' }}</strong></span>
+                                    <span class="zf-meta__item"><i class="fas fa-clock" aria-hidden="true"></i>{{ $deal->duration ?? 'Duration' }}</span>
+                                    <span class="zf-meta__item"><i class="fas fa-plane-arrival" aria-hidden="true"></i>{{ isset($deal->stops) && $deal->stops == 0 ? 'Direct' : $deal->stops . ' Stop(s)' }}</span>
                                 </div>
-                                <form method="POST" action="{{ route('book.deal-flight') }}">
+
+                                <p class="ziara-deal__desc">{{ $deal->description ?? 'No description available.' }}</p>
+
+                                <div class="ziara-deal__price">
+                                    <strong>{{ $deal->currency ?? 'KES' }} {{ number_format($deal->price ?? 0) }}</strong>
+                                    <s>{{ $deal->currency ?? 'KES' }} {{ number_format($deal->originalPrice ?? 0) }}</s>
+                                </div>
+
+                                <form method="POST" action="{{ route('deal.flight.book') }}">
                                     @csrf
                                     <input type="hidden" name="flight_data" value="{{ json_encode($deal) }}">
-                                    <button type="submit" class="btn btn-warning rounded-pill px-4">
-                                        <i class="fas fa-plane me-1"></i>Book Now
+                                    <button type="submit" class="ziara-deal__btn" style="width:100%;">
+                                        <i class="fas fa-plane" aria-hidden="true"></i>Book Now
                                     </button>
                                 </form>
                             </div>
                         </div>
                     </div>
-                </div>
-                @empty
-                <div class="col-12 text-center py-5">
-                    <div class="p-5 bg-light rounded-3">
+                    @empty
+                    <div class="zf-empty">
+                        <div class="zf-empty__icon"><i class="fas fa-plane-circle-exclamation" aria-hidden="true"></i></div>
                         <h3>No flight deals available at the moment</h3>
-                        <p class="text-muted">Please check back later or try different search criteria.</p>
+                        <p>Please check back later or try different search criteria.</p>
                     </div>
+                    @endforelse
                 </div>
-                @endforelse
             </div>
-        </div>
+        </section>
     @endif
-@endsection
 
-@section('scripts')
-<script>
+    <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Handle filters
         const filterButtons = document.querySelectorAll('[data-filter]');

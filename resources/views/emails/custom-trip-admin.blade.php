@@ -30,7 +30,7 @@
         <p>Please follow up with this customer within the next 24 hours.</p>
         
         <div class="actions" style="text-align: center; margin-top: 30px;">
-            <a href="{{ route('admin.custom-trips.show', $customTrip->id) }}" style="background-color: #0891b2; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">View in Admin Panel</a>
+            <a href="{{ route('admin.bookings.all') }}" style="background-color: #0891b2; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">View in Admin Panel</a>
         </div>
     </div>
 </div>

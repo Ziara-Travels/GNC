@@ -4,6 +4,7 @@
 namespace App\Exports;
 
 use App\Models\Payment;
+use Illuminate\Support\Enumerable;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
@@ -23,7 +24,7 @@ class PaymentsExport implements FromCollection, WithHeadings, WithMapping, WithS
         $this->endDate = $endDate;
     }
 
-    public function collection()
+    public function collection(): Enumerable
     {
         $query = Payment::with(['user', 'booking']);
 
@@ -80,7 +81,7 @@ class PaymentsExport implements FromCollection, WithHeadings, WithMapping, WithS
         ];
     }
 
-    public function styles(Worksheet $sheet)
+    public function styles(Worksheet $sheet): ?array
     {
         return [
             1 => ['font' => ['bold' => true]],

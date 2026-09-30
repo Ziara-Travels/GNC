@@ -1,0 +1,1103 @@
+/* ============================================================
+   ZIARA TOURS — card grid (gold + maroon brand)
+   Scoped under .ziara-tours so it won't clash with the theme.
+   ============================================================ */
+
+.ziara-tours {
+  --zt-gold:        #c9a227;
+  --zt-gold-bright: #f3d24a;
+  --zt-gold-soft:   #fdf6df;
+  --zt-maroon:      #6b2c1f;
+  --zt-maroon-deep: #4a1d13;
+  --zt-ink:         #1c1612;
+  --zt-muted:       #6d6258;
+  --zt-line:        #eadfca;
+  --zt-ease:        cubic-bezier(.22,1,.36,1);
+
+  display: grid;
+  grid-template-columns: repeat(var(--ziara-cols, 3), 1fr);
+  gap: 28px;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  color: var(--zt-ink);
+  box-sizing: border-box;
+}
+.ziara-tours *, .ziara-tours *::before, .ziara-tours *::after { box-sizing: border-box; }
+
+.ziara-tours__empty {
+  text-align: center;
+  color: #6d6258;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  padding: 32px 0;
+}
+
+/* Optional shortcode heading (title="…") */
+.ziara-tours-head {
+  text-align: center;
+  margin: 0 0 34px;
+  font-family: 'DM Sans', system-ui, sans-serif;
+}
+.ziara-tours-head__title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 38px;
+  font-weight: 700;
+  line-height: 1.1;
+  color: #4a1d13;
+  margin: 0;
+  padding-bottom: 14px;
+  position: relative;
+  display: inline-block;
+}
+.ziara-tours-head__title::after {
+  content: '';
+  position: absolute;
+  left: 50%; bottom: 0;
+  transform: translateX(-50%);
+  width: 64px; height: 3px;
+  background: linear-gradient(90deg, #6b2c1f 0%, #c9a227 100%);
+  border-radius: 2px;
+}
+.ziara-tours-head__sub {
+  font-size: 15px;
+  color: #6d6258;
+  margin: 14px 0 0;
+}
+@media (max-width: 600px) {
+  .ziara-tours-head__title { font-size: 30px; }
+}
+
+/* ── Category carousel (slider="yes") — auto-advancing loop ──── */
+.ziara-carousel {
+  max-width: 1180px;
+  margin: 0 auto;
+  overflow: hidden;
+}
+.ziara-carousel__track {
+  display: flex;
+  gap: 28px;
+  will-change: transform;
+}
+.ziara-carousel__track > .ziara-card {
+  flex: 0 0 calc((100% - (var(--ziara-cols, 3) - 1) * 28px) / var(--ziara-cols, 3));
+}
+/* 5–6 columns step down to 4 on large laptops */
+@media (max-width: 1280px) {
+  .ziara-carousel[style*="--ziara-cols:5"] .ziara-carousel__track > .ziara-card,
+  .ziara-carousel[style*="--ziara-cols:6"] .ziara-carousel__track > .ziara-card { flex-basis: calc((100% - 3 * 28px) / 4); }
+}
+@media (max-width: 1024px) {
+  .ziara-carousel { /* keep */ }
+  .ziara-carousel__track { gap: 24px; }
+  .ziara-carousel__track > .ziara-card { flex-basis: calc((100% - 2 * 24px) / 3); }
+}
+@media (max-width: 768px) {
+  .ziara-carousel__track > .ziara-card { flex-basis: calc((100% - 24px) / 2); }
+}
+@media (max-width: 520px) {
+  .ziara-carousel__track { gap: 20px; }
+  .ziara-carousel__track > .ziara-card { flex-basis: 100%; }
+}
+
+/* ── Card ──────────────────────────────────────────────────── */
+.ziara-card {
+  /* Self-contained tokens so colors work anywhere (carousel, grid, related…) */
+  --zt-gold:        #c9a227;
+  --zt-gold-bright: #f3d24a;
+  --zt-gold-soft:   #fdf6df;
+  --zt-maroon:      #6b2c1f;
+  --zt-maroon-deep: #4a1d13;
+  --zt-ink:         #1c1612;
+  --zt-muted:       #6d6258;
+  --zt-line:        #eadfca;
+  --zt-ease:        cubic-bezier(.22,1,.36,1);
+
+  position: relative;
+  background: #fff;
+  border: 1px solid var(--zt-line);
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  transition: transform .35s var(--zt-ease), box-shadow .35s var(--zt-ease);
+}
+.ziara-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 24px 50px rgba(74,29,19,.14);
+}
+
+/* ── Media ─────────────────────────────────────────────────── */
+.ziara-card__media {
+  position: relative;
+  display: block;
+  aspect-ratio: 16 / 11;
+  overflow: hidden;
+  background: var(--zt-gold-soft);
+}
+.ziara-card__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform .6s var(--zt-ease);
+}
+.ziara-card:hover .ziara-card__img { transform: scale(1.06); }
+.ziara-card__img--placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--zt-gold);
+  font-size: 40px;
+}
+
+/* Featured badge */
+.ziara-card__badge {
+  position: absolute;
+  top: 14px; left: 14px;
+  z-index: 2;
+  padding: 6px 14px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--zt-maroon-deep);
+  background: var(--zt-gold-bright);
+  border-radius: 50px;
+  box-shadow: 0 4px 12px rgba(243,210,74,.45);
+}
+
+/* Always-on bottom shade so the location reads over the image */
+.ziara-card__shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(28,22,18,.72) 0%, rgba(28,22,18,.25) 28%, rgba(28,22,18,0) 55%);
+  pointer-events: none;
+}
+
+/* Location overlaid on the image (bottom-left) */
+.ziara-card__loc {
+  position: absolute;
+  left: 16px; bottom: 14px;
+  right: 16px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #fff;
+}
+.ziara-card__loc i { color: var(--zt-gold-bright); font-size: 13px; flex-shrink: 0; }
+
+/* ── Body ──────────────────────────────────────────────────── */
+.ziara-card__body {
+  padding: 22px 22px 24px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.ziara-card__title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0 0 10px;
+  color: var(--zt-maroon-deep);
+}
+.ziara-card__title a {
+  color: inherit;
+  text-decoration: none;
+  transition: color .25s;
+}
+.ziara-card__title a:hover { color: var(--zt-gold); }
+
+/* short description from the overview */
+.ziara-card__desc {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--zt-muted);
+  margin: 0 0 14px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* meta row (duration / group) */
+.ziara-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin: 0 0 16px;
+  font-size: 13px;
+  color: var(--zt-muted);
+}
+.ziara-card__meta span { display: inline-flex; align-items: center; gap: 7px; }
+.ziara-card__meta i { color: var(--zt-gold); font-size: 13px; }
+
+/* ── Footer: price + action ────────────────────────────────── */
+.ziara-card__foot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid var(--zt-line);
+}
+.ziara-card__price { display: flex; flex-direction: column; align-items: center; line-height: 1.1; }
+.ziara-card__price-prefix {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  color: var(--zt-muted);
+}
+.ziara-card__price-amount {
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--zt-maroon);
+  margin-top: 3px;
+}
+.ziara-card__btn,
+.ziara-card a.ziara-card__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 9px 20px;               /* slimmer */
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: #fff !important;          /* beat theme link/button colors */
+  background: #6b2c1f !important;  /* maroon — explicit so the theme can't override */
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 50px;
+  white-space: nowrap;
+  flex: 0 0 auto;
+  transition: background .3s, transform .3s, box-shadow .3s;
+}
+.ziara-card__btn:hover,
+.ziara-card a.ziara-card__btn:hover {
+  background: #4a1d13 !important;  /* maroon-deep */
+  color: #fff !important;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(107,44,31,.28);
+}
+.ziara-card__btn i { font-size: 11px; transition: transform .3s; }
+.ziara-card__btn:hover i { transform: translateX(3px); }
+
+/* ── Responsive (cards) ────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .ziara-tours { gap: 24px; }
+  .ziara-tours[style*="--ziara-cols:4"],
+  .ziara-tours[style*="--ziara-cols:3"] { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 680px) {
+  .ziara-tours { grid-template-columns: 1fr !important; gap: 22px; }
+  .ziara-card__title { font-size: 22px; }
+}
+
+/* ============================================================
+   TOURS ARCHIVE PAGE  (archive-ziara_tour.php / taxonomy)
+   ============================================================ */
+.ziara-archive {
+  --zt-gold:        #c9a227;
+  --zt-gold-bright: #f3d24a;
+  --zt-maroon:      #6b2c1f;
+  --zt-maroon-deep: #4a1d13;
+  --zt-ink:         #1c1612;
+  --zt-muted:       #6d6258;
+  --zt-line:        #eadfca;
+
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 56px 24px 72px;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  box-sizing: border-box;
+}
+.ziara-archive * { box-sizing: border-box; }
+
+/* Styled banner header + breadcrumb (full-bleed) */
+.ziara-archive__hero {
+  --zt-gold:        #c9a227;
+  --zt-gold-bright: #f3d24a;
+  --zt-maroon:      #6b2c1f;
+  --zt-maroon-deep: #4a1d13;
+
+  position: relative;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  padding: 64px 24px;
+  text-align: center;
+  background: linear-gradient(135deg, var(--zt-maroon-deep) 0%, var(--zt-maroon) 60%, #7e3425 100%);
+  border-bottom: 3px solid var(--zt-gold);
+  overflow: hidden;
+  font-family: 'DM Sans', system-ui, sans-serif;
+}
+/* subtle diagonal texture */
+.ziara-archive__hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(105deg, transparent 0, transparent 120px, rgba(255,255,255,.03) 120px, rgba(255,255,255,.03) 121px);
+  pointer-events: none;
+}
+:is(
+  .wp-block-html, .wp-block, .entry-content > *,
+  .elementor-widget-html, .elementor-element, .et_pb_code, .fl-html
+):has(.ziara-archive__hero) { max-width: none !important; }
+
+.ziara-archive__hero-inner { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; }
+
+/* Breadcrumb */
+.ziara-breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: .4px;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.ziara-breadcrumb a { color: rgba(255,255,255,.8); text-decoration: none; transition: color .25s; }
+.ziara-breadcrumb a:hover { color: var(--zt-gold-bright); }
+.ziara-breadcrumb i { font-size: 8px; color: var(--zt-gold); }
+.ziara-breadcrumb span[aria-current] { color: var(--zt-gold-bright); }
+
+.ziara-archive__title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 46px;
+  font-weight: 700;
+  line-height: 1.05;
+  color: #fff;
+  margin: 0;
+}
+.ziara-archive__intro {
+  font-size: 16px;
+  line-height: 1.7;
+  color: rgba(255,255,255,.85);
+  max-width: 640px;
+  margin: 14px auto 0;
+}
+
+/* Pagination — defines its own brand tokens + font so it styles
+   correctly anywhere, including the [ziara_tours] shortcode grid
+   where it sits outside the .ziara-archive container. */
+.ziara-archive__pagination {
+  --zt-gold:        #c9a227;
+  --zt-maroon:      #6b2c1f;
+  --zt-maroon-deep: #4a1d13;
+  --zt-line:        #eadfca;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  margin-top: 48px;
+  text-align: center;
+}
+.ziara-archive__pagination .nav-links {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 auto;
+}
+.ziara-archive__pagination .page-numbers {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 42px;
+  height: 42px;
+  padding: 0 12px;
+  border-radius: 8px;
+  border: 1px solid var(--zt-line);
+  color: var(--zt-maroon-deep);
+  text-decoration: none;
+  font-weight: 600;
+  transition: background .25s, color .25s, border-color .25s;
+}
+.ziara-archive__pagination .page-numbers:hover { border-color: var(--zt-gold); }
+.ziara-archive__pagination .page-numbers.current {
+  background: var(--zt-maroon);
+  border-color: var(--zt-maroon);
+  color: #fff;
+}
+
+/* ============================================================
+   SINGLE TOUR PAGE  (single-ziara_tour.php)
+   ============================================================ */
+.ziara-single {
+  --zt-gold:        #c9a227;
+  --zt-gold-bright: #f3d24a;
+  --zt-gold-soft:   #fdf6df;
+  --zt-maroon:      #6b2c1f;
+  --zt-maroon-deep: #4a1d13;
+  --zt-ink:         #1c1612;
+  --zt-muted:       #6d6258;
+  --zt-line:        #eadfca;
+
+  font-family: 'DM Sans', system-ui, sans-serif;
+  color: var(--zt-ink);
+
+  /* Full-bleed: break out of the theme's content container */
+  width: 100vw;
+  max-width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  background: #fff;
+}
+.ziara-single * { box-sizing: border-box; }
+
+/* Neutralise page-builder / theme wrappers that add side padding
+   or max-width around the single-tour content. */
+:is(
+  .wp-block-html, .wp-block, .entry-content > *,
+  .elementor-widget-html, .elementor-element, .et_pb_code, .fl-html
+):has(.ziara-single) {
+  margin: 0 !important;
+  padding: 0 !important;
+  max-width: none !important;
+}
+
+/* Hero */
+.ziara-single__hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: linear-gradient(135deg, var(--zt-maroon-deep) 0%, var(--zt-maroon) 60%, #7e3425 100%) center/cover no-repeat;
+  border-bottom: 3px solid var(--zt-gold);
+  padding: 64px 24px;
+}
+.ziara-single__hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(28,22,18,.15) 0%, rgba(74,29,19,.78) 100%);
+}
+.ziara-single__hero-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 1180px;
+  width: 100%;
+  margin: 0 auto;
+  color: #fff;
+}
+.ziara-single__kicker {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--zt-gold-bright);
+  margin-bottom: 12px;
+}
+.ziara-single__title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 50px;
+  font-weight: 700;
+  line-height: 1.05;
+  color: #fff;
+  margin: 0 0 12px;
+}
+.ziara-single__loc {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  color: rgba(255,255,255,.9);
+  margin: 0;
+}
+.ziara-single__loc i { color: var(--zt-gold-bright); }
+
+/* Breadcrumb inside the single hero — left aligned */
+.ziara-single__hero-inner .ziara-breadcrumb {
+  justify-content: flex-start;
+  margin-bottom: 14px;
+}
+
+/* Body layout */
+.ziara-single__wrap {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 56px 24px;
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 48px;
+  align-items: start;
+}
+.ziara-single__content {
+  font-size: 16px;
+  line-height: 1.8;
+  color: #3a322c;
+}
+.ziara-single__content h2,
+.ziara-single__content h3 {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  color: var(--zt-maroon-deep);
+  margin: 28px 0 12px;
+}
+.ziara-single__content img { border-radius: 12px; }
+
+/* Booking box */
+.ziara-single__aside { position: sticky; top: 24px; }
+.ziara-single__box {
+  background: #fff;
+  border: 1px solid var(--zt-line);
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 18px 44px rgba(74,29,19,.10);
+}
+.ziara-single__price {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding-bottom: 18px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid var(--zt-line);
+}
+.ziara-single__price span { font-size: 14px; color: var(--zt-muted); }
+.ziara-single__price strong { font-size: 28px; color: var(--zt-maroon); font-weight: 700; }
+
+/* Pricing tiers inside the booking box */
+.ziara-single__pricing { margin-bottom: 22px; }
+.ziara-single__pricing-head {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--zt-gold);
+  margin-bottom: 12px;
+}
+.ziara-single__box .ziara-pricing { display: flex; flex-direction: column; gap: 10px; }
+.ziara-single__box .ziara-pricing li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--zt-gold-soft);
+  border: 1px solid var(--zt-line);
+  border-radius: 12px;
+  font-size: 14px;
+}
+.ziara-single__box .ziara-pricing__label {
+  font-weight: 600;
+  color: var(--zt-maroon-deep);
+  line-height: 1.3;
+}
+.ziara-single__box .ziara-pricing__price {
+  flex-shrink: 0;
+  font-weight: 700;
+  font-size: 13px;
+  color: #fff;
+  background: var(--zt-maroon);
+  padding: 6px 12px;
+  border-radius: 50px;
+  white-space: nowrap;
+}
+/* Free-form note line (no "Label | Price") */
+.ziara-single__box .ziara-pricing__note {
+  justify-content: flex-start;
+  gap: 9px;
+  background: transparent;
+  border: 0;
+  padding: 4px 2px;
+  color: var(--zt-muted);
+  font-size: 13.5px;
+}
+.ziara-single__box .ziara-pricing__note i { color: var(--zt-gold); }
+
+.ziara-single__facts { list-style: none; margin: 0 0 22px; padding: 0; }
+.ziara-single__facts li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 0;
+  border-bottom: 1px dashed var(--zt-line);
+  font-size: 14px;
+}
+.ziara-single__facts li:last-child { border-bottom: none; }
+.ziara-single__facts i { color: var(--zt-gold); width: 18px; text-align: center; }
+.ziara-single__facts span { color: var(--zt-muted); flex: 1; }
+.ziara-single__facts b { color: var(--zt-ink); font-weight: 700; }
+
+.ziara-single__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  width: 100%;
+  padding: 15px 20px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .6px;
+  text-transform: uppercase;
+  color: #fff;
+  background: var(--zt-maroon);
+  border: 0;
+  border-radius: 50px;
+  cursor: pointer;
+  text-decoration: none;
+  -webkit-appearance: none;
+  appearance: none;
+  transition: background .3s, transform .3s, box-shadow .3s;
+}
+.ziara-single__btn:hover {
+  background: var(--zt-maroon-deep);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 26px rgba(107,44,31,.28);
+  color: #fff;
+}
+.ziara-single__wa {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  width: 100%;
+  margin-top: 12px;
+  padding: 14px 20px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  background: #25d366;
+  border-radius: 50px;
+  text-decoration: none;
+  transition: background .3s, transform .3s, box-shadow .3s;
+}
+.ziara-single__wa:hover {
+  background: #1da851;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 26px rgba(37,211,102,.35);
+  color: #fff;
+}
+
+/* Related */
+.ziara-single__related {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 24px 72px;
+}
+.ziara-single__related-title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 34px;
+  font-weight: 700;
+  color: var(--zt-maroon-deep);
+  margin: 0 0 28px;
+  text-align: center;
+}
+
+/* ── Responsive (single + archive) ─────────────────────────── */
+@media (max-width: 900px) {
+  .ziara-single__wrap { grid-template-columns: 1fr; gap: 32px; }
+  .ziara-single__aside { position: static; }
+  .ziara-single__title { font-size: 38px; }
+  .ziara-archive__title { font-size: 36px; }
+}
+@media (max-width: 600px) {
+  .ziara-single__hero { padding: 44px 18px; }
+  .ziara-single__title { font-size: 30px; }
+  .ziara-single__wrap, .ziara-single__related { padding-left: 18px; padding-right: 18px; }
+  .ziara-single__box { padding: 22px; }
+  .ziara-archive { padding: 40px 18px 56px; }
+  .ziara-archive__hero { padding: 44px 18px; }
+  .ziara-archive__title { font-size: 30px; }
+  .ziara-archive__intro { font-size: 15px; }
+  .ziara-breadcrumb { font-size: 11.5px; gap: 7px; }
+  .ziara-single__related-title { font-size: 28px; }
+}
+@media (max-width: 400px) {
+  .ziara-single__title,
+  .ziara-archive__title { font-size: 26px; }
+  .ziara-single__wrap { padding-top: 36px; }
+  .ziara-block__title { font-size: 25px; }
+}
+
+/* ============================================================
+   BOOKING MODAL  (single tour page)
+   ============================================================ */
+.ziara-modal {
+  --zm-cream:       #faf5ea;
+  --zm-maroon:      #6b2c1f;
+  --zm-maroon-deep: #4a1d13;
+  --zm-gold:        #c9a227;
+  --zm-line:        #eaddc6;
+
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .3s ease, visibility .3s ease;
+  font-family: 'DM Sans', system-ui, sans-serif;
+}
+.ziara-modal.is-open { opacity: 1; visibility: visible; }
+
+.ziara-modal__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(74,29,19,.55);
+  backdrop-filter: blur(3px);
+}
+
+/* Cream panel matching the booking form */
+.ziara-modal__dialog {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: var(--zm-cream);
+  border-radius: 16px;
+  box-shadow: 0 30px 90px rgba(28,22,18,.4);
+  transform: translateY(18px) scale(.97);
+  transition: transform .35s cubic-bezier(.22,1,.36,1);
+  -webkit-overflow-scrolling: touch;
+}
+.ziara-modal.is-open .ziara-modal__dialog { transform: translateY(0) scale(1); }
+
+/* Sticky maroon header bar with gold accent */
+.ziara-modal__title {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  margin: 0;
+  padding: 20px 60px 20px 26px;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.25;
+  color: #fff;
+  background: linear-gradient(110deg, var(--zm-maroon-deep) 0%, var(--zm-maroon) 100%);
+  border-bottom: 3px solid var(--zm-gold);
+  border-radius: 16px 16px 0 0;
+}
+.ziara-modal__close {
+  position: absolute;
+  top: 14px; right: 16px;
+  z-index: 3;
+  width: 34px; height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  line-height: 1;
+  color: rgba(255,255,255,.85);
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background .25s, color .25s;
+}
+.ziara-modal__close:hover { background: rgba(255,255,255,.18); color: #fff; }
+
+.ziara-modal__body { padding: 0; }
+
+/* The CF7 form already brings cream/brand styling (.zbf). Inside the
+   modal, drop its panel background/padding/radius so it sits flush
+   in the dialog instead of looking like a box inside a box. */
+.ziara-modal__body .zbf {
+  background: transparent;
+  padding: 22px 26px 26px;
+  border-radius: 0;
+}
+
+/* Fallback styling if the form is a plain CF7 form (no .zbf wrapper) */
+.ziara-modal__body > .wpcf7 { padding: 22px 26px 26px; }
+.ziara-modal__body .wpcf7-form-control-wrap { display: block; }
+.ziara-modal__body :is(.wpcf7) input:not([type=submit]):not([type=checkbox]):not([type=radio]),
+.ziara-modal__body :is(.wpcf7) textarea,
+.ziara-modal__body :is(.wpcf7) select {
+  width: 100%;
+  padding: 12px 14px;
+  margin: 4px 0;
+  font-family: inherit;
+  font-size: 15px;
+  color: #1c1612;
+  border: 1px solid var(--zm-line);
+  border-radius: 9px;
+  background: #fff;
+  box-sizing: border-box;
+}
+.ziara-modal__body :is(.wpcf7) input:focus,
+.ziara-modal__body :is(.wpcf7) textarea:focus {
+  outline: none;
+  border-color: var(--zm-gold);
+  box-shadow: 0 0 0 3px rgba(201,162,39,.18);
+}
+.ziara-modal__body :is(.wpcf7) label { color: var(--zm-maroon-deep); font-weight: 600; }
+.ziara-modal__body :is(.wpcf7) .wpcf7-submit {
+  display: block;
+  margin: 10px auto 0;
+  background: var(--zm-maroon);
+  color: #fff; border: 0; border-radius: 50px;
+  padding: 14px 40px; font-weight: 700;
+  letter-spacing: .6px; text-transform: uppercase; cursor: pointer;
+  transition: background .25s, transform .25s;
+}
+.ziara-modal__body :is(.wpcf7) .wpcf7-submit:hover { background: var(--zm-maroon-deep); transform: translateY(-2px); }
+
+/* CF7 response/validation messages */
+.ziara-modal__body .wpcf7-response-output {
+  color: var(--zm-maroon-deep);
+  border-radius: 8px;
+  margin: 8px 26px 22px;
+}
+.ziara-modal__body .wpcf7-not-valid-tip { color: #b3261e; }
+
+/* Prevent background scroll while modal is open */
+body.ziara-modal-open { overflow: hidden; }
+
+@media (max-width: 600px) {
+  .ziara-modal { padding: 12px; }
+  .ziara-modal__title { font-size: 16px; padding: 18px 56px 18px 20px; }
+  .ziara-modal__body .zbf { padding: 18px 20px 22px; }
+}
+
+/* ============================================================
+   SINGLE TOUR — content tabs & sections
+   ============================================================ */
+.ziara-single__content {
+  --zt-gold:        #c9a227;
+  --zt-gold-soft:   #fdf6df;
+  --zt-maroon:      #6b2c1f;
+  --zt-maroon-deep: #4a1d13;
+  --zt-ink:         #1c1612;
+  --zt-muted:       #6d6258;
+  --zt-line:        #eadfca;
+}
+
+/* Featured image above the overview */
+.ziara-single__feature {
+  margin: 0 0 36px;
+  border-radius: 14px;
+  overflow: hidden;
+  line-height: 0;
+}
+.ziara-single__feature img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Highlights shown under the Overview text */
+.ziara-checklist--top { margin-top: 18px; }
+
+/* Stacked content blocks */
+.ziara-block { margin-bottom: 44px; }
+.ziara-block:last-child { margin-bottom: 0; }
+.ziara-block__title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--zt-maroon-deep);
+  margin: 0 0 18px;
+  padding-bottom: 12px;
+  position: relative;
+}
+.ziara-block__title::after {
+  content: '';
+  position: absolute;
+  left: 0; bottom: 0;
+  width: 56px; height: 3px;
+  background: linear-gradient(90deg, var(--zt-maroon) 0%, var(--zt-gold) 100%);
+  border-radius: 2px;
+}
+
+.ziara-sec__title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--zt-maroon-deep);
+  margin: 28px 0 14px;
+}
+.ziara-tabs__panel > .ziara-sec__title:first-child { margin-top: 0; }
+.ziara-prose { font-size: 16px; line-height: 1.8; color: #3a322c; }
+.ziara-prose > *:first-child { margin-top: 0; }
+
+/* Check / cross lists */
+.ziara-checklist, .ziara-amenities { list-style: none; margin: 0 0 8px; padding: 0; }
+.ziara-checklist li, .ziara-amenities li {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  padding: 8px 0;
+  font-size: 15px;
+  color: #3a322c;
+}
+.ziara-checklist li i {
+  margin-top: 3px;
+  width: 18px; height: 18px;
+  flex-shrink: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 9px;
+  color: #fff;
+  background: var(--zt-gold);
+  border-radius: 50%;
+}
+.ziara-checklist--no li i { background: #b3261e; }
+
+/* Amenities with icon chips */
+.ziara-amenities {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 24px;
+}
+.ziara-amenities li {
+  align-items: center;
+  gap: 13px;
+  padding: 0;
+  font-size: 15px;
+  color: var(--zt-ink);
+}
+.ziara-amenities li i {
+  width: 40px; height: 40px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: var(--zt-maroon-deep);
+  background: var(--zt-gold-soft);
+  border-radius: 10px;
+  margin: 0;
+}
+
+/* Pricing list */
+.ziara-pricing { list-style: none; margin: 0; padding: 0; }
+.ziara-pricing li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px dashed var(--zt-line);
+  font-size: 15.5px;
+}
+.ziara-pricing li:last-child { border-bottom: none; }
+.ziara-pricing__label { color: var(--zt-ink); font-weight: 600; }
+.ziara-pricing__price {
+  color: var(--zt-maroon);
+  font-weight: 700;
+  white-space: nowrap;
+}
+.ziara-pricing__note {
+  justify-content: flex-start;
+  gap: 10px;
+  color: var(--zt-muted);
+}
+.ziara-pricing__note i { color: var(--zt-gold); }
+
+/* Inclusions two columns */
+.ziara-incl { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; }
+.ziara-incl .ziara-sec__title { margin-top: 0; font-size: 20px; }
+
+/* Itinerary accordion */
+.ziara-itinerary { display: flex; flex-direction: column; gap: 12px; }
+.ziara-itinerary__item {
+  border: 1px solid var(--zt-line);
+  border-left: 3px solid var(--zt-gold);
+  border-radius: 10px;
+  background: #fff;
+  overflow: hidden;
+}
+.ziara-itinerary__title {
+  list-style: none;
+  cursor: pointer;
+  padding: 16px 46px 16px 20px;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--zt-maroon-deep);
+  position: relative;
+}
+.ziara-itinerary__title::-webkit-details-marker { display: none; }
+.ziara-itinerary__title::after {
+  content: '\002B';
+  position: absolute;
+  right: 18px; top: 50%;
+  transform: translateY(-50%);
+  font-size: 20px;
+  color: var(--zt-gold);
+}
+.ziara-itinerary__item[open] .ziara-itinerary__title::after { content: '\2212'; }
+.ziara-itinerary__desc {
+  padding: 0 20px 18px;
+  font-size: 15px;
+  line-height: 1.75;
+  color: #3a322c;
+}
+
+/* Gallery grid */
+.ziara-gallery {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.ziara-gallery__item {
+  display: block;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: 10px;
+}
+.ziara-gallery__item img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform .5s cubic-bezier(.22,1,.36,1);
+}
+.ziara-gallery__item:hover img { transform: scale(1.07); }
+
+/* FAQ accordion */
+.ziara-faq__item {
+  border: 1px solid var(--zt-line);
+  border-radius: 10px;
+  margin-bottom: 12px;
+  background: #fff;
+  overflow: hidden;
+}
+.ziara-faq__q {
+  list-style: none;
+  cursor: pointer;
+  padding: 16px 20px;
+  font-weight: 600;
+  font-size: 15.5px;
+  color: var(--zt-maroon-deep);
+  position: relative;
+  padding-right: 44px;
+}
+.ziara-faq__q::-webkit-details-marker { display: none; }
+.ziara-faq__q::after {
+  content: '\002B';
+  position: absolute;
+  right: 18px; top: 50%;
+  transform: translateY(-50%);
+  font-size: 20px;
+  color: var(--zt-gold);
+}
+.ziara-faq__item[open] .ziara-faq__q::after { content: '\2212'; }
+.ziara-faq__a {
+  padding: 0 20px 18px;
+  font-size: 15px;
+  line-height: 1.75;
+  color: #3a322c;
+}
+
+@media (max-width: 600px) {
+  .ziara-incl { grid-template-columns: 1fr; gap: 24px; }
+  .ziara-amenities { grid-template-columns: 1fr; }
+  .ziara-gallery { grid-template-columns: repeat(2, 1fr); }
+  .ziara-tabs__btn { padding: 10px 14px; font-size: 12px; }
+}

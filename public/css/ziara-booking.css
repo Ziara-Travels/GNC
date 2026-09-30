@@ -1,0 +1,799 @@
+/*
+ * ziara-booking.css
+ * Maroon / gold luxury restyle for the flight booking flow views.
+ * Scope classes (added to existing top-level elements, no markup removed):
+ *   .ziara-bk        page root
+ *   .ziara-bk-hero   dark hero band
+ *   .ziara-bk-body   light content area
+ * The remaps below target Tailwind/Bootstrap utility classes by substring so
+ * no element, id, class used by the inline JS has to be renamed or removed.
+ */
+
+.ziara-bk {
+  --maroon: #6b2c1f;
+  --maroon-deep: #4a1d13;
+  --maroon-mid: #7e3425;
+  --maroon-soft: #8f4231;
+  --gold: #c9a227;
+  --gold-dim: #a8861a;
+  --gold-bright: #f3d24a;
+  --gold-pale: #fdf8eb;
+  --gold-line: #f0e3c2;
+  --gold-border: rgba(201, 162, 39, .32);
+  --ink: #1c1612;
+  --muted: #7a6a60;
+  --line: #ede4d4;
+  --shadow-sm: 0 2px 12px rgba(74, 29, 19, .10);
+  --shadow-md: 0 8px 32px rgba(74, 29, 19, .16);
+  --shadow-lg: 0 20px 56px rgba(74, 29, 19, .22);
+  --zb-ease: cubic-bezier(.22, 1, .36, 1);
+}
+
+.ziara-bk {
+  --ff-primary: #6b2c1f;
+  --ff-primary-dark: #4a1d13;
+  --ff-amber: #c9a227;
+  --ff-emerald: #7e3425;
+  --ff-slate-50: #fdf8eb;
+  --ff-slate-100: #faf3e2;
+  --ff-slate-200: #ede4d4;
+  --ff-slate-500: #7a6a60;
+  --ff-slate-700: #4a1d13;
+  --ff-slate-900: #1c1612;
+}
+
+.ziara-bk {
+  font-family: var(--font-body, 'DM Sans', system-ui, sans-serif);
+  color: var(--ink);
+  background: #fff;
+}
+
+/* ── Hero band ─────────────────────────────────────────────────────────── */
+
+.ziara-bk-hero {
+  background-image: linear-gradient(135deg, var(--maroon-deep) 0%, var(--maroon) 52%, var(--maroon-mid) 100%) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.ziara-bk-hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 18% 12%, rgba(243, 210, 74, .18) 0%, transparent 55%),
+    repeating-linear-gradient(105deg, transparent 0, transparent 120px, rgba(255, 255, 255, .02) 120px, rgba(255, 255, 255, .02) 121px);
+}
+
+.ziara-bk-hero > :not([class*="absolute"]) {
+  position: relative;
+  z-index: 2;
+}
+
+.ziara-bk-hero h1,
+.ziara-bk-hero h2,
+.ziara-bk-hero h3 {
+  font-family: var(--font-display, 'Cormorant Garamond', Georgia, serif);
+  font-weight: 600;
+  letter-spacing: .5px;
+  color: #fff;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, .25);
+}
+
+.ziara-bk-hero h1 {
+  font-size: clamp(2.1rem, 4.4vw, 3.4rem);
+  line-height: 1.1;
+}
+
+.ziara-bk-hero p,
+.ziara-bk-hero span,
+.ziara-bk-hero div {
+  color: rgba(255, 255, 255, .86);
+}
+
+.ziara-bk-hero .ziara-bk-kicker,
+.ziara-bk-hero [class*="uppercase"] {
+  color: var(--gold-bright);
+  letter-spacing: 2px;
+  font-weight: 700;
+}
+
+.ziara-bk-hero [class*="text-2xl"],
+.ziara-bk-hero [class*="text-3xl"],
+.ziara-bk-hero [class*="font-mono"] {
+  color: var(--gold-bright) !important;
+  text-shadow: none;
+}
+
+.ziara-bk-hero [class*="bg-white/"],
+.ziara-bk-hero [class*="backdrop-blur"] {
+  background: rgba(255, 255, 255, .08) !important;
+  border-color: rgba(243, 210, 74, .34) !important;
+  box-shadow: var(--shadow-lg);
+}
+
+.ziara-bk-hero [class*="rounded-full"],
+.ziara-bk-hero [class*="rounded-2xl"],
+.ziara-bk-hero [class*="rounded-3xl"] {
+  border-color: rgba(243, 210, 74, .3) !important;
+}
+
+.ziara-bk-hero svg path[fill="#ffffff"] {
+  fill: #fff;
+}
+
+.ziara-bk-hero [class*="bg-clip-text"] {
+  background-image: linear-gradient(100deg, #fff 0%, var(--gold-bright) 100%) !important;
+  color: transparent !important;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ── Content area ──────────────────────────────────────────────────────── */
+
+.ziara-bk-body {
+  background-image: linear-gradient(180deg, #fff 0%, var(--gold-pale) 100%) !important;
+}
+
+/* Cards / panels */
+.ziara-bk-body [class*="rounded-3xl"],
+.ziara-bk-body [class*="rounded-2xl"],
+.ziara-bk-body [class*="rounded-xl"] {
+  border-color: var(--line) !important;
+}
+
+.ziara-bk .ziara-bk-card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  box-shadow: var(--shadow-md);
+}
+
+/* Card header strips that were red/green/blue gradients */
+.ziara-bk [class*="bg-gradient-to-r"][class*="text-white"] {
+  background-image: linear-gradient(120deg, var(--maroon-deep) 0%, var(--maroon) 70%, var(--maroon-soft) 100%) !important;
+}
+
+.ziara-bk [class*="bg-gradient-to-r"][class*="text-white"] p,
+.ziara-bk [class*="bg-gradient-to-r"][class*="text-white"] span {
+  color: rgba(255, 255, 255, .82) !important;
+}
+
+/* ── Text palette ──────────────────────────────────────────────────────── */
+
+.ziara-bk-body [class*="text-blue-5"],
+.ziara-bk-body [class*="text-blue-6"],
+.ziara-bk-body [class*="text-blue-7"],
+.ziara-bk-body [class*="text-blue-8"],
+.ziara-bk-body [class*="text-blue-9"],
+.ziara-bk-body [class*="text-indigo-5"],
+.ziara-bk-body [class*="text-indigo-6"],
+.ziara-bk-body [class*="text-indigo-7"],
+.ziara-bk-body [class*="text-indigo-8"],
+.ziara-bk-body [class*="text-indigo-9"],
+.ziara-bk-body [class*="text-purple-5"],
+.ziara-bk-body [class*="text-purple-6"],
+.ziara-bk-body [class*="text-purple-7"],
+.ziara-bk-body [class*="text-purple-8"],
+.ziara-bk-body [class*="text-purple-9"],
+.ziara-bk-body [class*="text-violet-5"],
+.ziara-bk-body [class*="text-violet-6"],
+.ziara-bk-body [class*="text-violet-7"],
+.ziara-bk-body [class*="text-sky-5"],
+.ziara-bk-body [class*="text-sky-6"],
+.ziara-bk-body [class*="text-sky-7"],
+.ziara-bk-body [class*="text-teal-5"],
+.ziara-bk-body [class*="text-teal-6"],
+.ziara-bk-body [class*="text-teal-7"],
+.ziara-bk-body [class*="text-emerald-5"],
+.ziara-bk-body [class*="text-emerald-6"],
+.ziara-bk-body [class*="text-emerald-7"],
+.ziara-bk-body [class*="text-emerald-8"],
+.ziara-bk-body [class*="text-green-5"],
+.ziara-bk-body [class*="text-green-6"],
+.ziara-bk-body [class*="text-green-7"],
+.ziara-bk-body [class*="text-green-8"],
+.ziara-bk-body [class*="text-green-9"],
+.ziara-bk-body [class*="text-primary-5"],
+.ziara-bk-body [class*="text-primary-6"],
+.ziara-bk-body [class*="text-primary-7"] {
+  color: var(--maroon) !important;
+}
+
+.ziara-bk-body [class*="text-gray-8"],
+.ziara-bk-body [class*="text-gray-9"],
+.ziara-bk-body [class*="text-slate-8"],
+.ziara-bk-body [class*="text-slate-9"],
+.ziara-bk-body [class*="text-slate-7"] {
+  color: var(--ink) !important;
+}
+
+.ziara-bk-body [class*="text-gray-4"],
+.ziara-bk-body [class*="text-gray-5"],
+.ziara-bk-body [class*="text-gray-6"],
+.ziara-bk-body [class*="text-gray-7"],
+.ziara-bk-body [class*="text-slate-4"],
+.ziara-bk-body [class*="text-slate-5"],
+.ziara-bk-body [class*="text-slate-6"] {
+  color: var(--muted) !important;
+}
+
+.ziara-bk-body [class*="text-red-6"],
+.ziara-bk-body [class*="text-red-7"],
+.ziara-bk-body [class*="text-red-8"],
+.ziara-bk-body [class*="text-rose-6"],
+.ziara-bk-body [class*="text-rose-7"],
+.ziara-bk-body [class*="text-rose-8"],
+.ziara-bk-body [class*="text-orange-7"],
+.ziara-bk-body [class*="text-orange-8"],
+.ziara-bk-body [class*="text-yellow-7"],
+.ziara-bk-body [class*="text-yellow-8"],
+.ziara-bk-body [class*="text-amber-7"],
+.ziara-bk-body [class*="text-amber-8"] {
+  color: var(--maroon) !important;
+}
+
+.ziara-bk-body h1,
+.ziara-bk-body h2,
+.ziara-bk-body h3,
+.ziara-bk-body h4,
+.ziara-bk-body h5,
+.ziara-bk-body h6 {
+  font-family: var(--font-display, 'Cormorant Garamond', Georgia, serif);
+  color: var(--ink);
+  letter-spacing: .3px;
+}
+
+.ziara-bk-body h2,
+.ziara-bk-body h3 {
+  position: relative;
+}
+
+.ziara-bk-body a:not([class*="bg-"]) {
+  color: var(--maroon);
+}
+
+.ziara-bk-body a:not([class*="bg-"]):hover {
+  color: var(--gold-dim);
+}
+
+/* ── Soft surface tints ────────────────────────────────────────────────── */
+
+.ziara-bk-body [class*="bg-blue-50"],
+.ziara-bk-body [class*="bg-blue-100"],
+.ziara-bk-body [class*="bg-indigo-50"],
+.ziara-bk-body [class*="bg-indigo-100"],
+.ziara-bk-body [class*="bg-purple-50"],
+.ziara-bk-body [class*="bg-purple-100"],
+.ziara-bk-body [class*="bg-green-50"],
+.ziara-bk-body [class*="bg-green-100"],
+.ziara-bk-body [class*="bg-emerald-50"],
+.ziara-bk-body [class*="bg-emerald-100"],
+.ziara-bk-body [class*="bg-teal-50"],
+.ziara-bk-body [class*="bg-teal-100"],
+.ziara-bk-body [class*="bg-sky-50"],
+.ziara-bk-body [class*="bg-sky-100"],
+.ziara-bk-body [class*="bg-gray-50"],
+.ziara-bk-body [class*="bg-slate-50"],
+.ziara-bk-body [class*="bg-slate-100"],
+.ziara-bk-body [class*="bg-light"],
+.ziara-bk-body [class*="bg-red-50"],
+.ziara-bk-body [class*="bg-rose-50"],
+.ziara-bk-body [class*="bg-orange-50"],
+.ziara-bk-body [class*="bg-yellow-50"],
+.ziara-bk-body [class*="bg-amber-50"] {
+  background-color: var(--gold-pale) !important;
+  border-color: var(--gold-line) !important;
+}
+
+.ziara-bk-body [class*="bg-red-100"],
+.ziara-bk-body [class*="bg-rose-100"],
+.ziara-bk-body [class*="bg-orange-100"],
+.ziara-bk-body [class*="bg-yellow-100"],
+.ziara-bk-body [class*="bg-amber-100"] {
+  background-color: #f7e9c9 !important;
+  border-color: var(--gold-border) !important;
+}
+
+/* Info / help panels keep a faint hue but stay on-brand */
+.ziara-bk-body [class*="bg-blue-50"],
+.ziara-bk-body [class*="bg-indigo-50"],
+.ziara-bk-body [class*="bg-green-50"],
+.ziara-bk-body [class*="bg-emerald-50"] {
+  border-left-color: var(--gold) !important;
+}
+
+/* ── Solid brand surfaces ──────────────────────────────────────────────── */
+
+.ziara-bk [class*="bg-blue-500"],
+.ziara-bk [class*="bg-blue-600"],
+.ziara-bk [class*="bg-blue-700"],
+.ziara-bk [class*="bg-indigo-500"],
+.ziara-bk [class*="bg-indigo-600"],
+.ziara-bk [class*="bg-indigo-700"],
+.ziara-bk [class*="bg-purple-500"],
+.ziara-bk [class*="bg-purple-600"],
+.ziara-bk [class*="bg-purple-700"],
+.ziara-bk [class*="bg-violet-500"],
+.ziara-bk [class*="bg-violet-600"],
+.ziara-bk [class*="bg-sky-500"],
+.ziara-bk [class*="bg-sky-600"],
+.ziara-bk [class*="bg-teal-500"],
+.ziara-bk [class*="bg-teal-600"],
+.ziara-bk [class*="bg-emerald-500"],
+.ziara-bk [class*="bg-emerald-600"],
+.ziara-bk [class*="bg-green-500"],
+.ziara-bk [class*="bg-green-600"],
+.ziara-bk [class*="bg-green-700"],
+.ziara-bk [class*="bg-red-500"],
+.ziara-bk [class*="bg-red-600"],
+.ziara-bk [class*="bg-rose-500"],
+.ziara-bk [class*="bg-rose-600"],
+.ziara-bk [class*="bg-primary-500"],
+.ziara-bk [class*="bg-primary-600"] {
+  background-color: var(--maroon) !important;
+  color: #fff;
+}
+
+.ziara-bk [class*="bg-yellow-400"],
+.ziara-bk [class*="bg-yellow-500"],
+.ziara-bk [class*="bg-amber-400"],
+.ziara-bk [class*="bg-amber-500"] {
+  background-color: var(--gold) !important;
+  color: var(--maroon-deep);
+}
+
+/* Status pips */
+.ziara-bk [class*="bg-green-500"][class*="rounded-full"],
+.ziara-bk [class*="bg-red-500"][class*="rounded-full"] {
+  background-color: var(--gold) !important;
+}
+
+/* Progress fills */
+.ziara-bk #scanProgress,
+.ziara-bk [class*="bg-blue-600"][class*="h-2"],
+.ziara-bk [class*="h-2.5"][class*="rounded-full"] {
+  background: linear-gradient(90deg, var(--gold-dim), var(--gold-bright)) !important;
+}
+
+/* ── Gradients ─────────────────────────────────────────────────────────── */
+
+.ziara-bk [class*="bg-gradient-to-r"][class*="from-gray-6"],
+.ziara-bk [class*="bg-gradient-to-r"][class*="from-gray-7"],
+.ziara-bk [class*="bg-gradient-to-r"][class*="from-slate-6"],
+.ziara-bk [class*="bg-gradient-to-r"][class*="from-slate-7"] {
+  background-image: linear-gradient(120deg, var(--maroon) 0%, var(--maroon-deep) 100%) !important;
+  color: #fff;
+}
+
+.ziara-bk [class*="bg-gradient-to-r"][class*="from-amber-5"],
+.ziara-bk [class*="bg-gradient-to-r"][class*="from-amber-6"],
+.ziara-bk [class*="bg-gradient-to-r"][class*="from-yellow-4"],
+.ziara-bk [class*="bg-gradient-to-r"][class*="from-yellow-5"] {
+  background-image: linear-gradient(120deg, var(--gold) 0%, var(--gold-bright) 100%) !important;
+  color: var(--maroon-deep);
+}
+
+.ziara-bk [class*="bg-gradient-to-"][class*="from-blue-5"],
+.ziara-bk [class*="bg-gradient-to-"][class*="from-blue-6"],
+.ziara-bk [class*="bg-gradient-to-"][class*="from-blue-7"],
+.ziara-bk [class*="bg-gradient-to-"][class*="from-blue-8"],
+.ziara-bk [class*="bg-gradient-to-"][class*="from-indigo-5"],
+.ziara-bk [class*="bg-gradient-to-"][class*="from-indigo-6"],
+.ziara-bk [class*="bg-gradient-to-"][class*="from-indigo-7"],
+.ziara-bk [class*="bg-gradient-to-"][class*="from-indigo-8"],
+.ziara-bk [class*="bg-gradient-to-"][class*="from-indigo-9"],
+.ziara-bk [class*="bg-gradient-to-"][class*="from-purple-4"],
+.ziara-bk [class*="bg-gradient-to-"][class*="from-purple-5"],
+.ziara-bk [class*="bg-gradient-to-"][class*="from-purple-6"],
+.ziara-bk [class*="bg-gradient-to-"][class*="from-purple-7"],
+.ziara-bk [class*="bg-gradient-to-"][class*="from-green-5"],
+.ziara-bk [class*="bg-gradient-to-"][class*="from-green-6"],
+.ziara-bk [class*="bg-gradient-to-"][class*="from-green-7"],
+.ziara-bk [class*="bg-gradient-to-"][class*="from-emerald-5"],
+.ziara-bk [class*="bg-gradient-to-"][class*="from-emerald-6"],
+.ziara-bk [class*="bg-gradient-to-"][class*="from-emerald-7"],
+.ziara-bk [class*="bg-gradient-to-"][class*="from-teal-5"],
+.ziara-bk [class*="bg-gradient-to-"][class*="from-teal-6"],
+.ziara-bk [class*="bg-gradient-to-"][class*="from-teal-7"],
+.ziara-bk [class*="bg-gradient-to-"][class*="from-teal-8"],
+.ziara-bk [class*="bg-gradient-to-"][class*="from-red-6"],
+.ziara-bk [class*="bg-gradient-to-"][class*="from-red-7"],
+.ziara-bk [class*="bg-gradient-to-"][class*="from-rose-6"],
+.ziara-bk [class*="bg-gradient-to-"][class*="from-rose-7"],
+.ziara-bk [class*="bg-gradient-to-"][class*="from-rose-8"],
+.ziara-bk [class*="bg-gradient-to-"][class*="from-primary-5"] {
+  background-image: linear-gradient(120deg, var(--maroon) 0%, var(--maroon-deep) 100%) !important;
+  color: #fff;
+}
+
+.ziara-bk [class*="bg-gradient-to-"][class*="from-purple-5"],
+.ziara-bk [class*="bg-gradient-to-"][class*="from-blue-5"],
+.ziara-bk [class*="bg-gradient-to-"][class*="from-indigo-5"] {
+  background-image: linear-gradient(120deg, var(--maroon) 0%, var(--maroon-deep) 100%) !important;
+}
+
+.ziara-bk [class*="bg-gradient-to-"][class*="from-purple-50"],
+.ziara-bk [class*="bg-gradient-to-"][class*="from-blue-50"],
+.ziara-bk [class*="bg-gradient-to-"][class*="from-indigo-50"],
+.ziara-bk [class*="bg-gradient-to-"][class*="from-blue-100"] {
+  background-image: linear-gradient(140deg, var(--gold-pale) 0%, #fff 100%) !important;
+  border-color: var(--gold-border) !important;
+}
+
+/* ── Borders ───────────────────────────────────────────────────────────── */
+
+.ziara-bk-body [class*="border-blue-1"],
+.ziara-bk-body [class*="border-blue-2"],
+.ziara-bk-body [class*="border-blue-3"],
+.ziara-bk-body [class*="border-indigo-1"],
+.ziara-bk-body [class*="border-indigo-2"],
+.ziara-bk-body [class*="border-indigo-3"],
+.ziara-bk-body [class*="border-purple-1"],
+.ziara-bk-body [class*="border-purple-2"],
+.ziara-bk-body [class*="border-purple-3"],
+.ziara-bk-body [class*="border-green-2"],
+.ziara-bk-body [class*="border-green-3"],
+.ziara-bk-body [class*="border-emerald-2"],
+.ziara-bk-body [class*="border-emerald-3"],
+.ziara-bk-body [class*="border-teal-2"],
+.ziara-bk-body [class*="border-red-2"],
+.ziara-bk-body [class*="border-red-3"],
+.ziara-bk-body [class*="border-rose-2"],
+.ziara-bk-body [class*="border-rose-3"],
+.ziara-bk-body [class*="border-orange-2"],
+.ziara-bk-body [class*="border-orange-3"],
+.ziara-bk-body [class*="border-yellow-2"],
+.ziara-bk-body [class*="border-yellow-3"],
+.ziara-bk-body [class*="border-amber-2"],
+.ziara-bk-body [class*="border-amber-3"],
+.ziara-bk-body [class*="border-gray-1"],
+.ziara-bk-body [class*="border-gray-2"],
+.ziara-bk-body [class*="border-gray-3"],
+.ziara-bk-body [class*="border-slate-1"],
+.ziara-bk-body [class*="border-slate-2"],
+.ziara-bk-body [class*="border-slate-3"] {
+  border-color: var(--line) !important;
+}
+
+.ziara-bk-body [class*="border-blue-5"],
+.ziara-bk-body [class*="border-blue-7"],
+.ziara-bk-body [class*="border-indigo-5"],
+.ziara-bk-body [class*="border-indigo-7"],
+.ziara-bk-body [class*="border-green-5"],
+.ziara-bk-body [class*="border-green-7"],
+.ziara-bk-body [class*="border-emerald-5"],
+.ziara-bk-body [class*="border-indigo-3"][class*="border-solid"],
+.ziara-bk-body [class*="border-primary-5"],
+.ziara-bk-body [class*="border-red-5"],
+.ziara-bk-body [class*="border-rose-5"] {
+  border-color: var(--gold) !important;
+}
+
+/* ── Focus / validation ────────────────────────────────────────────────── */
+
+.ziara-bk [class*="focus:ring-blue-500"],
+.ziara-bk [class*="focus:ring-indigo-500"],
+.ziara-bk [class*="focus:ring-primary-500"],
+.ziara-bk [class*="focus:ring-purple-500"],
+.ziara-bk [class*="focus:ring-green-500"],
+.ziara-bk [class*="focus:ring-red-500"],
+.ziara-bk [class*="ring-blue-500"]:focus,
+.ziara-bk [class*="ring-indigo-500"]:focus,
+.ziara-bk [class*="ring-primary-500"]:focus,
+.ziara-bk [class*="ring-green-500"]:focus,
+.ziara-bk [class*="ring-red-500"]:focus {
+  --tw-ring-color: var(--gold) !important;
+  --tw-ring-offset-color: var(--gold-pale) !important;
+  border-color: var(--gold) !important;
+}
+
+.ziara-bk [class*="border-transparent"]:focus {
+  border-color: var(--gold) !important;
+}
+
+/* ── Buttons ───────────────────────────────────────────────────────────── */
+
+.ziara-bk button,
+.ziara-bk a[class*="px-"],
+.ziara-bk input[type="submit"] {
+  transition: transform .25s var(--zb-ease), box-shadow .25s var(--zb-ease), background-color .25s, color .25s, border-color .25s;
+}
+
+.ziara-bk button[class*="bg-blue-"],
+.ziara-bk button[class*="bg-green-"],
+.ziara-bk button[class*="bg-purple-"],
+.ziara-bk button[class*="bg-red-"],
+.ziara-bk button[class*="bg-indigo-"],
+.ziara-bk button[class*="bg-primary-"],
+.ziara-bk a[class*="bg-blue-"],
+.ziara-bk a[class*="bg-green-"],
+.ziara-bk a[class*="bg-purple-"],
+.ziara-bk a[class*="bg-red-"],
+.ziara-bk a[class*="bg-indigo-"] {
+  background-color: var(--maroon) !important;
+  color: #fff !important;
+  border: 1px solid var(--maroon-deep);
+  box-shadow: 0 8px 22px rgba(107, 44, 31, .22);
+}
+
+.ziara-bk button[class*="bg-blue-"]:hover,
+.ziara-bk button[class*="bg-green-"]:hover,
+.ziara-bk button[class*="bg-purple-"]:hover,
+.ziara-bk button[class*="bg-red-"]:hover,
+.ziara-bk button[class*="bg-indigo-"]:hover,
+.ziara-bk button[class*="bg-primary-"]:hover,
+.ziara-bk a[class*="bg-blue-"]:hover,
+.ziara-bk a[class*="bg-green-"]:hover,
+.ziara-bk a[class*="bg-purple-"]:hover,
+.ziara-bk a[class*="bg-red-"]:hover,
+.ziara-bk a[class*="bg-indigo-"]:hover {
+  background-color: var(--maroon-deep) !important;
+  color: #fff !important;
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(74, 29, 19, .30);
+}
+
+.ziara-bk button[class*="bg-white"],
+.ziara-bk a[class*="bg-white"][class*="rounded"] {
+  background-color: #fff !important;
+  color: var(--maroon) !important;
+  border: 1.5px solid var(--maroon);
+  box-shadow: 0 8px 22px rgba(74, 29, 19, .14);
+}
+
+.ziara-bk button[class*="bg-white"]:hover,
+.ziara-bk a[class*="bg-white"][class*="rounded"]:hover {
+  background-color: var(--gold-pale) !important;
+  color: var(--maroon-deep) !important;
+  transform: translateY(-2px);
+}
+
+.ziara-bk .ff-btn-primary {
+  background: var(--maroon) !important;
+  color: #fff !important;
+  box-shadow: 0 10px 28px rgba(107, 44, 31, .26);
+}
+
+.ziara-bk .ff-btn-primary:hover {
+  background: var(--maroon-deep) !important;
+  box-shadow: 0 14px 34px rgba(74, 29, 19, .32);
+}
+
+.ziara-bk .ff-badge-adult,
+.ziara-bk .ff-badge-child,
+.ziara-bk .ff-badge-infant {
+  background: var(--gold-pale) !important;
+  color: var(--maroon) !important;
+  border: 1px solid var(--gold-border);
+  letter-spacing: .6px;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.ziara-bk .ff-card {
+  border-color: var(--line) !important;
+  box-shadow: var(--shadow-sm);
+}
+
+.ziara-bk .ziara-bk-cta {
+  background: linear-gradient(120deg, var(--maroon-deep) 0%, var(--maroon) 60%, var(--maroon-mid) 100%) !important;
+  border-top: 3px solid var(--gold) !important;
+}
+
+.ziara-bk .ziara-bk-cta h2,
+.ziara-bk .ziara-bk-cta h3,
+.ziara-bk .ziara-bk-cta strong {
+  color: #fff;
+}
+
+.ziara-bk .ziara-bk-cta p,
+.ziara-bk .ziara-bk-cta span,
+.ziara-bk .ziara-bk-cta li {
+  color: rgba(255, 255, 255, .82);
+}
+
+.ziara-bk .ziara-bk-cta h4,
+.ziara-bk .ziara-bk-cta h5,
+.ziara-bk .ziara-bk-cta h6 {
+  color: #fff;
+}
+
+.ziara-bk .ziara-bk-cta a {
+  color: var(--gold-bright) !important;
+}
+
+.ziara-bk .ziara-bk-gold {
+  background: linear-gradient(120deg, var(--gold) 0%, var(--gold-bright) 100%) !important;
+  color: var(--maroon-deep) !important;
+  border: 1px solid var(--gold-dim);
+  box-shadow: 0 10px 28px rgba(201, 162, 39, .30);
+}
+
+.ziara-bk .ziara-bk-gold:hover {
+  background: linear-gradient(120deg, var(--gold-bright) 0%, var(--gold) 100%) !important;
+  color: var(--maroon-deep) !important;
+}
+
+.ziara-bk .ziara-bk-ghost {
+  background: transparent !important;
+  color: var(--maroon) !important;
+  border: 1.5px solid var(--maroon) !important;
+}
+
+.ziara-bk .ziara-bk-ghost:hover {
+  background: var(--maroon) !important;
+  color: #fff !important;
+}
+
+.ziara-bk .ziara-bk-total {
+  background: var(--gold-pale) !important;
+  border: 1px solid var(--gold-border);
+  border-radius: 12px;
+}
+
+.ziara-bk .ziara-bk-total-row {
+  border-top: 2px solid var(--gold);
+  padding-top: 10px;
+  margin-top: 6px;
+  color: var(--maroon);
+  font-size: 17px;
+}
+
+.ziara-bk .ziara-bk-totalbar {
+  background: linear-gradient(120deg, var(--maroon-deep) 0%, var(--maroon) 68%, var(--maroon-mid) 100%) !important;
+  border: 1px solid var(--gold-border);
+  box-shadow: var(--shadow-md);
+}
+
+.ziara-bk .ziara-bk-totalbar p,
+.ziara-bk .ziara-bk-totalbar .text-slate-900,
+.ziara-bk .ziara-bk-totalbar .text-slate-500 {
+  color: #fff !important;
+}
+
+.ziara-bk .ziara-bk-totalbar .text-slate-500 {
+  color: rgba(255, 255, 255, .72) !important;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.ziara-bk .ziara-bk-alert {
+  background: #fdf1f1 !important;
+  border-color: rgba(154, 52, 18, .28) !important;
+  border-left: 4px solid var(--maroon) !important;
+}
+
+.ziara-bk .ziara-bk-alert p,
+.ziara-bk .ziara-bk-alert li,
+.ziara-bk .ziara-bk-alert ul {
+  color: #7c2d12 !important;
+}
+
+/* ── Forms ─────────────────────────────────────────────────────────────── */
+
+.ziara-bk input,
+.ziara-bk select,
+.ziara-bk textarea {
+  border-color: var(--line) !important;
+  color: var(--ink);
+  background-color: #fff;
+}
+
+.ziara-bk input::placeholder,
+.ziara-bk textarea::placeholder {
+  color: #b3a596;
+}
+
+.ziara-bk label {
+  color: var(--muted);
+  font-weight: 600;
+  letter-spacing: .2px;
+}
+
+.ziara-bk [class*="border-gray-300"] {
+  border-color: #e3d8c4 !important;
+}
+
+.ziara-bk [class*="uppercase"][class*="tracking-wide"],
+.ziara-bk [class*="uppercase"][class*="tracking-wider"] {
+  letter-spacing: 1.4px;
+}
+
+/* ── Badges / chips ────────────────────────────────────────────────────── */
+
+.ziara-bk [class*="rounded-full"][class*="px-3"][class*="py-1"],
+.ziara-bk [class*="rounded-full"][class*="px-4"][class*="py-2"] {
+  background: var(--gold-pale) !important;
+  color: var(--maroon) !important;
+  border: 1px solid var(--gold-border);
+  font-weight: 700;
+  letter-spacing: .6px;
+  text-transform: uppercase;
+  font-size: 11.5px;
+}
+
+.ziara-bk .badge,
+.ziara-bk [class*="bg-success"] {
+  background: var(--gold) !important;
+  color: var(--maroon-deep) !important;
+}
+
+.ziara-bk [class*="bg-danger"] {
+  background: var(--maroon) !important;
+  color: #fff !important;
+}
+
+/* ── Modals ────────────────────────────────────────────────────────────── */
+
+.ziara-bk .ziara-bk-modal {
+  background: rgba(26, 10, 6, .68) !important;
+  backdrop-filter: blur(3px);
+}
+
+.ziara-bk .ziara-bk-modal > div {
+  border-top: 3px solid var(--gold);
+  box-shadow: var(--shadow-lg);
+}
+
+.ziara-bk [class*="bg-black"][class*="bg-opacity-50"] {
+  background-color: rgba(26, 10, 6, .68) !important;
+}
+
+/* ── Chat / AI panel ───────────────────────────────────────────────────── */
+
+.ziara-bk #aiAssistantChat {
+  background: var(--gold-pale);
+  border-color: var(--gold-border) !important;
+}
+
+.ziara-bk #aiAssistantInput {
+  border-color: var(--line) !important;
+}
+
+/* ── Tables / dividers ─────────────────────────────────────────────────── */
+
+.ziara-bk [class*="border-t"][class*="border-gray-200"],
+.ziara-bk [class*="border-b"][class*="border-gray-200"] {
+  border-color: var(--line) !important;
+}
+
+.ziara-bk [class*="divide-gray-200"] > * + * {
+  border-color: var(--line) !important;
+}
+
+/* ── Countdown toast created by inline JS (appended to body) ───────────── */
+
+.ziara-bk-toast,
+body > div[class*="fixed"][class*="bottom-4"][class*="right-4"] {
+  background: var(--maroon-deep) !important;
+  color: #fff !important;
+  border: 1px solid var(--gold-border);
+  font-size: 13px;
+  letter-spacing: .2px;
+}
+
+/* ── Responsive ────────────────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .ziara-bk-hero {
+    padding-top: 48px !important;
+    padding-bottom: 56px !important;
+  }
+
+  .ziara-bk-hero h1 {
+    font-size: 2rem;
+  }
+}
+
+@media print {
+  .ziara-bk [class*="shadow"] {
+    box-shadow: none !important;
+  }
+
+  .ziara-bk-body {
+    background: #fff !important;
+  }
+}

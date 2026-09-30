@@ -1,0 +1,665 @@
+{
+  "info": {
+    "_postman_id": "b9f0a3b3-b2fe-44f3-a938-6e4c7c4fb3d2",
+    "name": "RAPIDAPI DOCUMENTATION",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "39799975"
+  },
+  "item": [
+    {
+      "name": "Sky Scanner",
+      "item": [
+        {
+          "name": "Flights",
+          "item": [
+            {
+              "name": "flights/airports",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-RapidAPI-Key",
+                    "value": "{{RapidAPI-Key}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-RapidAPI-Host",
+                    "value": "sky-scanner3.p.rapidapi.com",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "https://sky-scanner3.p.rapidapi.com/flights/airports",
+                  "protocol": "https",
+                  "host": [
+                    "sky-scanner3",
+                    "p",
+                    "rapidapi",
+                    "com"
+                  ],
+                  "path": [
+                    "flights",
+                    "airports"
+                  ]
+                },
+                "description": "### DESCRIPTION\n\nGet all airports\n\nYou can use the id from this endpoint to search for flights.  \nAirports with id = null are those that are not available on Skyscanner"
+              },
+              "response": []
+            },
+            {
+              "name": "flights/auto-complete",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-RapidAPI-Key",
+                    "value": "{{RapidAPI-Key}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-RapidAPI-Host",
+                    "value": "sky-scanner3.p.rapidapi.com",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "https://sky-scanner3.p.rapidapi.com/flights/auto-complete?query=New York",
+                  "protocol": "https",
+                  "host": [
+                    "sky-scanner3",
+                    "p",
+                    "rapidapi",
+                    "com"
+                  ],
+                  "path": [
+                    "flights",
+                    "auto-complete"
+                  ],
+                  "query": [
+                    {
+                      "key": "query",
+                      "value": "New York",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "description": "### DESCRIPTION\n\n- _**query**_  \n    Type: string  \n    Required: true  \n    Ex: `New York`\n- _**placeTypes**_  \n    It can input multiple values, and the values should be separated by commas  \n    The **/flights/search-multi-city** endpoint is only used in the case placeTypes=CITY,AIRPORT  \n    Ex: `CITY,AIRPORT`  \n    `CITY`: City  \n    `AIRPORT`: Airport  \n    `COUNTRY`: Country\n- _**outboundDate**_  \n    Format: `YYYY-MM-DD`  \n    Default value: Current date\n- _**market**_  \n    `market` can be retrieved from /get-config endpoint(data->market)  \n    Ex: `US`  \n    Default value: `US`\n- _**locale**_  \n    `locale` can be retrieved from /get-config endpoint(data->locale)  \n    Ex: `en-US`  \n    Default value: `en-US`"
+              },
+              "response": []
+            },
+            {
+              "name": "flights/search-everywhere",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-RapidAPI-Key",
+                    "value": "{{RapidAPI-Key}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-RapidAPI-Host",
+                    "value": "sky-scanner3.p.rapidapi.com",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "https://sky-scanner3.p.rapidapi.com/flights/search-everywhere?fromEntityId=NYCA",
+                  "protocol": "https",
+                  "host": [
+                    "sky-scanner3",
+                    "p",
+                    "rapidapi",
+                    "com"
+                  ],
+                  "path": [
+                    "flights",
+                    "search-everywhere"
+                  ],
+                  "query": [
+                    {
+                      "key": "fromEntityId",
+                      "value": "NYCA"
+                    }
+                  ]
+                },
+                "description": "### DESCRIPTION\n\n- **fromEntityId**  \n    From location  \n    Required: true  \n    `fromEntityId` can be retrieved fromEx: `NYCA` New York (Any)\n    1. `/flights/auto-complete`: data->presentation->id / skyId\n    2. `/flights/airports`: data->id / skyId  \n        Ex: `PARI` Paris (Any)\n- **toEntityId**  \n    To location  \n    `toEntityId` can be retrieved from\n    \n    1. `/flights/auto-complete`: data->presentation->id / skyId\n    2. `/flights/airports`: data->id / skyId  \n        Ex: `MSYA` New Orleans (Any)\n        \n- **type**  \n    Search type: oneway or roundtrip  \n    Default: `oneway`\n- **year**  \n    Depart year  \n    Format: `YYYY`  \n    Ex: `2024`\n- **month**  \n    Depart month  \n    Format: `MM`  \n    Ex: `05`\n- **market**  \n    `market` can be retrieved from /get-config endpoint(data->market)  \n    Ex: `US`  \n    Default value: `US`\n- **locale**  \n    `locale` can be retrieved from /get-config endpoint(data->locale)  \n    Ex: `en-US`  \n    Default value: `en-US`\n- **adults**  \n    Adults: 12+ years  \n    Type: number  \n    Ex: `3`  \n    Default value: `1`\n- **children**  \n    Children: 2-12 years  \n    Type: number  \n    Ex: `4`  \n    Default value: `0`\n- **infants**  \n    Infants: Under 2 years  \n    Type: number  \n    Ex: `1`  \n    Default value: `0`\n- **cabinClass**  \n    Cabin class  \n    Type: string  \n    Ex: `economy`  \n    Default value: `economy economy`: Economy  \n    `premium_economy`: Premium Economy  \n    `business`: Business  \n    `first`: First"
+              },
+              "response": []
+            },
+            {
+              "name": "flights/search-roundtrip",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-RapidAPI-Key",
+                    "value": "{{RapidAPI-Key}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-RapidAPI-Host",
+                    "value": "sky-scanner3.p.rapidapi.com",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "https://sky-scanner3.p.rapidapi.com/flights/search-roundtrip?fromEntityId=PARI&toEntityId=MSYA&departDate=2024-05-23&returnDate=2024-05-24",
+                  "protocol": "https",
+                  "host": [
+                    "sky-scanner3",
+                    "p",
+                    "rapidapi",
+                    "com"
+                  ],
+                  "path": [
+                    "flights",
+                    "search-roundtrip"
+                  ],
+                  "query": [
+                    {
+                      "key": "fromEntityId",
+                      "value": "PARI"
+                    },
+                    {
+                      "key": "toEntityId",
+                      "value": "MSYA"
+                    },
+                    {
+                      "key": "departDate",
+                      "value": "2024-05-23",
+                      "type": "text"
+                    },
+                    {
+                      "key": "returnDate",
+                      "value": "2024-05-24",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "description": "### DESCRIPTION\n\nIn case the status is 'incomplete'(data->context->status=incomplete), you need to use the /flights/search-incomplete endpoint to get the full data until the status is 'complete'(data->context->status=complete)\n\nYou can now search  \nEverywhere: leave toEntityId empty.  \nAnytime: leave departDate and returnDate empty.  \nThe whole month: input wholeMonthDepart and wholeMonthReturn.\n\n- **fromEntityId**  \n    From location  \n    Required: true  \n    `fromEntityId` can be retrieved fromEx: `NYCA` New York (Any)\n    1. `/flights/auto-complete`: data->presentation->id / skyId\n    2. `/flights/airports`: data->id / skyId  \n        Ex: `PARI` Paris (Any)\n- **toEntityId**  \n    To location  \n    `toEntityId` can be retrieved from\n    1. `/flights/auto-complete`: data->presentation->id / skyId\n    2. `/flights/airports`: data->id / skyId  \n        Ex: `MSYA` New Orleans (Any)\n- **wholeMonthDepart**  \n    Whole month depart  \n    Format: `YYYY-MM`  \n    Ex: `2024-02`\n- **wholeMonthReturn**  \n    Whole month return  \n    Format: YYYY-MM  \n    Ex: 2024-02\n- **departDate**  \n    Depart date  \n    Required: true  \n    Format: `YYYY-MM-DD`  \n    Ex: `2024-02-14`\n- **returnDate**  \n    Return date  \n    Required: true  \n    Format: `YYYY-MM-DD`  \n    Ex: `2024-02-15`\n- **stops**  \n    Stops  \n    It can input multiple values, and the values should be separated by commas  \n    Ex: `direct,1stop`  \n    Default value: Select all  \n    `direct`: Direct  \n    `1stop`: 1 stop  \n    `2stops`: 2+ stops\n- **market**  \n    `market` can be retrieved from /get-config endpoint(data->market)  \n    Ex: `US`  \n    Default value: `US`\n- **currency**  \n    `currency` can be retrieved from /get-config endpoint(data->currency)  \n    Ex: `USD`  \n    Default value: `USD`\n    \n- **locale**  \n    `locale` can be retrieved from /get-config endpoint(data->locale)  \n    Ex: `en-US`  \n    Default value: `en-US`\n    \n- **adults**  \n    Adults: 12+ years  \n    Type: number  \n    Ex: `3`  \n    Default value: `1`\n- **children**  \n    Children: 2-12 years  \n    Type: number  \n    Ex: `4`  \n    Default value: `0`\n- **infants**  \n    Infants: Under 2 years  \n    Type: number  \n    Ex: `1`  \n    Default value: `0`\n- **cabinClass**  \n    Cabin class  \n    Type: string  \n    Ex: `economy`  \n    Default value: `economy economy`: Economy  \n    `premium_economy`: Premium Economy  \n    `business`: Business  \n    `first`: First"
+              },
+              "response": []
+            },
+            {
+              "name": "flights/search-one-way",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-RapidAPI-Key",
+                    "value": "{{RapidAPI-Key}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-RapidAPI-Host",
+                    "value": "sky-scanner3.p.rapidapi.com",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "https://sky-scanner3.p.rapidapi.com/flights/search-one-way?fromEntityId=PARI&toEntityId=MSYA&departDate=2024-05-23",
+                  "protocol": "https",
+                  "host": [
+                    "sky-scanner3",
+                    "p",
+                    "rapidapi",
+                    "com"
+                  ],
+                  "path": [
+                    "flights",
+                    "search-one-way"
+                  ],
+                  "query": [
+                    {
+                      "key": "fromEntityId",
+                      "value": "PARI"
+                    },
+                    {
+                      "key": "toEntityId",
+                      "value": "MSYA"
+                    },
+                    {
+                      "key": "departDate",
+                      "value": "2024-05-23"
+                    }
+                  ]
+                },
+                "description": "### DESCRIPTION\n\nIn case the status is 'incomplete'(data->context->status=incomplete), you need to use the /flights/search-incomplete endpoint to get the full data until the status is 'complete'(data->context->status=complete)\n\nYou can now search  \nEverywhere: leave toEntityId empty.  \nAnytime: leave departDate empty.  \nThe whole month: input wholeMonthDepart.\n\n- **fromEntityId**  \n    From location  \n    Required: true  \n    `fromEntityId` can be retrieved fromEx: `NYCA` New York (Any)\n    1. `/flights/auto-complete`: data->presentation->id / skyId\n    2. `/flights/airports`: data->id / skyId  \n        Ex: `PARI` Paris (Any)\n- **toEntityId**  \n    To location  \n    `toEntityId` can be retrieved from\n    1. `/flights/auto-complete`: data->presentation->id / skyId\n    2. `/flights/airports`: data->id / skyId  \n        Ex: `MSYA` New Orleans (Any)\n- **wholeMonthDepart**  \n    Whole month depart  \n    Format: `YYYY-MM`  \n    Ex: `2024-02`\n- **departDate**  \n    Depart date  \n    Required: true  \n    Format: `YYYY-MM-DD`  \n    Ex: `2024-02-14`\n- **stops**  \n    Stops  \n    It can input multiple values, and the values should be separated by commas  \n    Ex: `direct,1stop`  \n    Default value: Select all  \n    `direct`: Direct  \n    `1stop`: 1 stop  \n    `2stops`: 2+ stops\n- **market**  \n    `market` can be retrieved from /get-config endpoint(data->market)  \n    Ex: `US`  \n    Default value: `US`\n- **currency**  \n    `currency` can be retrieved from /get-config endpoint(data->currency)  \n    Ex: `USD`  \n    Default value: `USD`\n- **locale**  \n    `locale` can be retrieved from /get-config endpoint(data->locale)  \n    Ex: `en-US`  \n    Default value: `en-US`\n- **adults**  \n    Adults: 12+ years  \n    Type: number  \n    Ex: `3`  \n    Default value: `1`\n- **children**  \n    Children: 2-12 years  \n    Type: number  \n    Ex: `4`  \n    Default value: `0`\n- **infants**  \n    Infants: Under 2 years  \n    Type: number  \n    Ex: `1`  \n    Default value: `0`\n- **cabinClass**  \n    Cabin class  \n    Type: string  \n    Ex: `economy`  \n    Default value: `economy economy`: Economy  \n    `premium_economy`: Premium Economy  \n    `business`: Business  \n    `first`: First"
+              },
+              "response": []
+            },
+            {
+              "name": "flights/search-multi-city",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-RapidAPI-Key",
+                    "value": "{{RapidAPI-Key}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-RapidAPI-Host",
+                    "value": "sky-scanner3.p.rapidapi.com",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"market\": \"US\",\r\n    \"locale\": \"en-US\",\r\n    \"currency\": \"USD\",\r\n    \"adults\": 1,\r\n    \"children\": 0,\r\n    \"infants\": 0,\r\n    \"cabinClass\": \"economy\",\r\n    \"stops\": [\r\n        \"direct\",\r\n        \"1stop\",\r\n        \"2stops\"\r\n    ],\r\n    \"flights\": [\r\n        {\r\n            \"fromEntityId\": \"BCN\",\r\n            \"toEntityId\": \"NUE\",\r\n            \"departDate\": \"2024-06-21\"\r\n        },\r\n        {\r\n            \"fromEntityId\": \"PARI\",\r\n            \"toEntityId\": \"MSYA\",\r\n            \"departDate\": \"2024-06-28\"\r\n        }\r\n    ]\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://sky-scanner3.p.rapidapi.com/flights/search-multi-city",
+                  "protocol": "https",
+                  "host": [
+                    "sky-scanner3",
+                    "p",
+                    "rapidapi",
+                    "com"
+                  ],
+                  "path": [
+                    "flights",
+                    "search-multi-city"
+                  ]
+                },
+                "description": "### DESCRIPTION\n\nIn case the status is 'incomplete'(data->context->status=incomplete), you need to use the /flights/search-incomplete endpoint to get the full data until the status is 'complete'(data->context->status=complete)\n\n- **flights->fromEntityId**  \n    From location  \n    Required: true  \n    `fromEntityId` can be retrieved fromEx: `NYCA` New York (Any)\n    1. `/flights/auto-complete`: data->presentation->id / skyId\n    2. `/flights/airports`: data->id / skyId  \n        Ex: `PARI` Paris (Any)\n- **flights->toEntityId**  \n    To location  \n    `toEntityId` can be retrieved from\n    1. `/flights/auto-complete`: data->presentation->id / skyId\n    2. `/flights/airports`: data->id / skyId  \n        Ex: `MSYA` New Orleans (Any)\n- **flights->departDate**  \n    Depart date  \n    Required: true  \n    Format: `YYYY-MM-DD`  \n    Ex: `2024-02-14`\n- **stops**  \n    Stops  \n    It can input multiple values, and the values should be separated by commas  \n    Ex: \\[\"direct\",\"1stop\"\\]  \n    Default value: Select all  \n    `direct`: Direct  \n    `1stop`: 1 stop  \n    `2stops`: 2+ stops\n    \n- **market**  \n    `market` can be retrieved from /get-config endpoint(data->market)  \n    Ex: `US`  \n    Default value: `US`\n- **currency**  \n    `currency` can be retrieved from /get-config endpoint(data->currency)  \n    Ex: `USD`  \n    Default value: `USD`\n- **locale**  \n    `locale` can be retrieved from /get-config endpoint(data->locale)  \n    Ex: `en-US`  \n    Default value: `en-US`\n- **adults**  \n    Adults: 12+ years  \n    Type: number  \n    Ex: `3`  \n    Default value: `1`\n- **children**  \n    Children: 2-12 years  \n    Type: number  \n    Ex: `4`  \n    Default value: `0`\n- **infants**  \n    Infants: Under 2 years  \n    Type: number  \n    Ex: `1`  \n    Default value: `0`\n- **cabinClass**  \n    Cabin class  \n    Type: string  \n    Ex: `economy`  \n    Default value: `economy economy`: Economy  \n    `premium_economy`: Premium Economy  \n    `business`: Business  \n    `first`: First"
+              },
+              "response": []
+            },
+            {
+              "name": "flights/search-incomplete",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-RapidAPI-Key",
+                    "value": "{{RapidAPI-Key}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-RapidAPI-Host",
+                    "value": "sky-scanner3.p.rapidapi.com",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "https://sky-scanner3.p.rapidapi.com/flights/search-incomplete?sessionId=ClQIARJQCk4KJGQ1MDlmYWJhLWFkMDMtNDg1ZS1iZjc3LWFhODA2MDQ5YjNiOBACGiQyMWE0MjU0MS1lZjRjLTQ2NzQtOTI1MC0zNzE3NzAzZDE0NDASKHVzc180N2MxYzgzZS0zZTFjLTQ4ZmMtOGEyZi04MDIyYmMyMTQxODk=",
+                  "protocol": "https",
+                  "host": [
+                    "sky-scanner3",
+                    "p",
+                    "rapidapi",
+                    "com"
+                  ],
+                  "path": [
+                    "flights",
+                    "search-incomplete"
+                  ],
+                  "query": [
+                    {
+                      "key": "sessionId",
+                      "value": "ClQIARJQCk4KJGQ1MDlmYWJhLWFkMDMtNDg1ZS1iZjc3LWFhODA2MDQ5YjNiOBACGiQyMWE0MjU0MS1lZjRjLTQ2NzQtOTI1MC0zNzE3NzAzZDE0NDASKHVzc180N2MxYzgzZS0zZTFjLTQ4ZmMtOGEyZi04MDIyYmMyMTQxODk="
+                    }
+                  ]
+                },
+                "description": "### DESCRIPTION\n\nGet full data for **/flights/search-roundtrip** or **/flights/search-one-way** or **/flights/search-multi-city** endpoint\n\nYou need to call the API multiple times until the item status is 'complete'(data->context->status=complete)\n\n- **sessionId**  \n    Session id  \n    Required: true  \n    `sessionId` can be retrieved from **/flights/search-roundtrip** or **/flights/search-one-way** or **/flights/search-multi-city** endpoint(data->context->sessionId)\n- **stops**  \n    Stops  \n    It can input multiple values, and the values should be separated by commas  \n    Ex: `direct,1stop`  \n    Default value: Select all  \n    `direct`: Direct  \n    `1stop`: 1 stop  \n    `2stops`: 2+ stops\n- **market**  \n    `market` can be retrieved from /get-config endpoint(data->market)  \n    Ex: `US`  \n    Default value: `US`\n- **currency**  \n    `currency` can be retrieved from /get-config endpoint(data->currency)  \n    Ex: `USD`  \n    Default value: `USD`\n- **locale**  \n    `locale` can be retrieved from /get-config endpoint(data->locale)  \n    Ex: `en-US`  \n    Default value: `en-US`"
+              },
+              "response": []
+            },
+            {
+              "name": "flights/detail",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-RapidAPI-Key",
+                    "value": "{{RapidAPI-Key}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-RapidAPI-Host",
+                    "value": "sky-scanner3.p.rapidapi.com",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "https://sky-scanner3.p.rapidapi.com/flights/detail?itineraryId=10413-2406032005--30667-0-12712-2406032215&token=eyJhIjoxLCJjIjowLCJpIjowLCJjYyI6ImVjb25vbXkiLCJvIjoiQ0RHIiwiZCI6IkpGSyIsImQxIjoiMjAyNC0wNi0wMyJ9",
+                  "protocol": "https",
+                  "host": [
+                    "sky-scanner3",
+                    "p",
+                    "rapidapi",
+                    "com"
+                  ],
+                  "path": [
+                    "flights",
+                    "detail"
+                  ],
+                  "query": [
+                    {
+                      "key": "itineraryId",
+                      "value": "10413-2406032005--30667-0-12712-2406032215"
+                    },
+                    {
+                      "key": "token",
+                      "value": "eyJhIjoxLCJjIjowLCJpIjowLCJjYyI6ImVjb25vbXkiLCJvIjoiQ0RHIiwiZCI6IkpGSyIsImQxIjoiMjAyNC0wNi0wMyJ9"
+                    }
+                  ]
+                },
+                "description": "### DESCRIPTION\n\n- **token**  \n    Required: true  \n    `token` can be retrieved from **/flights/search-roundtrip** or **/flights/search-one-way** or **/flights/search-multi-city** endpoint (data->token)\n    \n- **itineraryId**  \n    Itinerary id  \n    Required: true  \n    `itineraryId` can be retrieved from **/flights/search-roundtrip** or **/flights/search-one-way** or **/flights/search-multi-city** endpoint (data->itineraries->id)\n    \n- **market**  \n    `market` can be retrieved from /get-config endpoint(data->market)  \n    Ex: `US`  \n    Default value: `US`\n    \n- **currency**  \n    `currency` can be retrieved from /get-config endpoint(data->currency)  \n    Ex: `USD`  \n    Default value: `USD`\n    \n- **locale**  \n    `locale` can be retrieved from /get-config endpoint(data->locale)  \n    Ex: `en-US`  \n    Default value: `en-US`"
+              },
+              "response": []
+            },
+            {
+              "name": "flights/price-calendar",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-RapidAPI-Key",
+                    "value": "{{RapidAPI-Key}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-RapidAPI-Host",
+                    "value": "sky-scanner3.p.rapidapi.com",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "https://sky-scanner3.p.rapidapi.com/flights/price-calendar?fromEntityId=CDG&departDate=2024-06-01",
+                  "protocol": "https",
+                  "host": [
+                    "sky-scanner3",
+                    "p",
+                    "rapidapi",
+                    "com"
+                  ],
+                  "path": [
+                    "flights",
+                    "price-calendar"
+                  ],
+                  "query": [
+                    {
+                      "key": "fromEntityId",
+                      "value": "CDG"
+                    },
+                    {
+                      "key": "departDate",
+                      "value": "2024-06-01"
+                    }
+                  ]
+                },
+                "description": "### DESCRIPTION\n\n- **fromEntityId**  \n    From location  \n    Required: true  \n    `fromEntityId` can be retrieved fromEx: `NYCA` New York (Any)\n    1. `/flights/auto-complete`: data->presentation->id / skyId\n    2. `/flights/airports`: data->id / skyId  \n        Ex: `PARI` Paris (Any)\n- **departDate**Depart date  \n    Required: true  \n    Format: `YYYY-MM-DD`  \n    Ex: `2024-02-14`\n- **toEntityId**  \n    To location  \n    `toEntityId` can be retrieved from\n    1. `/flights/auto-complete`: data->presentation->id / skyId\n    2. `/flights/airports`: data->id / skyId  \n        Ex: `MSYA` New Orleans (Any)\n- **market**  \n    `market` can be retrieved from /get-config endpoint(data->market)  \n    Ex: `US`  \n    Default value: `US`\n- **currency**  \n    `currency` can be retrieved from /get-config endpoint(data->currency)  \n    Ex: `USD`  \n    Default value: `USD`\n- **locale**  \n    `locale` can be retrieved from /get-config endpoint(data->locale)  \n    Ex: `en-US`  \n    Default value: `en-US`"
+              },
+              "response": []
+            },
+            {
+              "name": "flights/price-calendar-return",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-RapidAPI-Key",
+                    "value": "{{RapidAPI-Key}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-RapidAPI-Host",
+                    "value": "sky-scanner3.p.rapidapi.com",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "https://sky-scanner3.p.rapidapi.com/flights/price-calendar-return?fromEntityId=CDG&departDate=2024-06-15&returnDate=2024-09-17",
+                  "protocol": "https",
+                  "host": [
+                    "sky-scanner3",
+                    "p",
+                    "rapidapi",
+                    "com"
+                  ],
+                  "path": [
+                    "flights",
+                    "price-calendar-return"
+                  ],
+                  "query": [
+                    {
+                      "key": "fromEntityId",
+                      "value": "CDG"
+                    },
+                    {
+                      "key": "departDate",
+                      "value": "2024-06-15"
+                    },
+                    {
+                      "key": "returnDate",
+                      "value": "2024-09-17"
+                    }
+                  ]
+                },
+                "description": "### DESCRIPTION\n\n- **fromEntityId**  \n    From location  \n    Required: true  \n    `fromEntityId` can be retrieved fromEx: `NYCA` New York (Any)\n    1. `/flights/auto-complete`: data->presentation->id / skyId\n    2. `/flights/airports`: data->id / skyId  \n        Ex: `PARI` Paris (Any)\n- **Depart date**  \n    Required: true  \n    Format: `YYYY-MM-DD`  \n    Ex: `2024-02-14`\n- **returnDate**  \n    Return date  \n    Required: true  \n    Format: `YYYY-MM-DD`  \n    Ex: `2024-02-15`\n- **toEntityId**  \n    To location  \n    `toEntityId` can be retrieved from\n    1. `/flights/auto-complete`: data->presentation->id / skyId\n    2. `/flights/airports`: data->id / skyId  \n        Ex: `MSYA` New Orleans (Any)\n- **market**  \n    `market` can be retrieved from /get-config endpoint(data->market)  \n    Ex: `US`  \n    Default value: `US`\n- **currency**  \n    `currency` can be retrieved from /get-config endpoint(data->currency)  \n    Ex: `USD`  \n    Default value: `USD`\n- **locale**  \n    `locale` can be retrieved from /get-config endpoint(data->locale)  \n    Ex: `en-US`  \n    Default value: `en-US`"
+              },
+              "response": []
+            },
+            {
+              "name": "flights/cheapest-one-way",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-RapidAPI-Key",
+                    "value": "{{RapidAPI-Key}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-RapidAPI-Host",
+                    "value": "sky-scanner3.p.rapidapi.com",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "https://sky-scanner3.p.rapidapi.com/flights/cheapest-one-way?fromEntityId=CDG&toEntityId=JFK&departDate=2024-06-15",
+                  "protocol": "https",
+                  "host": [
+                    "sky-scanner3",
+                    "p",
+                    "rapidapi",
+                    "com"
+                  ],
+                  "path": [
+                    "flights",
+                    "cheapest-one-way"
+                  ],
+                  "query": [
+                    {
+                      "key": "fromEntityId",
+                      "value": "CDG"
+                    },
+                    {
+                      "key": "toEntityId",
+                      "value": "JFK",
+                      "type": "text"
+                    },
+                    {
+                      "key": "departDate",
+                      "value": "2024-06-15"
+                    }
+                  ]
+                },
+                "description": "### DESCRIPTION\n\n- **fromEntityId**  \n    From location  \n    Required: true  \n    `fromEntityId` can be retrieved fromEx: `NYCA` New York (Any)\n    \n    1. `/flights/auto-complete`: data->presentation->id / skyId\n        \n    2. `/flights/airports`: data->id / skyId  \n        Ex: `PARI` Paris (Any)\n        \n- **toEntityId**  \n    To location  \n    `toEntityId` can be retrieved from\n    \n    1. `/flights/auto-complete`: data->presentation->id / skyId\n        \n    2. `/flights/airports`: data->id / skyId  \n        Ex: `MSYA` New Orleans (Any)\n        \n- **departDate**  \n    Depart date  \n    Required: true  \n    Format: `YYYY-MM-DD`  \n    Ex: `2024-02-14`\n    \n- **market**  \n    `market` can be retrieved from /get-config endpoint(data->market)  \n    Ex: `US`  \n    Default value: `US`\n    \n- **currency**  \n    `currency` can be retrieved from /get-config endpoint(data->currency)  \n    Ex: `USD`  \n    Default value: `USD`\n    \n- **locale**  \n    `locale` can be retrieved from /get-config endpoint(data->locale)  \n    Ex: `en-US`  \n    Default value: `en-US`"
+              },
+              "response": []
+            },
+            {
+              "name": "flights/skyId-list",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-RapidAPI-Key",
+                    "value": "{{RapidAPI-Key}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-RapidAPI-Host",
+                    "value": "sky-scanner3.p.rapidapi.com",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "https://sky-scanner3.p.rapidapi.com/flights/skyId-list",
+                  "protocol": "https",
+                  "host": [
+                    "sky-scanner3",
+                    "p",
+                    "rapidapi",
+                    "com"
+                  ],
+                  "path": [
+                    "flights",
+                    "skyId-list"
+                  ]
+                },
+                "description": "### DESCRIPTION\n\nGet skyId List"
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "flights/get-config",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-RapidAPI-Key",
+                "value": "{{RapidAPI-Key}}",
+                "type": "text"
+              },
+              {
+                "key": "X-RapidAPI-Host",
+                "value": "sky-scanner3.p.rapidapi.com",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "https://sky-scanner3.p.rapidapi.com/get-config",
+              "protocol": "https",
+              "host": [
+                "sky-scanner3",
+                "p",
+                "rapidapi",
+                "com"
+              ],
+              "path": [
+                "get-config"
+              ]
+            },
+            "description": "### DESCRIPTION\n\nGet market, locale, and currency to use in endpoints."
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "RapidAPI-Key",
+      "value": "{{RapidAPI-Key}}"
+    }
+  ]
+}

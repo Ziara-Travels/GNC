@@ -462,6 +462,18 @@ class OrderFlightController extends Controller
     
     private function createAmadeusBooking($booking, $bookingData)
     {
+        // RapidAPI/Skyscanner offers are metasearch results - there is no
+        // Amadeus flight-order to create. Record the itinerary locally instead.
+        if (isset($bookingData['source']) && $bookingData['source'] === 'skyscanner') {
+            return [
+                'success' => true,
+                'booking_id' => 'SKY-' . $booking->booking_reference,
+                'booking_data' => $bookingData,
+                'e_ticket_data' => $this->buildSkyETicketData($bookingData),
+                'message' => 'Flight itinerary recorded (Sky Scanner offer)',
+            ];
+        }
+
         try {
             $accessToken = $this->getAccessToken();
             
@@ -610,6 +622,32 @@ class OrderFlightController extends Controller
             }
         }
         
+        return $eTickets;
+    }
+
+    /**
+     * Build e-ticket style data from a normalized Sky Scanner offer so the
+     * e-ticket PDF view keeps working without an Amadeus flight-order.
+     */
+    private function buildSkyETicketData($bookingData)
+    {
+        $eTickets = [];
+
+        foreach (($bookingData['itineraries'] ?? []) as $itinerary) {
+            foreach (($itinerary['segments'] ?? []) as $segment) {
+                $eTickets[] = [
+                    'ticket_number' => 'SKY-' . ($bookingData['id'] ?? '') . '-' . ($segment['number'] ?? ''),
+                    'flight_number' => ($segment['carrierCode'] ?? '') . ($segment['number'] ?? ''),
+                    'departure_airport' => $segment['departure']['iataCode'] ?? null,
+                    'arrival_airport' => $segment['arrival']['iataCode'] ?? null,
+                    'departure_time' => $segment['departure']['at'] ?? null,
+                    'arrival_time' => $segment['arrival']['at'] ?? null,
+                    'cabin_class' => $bookingData['travelerPricings'][0]['fareDetailsBySegment'][0]['cabin'] ?? 'ECONOMY',
+                    'aircraft_type' => $segment['aircraft'] ?? null,
+                ];
+            }
+        }
+
         return $eTickets;
     }
     
@@ -968,7 +1006,7 @@ class OrderFlightController extends Controller
                     'booking_id' => $booking->id,
                     'booking_reference' => $booking->booking_reference,
                 ],
-                'action_url' => route('bookings.view', $booking->booking_reference),
+                'action_url' => route('bookings.detail', $booking->booking_reference),
                 'priority' => 'high'
             ]);
         }
@@ -986,7 +1024,7 @@ class OrderFlightController extends Controller
                     'booking_reference' => $booking->booking_reference,
                     'user_id' => $user->id,
                 ],
-                'action_url' => route('admin.bookings.view', $booking->id),
+                'action_url' => route('admin.bookings.all'),
                 'priority' => 'medium'
             ]);
         }

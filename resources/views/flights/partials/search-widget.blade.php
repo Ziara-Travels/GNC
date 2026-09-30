@@ -38,6 +38,7 @@
                         <i class="fas fa-plane-departure absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-300 text-[10px]"></i>
                         <input type="text" name="from" id="{{ $idPrefix }}_from" class="w-full pl-7 pr-2 py-2 border border-gray-200 rounded-lg text-xs text-gray-800 focus:ring-1 focus:ring-blue-500 airport-autocomplete" placeholder="City or Airport" autocomplete="off" required>
                         <input type="hidden" name="from_iata" id="{{ $idPrefix }}_from_iata">
+                        <input type="hidden" name="from_entity" id="{{ $idPrefix }}_from_entity">
                     </div>
                     <div class="airport-suggestions absolute z-50 w-full bg-white border border-gray-200 rounded-lg shadow-xl mt-1 hidden max-h-48 overflow-y-auto"></div>
                 </div>
@@ -47,6 +48,7 @@
                         <i class="fas fa-plane-arrival absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-300 text-[10px]"></i>
                         <input type="text" name="to" id="{{ $idPrefix }}_to" class="w-full pl-7 pr-2 py-2 border border-gray-200 rounded-lg text-xs text-gray-800 focus:ring-1 focus:ring-blue-500 airport-autocomplete" placeholder="City or Airport" autocomplete="off" required>
                         <input type="hidden" name="to_iata" id="{{ $idPrefix }}_to_iata">
+                        <input type="hidden" name="to_entity" id="{{ $idPrefix }}_to_entity">
                     </div>
                     <div class="airport-suggestions absolute z-50 w-full bg-white border border-gray-200 rounded-lg shadow-xl mt-1 hidden max-h-48 overflow-y-auto"></div>
                 </div>

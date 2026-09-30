@@ -1,114 +1,169 @@
 @extends('layouts.main')
 
+@section('title', 'Book Flights to East Africa - Ziara Travel')
+
 @section('content')
-{{-- ===== HERO + SEARCH ===== --}}
-<section class="relative bg-slate-900 overflow-hidden">
-    <img src="https://images.unsplash.com/photo-1436491865332-7a61a109db05?w=1400&h=500&fit=crop" alt="" class="absolute inset-0 w-full h-full object-cover opacity-25" loading="eager">
-    <div class="relative max-w-5xl mx-auto px-4 pt-28 pb-10">
-        <h1 class="text-2xl md:text-3xl font-bold text-white mb-1 text-center">Find Your Perfect Flight</h1>
-        <p class="text-xs text-gray-300 text-center mb-8">Search across 500+ airlines for the best fares to East Africa and beyond.</p>
+@php
+    $routes = [
+        ['to'=>'Mombasa','code'=>'MBA','dur'=>'55m','price'=>'7,500','airline'=>'Kenya Airways','img'=>'https://images.unsplash.com/photo-1596005554384-d293674c91d7?w=300&h=180&fit=crop'],
+        ['to'=>'Zanzibar','code'=>'ZNZ','dur'=>'1h 30m','price'=>'12,000','airline'=>'Precision Air','img'=>'https://images.unsplash.com/photo-1586861635167-e5223aadc9fe?w=300&h=180&fit=crop'],
+        ['to'=>'Dar es Salaam','code'=>'DAR','dur'=>'1h 15m','price'=>'11,000','airline'=>'Fastjet','img'=>'https://images.unsplash.com/photo-1611348524140-53c9a25263d6?w=300&h=180&fit=crop'],
+        ['to'=>'Kampala','code'=>'EBB','dur'=>'1h 20m','price'=>'14,500','airline'=>'Kenya Airways','img'=>'https://images.unsplash.com/photo-1619122753925-a01d8bb38c20?w=300&h=180&fit=crop'],
+        ['to'=>'Kigali','code'=>'KGL','dur'=>'1h 35m','price'=>'16,500','airline'=>'RwandAir','img'=>'https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=300&h=180&fit=crop'],
+        ['to'=>'Addis Ababa','code'=>'ADD','dur'=>'2h 10m','price'=>'24,000','airline'=>'Ethiopian','img'=>'https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=300&h=180&fit=crop'],
+    ];
+    $steps = [
+        ['icon'=>'fa-search','t'=>'Search','d'=>'Enter your travel details above.'],
+        ['icon'=>'fa-list-check','t'=>'Compare','d'=>'Review prices across airlines.'],
+        ['icon'=>'fa-credit-card','t'=>'Pay','d'=>'Pay via M-Pesa, Equity or card.'],
+        ['icon'=>'fa-ticket-alt','t'=>'Fly','d'=>'Receive your e-ticket instantly.'],
+    ];
+    $faqs = [
+        ['q'=>'How far in advance should I book?','a'=>'For the best prices, book domestic flights 2-4 weeks ahead and international flights 4-8 weeks ahead.'],
+        ['q'=>'Can I change my flight after booking?','a'=>'Changes depend on your fare type. Flexible fares allow free changes; standard fares may incur a fee.'],
+        ['q'=>'What baggage is included?','a'=>'Baggage allowance varies by airline and fare class. Check your ticket details for specifics.'],
+        ['q'=>'How do I check in for my flight?','a'=>'Most airlines allow online check-in 24-48 hours before departure via their website or app.'],
+        ['q'=>'What payment methods are accepted?','a'=>'We accept M-Pesa, M-Pesa STK Push, Equity Eazzy Banking, credit/debit cards and bank transfers.'],
+    ];
+@endphp
 
-        @include('flights.partials.search-widget', ['idPrefix' => 'sf'])
+<style>
+.ziara-flight-search .ziara-archive__hero { --zt-maroon:#7b2a1b;--zt-maroon-deep:#6b1d15;--zt-gold:#d9a561;--zt-gold-bright:#f3d24a; }
+.ziara-flight-search__widget { max-width:900px;margin:0 auto; }
+.ziara-flight-search__widget .ff-trip-tab.active { color:#7b2a1b;border-bottom-color:#d9a561;background:var(--gold-pale); }
+.ziara-flight-search__widget .ff-trip-tab:hover:not(.active) { background:var(--gold-pale);color:#7b2a1b; }
+.ziara-flight-search__widget input:focus,
+.ziara-flight-search__widget select:focus { border-color:#d9a561 !important;box-shadow:0 0 0 3px rgba(217,165,97,0.22) !important;outline:none; }
+.ziara-flight-search__widget button[type="submit"] { background:#7b2a1b !important;border:1px solid #6b1d15; }
+.ziara-flight-search__widget button[type="submit"]:hover { background:#6b1d15 !important; }
+.ziara-flight-search__widget #sf_addLeg { color:#7b2a1b !important;border-color:#d9a561 !important; }
+.ziara-flight-search__widget #sf_addLeg:hover { background:var(--gold-pale) !important; }
+.ziara-flight-search__widget .ff-cal-day:hover:not(.ff-cal-disabled) { background:var(--gold-pale); }
+.ziara-flight-search__widget .ff-cal-day.ff-cal-selected { background:#7b2a1b; }
+.ziara-flight-search__widget .ff-cal-day.ff-cal-today:not(.ff-cal-selected) { border:1px solid #d9a561; }
+.ziara-flight-search__widget .ff-calendar-popover { border-color:#e5d3b5; }
+.ziara-flight-search .ziara-faqbox__item { border:1px solid var(--gold-border);border-radius:14px;background:#fff;overflow:hidden; }
+.ziara-flight-search .ziara-faqbox__item .faq-toggle:hover { background:var(--gold-pale); }
+.ziara-flight-search .ziara-faqbox__item .faq-toggle span { color:var(--maroon);font-family:'Cormorant Garamond',Georgia,serif;font-size:19px;font-weight:600; }
+.ziara-flight-search .ziara-faqbox__item .faq-toggle i { color:var(--gold); }
+.ziara-flight-search .ziara-faqbox__item .faq-content p { margin:0;color:var(--muted);font-size:14.5px;line-height:1.75; }
+</style>
+
+@include('partials.ziara-page-hero', [
+    'kicker' => 'Flights',
+    'title'  => 'Find Your Perfect <em>Flight</em>',
+    'intro'  => 'Search across 500+ airlines for the best fares to East Africa and beyond.',
+    'crumbs' => [
+        ['label' => 'Home', 'url' => route('home')],
+        ['label' => 'Flights', 'url' => route('flights.public.search')],
+    ],
+])
+
+<section class="zt-section zt-section--pale ziara-flight-search" style="--maroon:#7b2a1b;--maroon-deep:#6b1d15;--gold:#d9a561;--gold-bright:#f3d24a;">
+    <div class="container">
+        <div class="ziara-panel ziara-flight-search__widget" style="padding:26px;">
+            @include('flights.partials.search-widget', ['idPrefix' => 'sf'])
+        </div>
     </div>
 </section>
 
-{{-- ===== POPULAR ROUTES ===== --}}
-<section class="py-10 bg-white">
-    <div class="max-w-5xl mx-auto px-4">
-        <div class="flex items-end justify-between mb-6">
-            <div><span class="text-[10px] font-bold text-indigo-600 uppercase tracking-wider">Trending</span><h2 class="text-lg font-bold text-gray-900 mt-0.5">Popular Routes from Nairobi</h2></div>
-        </div>
-        @php $routes = [
-            ['to'=>'Mombasa','code'=>'MBA','dur'=>'55m','price'=>'7,500','airline'=>'Kenya Airways','img'=>'https://images.unsplash.com/photo-1596005554384-d293674c91d7?w=300&h=180&fit=crop'],
-            ['to'=>'Zanzibar','code'=>'ZNZ','dur'=>'1h 30m','price'=>'12,000','airline'=>'Precision Air','img'=>'https://images.unsplash.com/photo-1586861635167-e5223aadc9fe?w=300&h=180&fit=crop'],
-            ['to'=>'Dar es Salaam','code'=>'DAR','dur'=>'1h 15m','price'=>'11,000','airline'=>'Fastjet','img'=>'https://images.unsplash.com/photo-1611348524140-53c9a25263d6?w=300&h=180&fit=crop'],
-            ['to'=>'Kampala','code'=>'EBB','dur'=>'1h 20m','price'=>'14,500','airline'=>'Kenya Airways','img'=>'https://images.unsplash.com/photo-1619122753925-a01d8bb38c20?w=300&h=180&fit=crop'],
-            ['to'=>'Kigali','code'=>'KGL','dur'=>'1h 35m','price'=>'16,500','airline'=>'RwandAir','img'=>'https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=300&h=180&fit=crop'],
-            ['to'=>'Addis Ababa','code'=>'ADD','dur'=>'2h 10m','price'=>'24,000','airline'=>'Ethiopian','img'=>'https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=300&h=180&fit=crop'],
-        ]; @endphp
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+<section class="zt-section zt-section--white ziara-flight-search" style="--maroon:#7b2a1b;--maroon-deep:#6b1d15;--gold:#d9a561;--gold-bright:#f3d24a;">
+    <div class="container">
+        @include('partials.ziara-section-head', [
+            'sub'   => 'Trending',
+            'title' => 'Popular Routes from <em>Nairobi</em>',
+            'align' => 'center',
+        ])
+        <div class="ziara-deals">
             @foreach($routes as $r)
-            <div class="group bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
-                <div class="relative h-28 overflow-hidden">
-                    <img src="{{ $r['img'] }}" alt="{{ $r['to'] }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                    <div class="absolute bottom-2 left-2.5"><span class="text-xs font-bold text-white">NBO → {{ $r['code'] }}</span><br><span class="text-[9px] text-white/70">{{ $r['to'] }} &bull; {{ $r['dur'] }}</span></div>
-                </div>
-                <div class="p-2.5 flex items-center justify-between">
-                    <div><span class="text-[10px] text-gray-400">From</span><span class="text-xs font-bold text-blue-600 ml-1">KES {{ $r['price'] }}</span></div>
-                    <span class="text-[9px] text-gray-400">{{ $r['airline'] }}</span>
-                </div>
-            </div>
+                <article class="ziara-deal">
+                    <div class="ziara-deal__media">
+                        <img src="{{ $r['img'] }}" alt="{{ $r['to'] }}" loading="lazy">
+                        <span class="ziara-deal__badge">NBO &rarr; {{ $r['code'] }}</span>
+                    </div>
+                    <div class="ziara-deal__body">
+                        <h3 class="ziara-deal__title">{{ $r['to'] }}</h3>
+                        <p class="ziara-deal__desc">{{ $r['to'] }} &bull; {{ $r['dur'] }} &bull; {{ $r['airline'] }}</p>
+                        <div class="ziara-deal__price">
+                            <small style="font-size:12px;color:var(--muted);">From</small>
+                            <strong>KES {{ $r['price'] }}</strong>
+                        </div>
+                    </div>
+                </article>
             @endforeach
         </div>
     </div>
 </section>
 
-{{-- ===== CTA ===== --}}
-<section class="py-10 bg-gray-50">
-    <div class="max-w-5xl mx-auto px-4">
-        <div class="flex flex-col md:flex-row items-center gap-8 bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100">
-            <div class="md:w-1/2"><img src="https://images.unsplash.com/photo-1488085061387-422e29b40080?w=600&h=400&fit=crop" alt="Travel" class="w-full h-52 md:h-64 object-cover" loading="lazy"></div>
-            <div class="md:w-1/2 p-6">
-                <span class="text-[10px] font-bold text-blue-600 uppercase tracking-wider">Save More</span>
-                <h2 class="text-xl font-bold text-gray-900 mt-1 mb-2">Flight + Hotel Packages</h2>
-                <p class="text-xs text-gray-500 leading-relaxed mb-4">Bundle your flight with a hotel and save up to 30% on your total trip cost. Flexible cancellation on select packages.</p>
-                <a href="{{ url('/') }}" class="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors">Browse Packages <i class="fas fa-arrow-right text-[10px]"></i></a>
+<section class="zt-section zt-section--pale ziara-flight-search" style="--maroon:#7b2a1b;--maroon-deep:#6b1d15;--gold:#d9a561;--gold-bright:#f3d24a;">
+    <div class="container">
+        <div class="ziara-split">
+            <div><img src="https://images.unsplash.com/photo-1488085061387-422e29b40080?w=600&h=400&fit=crop" alt="Travel" loading="lazy" style="width:100%;border-radius:20px;box-shadow:0 24px 60px rgba(10,5,3,.18);"></div>
+            <div>
+                @include('partials.ziara-section-head', [
+                    'sub'   => 'Save More',
+                    'title' => 'Flight + Hotel <em>Packages</em>',
+                    'align' => 'left',
+                    'desc'  => 'Bundle your flight with a hotel and save up to 30% on your total trip cost. Flexible cancellation on select packages.',
+                ])
+                <a href="{{ url('/') }}" class="ziara-btn ziara-btn--gold">Browse Packages <i class="fa-solid fa-arrow-right-long" aria-hidden="true"></i></a>
             </div>
         </div>
     </div>
 </section>
 
-{{-- ===== HOW IT WORKS ===== --}}
-<section class="py-10 bg-white">
-    <div class="max-w-5xl mx-auto px-4">
-        <h2 class="text-lg font-bold text-gray-900 text-center mb-6">How Flight Booking Works</h2>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            @php $steps = [['icon'=>'fa-search','t'=>'Search','d'=>'Enter your travel details above.'],['icon'=>'fa-list-check','t'=>'Compare','d'=>'Review prices across airlines.'],['icon'=>'fa-credit-card','t'=>'Pay','d'=>'Pay via M-Pesa, Equity or card.'],['icon'=>'fa-ticket-alt','t'=>'Fly','d'=>'Receive your e-ticket instantly.']]; @endphp
-            @foreach($steps as $i=>$s)
-            <div class="text-center p-4 rounded-xl bg-gray-50">
-                <div class="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-blue-100 mb-2 relative"><i class="fas {{ $s['icon'] }} text-sm text-blue-600"></i><span class="absolute -top-1 -right-1 bg-blue-600 text-white text-[8px] font-bold w-4 h-4 rounded-full flex items-center justify-center">{{ $i+1 }}</span></div>
-                <h3 class="text-xs font-semibold text-gray-900 mb-0.5">{{ $s['t'] }}</h3>
-                <p class="text-[10px] text-gray-500">{{ $s['d'] }}</p>
-            </div>
+<section class="zt-section zt-section--white ziara-flight-search" style="--maroon:#7b2a1b;--maroon-deep:#6b1d15;--gold:#d9a561;--gold-bright:#f3d24a;">
+    <div class="container">
+        @include('partials.ziara-section-head', [
+            'sub'   => 'Simple Steps',
+            'title' => 'How Flight Booking <em>Works</em>',
+            'align' => 'center',
+        ])
+        <div class="ziara-minifeatures">
+            @foreach($steps as $s)
+                <div class="ziara-minifeature">
+                    <span class="ziara-minifeature__icon"><i class="fas {{ $s['icon'] }}" aria-hidden="true"></i></span>
+                    <h3 class="ziara-minifeature__title">{{ $s['t'] }}</h3>
+                    <p class="ziara-minifeature__desc">{{ $s['d'] }}</p>
+                </div>
             @endforeach
         </div>
     </div>
 </section>
 
-{{-- ===== FAQ ===== --}}
-<section class="py-10 bg-gray-50">
-    <div class="max-w-2xl mx-auto px-4">
-        <h2 class="text-lg font-bold text-gray-900 text-center mb-6">Flight Booking FAQs</h2>
-        @php $faqs = [
-            ['q'=>'How far in advance should I book?','a'=>'For the best prices, book domestic flights 2-4 weeks ahead and international flights 4-8 weeks ahead.'],
-            ['q'=>'Can I change my flight after booking?','a'=>'Changes depend on your fare type. Flexible fares allow free changes; standard fares may incur a fee.'],
-            ['q'=>'What baggage is included?','a'=>'Baggage allowance varies by airline and fare class. Check your ticket details for specifics.'],
-            ['q'=>'How do I check in for my flight?','a'=>'Most airlines allow online check-in 24-48 hours before departure via their website or app.'],
-            ['q'=>'What payment methods are accepted?','a'=>'We accept M-Pesa, M-Pesa STK Push, Equity Eazzy Banking, credit/debit cards and bank transfers.'],
-        ]; @endphp
-        <div class="space-y-2">
+<section class="zt-section zt-section--pale ziara-flight-search" style="--maroon:#7b2a1b;--maroon-deep:#6b1d15;--gold:#d9a561;--gold-bright:#f3d24a;">
+    <div class="container">
+        @include('partials.ziara-section-head', [
+            'sub'   => 'Need Help',
+            'title' => 'Flight Booking <em>FAQs</em>',
+            'align' => 'center',
+        ])
+        <div class="ziara-flight-search__faqs">
             @foreach($faqs as $faq)
-            <div class="border border-gray-200 rounded-lg bg-white overflow-hidden">
-                <button class="faq-toggle w-full flex items-center justify-between p-3 text-left hover:bg-gray-50 transition-colors" onclick="toggleFaq(this)">
-                    <span class="text-xs font-semibold text-gray-900 pr-3">{{ $faq['q'] }}</span>
-                    <i class="fas fa-chevron-down text-gray-300 text-[10px] transition-transform duration-200 shrink-0"></i>
-                </button>
-                <div class="faq-content hidden px-3 pb-3"><p class="text-[11px] text-gray-500 leading-relaxed">{{ $faq['a'] }}</p></div>
-            </div>
+                <div class="ziara-faqbox__item">
+                    <button class="faq-toggle w-full flex items-center justify-between p-4 text-left transition-colors" onclick="toggleFaq(this)">
+                        <span class="pr-3">{{ $faq['q'] }}</span>
+                        <i class="fas fa-chevron-down text-[10px] transition-transform duration-200 shrink-0"></i>
+                    </button>
+                    <div class="faq-content hidden px-4 pb-4"><p>{{ $faq['a'] }}</p></div>
+                </div>
             @endforeach
         </div>
     </div>
 </section>
 
-{{-- ===== NEWSLETTER ===== --}}
-<section class="py-10 bg-blue-600">
-    <div class="max-w-xl mx-auto px-4 text-center">
-        <h2 class="text-base font-bold text-white mb-1">Get Flight Deal Alerts</h2>
-        <p class="text-[11px] text-blue-100 mb-4">Be the first to know about fare drops and flash sales.</p>
-        <form class="flex gap-2" onsubmit="event.preventDefault(); alert('Subscribed!'); this.reset();">
+<section class="zt-section ziara-cta-band ziara-flight-search" style="--maroon:#6b1d15;--maroon-deep:#4d150f;--gold:#d9a561;--gold-bright:#f3d24a;">
+    <div class="container" style="max-width:640px;">
+        <div class="gsc-heading gsc-heading--light align-center style-1 widget auto-responsive" style="margin-bottom:26px;">
+            <div class="content-inner">
+                <div class="sub-title"><span>Stay in the Loop</span></div>
+                <h2 class="title"><span>Get <em>flight deal</em> alerts</span></h2>
+                <div class="title-desc" style="margin-left:auto;margin-right:auto;max-width:520px;">Be the first to know about fare drops and flash sales.</div>
+            </div>
+        </div>
+        <form class="flex gap-2" style="max-width:520px;margin:0 auto;" onsubmit="event.preventDefault(); alert('Subscribed!'); this.reset();">
             <input type="email" placeholder="Your email" class="flex-1 px-3 py-2 rounded-lg text-xs text-gray-800 focus:ring-2 focus:ring-amber-400 focus:outline-none" required>
-            <button type="submit" class="bg-amber-500 hover:bg-amber-600 text-white text-xs font-semibold px-5 py-2 rounded-lg transition-colors whitespace-nowrap">Subscribe</button>
+            <button type="submit" class="ziara-btn ziara-btn--gold text-xs whitespace-nowrap">Subscribe</button>
         </form>
     </div>
 </section>

@@ -86,7 +86,7 @@
                         Check-in Now
                     </a>
                 @endif
-                <a href="{{ route('booking.details', $booking->booking_reference) }}" class="button">
+                <a href="{{ route('bookings.detail', $booking->booking_reference) }}" class="button">
                     View Booking
                 </a>
             </div>

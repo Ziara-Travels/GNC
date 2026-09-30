@@ -55,180 +55,130 @@ class Permission extends Model
     public static function createDefaultPermissions()
     {
         $permissions = [
+            // Flight Management
+            [
+                'name' => 'flights.search',
+                'display_name' => 'Search Flights',
+                'description' => 'Can search for flights',
+                'group' => 'Flight Management',
+                'guard_name' => 'web',
+                'is_system_permission' => true
+            ],
+            [
+                'name' => 'flights.view',
+                'display_name' => 'View Flights',
+                'description' => 'Can view flight search results and details',
+                'group' => 'Flight Management',
+                'guard_name' => 'web',
+                'is_system_permission' => true
+            ],
+            [
+                'name' => 'flights.book',
+                'display_name' => 'Book Flights',
+                'description' => 'Can book flights',
+                'group' => 'Flight Management',
+                'guard_name' => 'web',
+                'is_system_permission' => true
+            ],
+            [
+                'name' => 'flights.search_for_others',
+                'display_name' => 'Search Flights For Others',
+                'description' => 'Can search flights on behalf of another user',
+                'group' => 'Flight Management',
+                'guard_name' => 'web',
+                'is_system_permission' => true
+            ],
+
+            // Booking Management
+            [
+                'name' => 'bookings.view_own',
+                'display_name' => 'View Own Bookings',
+                'description' => 'Can view only their own bookings',
+                'group' => 'Booking Management',
+                'guard_name' => 'web',
+                'is_system_permission' => true
+            ],
+
+            // Payment Management
+            [
+                'name' => 'payments.view',
+                'display_name' => 'View Payments',
+                'description' => 'Can view payment records',
+                'group' => 'Payment Management',
+                'guard_name' => 'web',
+                'is_system_permission' => true
+            ],
+            [
+                'name' => 'payments.view_all',
+                'display_name' => 'View All Payments',
+                'description' => 'Can view payment records for every user',
+                'group' => 'Payment Management',
+                'guard_name' => 'web',
+                'is_system_permission' => true
+            ],
+            [
+                'name' => 'payments.view_own',
+                'display_name' => 'View Own Payments',
+                'description' => 'Can view only their own payment records',
+                'group' => 'Payment Management',
+                'guard_name' => 'web',
+                'is_system_permission' => true
+            ],
+            [
+                'name' => 'payments.create',
+                'display_name' => 'Create Payments',
+                'description' => 'Can initiate payment records',
+                'group' => 'Payment Management',
+                'guard_name' => 'web',
+                'is_system_permission' => true
+            ],
+            [
+                'name' => 'payments.process',
+                'display_name' => 'Process Payments',
+                'description' => 'Can process and approve pending payments',
+                'group' => 'Payment Management',
+                'guard_name' => 'web',
+                'is_system_permission' => true
+            ],
+            [
+                'name' => 'payments.export',
+                'display_name' => 'Export Payments',
+                'description' => 'Can export payment data',
+                'group' => 'Payment Management',
+                'guard_name' => 'web',
+                'is_system_permission' => true
+            ],
+
             // User Management
             [
-                'name' => 'view_users',
-                'display_name' => 'View Users',
-                'description' => 'Can view user list and profiles',
+                'name' => 'users.view',
+                'display_name' => 'View User Records',
+                'description' => 'Can view user listings and profiles',
                 'group' => 'User Management',
                 'guard_name' => 'web',
                 'is_system_permission' => true
             ],
             [
-                'name' => 'create_users',
-                'display_name' => 'Create Users',
+                'name' => 'users.create',
+                'display_name' => 'Create User Records',
                 'description' => 'Can create new users',
                 'group' => 'User Management',
                 'guard_name' => 'web',
                 'is_system_permission' => true
             ],
             [
-                'name' => 'edit_users',
-                'display_name' => 'Edit Users',
-                'description' => 'Can edit user information',
+                'name' => 'users.update',
+                'display_name' => 'Update User Records',
+                'description' => 'Can update user information',
                 'group' => 'User Management',
                 'guard_name' => 'web',
                 'is_system_permission' => true
             ],
             [
-                'name' => 'delete_users',
-                'display_name' => 'Delete Users',
-                'description' => 'Can delete users',
+                'name' => 'users.manage',
+                'display_name' => 'Manage Users',
+                'description' => 'Can manage users, including their roles and status',
                 'group' => 'User Management',
-                'guard_name' => 'web',
-                'is_system_permission' => true
-            ],
-            [
-                'name' => 'manage_user_roles',
-                'display_name' => 'Manage User Roles',
-                'description' => 'Can assign/remove roles from users',
-                'group' => 'User Management',
-                'guard_name' => 'web',
-                'is_system_permission' => true
-            ],
-
-            // Role Management
-            [
-                'name' => 'view_roles',
-                'display_name' => 'View Roles',
-                'description' => 'Can view roles list',
-                'group' => 'Role Management',
-                'guard_name' => 'web',
-                'is_system_permission' => true
-            ],
-            [
-                'name' => 'create_roles',
-                'display_name' => 'Create Roles',
-                'description' => 'Can create new roles',
-                'group' => 'Role Management',
-                'guard_name' => 'web',
-                'is_system_permission' => true
-            ],
-            [
-                'name' => 'edit_roles',
-                'display_name' => 'Edit Roles',
-                'description' => 'Can edit roles',
-                'group' => 'Role Management',
-                'guard_name' => 'web',
-                'is_system_permission' => true
-            ],
-            [
-                'name' => 'delete_roles',
-                'display_name' => 'Delete Roles',
-                'description' => 'Can delete roles',
-                'group' => 'Role Management',
-                'guard_name' => 'web',
-                'is_system_permission' => true
-            ],
-
-            // Permission Management
-            [
-                'name' => 'view_permissions',
-                'display_name' => 'View Permissions',
-                'description' => 'Can view permissions list',
-                'group' => 'Permission Management',
-                'guard_name' => 'web',
-                'is_system_permission' => true
-            ],
-            [
-                'name' => 'create_permissions',
-                'display_name' => 'Create Permissions',
-                'description' => 'Can create new permissions',
-                'group' => 'Permission Management',
-                'guard_name' => 'web',
-                'is_system_permission' => true
-            ],
-            [
-                'name' => 'edit_permissions',
-                'display_name' => 'Edit Permissions',
-                'description' => 'Can edit permissions',
-                'group' => 'Permission Management',
-                'guard_name' => 'web',
-                'is_system_permission' => true
-            ],
-            [
-                'name' => 'delete_permissions',
-                'display_name' => 'Delete Permissions',
-                'description' => 'Can delete permissions',
-                'group' => 'Permission Management',
-                'guard_name' => 'web',
-                'is_system_permission' => true
-            ],
-
-            // System Management
-            [
-                'name' => 'view_dashboard',
-                'display_name' => 'View Dashboard',
-                'description' => 'Can access admin dashboard',
-                'group' => 'System Management',
-                'guard_name' => 'web',
-                'is_system_permission' => true
-            ],
-            [
-                'name' => 'manage_settings',
-                'display_name' => 'Manage Settings',
-                'description' => 'Can manage system settings',
-                'group' => 'System Management',
-                'guard_name' => 'web',
-                'is_system_permission' => true
-            ],
-            [
-                'name' => 'view_logs',
-                'display_name' => 'View Logs',
-                'description' => 'Can view system logs',
-                'group' => 'System Management',
-                'guard_name' => 'web',
-                'is_system_permission' => true
-            ],
-
-            // Content Management
-            [
-                'name' => 'view_content',
-                'display_name' => 'View Content',
-                'description' => 'Can view content',
-                'group' => 'Content Management',
-                'guard_name' => 'web',
-                'is_system_permission' => true
-            ],
-            [
-                'name' => 'create_content',
-                'display_name' => 'Create Content',
-                'description' => 'Can create new content',
-                'group' => 'Content Management',
-                'guard_name' => 'web',
-                'is_system_permission' => true
-            ],
-            [
-                'name' => 'edit_content',
-                'display_name' => 'Edit Content',
-                'description' => 'Can edit content',
-                'group' => 'Content Management',
-                'guard_name' => 'web',
-                'is_system_permission' => true
-            ],
-            [
-                'name' => 'delete_content',
-                'display_name' => 'Delete Content',
-                'description' => 'Can delete content',
-                'group' => 'Content Management',
-                'guard_name' => 'web',
-                'is_system_permission' => true
-            ],
-            [
-                'name' => 'publish_content',
-                'display_name' => 'Publish Content',
-                'description' => 'Can publish/unpublish content',
-                'group' => 'Content Management',
                 'guard_name' => 'web',
                 'is_system_permission' => true
             ]

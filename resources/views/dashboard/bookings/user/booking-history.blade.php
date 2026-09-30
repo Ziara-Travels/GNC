@@ -192,7 +192,7 @@
                                             <button onclick="viewDetails({{ $booking->id }})" class="text-[#2563eb] hover:text-[#1d4ed8]">
                                                 <i data-lucide="eye" class="h-4 w-4"></i>
                                             </button>
-                                            <a href="{{ route('dashboard.booking.print', $booking->id) }}" class="text-[#10b981] hover:text-[#059669]">
+                                            <a href="{{ route('bookings.show', $booking->id) }}" class="text-[#10b981] hover:text-[#059669]">
                                                 <i data-lucide="printer" class="h-4 w-4"></i>
                                             </a>
                                             @if($booking->status == 'pending')
@@ -305,7 +305,7 @@
                         </div>
                         <i data-lucide="chevron-right" class="h-4 w-4 text-[#64748b]"></i>
                     </a>
-                    <a href="{{ route('dashboard.profile') }}" class="flex items-center justify-between p-3 bg-[#f1f5f9] rounded-lg hover:bg-[#e2e8f0] transition-colors duration-200">
+                    <a href="{{ route('user.dashboard.profile') }}" class="flex items-center justify-between p-3 bg-[#f1f5f9] rounded-lg hover:bg-[#e2e8f0] transition-colors duration-200">
                         <div class="flex items-center">
                             <div class="h-8 w-8 rounded-full bg-[#8b5cf6] bg-opacity-10 flex items-center justify-center mr-3">
                                 <i data-lucide="user" class="h-4 w-4 text-[#8b5cf6]"></i>
@@ -568,7 +568,7 @@
         const status = document.getElementById('statusFilter').value;
         const payment = document.getElementById('paymentFilter').value;
         
-        window.location.href = `{{ route('dashboard.booking.history') }}?period=${period}&type=${type}&status=${status}&payment=${payment}`;
+        window.location.href = `{{ route('user.bookings.all') }}?period=${period}&type=${type}&status=${status}&payment=${payment}`;
     }
     
     // Export data function
@@ -578,7 +578,7 @@
         const status = document.getElementById('statusFilter').value;
         const payment = document.getElementById('paymentFilter').value;
         
-        window.open(`{{ route('dashboard.booking.export') }}?format=${format}&period=${period}&type=${type}&status=${status}&payment=${payment}`, '_blank');
+        window.open(`{{ route('gdpr.export-data') }}?format=${format}&period=${period}&type=${type}&status=${status}&payment=${payment}`, '_blank');
     }
     
     // View booking details

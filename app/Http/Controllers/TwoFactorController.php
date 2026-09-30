@@ -36,7 +36,7 @@ class TwoFactorController extends Controller
         // Check if 2FA is already set up
         $twoFactorAuth = $user->twoFactorAuth;
         if ($twoFactorAuth && $twoFactorAuth->enabled) {
-            return redirect()->route('profile.show')->with('info', 'Two-factor authentication is already enabled.');
+            return redirect()->route('user.profile.my')->with('info', 'Two-factor authentication is already enabled.');
         }
         
         // Generate new secret
@@ -109,7 +109,7 @@ class TwoFactorController extends Controller
         // Mark the session as 2FA verified
         Session::put('two_factor_verified', true);
         
-        return redirect()->route('profile.show')->with('success', 'Two-factor authentication has been enabled.');
+        return redirect()->route('user.profile.my')->with('success', 'Two-factor authentication has been enabled.');
     }
 
     /**
@@ -206,7 +206,7 @@ class TwoFactorController extends Controller
             $twoFactorAuth->save();
         }
         
-        return redirect()->route('profile.show')->with('success', 'Two-factor authentication has been disabled.');
+        return redirect()->route('user.profile.my')->with('success', 'Two-factor authentication has been disabled.');
     }
 
     /**
@@ -220,7 +220,7 @@ class TwoFactorController extends Controller
         $twoFactorAuth = $user->twoFactorAuth;
         
         if (!$twoFactorAuth || !$twoFactorAuth->enabled) {
-            return redirect()->route('profile.show')->with('error', 'Two-factor authentication is not enabled.');
+            return redirect()->route('user.profile.my')->with('error', 'Two-factor authentication is not enabled.');
         }
         
         // Generate 8 backup codes

@@ -2,18 +2,19 @@
 @section('title', 'Terms of Service - Ziara Travel')
 
 @section('content')
-{{-- ===== HERO ===== --}}
-<section class="relative bg-slate-900 overflow-hidden">
-    <img src="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=1400&h=500&fit=crop" alt="" class="absolute inset-0 w-full h-full object-cover opacity-20" loading="eager">
-    <div class="relative max-w-5xl mx-auto px-4 pt-28 pb-10 text-center">
-        <h1 class="text-2xl md:text-3xl font-bold text-white mb-1">Terms of <span class="text-amber-400">Service</span></h1>
-        <p class="text-xs text-gray-300">Last updated: August 2025</p>
-    </div>
-</section>
+@include('partials.ziara-page-hero', [
+    'kicker' => 'Terms of Service',
+    'title'  => 'Terms of <em>Service</em>',
+    'intro'  => 'Last updated: August 2025',
+])
 
-{{-- ===== TERMS CONTENT ===== --}}
-<section class="py-10 bg-white">
-    <div class="max-w-3xl mx-auto px-4 space-y-6">
+<section class="zt-section zt-section--white">
+    <div class="container" style="max-width:960px;">
+        @include('partials.ziara-section-head', [
+            'sub'   => 'Legal Terms',
+            'title' => 'Our <em>Terms</em>',
+            'align' => 'center',
+        ])
         @php $sections = [
             ['title'=>'1. Acceptance of Terms','text'=>'By accessing and using Ziara Travel\'s website and services, you agree to be bound by these Terms of Service. If you do not agree, please discontinue use of our services.'],
             ['title'=>'2. Services Description','text'=>'Ziara Travel provides an online platform for searching, comparing, and booking flights, hotels, and travel-related services. We act as an intermediary between you and travel service providers such as airlines and hotels.'],
@@ -29,27 +30,18 @@
         ]; @endphp
 
         @foreach($sections as $s)
-        <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
-            <h2 class="text-xs font-bold text-gray-900 mb-1.5">{{ $s['title'] }}</h2>
-            <p class="text-[11px] text-gray-500 leading-relaxed">{{ $s['text'] }}</p>
+        <div class="ziara-panel">
+            <h2 class="ziara-panel__title">{{ $s['title'] }}</h2>
+            <div class="ziara-prose"><p>{{ $s['text'] }}</p></div>
         </div>
         @endforeach
+
+        <div style="text-align:center;margin-top:36px;">
+            <p style="font-size:15px;color:var(--muted);margin:0 0 16px;">Have questions about our terms?</p>
+            <a href="{{ url('/contactus') }}" class="ziara-btn ziara-btn--gold">Contact Support</a>
+        </div>
     </div>
 </section>
 
-{{-- ===== CTA ===== --}}
-<section class="py-10 bg-gray-50">
-    <div class="max-w-5xl mx-auto px-4 text-center">
-        <p class="text-xs text-gray-500 mb-3">Have questions about our terms?</p>
-        <a href="{{ url('/contactus') }}" class="inline-block bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-5 py-2 rounded-lg transition-colors">Contact Support</a>
-    </div>
-</section>
-
-<section class="py-10 bg-emerald-600">
-    <div class="max-w-xl mx-auto px-4 text-center">
-        <h2 class="text-base font-bold text-white mb-1">Stay Updated</h2>
-        <p class="text-[11px] text-emerald-100 mb-4">Get notified about policy changes and travel updates.</p>
-        <form class="flex gap-2" onsubmit="event.preventDefault();alert('Subscribed!');this.reset();"><input type="email" placeholder="Your email" class="flex-1 px-3 py-2 rounded-lg text-xs text-gray-800 focus:ring-2 focus:ring-amber-400 focus:outline-none" required><button type="submit" class="bg-amber-500 hover:bg-amber-600 text-white text-xs font-semibold px-5 py-2 rounded-lg transition-colors whitespace-nowrap">Subscribe</button></form>
-    </div>
-</section>
+@include('partials.ziara-newsletter', ['title' => 'Stay Updated'])
 @endsection

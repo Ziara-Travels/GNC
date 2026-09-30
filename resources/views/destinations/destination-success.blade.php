@@ -1,8 +1,13 @@
 @extends('layouts.main')
 
-@section('styles')
+@section('content')
+@include('partials.ziara-page-hero', [
+    'kicker' => 'Booking Confirmed',
+    'title'  => 'Booking <em>Successful!</em>',
+    'intro'  => 'Your destination package has been confirmed.',
+])
+
 <style>
-    /* Custom animations */
     @keyframes fadeInUp {
         from {
             opacity: 0;
@@ -13,15 +18,15 @@
             transform: translateY(0);
         }
     }
-    
+
     .animate-fade-in-up {
         animation: fadeInUp 0.5s ease-out forwards;
     }
-    
+
     .animate-bounce-slow {
         animation: bounce 2s infinite;
     }
-    
+
     @keyframes pulse {
         0%, 100% {
             opacity: 1;
@@ -30,16 +35,15 @@
             opacity: 0.5;
         }
     }
-    
+
     .animate-pulse-slow {
         animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
     }
-    
-    /* Success icon animation */
+
     .success-animation {
         animation: scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
     }
-    
+
     @keyframes scaleIn {
         0% {
             transform: scale(0);
@@ -50,220 +54,174 @@
             opacity: 1;
         }
     }
-    
-    /* Countdown animation */
+
     .countdown-animation {
         transition: all 1s linear;
     }
 </style>
-@endsection
 
-@section('content')
-<div class="bg-gray-50 min-h-screen py-12">
-    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- Success Card -->
-        <div class="bg-white rounded-xl shadow-lg overflow-hidden animate-fade-in-up">
-            <!-- Success Header -->
-            <div class="bg-green-500 px-6 py-8 text-center">
-                <div class="success-animation mx-auto bg-white rounded-full h-24 w-24 flex items-center justify-center mb-6">
-                    <i data-lucide="check" class="h-12 w-12 text-green-500"></i>
+<section class="zt-section zt-section--pale">
+    <div class="container">
+        <div class="ziara-panel animate-fade-in-up" style="padding:0;overflow:hidden;">
+            <div class="ziara-panel--dark" style="text-align:center;padding:44px 28px;">
+                <div class="success-animation" style="margin:0 auto 24px;background:#fff;border-radius:50%;height:96px;width:96px;display:flex;align-items:center;justify-content:center;">
+                    <i data-lucide="check" style="height:48px;width:48px;color:var(--maroon);"></i>
                 </div>
-                <h1 class="text-3xl font-bold text-white">Booking Successful!</h1>
-                <p class="text-green-100 mt-2">Your destination package has been confirmed.</p>
+                <h1 class="ziara-page-hero__title" style="margin:0;">Booking Successful!</h1>
+                <p class="ziara-cta-band__desc" style="margin:10px 0 0;">Your destination package has been confirmed.</p>
             </div>
-            
-            <!-- Booking Details -->
-            <div class="p-6">
-                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg mb-6">
-                    <div class="font-medium text-gray-700">Booking Reference</div>
-                    <div class="text-lg font-bold text-gray-900">{{ $booking['reference'] ?? 'DEST-' . strtoupper(substr(uniqid(), 0, 8)) }}</div>
-                </div>
-                
-                <div class="space-y-6">
-                    <!-- Destination Details -->
-                    <div class="border-b border-gray-200 pb-6">
-                        <h2 class="text-lg font-bold text-gray-900 mb-4">Trip Details</h2>
-                        
-                        <div class="flex flex-col md:flex-row gap-4">
-                            <!-- Destination Image -->
-                            <div class="md:w-1/3">
-                                <div class="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden bg-gray-100">
-                                    <img src="{{ asset('images/destinations/' . ($destination['image'] ?? 'destination-placeholder.jpg')) }}" alt="{{ $destination['name'] ?? 'Destination' }}" class="w-full h-full object-cover">
-                                </div>
-                            </div>
-                            
-                            <!-- Destination Info -->
-                            <div class="md:w-2/3 flex flex-col justify-between">
-                                <div>
-                                    <h3 class="text-lg font-bold text-gray-900">{{ $destination['name'] ?? 'Zanzibar Beach Getaway' }}</h3>
-                                    
-                                    <div class="flex items-center mt-2">
-                                        <i data-lucide="map-pin" class="h-4 w-4 text-gray-500 mr-1"></i>
-                                        <span class="text-gray-600">{{ $destination['location'] ?? 'Zanzibar, Tanzania' }}</span>
-                                    </div>
-                                    
-                                    <div class="mt-4 grid grid-cols-2 gap-3">
-                                        <div>
-                                            <div class="text-xs text-gray-500">Check-in</div>
-                                            <div class="font-medium">{{ $booking['check_in'] ?? date('D, M d, Y') }}</div>
-                                        </div>
-                                        
-                                        <div>
-                                            <div class="text-xs text-gray-500">Check-out</div>
-                                            <div class="font-medium">{{ $booking['check_out'] ?? date('D, M d, Y', strtotime('+5 days')) }}</div>
-                                        </div>
-                                        
-                                        <div>
-                                            <div class="text-xs text-gray-500">Duration</div>
-                                            <div class="font-medium">{{ $destination['duration'] ?? '5 days, 4 nights' }}</div>
-                                        </div>
-                                        
-                                        <div>
-                                            <div class="text-xs text-gray-500">Travelers</div>
-                                            <div class="font-medium">{{ $booking['adults'] ?? '2' }} adults{{ ($booking['children'] ?? 0) > 0 ? ', ' . $booking['children'] . ' children' : '' }}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+
+            <div style="padding:30px 28px;">
+                <ul class="ziara-summary" style="margin-bottom:34px;">
+                    <li>
+                        <span>Booking Reference</span>
+                        <strong>{{ $booking['reference'] ?? 'DEST-' . strtoupper(substr(uniqid(), 0, 8)) }}</strong>
+                    </li>
+                </ul>
+
+                <h2 class="ziara-panel__title">Trip Details</h2>
+                <div class="ziara-split" style="margin-bottom:34px;">
+                    <div class="ziara-deal__media">
+                        <img src="{{ asset('images/destinations/' . ($destination['image'] ?? 'destination-placeholder.jpg')) }}" alt="{{ $destination['name'] ?? 'Destination' }}">
                     </div>
-                    
-                    <!-- Travel Information -->
-                    <div class="border-b border-gray-200 pb-6">
-                        <h2 class="text-lg font-bold text-gray-900 mb-4">Travel Information</h2>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <div class="text-sm text-gray-600">Flight Details</div>
-                                <div class="font-medium">{{ $booking['flight_details'] ?? 'Flight to Zanzibar (ZNZ)' }}</div>
-                                <div class="text-xs text-gray-500 mt-1">{{ $booking['flight_number'] ?? 'KQ 410' }} - {{ $booking['flight_date'] ?? date('d M Y') }}</div>
-                            </div>
-                            
-                            <div>
-                                <div class="text-sm text-gray-600">Accommodation</div>
-                                <div class="font-medium">{{ $booking['accommodation'] ?? 'Beach Front Resort' }}</div>
-                                <div class="text-xs text-gray-500 mt-1">{{ $booking['room_type'] ?? 'Deluxe Suite' }}</div>
-                            </div>
-                            
-                            <div>
-                                <div class="text-sm text-gray-600">Airport Transfer</div>
-                                <div class="font-medium">{{ $booking['transfer'] ?? 'Included' }}</div>
-                            </div>
-                            
-                            <div>
-                                <div class="text-sm text-gray-600">Meal Plan</div>
-                                <div class="font-medium">{{ $booking['meal_plan'] ?? 'Half-board (Breakfast & Dinner)' }}</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Payment Details -->
-                    <div class="border-b border-gray-200 pb-6">
-                        <h2 class="text-lg font-bold text-gray-900 mb-4">Payment Details</h2>
-                        
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <div class="text-sm text-gray-600">Payment Method</div>
-                                <div class="font-medium">{{ $booking['payment_method'] ?? 'Credit Card' }}</div>
-                            </div>
-                            
-                            <div>
-                                <div class="text-sm text-gray-600">Payment Status</div>
-                                <div class="font-medium text-green-600 flex items-center">
-                                    <i data-lucide="check-circle" class="h-4 w-4 mr-1"></i>
-                                    Paid
-                                </div>
-                            </div>
-                            
-                            <div>
-                                <div class="text-sm text-gray-600">Transaction ID</div>
-                                <div class="font-medium">{{ $booking['transaction_id'] ?? 'TXN-' . rand(100000, 999999) }}</div>
-                            </div>
-                            
-                            <div>
-                                <div class="text-sm text-gray-600">Amount Paid</div>
-                                <div class="font-medium">{{ $booking['currency'] ?? 'USD' }} {{ $booking['total'] ?? '1,899.00' }}</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Customer Details -->
                     <div>
-                        <h2 class="text-lg font-bold text-gray-900 mb-4">Customer Details</h2>
-                        
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <div class="text-sm text-gray-600">Name</div>
-                                <div class="font-medium">{{ Auth::user()->name ?? 'John Doe' }}</div>
-                            </div>
-                            
-                            <div>
-                                <div class="text-sm text-gray-600">Email</div>
-                                <div class="font-medium">{{ Auth::user()->email ?? 'john.doe@example.com' }}</div>
-                            </div>
-                            
-                            <div>
-                                <div class="text-sm text-gray-600">Phone</div>
-                                <div class="font-medium">{{ Auth::user()->phone ?? '+254 712 345 678' }}</div>
-                            </div>
-                        </div>
+                        <h3 class="ziara-deal__title">{{ $destination['name'] ?? 'Zanzibar Beach Getaway' }}</h3>
+                        <p class="ziara-deal__desc" style="display:flex;align-items:center;gap:8px;">
+                            <i data-lucide="map-pin" style="height:16px;width:16px;color:var(--maroon);" aria-hidden="true"></i>
+                            {{ $destination['location'] ?? 'Zanzibar, Tanzania' }}
+                        </p>
+                        <ul class="ziara-summary">
+                            <li>
+                                <span>Check-in</span>
+                                <strong>{{ $booking['check_in'] ?? date('D, M d, Y') }}</strong>
+                            </li>
+                            <li>
+                                <span>Check-out</span>
+                                <strong>{{ $booking['check_out'] ?? date('D, M d, Y', strtotime('+5 days')) }}</strong>
+                            </li>
+                            <li>
+                                <span>Duration</span>
+                                <strong>{{ $destination['duration'] ?? '5 days, 4 nights' }}</strong>
+                            </li>
+                            <li>
+                                <span>Travelers</span>
+                                <strong>{{ $booking['adults'] ?? '2' }} adults{{ ($booking['children'] ?? 0) > 0 ? ', ' . $booking['children'] . ' children' : '' }}</strong>
+                            </li>
+                        </ul>
                     </div>
                 </div>
-                
-                <!-- What's Next Section -->
-                <div class="mt-8 p-5 bg-indigo-50 rounded-lg border border-indigo-100">
-                    <h3 class="font-semibold text-indigo-800 mb-3">What's Next?</h3>
-                    
-                    <ul class="space-y-3">
-                        <li class="flex items-start">
-                            <i data-lucide="mail" class="h-5 w-5 text-indigo-600 mt-0.5 mr-2"></i>
-                            <span class="text-gray-700">A confirmation email with all booking details has been sent to your email address.</span>
+
+                <h2 class="ziara-panel__title">Travel Information</h2>
+                <div class="ziara-infocards" style="margin-bottom:34px;">
+                    <div class="ziara-infocard">
+                        <div class="ziara-infocard__icon"><i data-lucide="plane" aria-hidden="true"></i></div>
+                        <h3 class="ziara-infocard__title">Flight Details</h3>
+                        <div class="ziara-infocard__value">{{ $booking['flight_details'] ?? 'Flight to Zanzibar (ZNZ)' }}<br>{{ $booking['flight_number'] ?? 'KQ 410' }} - {{ $booking['flight_date'] ?? date('d M Y') }}</div>
+                    </div>
+                    <div class="ziara-infocard">
+                        <div class="ziara-infocard__icon"><i data-lucide="hotel" aria-hidden="true"></i></div>
+                        <h3 class="ziara-infocard__title">Accommodation</h3>
+                        <div class="ziara-infocard__value">{{ $booking['accommodation'] ?? 'Beach Front Resort' }}<br>{{ $booking['room_type'] ?? 'Deluxe Suite' }}</div>
+                    </div>
+                    <div class="ziara-infocard">
+                        <div class="ziara-infocard__icon"><i data-lucide="car" aria-hidden="true"></i></div>
+                        <h3 class="ziara-infocard__title">Airport Transfer</h3>
+                        <div class="ziara-infocard__value">{{ $booking['transfer'] ?? 'Included' }}</div>
+                    </div>
+                    <div class="ziara-infocard">
+                        <div class="ziara-infocard__icon"><i data-lucide="utensils" aria-hidden="true"></i></div>
+                        <h3 class="ziara-infocard__title">Meal Plan</h3>
+                        <div class="ziara-infocard__value">{{ $booking['meal_plan'] ?? 'Half-board (Breakfast & Dinner)' }}</div>
+                    </div>
+                </div>
+
+                <h2 class="ziara-panel__title">Payment Details</h2>
+                <div class="ziara-infocards" style="margin-bottom:34px;">
+                    <div class="ziara-infocard">
+                        <div class="ziara-infocard__icon"><i data-lucide="credit-card" aria-hidden="true"></i></div>
+                        <h3 class="ziara-infocard__title">Payment Method</h3>
+                        <div class="ziara-infocard__value">{{ $booking['payment_method'] ?? 'Credit Card' }}</div>
+                    </div>
+                    <div class="ziara-infocard">
+                        <div class="ziara-infocard__icon" style="background:#eef7ef;color:#167a3a;"><i data-lucide="check-circle" aria-hidden="true"></i></div>
+                        <h3 class="ziara-infocard__title">Payment Status</h3>
+                        <div class="ziara-infocard__value" style="color:#167a3a;font-weight:700;">Paid</div>
+                    </div>
+                    <div class="ziara-infocard">
+                        <div class="ziara-infocard__icon"><i data-lucide="receipt" aria-hidden="true"></i></div>
+                        <h3 class="ziara-infocard__title">Transaction ID</h3>
+                        <div class="ziara-infocard__value">{{ $booking['transaction_id'] ?? 'TXN-' . rand(100000, 999999) }}</div>
+                    </div>
+                    <div class="ziara-infocard">
+                        <div class="ziara-infocard__icon"><i data-lucide="banknote" aria-hidden="true"></i></div>
+                        <h3 class="ziara-infocard__title">Amount Paid</h3>
+                        <div class="ziara-infocard__value">{{ $booking['currency'] ?? 'USD' }} {{ $booking['total'] ?? '1,899.00' }}</div>
+                    </div>
+                </div>
+
+                <h2 class="ziara-panel__title">Customer Details</h2>
+                <div class="ziara-infocards" style="margin-bottom:34px;">
+                    <div class="ziara-infocard">
+                        <div class="ziara-infocard__icon"><i data-lucide="user" aria-hidden="true"></i></div>
+                        <h3 class="ziara-infocard__title">Name</h3>
+                        <div class="ziara-infocard__value">{{ Auth::user()->name ?? 'John Doe' }}</div>
+                    </div>
+                    <div class="ziara-infocard">
+                        <div class="ziara-infocard__icon"><i data-lucide="mail" aria-hidden="true"></i></div>
+                        <h3 class="ziara-infocard__title">Email</h3>
+                        <div class="ziara-infocard__value">{{ Auth::user()->email ?? 'john.doe@example.com' }}</div>
+                    </div>
+                    <div class="ziara-infocard">
+                        <div class="ziara-infocard__icon"><i data-lucide="phone" aria-hidden="true"></i></div>
+                        <h3 class="ziara-infocard__title">Phone</h3>
+                        <div class="ziara-infocard__value">{{ Auth::user()->phone ?? '+254 712 345 678' }}</div>
+                    </div>
+                </div>
+
+                <div class="ziara-note" style="margin-bottom:34px;">
+                    <h3 class="ziara-panel__title" style="margin-bottom:18px;">What's Next?</h3>
+                    <ul class="ziara-checklist">
+                        <li class="ziara-checklist__item">
+                            <span class="ziara-checklist__icon"><i data-lucide="mail" aria-hidden="true"></i></span>
+                            <span>A confirmation email with all booking details has been sent to your email address.</span>
                         </li>
-                        
-                        <li class="flex items-start">
-                            <i data-lucide="file-text" class="h-5 w-5 text-indigo-600 mt-0.5 mr-2"></i>
-                            <span class="text-gray-700">Your e-ticket and travel vouchers are attached to the confirmation email.</span>
+                        <li class="ziara-checklist__item">
+                            <span class="ziara-checklist__icon"><i data-lucide="file-text" aria-hidden="true"></i></span>
+                            <span>Your e-ticket and travel vouchers are attached to the confirmation email.</span>
                         </li>
-                        
-                        <li class="flex items-start">
-                            <i data-lucide="message-square" class="h-5 w-5 text-indigo-600 mt-0.5 mr-2"></i>
-                            <span class="text-gray-700">Our travel consultant will contact you within 24 hours to discuss final arrangements.</span>
+                        <li class="ziara-checklist__item">
+                            <span class="ziara-checklist__icon"><i data-lucide="message-square" aria-hidden="true"></i></span>
+                            <span>Our travel consultant will contact you within 24 hours to discuss final arrangements.</span>
                         </li>
                     </ul>
                 </div>
-                
-                <!-- Action Buttons -->
-                <div class="mt-8 flex flex-col sm:flex-row items-center gap-4">
-                    <a href="{{ route('dashboard.bookings') }}" class="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-6 rounded-lg flex items-center justify-center transition-colors">
-                        <i data-lucide="layout-dashboard" class="h-5 w-5 mr-2"></i>
+
+                <div style="display:flex;flex-wrap:wrap;gap:16px;">
+                    <a href="{{ route('user.bookings.all') }}" class="ziara-btn ziara-btn--maroon">
+                        <i data-lucide="layout-dashboard" class="w-5 h-5" aria-hidden="true"></i>
                         View in Dashboard
                     </a>
-                    
-                    <a href="{{ route('destinations.download-ticket', ['booking_id' => $booking['id'] ?? '1']) }}" class="w-full sm:w-auto bg-white hover:bg-gray-50 text-gray-700 font-medium py-3 px-6 rounded-lg border border-gray-300 flex items-center justify-center transition-colors">
-                        <i data-lucide="download" class="h-5 w-5 mr-2"></i>
+                    <a href="{{ route('bookings.download', $booking['id'] ?? 1) }}" class="ziara-btn ziara-btn--gold">
+                        <i data-lucide="download" class="w-5 h-5" aria-hidden="true"></i>
                         Download E-Ticket
                     </a>
-                    
-                    <a href="{{ route('home') }}" class="w-full sm:w-auto bg-white hover:bg-gray-50 text-gray-700 font-medium py-3 px-6 rounded-lg border border-gray-300 flex items-center justify-center transition-colors">
-                        <i data-lucide="home" class="h-5 w-5 mr-2"></i>
+                    <a href="{{ route('home') }}" class="ziara-btn ziara-btn--outline">
+                        <i data-lucide="home" class="w-5 h-5" aria-hidden="true"></i>
                         Back to Home
                     </a>
                 </div>
             </div>
         </div>
-        
-        <!-- Redirect Notification -->
-        <div class="mt-6 text-center animate-fade-in-up" style="animation-delay: 0.3s;">
-            <div class="p-4 bg-blue-50 rounded-lg inline-flex items-center">
-                <i data-lucide="info" class="h-5 w-5 text-blue-500 mr-2 animate-pulse-slow"></i>
-                <span class="text-gray-700">You will be redirected to the homepage in <span id="countdown" class="font-semibold countdown-animation">6</span> seconds</span>
+
+        <div class="animate-fade-in-up" style="text-align:center;animation-delay:0.3s;">
+            <div class="ziara-note" style="display:inline-flex;align-items:center;gap:10px;">
+                <i data-lucide="info" class="animate-pulse-slow" style="height:20px;width:20px;color:var(--maroon);" aria-hidden="true"></i>
+                <span>You will be redirected to the homepage in <span id="countdown" class="countdown-animation" style="font-weight:700;">6</span> seconds</span>
             </div>
         </div>
     </div>
-</div>
-@endsection
+</section>
 
-@section('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Initialize Lucide icons

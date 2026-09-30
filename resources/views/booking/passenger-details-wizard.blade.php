@@ -18,11 +18,12 @@
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/flight-flow.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/ziara-booking.css') }}?v={{ (file_exists(public_path('css/ziara-booking.css')) ? filemtime(public_path('css/ziara-booking.css')) : 0) }}">
 @endpush
 
 @section('content')
-<div class="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
-    <div class="relative bg-gradient-to-br from-blue-800 via-indigo-900 to-purple-900 py-16">
+<div class="ziara-bk min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
+    <div class="ziara-bk-hero relative bg-gradient-to-br from-blue-800 via-indigo-900 to-purple-900 py-16">
         <div class="container mx-auto px-4">
             <div class="max-w-4xl mx-auto">
                 <div class="flex items-center justify-between mb-8">
@@ -53,17 +54,17 @@
                 </div>
 
                 <h1 class="text-4xl font-bold text-white text-center mb-2">Who's Traveling?</h1>
-                <p class="text-blue-100 text-center">{{ $fromCity }} &rarr; {{ $toCity }}
+                <p class="ziara-bk-kicker text-blue-100 text-center">{{ $fromCity }} &rarr; {{ $toCity }}
                     @if($departureAt) &bull; {{ \Carbon\Carbon::parse($departureAt)->format('D, d M Y') }} @endif
                 </p>
             </div>
         </div>
     </div>
 
-    <div class="container mx-auto px-4 -mt-8 pb-16">
+    <div class="ziara-bk-body container mx-auto px-4 -mt-8 pb-16">
         <div class="max-w-4xl mx-auto">
             @if ($errors->any())
-                <div class="ff-card p-4 mb-6 border-rose-200 bg-rose-50">
+                <div class="ff-card p-4 mb-6 border-rose-200 bg-rose-50 ziara-bk-alert">
                     <p class="font-semibold text-rose-700 mb-1">Please fix the following:</p>
                     <ul class="list-disc list-inside text-sm text-rose-700">
                         @foreach ($errors->all() as $error)
@@ -158,7 +159,7 @@
                     </div>
                 @endforeach
 
-                <div class="ff-card p-6 flex items-center justify-between">
+                <div class="ff-card p-6 flex items-center justify-between ziara-bk-totalbar">
                     <div>
                         <p class="text-sm text-slate-500">Total price</p>
                         <p class="text-2xl font-bold text-slate-900">{{ $currency }} {{ number_format($totalPrice, 2) }}</p>
