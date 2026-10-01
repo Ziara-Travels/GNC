@@ -30,6 +30,7 @@ RUN apk add --no-cache \
     php84-tokenizer \
     php84-xml \
     php84-xmlreader \
+    php84-xmlwriter \
     php84-zip \
     php84-bcmath \
     php84-pcntl \
