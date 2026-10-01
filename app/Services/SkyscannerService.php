@@ -38,15 +38,17 @@ class SkyscannerService
     public function __construct()
     {
         $this->apiKey = (string) config('services.skyscanner.api_key', '');
-        $this->host = (string) config('services.skyscanner.host', 'flights-sky.p.rapidapi.com');
+        $this->host = trim((string) config('services.skyscanner.host', 'flights-sky.p.rapidapi.com'), " \t\n\r\0\x0B:/");
         $this->market = (string) config('services.skyscanner.market', 'KE');
         $this->locale = (string) config('services.skyscanner.locale', 'en-KE');
         $this->currency = (string) config('services.skyscanner.currency', 'KES');
-        $this->mock = (bool) config('services.skyscanner.mock', env('SKYSCANNER_MOCK', false));
+        $this->mock = (bool) config('services.skyscanner.mock', false);
+        $timeout = (int) config('services.skyscanner.timeout', 30);
 
         $this->client = new Client([
             'base_uri' => 'https://' . $this->host . '/',
-            'timeout' => 30,
+            'timeout' => $timeout,
+            'connect_timeout' => 10,
             'http_errors' => false,
         ]);
     }
@@ -56,6 +58,12 @@ class SkyscannerService
      */
     public function isMock()
     {
+        // Never silently fall back to mock data in production. The UI cannot
+        // distinguish mock from live results, so return false if we have a key.
+        if (app()->environment('production')) {
+            return $this->mock;
+        }
+
         return $this->mock || empty($this->apiKey);
     }
 

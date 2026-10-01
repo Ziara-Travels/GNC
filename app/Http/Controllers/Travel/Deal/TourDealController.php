@@ -236,7 +236,7 @@ class TourDealController extends Controller
                 }
                 
                 // Update user dashboard and alert admins
-                event(new TourBookingUpdated($booking));
+                event(new \App\Events\BookingStatusUpdated($booking));
                 
                 return redirect()->route('user.dashboard')
                     ->with('success', 'Payment successful! Your tour booking has been confirmed.');

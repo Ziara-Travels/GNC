@@ -2096,7 +2096,7 @@ class AdminDashboardController extends Controller
                 $superAdmins = $this->getSuperAdmins();
                 
                 foreach ($superAdmins as $superAdmin) {
-                    Mail::to($superAdmin->email)->send(new AdminPasswordChangeNotification($user, $superAdmin));
+                    Mail::to($superAdmin->email)->send(new \App\Mail\dashboard\AdminPassChangeNotification($user, $superAdmin));
                 }
             }
 
@@ -2108,7 +2108,7 @@ class AdminDashboardController extends Controller
                 $adminsAndSuperAdmins = $this->getAdminsAndSuperAdmins();
                 
                 foreach ($adminsAndSuperAdmins as $admin) {
-                    Mail::to($admin->email)->send(new AdminPasswordChangeNotification($user, $admin));
+                    Mail::to($admin->email)->send(new \App\Mail\dashboard\AdminPassChangeNotification($user, $admin));
                 }
             }
 

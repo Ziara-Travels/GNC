@@ -49,11 +49,27 @@ class RegisteredUserController extends Controller
         if ($request->has('redirect_to')) {
             return redirect($request->input('redirect_to'));
         }
-        
-        // Check if user came from checkout process
-        if (session()->has('checkout_redirect') && session()->has('flight_booking_data')) {
-            session()->forget('checkout_redirect');
-            return redirect()->route('checkout.index');
+
+        // A guest who selected a flight before logging in has the offer parked
+        // in the `pending_flight_booking` session key (set by
+        // OrderFlightController::selectFlight and FlightOffersController).
+        // Promote it to `selected_flight`, which is what the passenger-details
+        // and checkout steps read, so the booking is not silently lost.
+        //
+        // The previous code checked `checkout_redirect` + `flight_booking_data`.
+        // Neither key is ever written anywhere in the codebase, and the target
+        // route `checkout.index` does not exist, so that branch was dead.
+        if (session()->has('pending_flight_booking')) {
+            session(['selected_flight' => session('pending_flight_booking')]);
+            session()->forget('pending_flight_booking');
+        }
+
+        // Registration requires email verification before checkout, so send the
+        // user to the notice with the booking flag set. Once they verify,
+        // VerifiedUserController resumes at the passenger details step.
+        if (session()->has('selected_flight')) {
+            return redirect()->route('verification.notice')
+                ->with('message', 'Please verify your email address to complete your booking.');
         }
 
         // Redirect to verification notice instead of dashboard
@@ -161,6 +177,21 @@ class RegisteredUserController extends Controller
 
         foreach ($admins as $admin) {
             $admin->notify(new AdminReferralAlert($referrer, $newUser, $referralCode));
+
+            \App\Models\Notification::create([
+                'user_id' => $admin->id,
+                'title' => 'New Referral Registration',
+                'message' => $newUser->name . ' registered using ' . $referrer->name . '\'s referral code',
+                'type' => 'referral',
+                'data' => [
+                    'referrer_id' => $referrer->id,
+                    'new_user_id' => $newUser->id,
+                    'referral_code' => $referralCode->code,
+                    'reward_percentage' => $referralCode->reward_percentage,
+                ],
+                'action_url' => route('admin.referrals.show', $referralCode->id),
+                'priority' => 'medium',
+            ]);
         }
     }
 }

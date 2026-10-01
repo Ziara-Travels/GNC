@@ -66,7 +66,7 @@ class WhatsAppService
         $message .= "✈️ Flight: {$booking->flight_details['flight_number']}\n";
         $message .= "🕐 Departure: {$booking->flight_details['departure_time']}\n\n";
         $message .= "📱 Check-in now and get your boarding pass:\n";
-        $message .= "🔗 " . route('booking.check-in', $booking->booking_reference);
+        $message .= "🔗 " . route('booking.success', $booking->booking_reference);
 
         return $this->sendMessage($phoneNumber, $message);
     }

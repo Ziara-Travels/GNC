@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use App\Services\BookingService;
+use App\Services\FlightBookingService;
 use App\Models\Booking;
 use App\Models\FlightBooking;
 use App\Models\User;
@@ -20,7 +20,7 @@ class FlightBookingController extends Controller
     protected $bookingService;
     protected $client;
 
-    public function __construct(BookingService $bookingService, Client $client)
+    public function __construct(FlightBookingService $bookingService, Client $client)
     {
         $this->bookingService = $bookingService;
         $this->client = $client;
@@ -302,26 +302,44 @@ class FlightBookingController extends Controller
     private function prepareFlightBookingData($requestData)
     {
         $flightData = $requestData['flight_data'];
-        
+
+        // SkyScanner-normalised offers expose `grandTotal`, while Amadeus offers
+        // expose `total`. Read both, in the same order the flight cards use,
+        // so a missing key cannot throw an undefined-index error mid-booking.
+        $price = $flightData['price'] ?? [];
+
         return [
             'booking_type' => 'flight',
-            'title' => "Flight from {$flightData['origin']} to {$flightData['destination']}",
+            'title' => "Flight from ".($flightData['origin'] ?? '?')." to ".($flightData['destination'] ?? '?'),
             'flight_number' => $flightData['flight_number'] ?? null,
-            'departure_airport' => $flightData['origin'],
-            'arrival_airport' => $flightData['destination'],
+            'departure_airport' => $flightData['origin'] ?? null,
+            'arrival_airport' => $flightData['destination'] ?? null,
+            'origin_code' => $flightData['origin'] ?? null,
+            'destination_code' => $flightData['destination'] ?? null,
+            'origin_city' => $flightData['origin_city'] ?? null,
+            'destination_city' => $flightData['destination_city'] ?? null,
             'departure_time' => $flightData['departure_time'] ?? null,
             'arrival_time' => $flightData['arrival_time'] ?? null,
-            'total_amount' => $flightData['price']['total'],
-            'currency' => $flightData['price']['currency'],
+            'total_amount' => $price['grandTotal'] ?? $price['total'] ?? 0,
+            'total_price' => $price['grandTotal'] ?? $price['total'] ?? 0,
+            'amount' => $price['grandTotal'] ?? $price['total'] ?? 0,
+            'currency' => $price['currency'] ?? 'KES',
             'adults' => $flightData['adults'] ?? 1,
             'children' => $flightData['children'] ?? 0,
             'infants' => $flightData['infants'] ?? 0,
-            'travel_class' => $flightData['travel_class'] ?? 'ECONOMY',
+            'travel_class' => $flightData['travel_class'] ?? 'economy',
+            'cabin_class' => $flightData['travel_class'] ?? 'economy',
+            'stops' => $flightData['stops'] ?? 0,
             'contact_email' => $requestData['contact_email'],
             'contact_phone' => $requestData['contact_phone'],
             'flight_details' => $flightData,
             'traveler_details' => $requestData['traveler_details'],
-            'status' => 'pending_payment',
+            // bookings.status is an enum limited to
+            // pending|confirmed|completed|cancelled|processing. The previous
+            // value "pending_payment" is not a member and fails the check
+            // constraint on insert, so the booking could never be written.
+            'status' => 'pending',
+            'booking_status' => 'pending',
             'payment_status' => 'pending'
         ];
     }
@@ -343,9 +361,17 @@ class FlightBookingController extends Controller
      */
     public function show($offerId)
     {
+        // Linked from the deals page (`route('flights.booking', $item->item_id)`)
+        // and the superadmin booking table (`$flight->id`), so `$offerId` is a
+        // FlightBooking id. Resolve it here rather than letting the view do the
+        // lookup, and degrade gracefully when the id does not match a booking
+        // (deals items can carry unrelated ids) instead of throwing a 404.
+        $booking = FlightBooking::with('user')->find($offerId);
+
         return view('bookings.flight', [
             'offerId' => $offerId,
-            'user' => Auth::user()
+            'booking' => $booking,
+            'user' => Auth::user(),
         ]);
     }
 
@@ -354,6 +380,18 @@ class FlightBookingController extends Controller
      */
     public function store(Request $request)
     {
+        // flight_bookings.user_id is NOT NULL (foreignId()->constrained()), so a
+        // guest POST would otherwise blow up on the DB constraint. Require auth
+        // up front: guests must go through flights.select, which parks the offer
+        // in the session and sends them to log in first.
+        if (! Auth::check()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Please log in to complete this booking.',
+                'login_url' => route('login'),
+            ], 401);
+        }
+
         $request->validate([
             'amadeus_offer_id' => 'required|string',
             'amadeus_data' => 'required|json',
@@ -417,19 +455,24 @@ class FlightBookingController extends Controller
                 'booking_reference' => $bookingReference,
             ]);
 
-            $booking->update([
-                'booking_status' => 'confirmed',
-                'payment_status' => 'paid',
-                'payment_reference' => 'PAY' . strtoupper(Str::random(10))
-            ]);
-
+            // NOTE: this endpoint must NOT mark the booking confirmed/paid.
+            // It previously did exactly that (with a made-up "PAYxxxx"
+            // reference) without ever contacting the payment gateway, which
+            // meant anyone could POST to /flights/book with a doctored
+            // `total_price` and receive a confirmed, "paid" booking for free.
+            //
+            // The booking stays `pending`/`pending` and is only promoted once
+            // the real Jenga payment settles via FlightBookingController::
+            // processPayment() or the payments.jenga.callback webhook.
             return response()->json([
                 'success' => true,
-                'message' => 'Flight booking created successfully!',
+                'message' => 'Flight booking created. Complete payment to confirm your ticket.',
                 'booking_reference' => $bookingReference,
                 'booking_id' => $booking->id,
-                'redirect_url' => route('bookings.confirmation', ['type' => 'flight', 'reference' => $bookingReference])
-            ]);
+                'booking_status' => $booking->booking_status,
+                'payment_status' => $booking->payment_status,
+                'redirect_url' => route('flights.booking.payment', ['booking' => $booking->id]),
+            ], 201);
 
         } catch (\Exception $e) {
             Log::error('Error creating flight booking', [

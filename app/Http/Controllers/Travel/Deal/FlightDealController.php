@@ -218,7 +218,7 @@ class FlightDealController extends Controller
                 }
                 
                 // Update user dashboard and alert admins
-                event(new BookingUpdated($booking));
+                event(new \App\Events\BookingStatusUpdated($booking));
                 
                 return redirect()->route('user.dashboard')
                     ->with('success', 'Payment successful! Your flight booking has been confirmed.');

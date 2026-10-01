@@ -23,31 +23,37 @@ Artisan::command('inspire', function () {
 |--------------------------------------------------------------------------
 | Schedule
 |--------------------------------------------------------------------------
+|
+| NOTE: every entry below is either a command that exists in
+| app/Console/Commands or a job class that exists in app/Jobs. Seven of the
+| previous entries pointed at commands that were never implemented
+| (bookings:send-reminders, bookings:process-abandoned, files:cleanup,
+| cleanup:expired-sessions, cleanup:old-audit-logs,
+| gdpr:process-deletion-requests, gdpr:anonymize-old-data), so `schedule:work`
+| logged a command-not-found failure for each of them on every cycle.
+|
+| The abandoned-booking and expired-token concerns they were meant to cover are
+| already handled by CancelUnpaidBookingsJob and CleanupExpiredTokensJob below.
+| Cleanup of old audit logs is a real command: cleanup:old-audit-logs.
+|
 */
 
 Schedule::command('campaigns:process')->weekly();
 
-// Send pre-trip reminders
-Schedule::command('bookings:send-reminders')->weekly();
+// Send pre-trip reminders for imminent departures.
+Schedule::job(new \App\Jobs\SendPreTripReminderJob)->daily();
 
-// Process abandoned bookings
-Schedule::command('bookings:process-abandoned')->weekly();
-
-// Clean up old files
-Schedule::command('files:cleanup')->weekly();
-
-Schedule::job(new \App\Jobs\CleanupExpiredTokensJob)->hourly();
+// Abandoned / unpaid bookings.
+Schedule::command('bookings:send-abandoned-reminders')->hourly();
 Schedule::job(new \App\Jobs\CancelUnpaidBookingsJob)->everyTenMinutes();
+
+// Maintenance.
+Schedule::job(new \App\Jobs\CleanupExpiredTokensJob)->hourly();
 Schedule::job(new \App\Jobs\SendFailedPaymentRemindersJob)->hourly();
 Schedule::job(new \App\Jobs\UpdateSeatAvailabilityJob)->everyFifteenMinutes();
 
-// Data cleanup jobs
-Schedule::command('cleanup:expired-sessions')->daily();
+// Retention: drop booking audit rows older than the configured window.
 Schedule::command('cleanup:old-audit-logs')->weekly();
-
-// GDPR compliance jobs
-Schedule::command('gdpr:process-deletion-requests')->daily();
-Schedule::command('gdpr:anonymize-old-data')->monthly();
 
 // Send weekly newsletter every Monday at 9:00 AM
 Schedule::command('newsletter:send weekly')

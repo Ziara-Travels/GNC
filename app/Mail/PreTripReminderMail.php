@@ -46,7 +46,7 @@ class PreTripReminderMail extends Mailable
                         'booking' => $this->booking,
                         'flight' => $this->booking->flight_details,
                         'reminderType' => $this->reminderType,
-                        'checkInUrl' => route('booking.check-in', $this->booking->booking_reference)
+                        'checkInUrl' => route('booking.success', $this->booking->booking_reference)
                     ]);
     }
 }

@@ -24,6 +24,11 @@ services:
       - key: APP_URL
         fromService: type: web
         property: url
+      # Render terminates TLS and forwards over HTTP, so Laravel must honor
+      # X-Forwarded-Proto or every generated URL uses http:// (and secure
+      # cookies/CSRF break). Consumed by App\Http\Middleware\TrustProxies.
+      - key: TRUSTED_PROXIES
+        value: "*"
       - key: SESSION_SECURE_COOKIE
         value: "true"
       - key: SESSION_SAME_SITE
@@ -87,15 +92,26 @@ services:
       - key: BOOKING_TIMEOUT
         value: "35"
       - key: JENGA_BASE_URL
-        value: https://api.finserve.africa/v3-apis/account-api/v3.0/
+        value: https://api.finserve.africa/v3-apis/account-api/v3.0
       - key: JENGA_MERCHANT_CODE
         sync: false
       - key: JENGA_API_KEY
         sync: false
       - key: JENGA_CONSUMER_SECRET
         sync: false
+      # The callback route is registered in routes/web.php as
+      # POST /payments/jenga/callback (CSRF-exempt). The previous
+      # /api/payments/jenga/callback path does not exist and 404s, which
+      # silently leaves every paid booking stuck in "pending".
       - key: JENGA_CALLBACK_URL
-        value: ${APP_URL}/api/payments/jenga/callback
+        value: ${APP_URL}/payments/jenga/callback
+      # Jenga's transaction and payment-gateway APIs live on different hosts
+      # from the account API above. These must be pointed at the production
+      # hosts, otherwise card/bank/mpesa/equity/equitel charges hit sandbox.
+      - key: JENGA_TRANSACTION_API_URL
+        sync: false
+      - key: JENGA_PAYMENT_GATEWAY_URL
+        sync: false
       - key: BOOKINGCOM_AFFILIATE_ID
         sync: false
       - key: BOOKINGCOM_DEEPLINK

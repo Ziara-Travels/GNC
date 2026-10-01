@@ -277,7 +277,7 @@ class WishlistController extends Controller
         return response()->json(['count' => $count]);
     }
     
-    /**
+/**
      * Notify admins and superadmins about new wishlist item
      */
     private function notifyAdminsAndSuperAdmins($user, $wishlistItem)
@@ -286,7 +286,7 @@ class WishlistController extends Controller
         $admins = User::whereHas('roles', function ($query) {
             $query->whereIn('name', ['admin', 'superadmin']);
         })->get();
-        
+
         // Prepare item details for email
         $itemDetails = [
             'type' => $wishlistItem->type,
@@ -294,11 +294,32 @@ class WishlistController extends Controller
             'location' => $wishlistItem->location,
             'notes' => $wishlistItem->description
         ];
-        
+
         foreach ($admins as $admin) {
-            // Send notification
+            // Send notification (mail only)
             $admin->notify(new \App\Notifications\WishlistItemAdded($user, $wishlistItem));
-            
+
+            // Create in-app notification
+            \App\Models\Notification::create([
+                'user_id' => $admin->id,
+                'title' => 'New Wishlist Item Added',
+                'message' => $user->name . ' added "' . $wishlistItem->title . '" to their wishlist',
+                'type' => 'wishlist',
+                'data' => [
+                    'user_id' => $user->id,
+                    'user_name' => $user->name,
+                    'user_email' => $user->email,
+                    'wishlist_item_id' => $wishlistItem->id,
+                    'item_title' => $wishlistItem->title,
+                    'item_type' => $wishlistItem->type,
+                    'item_price' => $wishlistItem->price,
+                    'currency' => $wishlistItem->currency ?? 'KES',
+                    'created_at' => $wishlistItem->created_at->toISOString(),
+                ],
+                'action_url' => route('dashboard.wishlists'),
+                'priority' => 'medium',
+            ]);
+
             // Send email notification
             Mail::to($admin->email)->send(new WishlistNotificationMail($user, $wishlistItem->title, $itemDetails));
         }

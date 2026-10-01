@@ -15,10 +15,14 @@ class AmadeusService
 
     public function __construct()
     {
-        $this->baseUrl = config('services.amadeus.base_url', 'https://test.api.amadeus.com/v1');
-        $this->clientId = config('services.amadeus.client_id', env('AMADEUS_API_KEY', ''));
-        $this->clientSecret = config('services.amadeus.client_secret', env('AMADEUS_API_SECRET', ''));
-        $this->tokenUrl = config('services.amadeus.token_url', 'https://test.api.amadeus.com/v1/security/oauth2/token');
+        // These properties are typed `string`, so a missing env var (null) would
+        // throw a TypeError. config() returns null for a key that exists in
+        // config/services.php but has no env value behind it, which is exactly
+        // the case on Render until AMADEUS_API_KEY is set. Coerce to string.
+        $this->baseUrl = rtrim((string) (config('services.amadeus.base_url') ?: 'https://test.api.amadeus.com/v1'), '/');
+        $this->clientId = (string) (config('services.amadeus.client_id') ?? '');
+        $this->clientSecret = (string) (config('services.amadeus.client_secret') ?? '');
+        $this->tokenUrl = (string) (config('services.amadeus.token_url') ?: 'https://test.api.amadeus.com/v1/security/oauth2/token');
     }
 
     /**

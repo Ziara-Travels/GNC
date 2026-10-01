@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\AdminBookingNotification;
-use App\Mail\BookingConfirmationMail;
+use App\Mail\BookingConfirmation;
 use App\Mail\LoyaltyPointsUpdateMail;
 use App\Jobs\SendBookingConfirmationJob;
 use App\Jobs\SendPreTripReminderJob;

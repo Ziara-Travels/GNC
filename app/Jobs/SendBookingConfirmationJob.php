@@ -9,7 +9,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\BookingConfirmationMail;
+use App\Mail\BookingConfirmation;
 use App\Models\Booking;
 use App\Services\WhatsAppService;
 
@@ -27,7 +27,7 @@ class SendBookingConfirmationJob implements ShouldQueue
     public function handle()
     {
         // Send email confirmation
-        Mail::to($this->booking->email)->send(new BookingConfirmationMail($this->booking));
+        Mail::to($this->booking->email)->send(new BookingConfirmation($this->booking));
         
         // Send email to specific admin
         Mail::to('admin@omniviatech.co.ke')->send(new \App\Mail\AdminBookingNotification($this->booking));

@@ -33,12 +33,34 @@ return [
         'api_key' => env('EXCHANGE_RATE_API_KEY'),
     ],
     'jenga' => [
-        'base_url' => env('JENGA_BASE_URL', 'https://api.finserve.africa/v3-apis/account-api/v3.0/'),
+        'base_url' => rtrim(env('JENGA_BASE_URL', 'https://api.finserve.africa/v3-apis/account-api/v3.0'), '/'),
         'merchant_code' => env('JENGA_MERCHANT_CODE'),
         'api_key' => env('JENGA_API_KEY'),
-        'consumer_secret' => env('Consumer_Secret'),
-        'callback_url' => env('JENGA_CALLBACK_URL', 'https://your-domain.com/api/payments/jenga/callback'),
+        // Was env('Consumer_Secret'), a name that does not exist in any env
+        // file or render.yaml, so the consumer secret was always null and
+        // payment auth failed. Render sets JENGA_CONSUMER_SECRET.
+        'consumer_secret' => env('JENGA_CONSUMER_SECRET'),
+        'callback_url' => env('JENGA_CALLBACK_URL'),
+        // Jenga's transaction and payment-gateway products are served from
+        // different hosts than the account API. Set both in production or
+        // card/bank/mpesa/equity/equitel charges go to the sandbox hosts.
+        'transaction_api_url' => rtrim(env('JENGA_TRANSACTION_API_URL', 'https://sandbox.jengahq.io/transaction'), '/'),
+        'payment_gateway_url' => rtrim(env('JENGA_PAYMENT_GATEWAY_URL', 'https://sandbox.jengahq.io/payment-gateway'), '/'),
     ],
+
+    'amadeus' => [
+        'client_id' => env('AMADEUS_API_KEY'),
+        'client_secret' => env('AMADEUS_API_SECRET'),
+        // Keep the /v1 suffix: AmadeusService appends /reference-data/locations,
+        // /shopping/flight-offers, etc. directly onto this value.
+        'base_url' => rtrim(env('AMADEUS_BASE_URL', 'https://test.api.amadeus.com/v1'), '/'),
+        'token_url' => env('AMADEUS_TOKEN_URL', 'https://test.api.amadeus.com/v1/security/oauth2/token'),
+    ],
+
+    // Consumed by App\Http\Middleware\TrustProxies. Render terminates TLS, so
+    // '*' is correct there. Set TRUSTED_PROXIES=REMOTE_ADDR (or a comma
+    // separated IP list) to narrow it.
+    'trusted_proxies' => env('TRUSTED_PROXIES', '*'),
 
     'skyscanner' => [
         'api_key' => env('RAPIDAPI_KEY'),

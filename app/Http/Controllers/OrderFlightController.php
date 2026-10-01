@@ -23,6 +23,7 @@ use Carbon\Carbon;
 use App\Models\UserReferral;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\PaymentsExport;
@@ -32,12 +33,20 @@ class OrderFlightController extends Controller
     protected $client;
     protected $jengaApiUrl;
     protected $jengaApiKey;
-    
+    protected $jengaConsumerSecret;
+    protected $jengaTransactionUrl;
+    protected $jengaPaymentGatewayUrl;
+
     public function __construct(Client $client)
     {
         $this->client = $client;
-        $this->jengaApiUrl = env('JENGA_BASE_URL', 'https://uat.finserve.africa/v3-apis/');
-        $this->jengaApiKey = env('JENGA_API_KEY');
+        // Read from config, and rtrim() so that appending '/auth/token' cannot
+        // produce a double slash (".../v3.0//auth/token" -> 404 at the gateway).
+        $this->jengaApiUrl = rtrim((string) config('services.jenga.base_url'), '/');
+        $this->jengaApiKey = (string) config('services.jenga.api_key');
+        $this->jengaConsumerSecret = (string) config('services.jenga.consumer_secret');
+        $this->jengaTransactionUrl = rtrim((string) config('services.jenga.transaction_api_url'), '/');
+        $this->jengaPaymentGatewayUrl = rtrim((string) config('services.jenga.payment_gateway_url'), '/');
     }
 
     // Show checkout page
@@ -818,7 +827,7 @@ class OrderFlightController extends Controller
 
         // Make API request to Jenga
         try {
-            $response = $this->client->post('https://sandbox.jengahq.io/transaction/v2/payments', [
+            $response = $this->client->post($this->jengaTransactionUrl . '/v2/payments', [
                 'headers' => [
                     'Authorization' => 'Bearer ' . $accessToken,
                     'Content-Type' => 'application/json',
@@ -916,7 +925,7 @@ class OrderFlightController extends Controller
 
         // Make API request to Jenga
         try {
-            $response = $this->client->post('https://sandbox.jengahq.io/transaction/v2/remittance', [
+            $response = $this->client->post($this->jengaTransactionUrl . '/v2/remittance', [
                 'headers' => [
                     'Authorization' => 'Bearer ' . $accessToken,
                     'Content-Type' => 'application/json',
@@ -1224,19 +1233,32 @@ class OrderFlightController extends Controller
 
     private function getJengaAccessToken()
     {
-        // Implementation would cache the token
-        $response = Http::post($this->jengaApiUrl . '/auth/token', [
-            'api_key' => $this->jengaApiKey,
-            'grant_type' => 'client_credentials'
-        ]);
-
-        $token = $response->successful() ? $response->json('access_token') : null;
-
-        if (!$token) {
-            throw new \Exception('Failed to obtain Jenga access token: ' . $response->status());
+        if ($this->jengaApiKey === '' || $this->jengaConsumerSecret === '') {
+            throw new \Exception('Jenga is not configured: JENGA_API_KEY and JENGA_CONSUMER_SECRET are required.');
         }
 
-        return $token;
+        // Cache the token (30 min) so every payment does not trigger a fresh
+        // token round-trip. Falls back to no caching if the cache is unusable.
+        return Cache::remember('jenga_access_token', 1800, function () {
+            $response = Http::asForm()->post($this->jengaApiUrl . '/auth/token', [
+                'api_key'        => $this->jengaApiKey,
+                'consumer_secret'=> $this->jengaConsumerSecret,
+                'grant_type'     => 'client_credentials',
+            ]);
+
+            $token = $response->successful() ? $response->json('access_token') : null;
+
+            if (!$token) {
+                Log::error('Jenga token request failed', [
+                    'status' => $response->status(),
+                    'body'   => mb_substr($response->body(), 0, 500),
+                ]);
+
+                throw new \Exception('Failed to obtain Jenga access token: ' . $response->status());
+            }
+
+            return $token;
+        });
     }
 
     public function applyReferralDiscount($userId, $bookingAmount)
@@ -1661,7 +1683,7 @@ class OrderFlightController extends Controller
 
         // Make API request to Jenga
         try {
-            $response = $this->client->post('https://sandbox.jengahq.io/transaction/v2/payments/card', [
+            $response = $this->client->post($this->jengaTransactionUrl . '/v2/payments/card', [
                 'headers' => [
                     'Authorization' => 'Bearer ' . $accessToken,
                     'Content-Type' => 'application/json',
@@ -1736,8 +1758,8 @@ class OrderFlightController extends Controller
  */
 private function generateCardSignature($cardDetails)
 {
-    $merchantCode = env('JENGA_MERCHANT_CODE', '');
-    $apiKey = env('JENGA_API_KEY', '');
+    $merchantCode = config('services.jenga.merchant_code');
+    $apiKey = config('services.jenga.api_key');
     
     $signatureData = $merchantCode . $cardDetails['card_number'] . $cardDetails['cvv'];
     
@@ -1995,8 +2017,8 @@ private function processMpesaStkPush($payment, $phoneNumber)
  */
 private function generateMpesaSignature($referenceNumber)
 {
-    $merchantCode = env('JENGA_MERCHANT_CODE', '');
-    $apiKey = env('JENGA_API_KEY', '');
+    $merchantCode = config('services.jenga.merchant_code');
+    $apiKey = config('services.jenga.api_key');
     
     $signatureData = $merchantCode . $referenceNumber;
     
@@ -2122,7 +2144,7 @@ private function processEquitelPayment($payment, $phoneNumber)
         
         // Make API request to Jenga
         try {
-            $response = $this->client->post('https://sandbox.jengahq.io/transaction/v3/bills/pay', [
+            $response = $this->client->post($this->jengaTransactionUrl . '/v3/bills/pay', [
                 'headers' => [
                     'Authorization' => 'Bearer ' . $accessToken,
                     'Content-Type' => 'application/json',
@@ -2230,7 +2252,7 @@ private function processEquitelPayment($payment, $phoneNumber)
 
         // Make API request to Jenga
         try {
-            $response = $this->client->post('https://sandbox.jengahq.io/transaction/v2/payments/equity', [
+            $response = $this->client->post($this->jengaTransactionUrl . '/v2/payments/equity', [
                 'headers' => [
                     'Authorization' => 'Bearer ' . $accessToken,
                     'Content-Type' => 'application/json',
@@ -2336,7 +2358,7 @@ private function generatePaymentLink($payment)
         
         // Make API request to Jenga
         try {
-            $response = $this->client->post('https://sandbox.jengahq.io/payment-gateway/v1/links', [
+            $response = $this->client->post($this->jengaPaymentGatewayUrl . '/v1/links', [
                 'headers' => [
                     'Authorization' => 'Bearer ' . $accessToken,
                     'Content-Type' => 'application/json',

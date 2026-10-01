@@ -28,6 +28,14 @@ class UpdateSeatAvailabilityJob implements ShouldQueue
 
     public function handle()
     {
+        // AmadeusService has no getSeatAvailability(); without this guard every
+        // run of this 15-minutely job died on a BadMethodCallException.
+        if (! method_exists($this->amadeusService, 'getSeatAvailability')) {
+            Log::warning('Skipping seat availability refresh: AmadeusService::getSeatAvailability() is not implemented.');
+
+            return;
+        }
+
         // Get active bookings that need monitoring
         $activeFlights = Booking::where('status', 'pending')
             ->where('departure_time', '>', now())
@@ -65,7 +73,9 @@ class UpdateSeatAvailabilityJob implements ShouldQueue
                 );
 
                 // Send alerts if seats are running low
-                if ($seatRecord->isCritical()) {
+                // SeatAvailability exposes isCriticallyLow(); there is no
+                // isCritical() method, so the previous call always threw.
+                if ($seatRecord->isCriticallyLow()) {
                     $this->sendLowSeatAlerts($seatRecord);
                 }
 

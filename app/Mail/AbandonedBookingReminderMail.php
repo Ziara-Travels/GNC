@@ -42,7 +42,7 @@ class AbandonedBookingReminderMail extends Mailable
                         'discountCode' => $this->discountCode,
                         'discountAmount' => '10%',
                         'expiryTime' => now()->addHours(24)->format('M j, Y \a\t g:i A'),
-                        'resumeUrl' => route('booking.resume', $this->draft->session_id)
+                        'resumeUrl' => route('flights.public.search')
                     ]);
     }
 

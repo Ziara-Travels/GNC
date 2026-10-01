@@ -340,7 +340,12 @@ Route::middleware(['auth'])->group(function () {
     
     // Booking Routes
     Route::get('/booking/{type}', [OrderFlightController::class, 'showBooking'])->name('booking.show');
-    Route::post('/flights/select', [OrderFlightController::class, 'selectFlight'])->name('flights.select');
+    // NOTE: /flights/select is intentionally NOT registered here. It is already
+    // defined publicly at the top of this file, and re-registering the same
+    // method+URI inside this auth group silently replaces the public route
+    // (last registration wins), which made every guest "Select" button redirect
+    // to /login. The public definition handles guests explicitly in
+    // OrderFlightController::selectFlight().
     Route::post('/hotels/select', [OrderFlightController::class, 'selectHotel'])->name('hotels.select');
     Route::get('/checkout', [OrderFlightController::class, 'showCheckout'])->name('checkout.show');
     Route::post('/checkout/process', [OrderFlightController::class, 'processCheckout'])->name('checkout.process');
@@ -1322,7 +1327,10 @@ Route::middleware(['auth'])->group(function () {
     
     // Flight Booking Routes (POST only - GET is handled by the public routes above)
     Route::post('/flights/search', [FlightBookingController::class, 'searchFlights'])->name('flights.search.results');
-    Route::post('/flights/book', [FlightBookingController::class, 'bookFlight'])->name('flights.book');
+    // NOTE: /flights/book is intentionally NOT re-registered here. The public
+    // route at the top of this file points at FlightBookingController::store()
+    // and is the one the booking forms submit to. Re-declaring the URI here
+    // overrode it with bookFlight() behind the auth middleware.
     Route::get('/flights/booking/{booking}/payment', [FlightBookingController::class, 'showPayment'])->name('flights.booking.payment');
     Route::post('/flights/booking/{booking}/payment', [FlightBookingController::class, 'processPayment'])->name('flights.payment.process');
     
