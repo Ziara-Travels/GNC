@@ -1,14 +1,40 @@
 # syntax = docker/dockerfile:1
 
 # Vite 8 requires Node ^20.19.0 || >=22.12.0
-ARG NODE_VERSION=22.14.0
-FROM node:${NODE_VERSION}-slim as node_base
+# Use Node 22 Alpine as base, install PHP-FPM + extensions via apk
+FROM node:22-alpine as base
 
-# Must satisfy composer.json ("php": "^8.4")
-    FROM php:8.4-fpm-alpine as php_base
-
-# Install system dependencies
+# Install system dependencies + PHP 8.4 + extensions
+# php84 packages are in Alpine main/community repos
 RUN apk add --no-cache \
+    # PHP 8.4 + FPM + required extensions
+    php84 \
+    php84-fpm \
+    php84-ctype \
+    php84-curl \
+    php84-dom \
+    php84-fileinfo \
+    php84-gd \
+    php84-iconv \
+    php84-intl \
+    php84-mbstring \
+    php84-opcache \
+    php84-openssl \
+    php84-pdo \
+    php84-pdo_mysql \
+    php84-pdo_pgsql \
+    php84-pdo_sqlite \
+    php84-phar \
+    php84-session \
+    php84-simplexml \
+    php84-tokenizer \
+    php84-xml \
+    php84-xmlreader \
+    php84-zip \
+    php84-bcmath \
+    php84-pcntl \
+    php84-sockets \
+    # Build deps for any pecl extensions
     $PHPIZE_DEPS \
     linux-headers \
     icu-dev \
@@ -19,30 +45,25 @@ RUN apk add --no-cache \
     oniguruma-dev \
     postgresql-dev \
     sqlite-dev \
+    # Runtime deps
     nginx \
     supervisor \
     bash \
     git \
-    curl
-
-# Install PHP extensions
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) \
-    pdo \
-    pdo_mysql \
-    pdo_pgsql \
-    pdo_sqlite \
-    zip \
-    gd \
-    intl \
-    opcache \
-    bcmath \
-    mbstring \
-    pcntl \
-    sockets
+    curl \
+    # Composer deps
+    unzip
 
 # Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+# Configure PHP-FPM (Alpine php84 uses /etc/php84/php-fpm.d/www.conf)
+# Default is usually a unix socket; force TCP 127.0.0.1:9000 to match nginx.conf.template
+RUN sed -i -E 's|^;?listen = .*|listen = 127.0.0.1:9000|' /etc/php84/php-fpm.d/www.conf \
+    && mkdir -p /run/php-fpm \
+    # Create symlink so start.sh's path /usr/local/etc/php-fpm.d/www.conf works
+    && mkdir -p /usr/local/etc \
+    && ln -s /etc/php84 /usr/local/etc/php
 
 # Set working directory
 WORKDIR /var/www/html
@@ -54,11 +75,6 @@ WORKDIR /var/www/html
 COPY composer.json composer.lock ./
 
 RUN composer install --no-dev --prefer-dist --no-scripts --no-autoloader --no-interaction --no-progress
-
-# Make npm/node available from the node stage (php-fpm-alpine ships neither)
-COPY --from=node_base /usr/local/bin/node /usr/local/bin/node
-COPY --from=node_base /usr/local/lib/node_modules /usr/local/lib/node_modules
-RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm
 
 # Copy package files
 COPY package.json package-lock.json* ./
