@@ -71,7 +71,9 @@ RUN sed -i -E 's|^;?listen = .*|listen = 127.0.0.1:9000|' /etc/php84/php-fpm.d/w
     && ln -s /etc/php84 /usr/local/etc/php \
     && ln -s /etc/php84/php-fpm.d /usr/local/etc/php-fpm.d \
     # Symlink php84 -> php so composer and artisan work
-    && ln -s /usr/bin/php84 /usr/local/bin/php
+    && ln -s /usr/bin/php84 /usr/local/bin/php \
+    # Symlink php-fpm84 -> php-fpm for supervisord
+    && ln -s /usr/sbin/php-fpm84 /usr/local/sbin/php-fpm
 
 # Set working directory
 WORKDIR /var/www/html
