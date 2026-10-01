@@ -4,25 +4,11 @@ set -euo pipefail
 cd /var/www/html
 
 PORT="${PORT:-8080}"
-DB_PATH="${DB_DATABASE:-/var/www/html/database/database.sqlite}"
 
-# Force SQLite for Render persistent disk deployment.
-# Render may set DB_DATABASE to a MySQL database name (e.g., "flightapp") even
-# when we want SQLite on the persistent disk. Detect SQLite intent by:
-# 1. Explicit DB_CONNECTION=sqlite, OR
-# 2. DB_DATABASE points to a .sqlite file or absolute path, OR
-# 3. No MySQL/Postgres credentials are provided (DB_HOST/DB_PASSWORD not set)
-if [[ "${DB_CONNECTION:-}" == "sqlite" ]] \
-   || [[ "${DB_PATH}" == *".sqlite" ]] \
-   || [[ "${DB_PATH}" == *"/"* ]] \
-   || [[ -z "${DB_HOST:-}" && -z "${DB_PASSWORD:-}" ]]; then
-    export DB_CONNECTION=sqlite
-    # Use persistent disk path if DB_DATABASE looks like a DB name
-    if [[ "${DB_PATH}" != *".sqlite" ]] && [[ "${DB_PATH}" != *"/"* ]]; then
-        export DB_DATABASE="/var/data/database.sqlite"
-        DB_PATH="/var/data/database.sqlite"
-    fi
-fi
+# Force SQLite for Render persistent disk deployment (ignore any MySQL env vars)
+export DB_CONNECTION=sqlite
+export DB_DATABASE="/var/data/database.sqlite"
+DB_PATH="/var/data/database.sqlite"
 
 echo "Starting Ziara Travels deployment (port: ${PORT}, database: ${DB_PATH})..."
 
