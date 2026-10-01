@@ -66,9 +66,10 @@ RUN getent group www-data >/dev/null || addgroup -g 82 -S www-data \
 # Default is usually a unix socket; force TCP 127.0.0.1:9000 to match nginx.conf.template
 RUN sed -i -E 's|^;?listen = .*|listen = 127.0.0.1:9000|' /etc/php84/php-fpm.d/www.conf \
     && mkdir -p /run/php-fpm \
-    # Create symlink so start.sh's path /usr/local/etc/php-fpm.d/www.conf works
+    # Create symlinks so start.sh's paths work
     && mkdir -p /usr/local/etc /usr/local/bin \
     && ln -s /etc/php84 /usr/local/etc/php \
+    && ln -s /etc/php84/php-fpm.d /usr/local/etc/php-fpm.d \
     # Symlink php84 -> php so composer and artisan work
     && ln -s /usr/bin/php84 /usr/local/bin/php
 
