@@ -115,7 +115,7 @@ RUN touch /var/www/html/database/database.sqlite \
 COPY docker/nginx.conf.template /usr/local/share/nginx/nginx.conf.template
 COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-# Create startup script (cache-bust: 2026-10-01-sqlite-force)
+# Create startup script (cache-bust: 2026-10-01-tempdir-fix)
 COPY docker/start.sh /usr/local/bin/start.sh
 RUN chmod +x /usr/local/bin/start.sh
 

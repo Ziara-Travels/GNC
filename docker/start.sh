@@ -32,6 +32,22 @@ sed -i -E 's|^;?listen = .*|listen = 127.0.0.1:9000|' /usr/local/etc/php-fpm.d/w
 grep -q '^listen = 127.0.0.1:9000' /usr/local/etc/php-fpm.d/www.conf \
     || echo "WARNING: could not set php-fpm listen address"
 
+# Fix temp directory for Blade compilation - PHP-FPM clears env by default
+# Set temp dir directly in PHP-FPM config and preserve environment
+sed -i -E 's|^;?clear_env = .*|clear_env = no|' /usr/local/etc/php-fpm.d/www.conf
+grep -q '^clear_env = no' /usr/local/etc/php-fpm.d/www.conf \
+    || echo 'clear_env = no' >> /usr/local/etc/php-fpm.d/www.conf
+
+# Set temp directory in PHP-FPM config (for upload_tmp_dir and tempnam())
+sed -i '/^;?php_admin_value\[upload_tmp_dir\]/d' /usr/local/etc/php-fpm.d/www.conf
+echo 'php_admin_value[upload_tmp_dir] = /tmp/laravel-temp' >> /usr/local/etc/php-fpm.d/www.conf
+sed -i '/^;?php_admin_value\[sys_temp_dir\]/d' /usr/local/etc/php-fpm.d/www.conf
+echo 'php_admin_value[sys_temp_dir] = /tmp/laravel-temp' >> /usr/local/etc/php-fpm.d/www.conf
+
+# Also pass TMPDIR via env
+sed -i '/^env\[TMPDIR\]/d' /usr/local/etc/php-fpm.d/www.conf
+echo 'env[TMPDIR] = /tmp/laravel-temp' >> /usr/local/etc/php-fpm.d/www.conf
+
 # Render routes to the port it injects via $PORT.
 sed "s/__PORT__/${PORT}/g" /usr/local/share/nginx/nginx.conf.template \
     > /etc/nginx/http.d/default.conf
