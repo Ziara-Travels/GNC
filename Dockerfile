@@ -67,7 +67,7 @@ RUN getent group www-data >/dev/null || addgroup -g 82 -S www-data \
 RUN sed -i -E 's|^;?listen = .*|listen = 127.0.0.1:9000|' /etc/php84/php-fpm.d/www.conf \
     && mkdir -p /run/php-fpm \
     # Create symlinks so start.sh's paths work
-    && mkdir -p /usr/local/etc /usr/local/bin \
+    && mkdir -p /usr/local/etc /usr/local/bin /usr/local/sbin \
     && ln -s /etc/php84 /usr/local/etc/php \
     && ln -s /etc/php84/php-fpm.d /usr/local/etc/php-fpm.d \
     # Symlink php84 -> php so composer and artisan work
