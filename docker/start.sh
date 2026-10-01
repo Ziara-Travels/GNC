@@ -10,6 +10,12 @@ export DB_CONNECTION=sqlite
 export DB_DATABASE="/var/data/database.sqlite"
 DB_PATH="/var/data/database.sqlite"
 
+# Set up temp directory for Blade compilation BEFORE any artisan commands
+mkdir -p /tmp/laravel-temp
+chown -R www-data:www-data /tmp/laravel-temp
+chmod -R 775 /tmp/laravel-temp
+export TMPDIR="/tmp/laravel-temp"
+
 echo "Starting Ziara Travels deployment (port: ${PORT}, database: ${DB_PATH})..."
 
 # Render mounts the persistent disk over the database directory, so the image
@@ -19,12 +25,6 @@ if [ ! -f "${DB_PATH}" ]; then
     echo "Creating SQLite database at ${DB_PATH}"
     touch "${DB_PATH}"
 fi
-
-# Ensure system temp directory is writable by www-data for Blade compilation
-mkdir -p /tmp/laravel-temp
-chown -R www-data:www-data /tmp/laravel-temp
-chmod -R 775 /tmp/laravel-temp
-export TMPDIR="/tmp/laravel-temp"
 
 # PHP-FPM listens on TCP rather than a unix socket: supervisord runs it as
 # root but www-data (the pool user) cannot create a socket file in /var/run.
