@@ -58,6 +58,9 @@ RUN apk add --no-cache \
 # Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
+# Create www-data user/group (Alpine doesn't have it by default)
+RUN addgroup -g 82 -S www-data && adduser -u 82 -D -S -G www-data www-data
+
 # Configure PHP-FPM (Alpine php84 uses /etc/php84/php-fpm.d/www.conf)
 # Default is usually a unix socket; force TCP 127.0.0.1:9000 to match nginx.conf.template
 RUN sed -i -E 's|^;?listen = .*|listen = 127.0.0.1:9000|' /etc/php84/php-fpm.d/www.conf \
