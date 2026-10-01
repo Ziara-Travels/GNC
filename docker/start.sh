@@ -20,6 +20,12 @@ if [ ! -f "${DB_PATH}" ]; then
     touch "${DB_PATH}"
 fi
 
+# Ensure system temp directory is writable by www-data for Blade compilation
+mkdir -p /tmp/laravel-temp
+chown -R www-data:www-data /tmp/laravel-temp
+chmod -R 775 /tmp/laravel-temp
+export TMPDIR="/tmp/laravel-temp"
+
 # PHP-FPM listens on TCP rather than a unix socket: supervisord runs it as
 # root but www-data (the pool user) cannot create a socket file in /var/run.
 sed -i -E 's|^;?listen = .*|listen = 127.0.0.1:9000|' /usr/local/etc/php-fpm.d/www.conf
