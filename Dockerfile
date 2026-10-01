@@ -5,8 +5,7 @@ ARG NODE_VERSION=22.14.0
 FROM node:${NODE_VERSION}-slim as node_base
 
 # Must satisfy composer.json ("php": "^8.4")
-ARG PHP_VERSION=8.4
-FROM php:${PHP_VERSION}-fpm-alpine as php_base
+    FROM php:8.4-fpm-alpine as php_base
 
 # Install system dependencies
 RUN apk add --no-cache \
