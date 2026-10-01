@@ -6,6 +6,12 @@ cd /var/www/html
 PORT="${PORT:-8080}"
 DB_PATH="${DB_DATABASE:-/var/www/html/database/database.sqlite}"
 
+# Force SQLite if the database path looks like a file (not a MySQL database name)
+if [[ "${DB_PATH}" == *".sqlite" ]] || [[ "${DB_PATH}" == *"/"* ]]; then
+    export DB_CONNECTION=sqlite
+    export DB_DATABASE="${DB_PATH}"
+fi
+
 echo "Starting Ziara Travels deployment (port: ${PORT}, database: ${DB_PATH})..."
 
 # Render mounts the persistent disk over the database directory, so the image
