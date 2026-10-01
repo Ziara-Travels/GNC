@@ -63,7 +63,9 @@ RUN sed -i -E 's|^;?listen = .*|listen = 127.0.0.1:9000|' /etc/php84/php-fpm.d/w
     && mkdir -p /run/php-fpm \
     # Create symlink so start.sh's path /usr/local/etc/php-fpm.d/www.conf works
     && mkdir -p /usr/local/etc \
-    && ln -s /etc/php84 /usr/local/etc/php
+    && ln -s /etc/php84 /usr/local/etc/php \
+    # Symlink php84 -> php so composer and artisan work
+    && ln -s /usr/bin/php84 /usr/local/bin/php
 
 # Set working directory
 WORKDIR /var/www/html
