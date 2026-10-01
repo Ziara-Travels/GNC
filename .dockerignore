@@ -1,0 +1,67 @@
+# Git
+.git
+.gitignore
+
+# Dependencies
+node_modules
+vendor
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+storage/logs/*
+!storage/logs/.gitignore
+storage/framework/views/*
+!storage/framework/views/.gitignore
+storage/framework/cache/*
+!storage/framework/cache/.gitignore
+!storage/framework/cache/data/.gitignore
+storage/framework/sessions/*
+!storage/framework/sessions/.gitignore
+
+# Testing
+phpunit.xml
+coverage/
+
+# Build
+public/build
+public/hot
+public/storage
+
+# NOTE: Dockerfile and docker/ are intentionally NOT ignored:
+# the Dockerfile COPYs docker/nginx.conf, docker/supervisord.conf and docker/start.sh.
+
+# IDE / Editor
+*.sublime-project
+*.sublime-workspace
+netbeans
+
+# Database
+*.sqlite
+*.sqlite3
+*.sqlite-journal
+database/*.sqlite
+database/*.sqlite3
+
+# Cache
+bootstrap/cache/*.php
+!bootstrap/cache/.gitignore
+
+# Misc
+.phpunit.result.cache
+phpunit.xml
+README.md

@@ -1,0 +1,116 @@
+services:
+  - type: web
+    name: ziara-travels
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: starter
+    region: oregon
+    envVars:
+      - key: APP_KEY
+        generateValue: true
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: LOG_LEVEL
+        value: error
+      - key: DB_CONNECTION
+        value: sqlite
+      - key: DB_DATABASE
+        value: /var/data/database.sqlite
+      - key: DB_FOREIGN_KEYS
+        value: "true"
+      - key: APP_URL
+        fromService: type: web
+        property: url
+      - key: SESSION_SECURE_COOKIE
+        value: "true"
+      - key: SESSION_SAME_SITE
+        value: lax
+      - key: CACHE_DRIVER
+        value: file
+      - key: SESSION_DRIVER
+        value: file
+      - key: QUEUE_CONNECTION
+        value: sync
+      - key: MAIL_MAILER
+        value: smtp
+      - key: MAIL_HOST
+        sync: false
+      - key: MAIL_PORT
+        sync: false
+      - key: MAIL_USERNAME
+        sync: false
+      - key: MAIL_PASSWORD
+        sync: false
+      - key: MAIL_ENCRYPTION
+        value: tls
+      - key: MAIL_FROM_ADDRESS
+        value: noreply@ziaratravels.co.ke
+      - key: MAIL_FROM_NAME
+        value: "Ziara Travels"
+      - key: RAPIDAPI_KEY
+        sync: false
+      - key: RAPIDAPI_HOST_FLIGHTS
+        value: flights-sky.p.rapidapi.com
+      - key: RAPIDAPI_HOST_HOTELS
+        value: hotels-com6.p.rapidapi.com
+      - key: RAPIDAPI_HOST_BOOKING
+        value: booking-com18.p.rapidapi.com
+      - key: RAPIDAPI_MOCK
+        value: "false"
+      - key: SKYSCANNER_MARKET
+        value: KE
+      - key: SKYSCANNER_LOCALE
+        value: en-KE
+      - key: SKYSCANNER_CURRENCY
+        value: KES
+      - key: SKYSCANNER_MOCK
+        value: "false"
+      - key: SKYSCANNER_TIMEOUT
+        value: "30"
+      - key: HOTELS_LOCALE
+        value: en_US
+      - key: HOTELS_CURRENCY
+        value: KES
+      - key: HOTELS_MOCK
+        value: "false"
+      - key: HOTELS_TIMEOUT
+        value: "35"
+      - key: BOOKING_LOCALE
+        value: en-gb
+      - key: BOOKING_CURRENCY
+        value: KES
+      - key: BOOKING_MOCK
+        value: "false"
+      - key: BOOKING_TIMEOUT
+        value: "35"
+      - key: JENGA_BASE_URL
+        value: https://api.finserve.africa/v3-apis/account-api/v3.0/
+      - key: JENGA_MERCHANT_CODE
+        sync: false
+      - key: JENGA_API_KEY
+        sync: false
+      - key: JENGA_CONSUMER_SECRET
+        sync: false
+      - key: JENGA_CALLBACK_URL
+        value: ${APP_URL}/api/payments/jenga/callback
+      - key: BOOKINGCOM_AFFILIATE_ID
+        sync: false
+      - key: BOOKINGCOM_DEEPLINK
+        value: https://www.booking.com
+      - key: BOOKINGCOM_CURRENCY
+        value: KES
+    # Health check endpoint
+    healthCheckPath: /up
+    # Auto deploy on push to main
+    autoDeploy: true
+    # Disk for the SQLite database.
+    # Deliberately NOT /var/www/html/database: a disk is mounted over that
+    # path, which would hide the migration files shipped in the image and
+    # break `artisan migrate`.
+    disk:
+      name: data
+      mountPath: /var/data
+      sizeGB: 1

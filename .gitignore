@@ -7,6 +7,7 @@
 /vendor
 .env
 .env.backup
+.env.production
 .phpunit.result.cache
 docker-compose.override.yml
 Homestead.json
@@ -15,3 +16,11 @@ npm-debug.log
 yarn-error.log
 /.idea
 /.vscode
+
+# Local SQLite databases
+/database/*.sqlite
+/database/*.sqlite3
+*.sqlite
+*.sqlite3
+*.sqlite-journal
+/flightapp

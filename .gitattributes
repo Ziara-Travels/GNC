@@ -3,3 +3,9 @@
 *.scss linguist-vendored
 *.js linguist-vendored
 CHANGELOG.md export-ignore
+
+# Container entrypoint/config files must keep LF endings
+Dockerfile text eol=lf
+*.sh text eol=lf
+*.conf text eol=lf
+*.template text eol=lf

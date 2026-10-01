@@ -1,6 +1,6 @@
 <?php
 
-use Sentry\Tracing\SamplingContext;
+use App\Support\Sentry\TracesSampler;
 
 return [
 
@@ -44,22 +44,13 @@ return [
     |--------------------------------------------------------------------------
     | Dynamic Tracing Sampler
     |--------------------------------------------------------------------------
+    |
+    | Kept as a [class, method] pair rather than a closure so that this config
+    | stays serializable and `php artisan config:cache` can be used in
+    | production (a closure here makes config:cache throw).
+    |
     */
 
-    'traces_sampler' => function (SamplingContext $context): float {
-
-        $transactionContext = $context->getTransactionContext();
-
-        if ($transactionContext !== null) {
-            $name = $transactionContext->getName();
-
-            // Ignore health check routes
-            if ($name && str_contains($name, 'health')) {
-                return 0.0;
-            }
-        }
-
-        return (float) env('SENTRY_TRACES_SAMPLE_RATE', 0.2);
-    },
+    'traces_sampler' => [TracesSampler::class, 'sample'],
 
 ];
