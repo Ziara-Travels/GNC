@@ -440,6 +440,30 @@ class SupportController extends Controller
 
 
     /**
+     * Display gallery page
+     */
+    public function gallery()
+    {
+        return view('pages.gallery');
+    }
+
+    /**
+     * Display team page
+     */
+    public function team()
+    {
+        return view('pages.team');
+    }
+
+    /**
+     * Display partners page
+     */
+    public function partners()
+    {
+        return view('pages.partners');
+    }
+
+    /**
      * Display travel insurance page
      */
     public function travelInsurance()

@@ -48,29 +48,29 @@
           <a href="{{ route('aboutus') }}" class="zt-nav__link" role="menuitem">About Us</a>
         </li>
         <li class="zt-nav__item" role="none">
-          <a href="{{ route('special-offers') }}" class="zt-nav__link" role="menuitem">Kenyan Packages</a>
+          <a href="{{ route('tours.category', 'kenya-safaris') }}" class="zt-nav__link" role="menuitem">Kenyan Packages</a>
         </li>
         <li class="zt-nav__item has-dd" role="none">
-          <a href="{{ route('special-offers') }}" class="zt-nav__link" role="menuitem" aria-haspopup="true" aria-expanded="false">
+          <a href="{{ route('tours.category', 'kenya-safaris') }}" class="zt-nav__link" role="menuitem" aria-haspopup="true" aria-expanded="false">
             Safaris
             <i class="fa-solid fa-chevron-down zt-chev" aria-hidden="true"></i>
           </a>
           <ul class="zt-dropdown" role="menu" aria-label="Safaris submenu">
-            <li role="none"><a href="{{ route('special-offers') }}" role="menuitem"><i class="fa-solid fa-circle" aria-hidden="true"></i>Kenya Safaris</a></li>
-            <li role="none"><a href="{{ route('special-offers') }}" role="menuitem"><i class="fa-solid fa-circle" aria-hidden="true"></i>Uganda Safaris</a></li>
-            <li role="none"><a href="{{ route('special-offers') }}" role="menuitem"><i class="fa-solid fa-circle" aria-hidden="true"></i>Tanzania Safaris</a></li>
-            <li role="none"><a href="{{ route('special-offers') }}" role="menuitem"><i class="fa-solid fa-circle" aria-hidden="true"></i>Rwanda Safaris</a></li>
+            <li role="none"><a href="{{ route('tours.category', 'kenya-safaris') }}" role="menuitem"><i class="fa-solid fa-circle" aria-hidden="true"></i>Kenya Safaris</a></li>
+            <li role="none"><a href="{{ route('tours.category', 'international-packages') }}" role="menuitem"><i class="fa-solid fa-circle" aria-hidden="true"></i>Uganda Safaris</a></li>
+            <li role="none"><a href="{{ route('tours.category', 'international-packages') }}" role="menuitem"><i class="fa-solid fa-circle" aria-hidden="true"></i>Tanzania Safaris</a></li>
+            <li role="none"><a href="{{ route('tours.category', 'international-packages') }}" role="menuitem"><i class="fa-solid fa-circle" aria-hidden="true"></i>Rwanda Safaris</a></li>
           </ul>
         </li>
         <li class="zt-nav__item has-dd" role="none">
-          <a href="{{ route('special-offers') }}" class="zt-nav__link" role="menuitem" aria-haspopup="true" aria-expanded="false">
+          <a href="{{ route('tours.category', 'international-packages') }}" class="zt-nav__link" role="menuitem" aria-haspopup="true" aria-expanded="false">
             International Packages
             <i class="fa-solid fa-chevron-down zt-chev" aria-hidden="true"></i>
           </a>
           <ul class="zt-dropdown" role="menu" aria-label="International Packages submenu">
-            <li role="none"><a href="{{ route('special-offers') }}" role="menuitem"><i class="fa-solid fa-circle" aria-hidden="true"></i>Dubai Packages</a></li>
-            <li role="none"><a href="{{ route('special-offers') }}" role="menuitem"><i class="fa-solid fa-circle" aria-hidden="true"></i>South Africa Packages</a></li>
-            <li role="none"><a href="{{ route('special-offers') }}" role="menuitem"><i class="fa-solid fa-circle" aria-hidden="true"></i>Bangkok Packages</a></li>
+            <li role="none"><a href="{{ route('tours.category', 'dubai-package') }}" role="menuitem"><i class="fa-solid fa-circle" aria-hidden="true"></i>Dubai Packages</a></li>
+            <li role="none"><a href="{{ route('tours.category', 'international-packages') }}" role="menuitem"><i class="fa-solid fa-circle" aria-hidden="true"></i>South Africa Packages</a></li>
+            <li role="none"><a href="{{ route('tours.category', 'bangkok-packages') }}" role="menuitem"><i class="fa-solid fa-circle" aria-hidden="true"></i>Bangkok Packages</a></li>
           </ul>
         </li>
         <li class="zt-nav__item" role="none">
