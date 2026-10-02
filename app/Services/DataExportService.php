@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\WeeklyReportMail;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class DataExportService
 {

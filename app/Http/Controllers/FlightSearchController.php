@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
 use App\Services\FlightOffersService;
 use App\Services\SkyscannerService;
+use Illuminate\Support\Facades\Log;
 
 
 class FlightSearchController extends Controller

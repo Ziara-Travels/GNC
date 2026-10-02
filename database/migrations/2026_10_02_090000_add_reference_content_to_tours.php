@@ -13,11 +13,15 @@ use Illuminate\Support\Facades\Schema;
  *   list of labelled options lives here and the cheapest tier stays in `price`.
  *
  * card_excerpt - the short teaser the reference prints under some cards.
+ *
+ * gallery - the detail-page gallery images. Kept separate from `images` because
+ *   a tour may have no listing card image at all (it is absent from the
+ *   homepage carousel), which makes the roles ambiguous within a single list.
  */
 class AddReferenceContentToTours extends Migration
 {
     /** @var list<string> */
-    private array $columns = ['pricing_options', 'card_excerpt'];
+    private array $columns = ['pricing_options', 'card_excerpt', 'gallery'];
 
     public function up(): void
     {
@@ -27,6 +31,9 @@ class AddReferenceContentToTours extends Migration
             }
             if (! Schema::hasColumn('tours', 'card_excerpt')) {
                 $table->text('card_excerpt')->nullable()->after('pricing_options');
+            }
+            if (! Schema::hasColumn('tours', 'gallery')) {
+                $table->json('gallery')->nullable()->after('card_excerpt');
             }
         });
     }

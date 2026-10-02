@@ -30,8 +30,9 @@ class TourSeeder extends Seeder
         foreach ($catalogue as $row) {
             $slug = $row['slug'];
 
-            // The reference lists the cheapest tier first; `price` holds that
-            // amount while `pricing_options` keeps every labelled option.
+            // `price` holds the first tier the reference displays, which is not
+            // always the cheapest (Dubai leads with USD 1,182 and lists USD
+            // 1,010.50 third). `pricing_options` keeps every labelled option.
             $options = $row['prices'] ?? [];
 
             Tour::updateOrCreate(
@@ -42,6 +43,7 @@ class TourSeeder extends Seeder
                     'short_description'  => $row['short_description'],
                     'full_description'   => $row['full_description'],
                     'card_excerpt'       => $row['card_excerpt'] ?? null,
+                    'gallery'            => $row['gallery'] ?? [],
                     'city'               => $row['location'] !== '' ? $row['location'] : $row['name'],
                     'country'            => $row['country'],
                     'images'             => $row['images'],
@@ -50,13 +52,15 @@ class TourSeeder extends Seeder
                     'currency'           => $row['currency'],
                     'duration'           => $row['duration'],
                     'included_services'  => $row['inclusions'],
-                    'highlights'         => $options,
+                    'highlights'         => [],
                     'category'           => $row['category'],
                     'featured'           => $row['featured'],
                     'status'             => 'active',
                     'published_at'       => $now,
                     'updated_at'         => $now,
-                    'created_at'         => $now,
+                    // Only applied on insert, so re-seeding never rewrites the
+                    // original creation date of an existing tour.
+                    'created_at'         => Tour::where('slug', $slug)->value('created_at') ?? $now,
                 ]
             );
         }

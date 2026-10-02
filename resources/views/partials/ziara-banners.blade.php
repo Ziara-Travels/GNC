@@ -9,13 +9,16 @@
         @include('partials.ziara-banners', ['from' => 2])
 --}}
 @php
+    // Each banner deep-links to its local tour category. Categories that the
+    // reference splits by destination (Tanzania, Uganda, South Africa) have no
+    // dedicated local category yet, so they fall back to the closest one.
     $banners = [
-        ['title' => 'Kenya Safaris', 'image' => 'images/ziara/008.jpeg', 'url' => 'https://ziaratravels.co.ke/kenya-safaris/'],
-        ['title' => 'Tanzania Safaris', 'image' => 'images/ziara/010.jpeg', 'url' => 'https://ziaratravels.co.ke/tanzania-safaris/'],
-        ['title' => 'Uganda Safaris', 'image' => 'images/ziara/003.jpeg', 'url' => 'https://ziaratravels.co.ke/uganda-safaris/'],
-        ['title' => 'Dubai Packages', 'image' => 'images/ziara/011.jpeg', 'url' => 'https://ziaratravels.co.ke/dubai-packages/'],
-        ['title' => 'South Africa Packages', 'image' => 'images/ziara/001.jpeg', 'url' => 'https://ziaratravels.co.ke/south-africa-packages/'],
-        ['title' => 'Bangkok Packages', 'image' => 'images/ziara/005.jpeg', 'url' => 'https://ziaratravels.co.ke/bangkok-packages/'],
+        ['title' => 'Kenya Safaris', 'image' => 'images/ziara/008.jpeg', 'category' => 'kenya-safaris'],
+        ['title' => 'Tanzania Safaris', 'image' => 'images/ziara/010.jpeg', 'category' => 'international-packages'],
+        ['title' => 'Uganda Safaris', 'image' => 'images/ziara/003.jpeg', 'category' => 'safaris'],
+        ['title' => 'Dubai Packages', 'image' => 'images/ziara/011.jpeg', 'category' => 'dubai-package'],
+        ['title' => 'South Africa Packages', 'image' => 'images/ziara/001.jpeg', 'category' => 'international-packages'],
+        ['title' => 'Bangkok Packages', 'image' => 'images/ziara/005.jpeg', 'category' => 'bangkok-packages'],
     ];
 
     $from = $from ?? 0;
@@ -31,7 +34,7 @@
             <div class="banner-content">
                 <h3 class="title">{{ $banner['title'] }}</h3>
             </div>
-            <a class="link-term-overlay" href="{{ $banner['url'] }}" aria-label="{{ $banner['title'] }}"></a>
+            <a class="link-term-overlay" href="{{ route('tours.category', $banner['category']) }}" aria-label="{{ $banner['title'] }}"></a>
         </div>
     </div>
 @endforeach

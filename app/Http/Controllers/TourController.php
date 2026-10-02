@@ -20,6 +20,21 @@ class TourController extends Controller
     }
 
     /**
+     * Reference categories for the listing filter, as label/slug pairs.
+     */
+    protected function categoryOptions()
+    {
+        return collect(Tour::active()->distinct()->pluck('category'))
+            ->filter()
+            ->sort()
+            ->map(fn ($category) => [
+                'slug'  => $category,
+                'label' => Tour::categoryLabel($category),
+            ])
+            ->values();
+    }
+
+    /**
      * List / search available tours
      */
     public function index(Request $request)
@@ -66,9 +81,11 @@ class TourController extends Controller
 
         $tours = $query->paginate(12)->appends($request->query());
         $cities = Tour::active()->distinct()->pluck('city');
-        $categories = Tour::active()->distinct()->pluck('category');
+        $categories = $this->categoryOptions();
 
-        return view('tours.search', compact('tours', 'searchTerm', 'cities', 'categories'));
+        return view('tours.search', compact('tours', 'searchTerm', 'cities', 'categories') + [
+            'activeCategory' => null,
+        ]);
     }
 
     /**
@@ -109,13 +126,7 @@ class TourController extends Controller
             ->paginate(12)
             ->appends($request->query());
 
-        $categories = collect(Tour::active()->distinct()->pluck('category'))
-            ->sort()
-            ->map(fn ($category) => [
-                'slug'  => $category,
-                'label' => Tour::categoryLabel($category),
-            ])
-            ->values();
+        $categories = $this->categoryOptions();
 
         return view('tours.search', [
             'tours'       => $tours,
@@ -133,14 +144,32 @@ class TourController extends Controller
     {
         $tour = Tour::active()->where('slug', $slug)->firstOrFail();
 
+        // The reference always shows three related tours, preferring siblings in
+        // the same top-level group (e.g. Dubai shows Bangkok, Cape Town and
+        // Zanzibar) and topping up with other active tours when needed.
+        $siblingCategories = Tour::active()
+            ->where('category', '!=', $tour->category)
+            ->pluck('category')
+            ->filter(fn ($category) => Tour::parentCategory($category) === $tour->category_parent)
+            ->unique()
+            ->values();
+
         $relatedTours = Tour::active()
             ->where('id', '!=', $tour->id)
-            ->where(function ($q) use ($tour) {
-                $q->where('category', $tour->category)
-                  ->orWhere('country', $tour->country);
-            })
+            ->whereIn('category', $siblingCategories)
+            ->orderBy('id')
             ->limit(3)
             ->get();
+
+        if ($relatedTours->count() < 3) {
+            $topUp = Tour::active()
+                ->whereNotIn('id', $relatedTours->pluck('id')->push($tour->id))
+                ->orderBy('id')
+                ->limit(3 - $relatedTours->count())
+                ->get();
+
+            $relatedTours = $relatedTours->concat($topUp);
+        }
 
         return view('tours.show', compact('tour', 'relatedTours'));
     }

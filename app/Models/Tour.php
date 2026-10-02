@@ -33,6 +33,7 @@ class Tour extends Model
         'price',
         'pricing_options',
         'card_excerpt',
+        'gallery',
         'original_price',
         'currency',
         'discount_percent',
@@ -73,6 +74,7 @@ class Tour extends Model
     protected $casts = [
         'images' => 'array',
         'pricing_options' => 'array',
+        'gallery' => 'array',
         'included_services' => 'array',
         'excluded_services' => 'array',
         'highlights' => 'array',
@@ -246,8 +248,9 @@ class Tour extends Model
     }
 
     /**
-     * Listing/card image. The scraper saves the detail hero as "{slug}-hero.ext",
-     * so the first remaining entry is the card-sized variant.
+     * Listing/card image, or the hero when the tour has no dedicated card asset
+     * (the reference only shows it in the homepage carousel, which omits the
+     * three international packages).
      */
     public function getCardImageUrlAttribute(): string
     {
@@ -263,17 +266,15 @@ class Tour extends Model
     }
 
     /**
-     * Remaining images, used for the detail-page gallery.
+     * Detail-page gallery, stored explicitly so it never overlaps the hero or
+     * the listing card image.
      */
     public function getGalleryUrlsAttribute(): array
     {
-        $images = is_array($this->images) ? $this->images : [];
-        $card = $this->card_image_url;
-
-        return array_values(array_filter(
-            array_map([self::class, 'publicImageUrl'], $images),
-            fn ($url) => $url !== $this->hero_image_url && $url !== $card
-        ));
+        return array_values(array_filter(array_map(
+            [self::class, 'publicImageUrl'],
+            is_array($this->gallery) ? $this->gallery : []
+        )));
     }
 
     public function getAvailabilityStatusAttribute()

@@ -74,6 +74,11 @@ php artisan migrate --force
 # passwords and are not idempotent.
 php artisan db:seed --class=PermissionSeeder --force
 
+# The public tour catalogue is reference content, so it must exist on a fresh
+# persistent disk or every public page renders empty. TourSeeder is keyed by
+# slug and touches no user tables, so it is also safe on every boot.
+php artisan db:seed --class=TourSeeder --force
+
 echo "Optimizing Laravel..."
 php artisan config:clear
 php artisan route:clear

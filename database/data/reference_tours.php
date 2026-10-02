@@ -26,14 +26,16 @@ return array (
     'images' => 
     array (
       0 => 'images/tours/zanzibar-5-nights-6-days-hero.jpg',
-      1 => 'images/tours/zanzibar-5-nights-6-days.png',
-      2 => 'images/tours/zanzibar-5-nights-6-days-zan.png',
+      1 => 'images/tours/zanzibar-5-nights-6-days.jpg',
+      2 => 'images/tours/zanzibar-5-nights-6-days-gallery-1.jpg',
+      3 => 'images/tours/zanzibar-5-nights-6-days-gallery-2.jpg',
     ),
-    'card_image' => 'images/tours/zanzibar-5-nights-6-days.png',
+    'card_image' => 'images/tours/zanzibar-5-nights-6-days.jpg',
     'hero_image' => 'images/tours/zanzibar-5-nights-6-days-hero.jpg',
     'gallery' => 
     array (
-      0 => 'images/tours/zanzibar-5-nights-6-days-zan.png',
+      0 => 'images/tours/zanzibar-5-nights-6-days-gallery-1.jpg',
+      1 => 'images/tours/zanzibar-5-nights-6-days-gallery-2.jpg',
     ),
     'inclusions' => 
     array (
@@ -77,9 +79,9 @@ Pricing options:
     'images' => 
     array (
       0 => 'images/tours/mombasa-continetal-resort-full-board-hero.jpg',
-      1 => 'images/tours/mombasa-continetal-resort-full-board.jpeg',
+      1 => 'images/tours/mombasa-continetal-resort-full-board.jpg',
     ),
-    'card_image' => 'images/tours/mombasa-continetal-resort-full-board.jpeg',
+    'card_image' => 'images/tours/mombasa-continetal-resort-full-board.jpg',
     'hero_image' => 'images/tours/mombasa-continetal-resort-full-board-hero.jpg',
     'gallery' => 
     array (
@@ -122,9 +124,9 @@ What\'s included:
     'images' => 
     array (
       0 => 'images/tours/voyager-ail-inclusive-rates-hero.jpg',
-      1 => 'images/tours/voyager-ail-inclusive-rates.jpeg',
+      1 => 'images/tours/voyager-ail-inclusive-rates.jpg',
     ),
-    'card_image' => 'images/tours/voyager-ail-inclusive-rates.jpeg',
+    'card_image' => 'images/tours/voyager-ail-inclusive-rates.jpg',
     'hero_image' => 'images/tours/voyager-ail-inclusive-rates-hero.jpg',
     'gallery' => 
     array (
@@ -170,9 +172,9 @@ Pricing options:
     'images' => 
     array (
       0 => 'images/tours/bahari-beach-hotel-ail-inclusive-package-hero.jpg',
-      1 => 'images/tours/bahari-beach-hotel-ail-inclusive-package.jpeg',
+      1 => 'images/tours/bahari-beach-hotel-ail-inclusive-package.jpg',
     ),
-    'card_image' => 'images/tours/bahari-beach-hotel-ail-inclusive-package.jpeg',
+    'card_image' => 'images/tours/bahari-beach-hotel-ail-inclusive-package.jpg',
     'hero_image' => 'images/tours/bahari-beach-hotel-ail-inclusive-package-hero.jpg',
     'gallery' => 
     array (
@@ -214,9 +216,9 @@ What\'s included:
     'images' => 
     array (
       0 => 'images/tours/nyali-beach-hotel-full-board-package-hero.jpg',
-      1 => 'images/tours/nyali-beach-hotel-full-board-package.jpeg',
+      1 => 'images/tours/nyali-beach-hotel-full-board-package.jpg',
     ),
-    'card_image' => 'images/tours/nyali-beach-hotel-full-board-package.jpeg',
+    'card_image' => 'images/tours/nyali-beach-hotel-full-board-package.jpg',
     'hero_image' => 'images/tours/nyali-beach-hotel-full-board-package-hero.jpg',
     'gallery' => 
     array (
@@ -259,9 +261,9 @@ What\'s included:
     'images' => 
     array (
       0 => 'images/tours/pride-inn-paradise-half-board-package-hero.jpg',
-      1 => 'images/tours/pride-inn-paradise-half-board-package.jpeg',
+      1 => 'images/tours/pride-inn-paradise-half-board-package.jpg',
     ),
-    'card_image' => 'images/tours/pride-inn-paradise-half-board-package.jpeg',
+    'card_image' => 'images/tours/pride-inn-paradise-half-board-package.jpg',
     'hero_image' => 'images/tours/pride-inn-paradise-half-board-package-hero.jpg',
     'gallery' => 
     array (
@@ -308,9 +310,9 @@ Pricing options:
     'images' => 
     array (
       0 => 'images/tours/pride-inn-flamingo-all-inclusive-package-hero.jpg',
-      1 => 'images/tours/pride-inn-flamingo-all-inclusive-package.jpeg',
+      1 => 'images/tours/pride-inn-flamingo-all-inclusive-package.jpg',
     ),
-    'card_image' => 'images/tours/pride-inn-flamingo-all-inclusive-package.jpeg',
+    'card_image' => 'images/tours/pride-inn-flamingo-all-inclusive-package.jpg',
     'hero_image' => 'images/tours/pride-inn-flamingo-all-inclusive-package-hero.jpg',
     'gallery' => 
     array (
@@ -357,9 +359,9 @@ Pricing options:
     'images' => 
     array (
       0 => 'images/tours/swahili-beach-full-board-package-hero.jpg',
-      1 => 'images/tours/swahili-beach-full-board-package.jpeg',
+      1 => 'images/tours/swahili-beach-full-board-package.jpg',
     ),
-    'card_image' => 'images/tours/swahili-beach-full-board-package.jpeg',
+    'card_image' => 'images/tours/swahili-beach-full-board-package.jpg',
     'hero_image' => 'images/tours/swahili-beach-full-board-package-hero.jpg',
     'gallery' => 
     array (
@@ -406,9 +408,9 @@ Pricing options:
     'images' => 
     array (
       0 => 'images/tours/diani-reef-and-spa-all-inclusive-package-hero.jpg',
-      1 => 'images/tours/diani-reef-and-spa-all-inclusive-package.jpeg',
+      1 => 'images/tours/diani-reef-and-spa-all-inclusive-package.jpg',
     ),
-    'card_image' => 'images/tours/diani-reef-and-spa-all-inclusive-package.jpeg',
+    'card_image' => 'images/tours/diani-reef-and-spa-all-inclusive-package.jpg',
     'hero_image' => 'images/tours/diani-reef-and-spa-all-inclusive-package-hero.jpg',
     'gallery' => 
     array (
@@ -455,9 +457,9 @@ Pricing options:
     'images' => 
     array (
       0 => 'images/tours/baobab-hotel-all-inclusive-package-hero.jpg',
-      1 => 'images/tours/baobab-hotel-all-inclusive-package.jpeg',
+      1 => 'images/tours/baobab-hotel-all-inclusive-package.jpg',
     ),
-    'card_image' => 'images/tours/baobab-hotel-all-inclusive-package.jpeg',
+    'card_image' => 'images/tours/baobab-hotel-all-inclusive-package.jpg',
     'hero_image' => 'images/tours/baobab-hotel-all-inclusive-package-hero.jpg',
     'gallery' => 
     array (
@@ -504,9 +506,9 @@ Pricing options:
     'images' => 
     array (
       0 => 'images/tours/4-bedroom-private-villa-hero.jpg',
-      1 => 'images/tours/4-bedroom-private-villa.jpeg',
+      1 => 'images/tours/4-bedroom-private-villa.jpg',
     ),
-    'card_image' => 'images/tours/4-bedroom-private-villa.jpeg',
+    'card_image' => 'images/tours/4-bedroom-private-villa.jpg',
     'hero_image' => 'images/tours/4-bedroom-private-villa-hero.jpg',
     'gallery' => 
     array (
@@ -547,9 +549,9 @@ Pricing options:
     'images' => 
     array (
       0 => 'images/tours/5-bedroom-villas-hero.jpg',
-      1 => 'images/tours/5-bedroom-villas.jpeg',
+      1 => 'images/tours/5-bedroom-villas.jpg',
     ),
-    'card_image' => 'images/tours/5-bedroom-villas.jpeg',
+    'card_image' => 'images/tours/5-bedroom-villas.jpg',
     'hero_image' => 'images/tours/5-bedroom-villas-hero.jpg',
     'gallery' => 
     array (
@@ -592,9 +594,9 @@ Pricing options:
     'images' => 
     array (
       0 => 'images/tours/luxury-12-and-3-bedrooms-in-diani-hero.jpg',
-      1 => 'images/tours/luxury-12-and-3-bedrooms-in-diani.jpeg',
+      1 => 'images/tours/luxury-12-and-3-bedrooms-in-diani.jpg',
     ),
-    'card_image' => 'images/tours/luxury-12-and-3-bedrooms-in-diani.jpeg',
+    'card_image' => 'images/tours/luxury-12-and-3-bedrooms-in-diani.jpg',
     'hero_image' => 'images/tours/luxury-12-and-3-bedrooms-in-diani-hero.jpg',
     'gallery' => 
     array (
@@ -635,9 +637,9 @@ Pricing options:
     'images' => 
     array (
       0 => 'images/tours/one-bedroom-and-studio-villa-in-diani-hero.jpg',
-      1 => 'images/tours/one-bedroom-and-studio-villa-in-diani.jpeg',
+      1 => 'images/tours/one-bedroom-and-studio-villa-in-diani.jpg',
     ),
-    'card_image' => 'images/tours/one-bedroom-and-studio-villa-in-diani.jpeg',
+    'card_image' => 'images/tours/one-bedroom-and-studio-villa-in-diani.jpg',
     'hero_image' => 'images/tours/one-bedroom-and-studio-villa-in-diani-hero.jpg',
     'gallery' => 
     array (
@@ -675,9 +677,9 @@ Pricing options:
     'images' => 
     array (
       0 => 'images/tours/amboseli-2-nights-and-3-days-package-hero.jpg',
-      1 => 'images/tours/amboseli-2-nights-and-3-days-package.jpeg',
+      1 => 'images/tours/amboseli-2-nights-and-3-days-package.jpg',
     ),
-    'card_image' => 'images/tours/amboseli-2-nights-and-3-days-package.jpeg',
+    'card_image' => 'images/tours/amboseli-2-nights-and-3-days-package.jpg',
     'hero_image' => 'images/tours/amboseli-2-nights-and-3-days-package-hero.jpg',
     'gallery' => 
     array (
@@ -729,9 +731,9 @@ What\'s included:
     'images' => 
     array (
       0 => 'images/tours/ol-pejeta-nakuru-and-mara-package-for-4-nights-and-5-days-2-hero.jpg',
-      1 => 'images/tours/ol-pejeta-nakuru-and-mara-package-for-4-nights-and-5-days-2.jpeg',
+      1 => 'images/tours/ol-pejeta-nakuru-and-mara-package-for-4-nights-and-5-days-2.jpg',
     ),
-    'card_image' => 'images/tours/ol-pejeta-nakuru-and-mara-package-for-4-nights-and-5-days-2.jpeg',
+    'card_image' => 'images/tours/ol-pejeta-nakuru-and-mara-package-for-4-nights-and-5-days-2.jpg',
     'hero_image' => 'images/tours/ol-pejeta-nakuru-and-mara-package-for-4-nights-and-5-days-2-hero.jpg',
     'gallery' => 
     array (
@@ -765,9 +767,9 @@ What\'s included:
     'images' => 
     array (
       0 => 'images/tours/naivasha-nakuru-and-mara-package-for-4-nights-and-5-days-2-hero.jpg',
-      1 => 'images/tours/naivasha-nakuru-and-mara-package-for-4-nights-and-5-days-2.jpeg',
+      1 => 'images/tours/naivasha-nakuru-and-mara-package-for-4-nights-and-5-days-2.jpg',
     ),
-    'card_image' => 'images/tours/naivasha-nakuru-and-mara-package-for-4-nights-and-5-days-2.jpeg',
+    'card_image' => 'images/tours/naivasha-nakuru-and-mara-package-for-4-nights-and-5-days-2.jpg',
     'hero_image' => 'images/tours/naivasha-nakuru-and-mara-package-for-4-nights-and-5-days-2-hero.jpg',
     'gallery' => 
     array (
@@ -801,9 +803,9 @@ What\'s included:
     'images' => 
     array (
       0 => 'images/tours/samburu-and-ol-pejeta-for-3-nights-and-4-days-2-hero.jpg',
-      1 => 'images/tours/samburu-and-ol-pejeta-for-3-nights-and-4-days-2.jpeg',
+      1 => 'images/tours/samburu-and-ol-pejeta-for-3-nights-and-4-days-2.jpg',
     ),
-    'card_image' => 'images/tours/samburu-and-ol-pejeta-for-3-nights-and-4-days-2.jpeg',
+    'card_image' => 'images/tours/samburu-and-ol-pejeta-for-3-nights-and-4-days-2.jpg',
     'hero_image' => 'images/tours/samburu-and-ol-pejeta-for-3-nights-and-4-days-2-hero.jpg',
     'gallery' => 
     array (
@@ -837,9 +839,9 @@ What\'s included:
     'images' => 
     array (
       0 => 'images/tours/nakuru-and-mara-package-for-3-nights-and-4-days-2-hero.jpg',
-      1 => 'images/tours/nakuru-and-mara-package-for-3-nights-and-4-days-2.jpeg',
+      1 => 'images/tours/nakuru-and-mara-package-for-3-nights-and-4-days-2.jpg',
     ),
-    'card_image' => 'images/tours/nakuru-and-mara-package-for-3-nights-and-4-days-2.jpeg',
+    'card_image' => 'images/tours/nakuru-and-mara-package-for-3-nights-and-4-days-2.jpg',
     'hero_image' => 'images/tours/nakuru-and-mara-package-for-3-nights-and-4-days-2-hero.jpg',
     'gallery' => 
     array (
@@ -873,9 +875,9 @@ What\'s included:
     'images' => 
     array (
       0 => 'images/tours/maasai-mara-package-for-2-nights-and-3-days-hero.jpg',
-      1 => 'images/tours/maasai-mara-package-for-2-nights-and-3-days.png',
+      1 => 'images/tours/maasai-mara-package-for-2-nights-and-3-days.jpg',
     ),
-    'card_image' => 'images/tours/maasai-mara-package-for-2-nights-and-3-days.png',
+    'card_image' => 'images/tours/maasai-mara-package-for-2-nights-and-3-days.jpg',
     'hero_image' => 'images/tours/maasai-mara-package-for-2-nights-and-3-days-hero.jpg',
     'gallery' => 
     array (
@@ -909,9 +911,9 @@ What\'s included:
     'images' => 
     array (
       0 => 'images/tours/ol-pejeta-nakuru-and-mara-package-for-4-nights-and-5-days-hero.jpg',
-      1 => 'images/tours/ol-pejeta-nakuru-and-mara-package-for-4-nights-and-5-days.jpeg',
+      1 => 'images/tours/ol-pejeta-nakuru-and-mara-package-for-4-nights-and-5-days.jpg',
     ),
-    'card_image' => 'images/tours/ol-pejeta-nakuru-and-mara-package-for-4-nights-and-5-days.jpeg',
+    'card_image' => 'images/tours/ol-pejeta-nakuru-and-mara-package-for-4-nights-and-5-days.jpg',
     'hero_image' => 'images/tours/ol-pejeta-nakuru-and-mara-package-for-4-nights-and-5-days-hero.jpg',
     'gallery' => 
     array (
@@ -945,9 +947,9 @@ What\'s included:
     'images' => 
     array (
       0 => 'images/tours/naivasha-nakuru-and-mara-package-for-4-nights-and-5-days-hero.jpg',
-      1 => 'images/tours/naivasha-nakuru-and-mara-package-for-4-nights-and-5-days.jpeg',
+      1 => 'images/tours/naivasha-nakuru-and-mara-package-for-4-nights-and-5-days.jpg',
     ),
-    'card_image' => 'images/tours/naivasha-nakuru-and-mara-package-for-4-nights-and-5-days.jpeg',
+    'card_image' => 'images/tours/naivasha-nakuru-and-mara-package-for-4-nights-and-5-days.jpg',
     'hero_image' => 'images/tours/naivasha-nakuru-and-mara-package-for-4-nights-and-5-days-hero.jpg',
     'gallery' => 
     array (
@@ -981,9 +983,9 @@ What\'s included:
     'images' => 
     array (
       0 => 'images/tours/samburu-and-ol-pejeta-for-3-nights-and-4-days-hero.jpg',
-      1 => 'images/tours/samburu-and-ol-pejeta-for-3-nights-and-4-days.jpeg',
+      1 => 'images/tours/samburu-and-ol-pejeta-for-3-nights-and-4-days.jpg',
     ),
-    'card_image' => 'images/tours/samburu-and-ol-pejeta-for-3-nights-and-4-days.jpeg',
+    'card_image' => 'images/tours/samburu-and-ol-pejeta-for-3-nights-and-4-days.jpg',
     'hero_image' => 'images/tours/samburu-and-ol-pejeta-for-3-nights-and-4-days-hero.jpg',
     'gallery' => 
     array (
@@ -1017,9 +1019,9 @@ What\'s included:
     'images' => 
     array (
       0 => 'images/tours/nakuru-and-mara-package-for-3-nights-and-4-days-hero.jpg',
-      1 => 'images/tours/nakuru-and-mara-package-for-3-nights-and-4-days.jpeg',
+      1 => 'images/tours/nakuru-and-mara-package-for-3-nights-and-4-days.jpg',
     ),
-    'card_image' => 'images/tours/nakuru-and-mara-package-for-3-nights-and-4-days.jpeg',
+    'card_image' => 'images/tours/nakuru-and-mara-package-for-3-nights-and-4-days.jpg',
     'hero_image' => 'images/tours/nakuru-and-mara-package-for-3-nights-and-4-days-hero.jpg',
     'gallery' => 
     array (
@@ -1091,12 +1093,15 @@ What\'s included:
     'images' => 
     array (
       0 => 'images/tours/bangkok-5-nights-6-days-hero.jpg',
-      1 => 'images/tours/bangkok-5-nights-6-days-kok.png',
+      1 => 'images/tours/bangkok-5-nights-6-days-gallery-1.jpg',
+      2 => 'images/tours/bangkok-5-nights-6-days-gallery-2.jpg',
     ),
-    'card_image' => 'images/tours/bangkok-5-nights-6-days-kok.png',
+    'card_image' => 'images/tours/bangkok-5-nights-6-days-hero.jpg',
     'hero_image' => 'images/tours/bangkok-5-nights-6-days-hero.jpg',
     'gallery' => 
     array (
+      0 => 'images/tours/bangkok-5-nights-6-days-gallery-1.jpg',
+      1 => 'images/tours/bangkok-5-nights-6-days-gallery-2.jpg',
     ),
     'inclusions' => 
     array (
@@ -1142,12 +1147,15 @@ Pricing options:
     'images' => 
     array (
       0 => 'images/tours/cape-town-5-nights-6-days-hero.jpg',
-      1 => 'images/tours/cape-town-5-nights-6-days-town.png',
+      1 => 'images/tours/cape-town-5-nights-6-days-gallery-1.jpg',
+      2 => 'images/tours/cape-town-5-nights-6-days-gallery-2.jpg',
     ),
-    'card_image' => 'images/tours/cape-town-5-nights-6-days-town.png',
+    'card_image' => 'images/tours/cape-town-5-nights-6-days-hero.jpg',
     'hero_image' => 'images/tours/cape-town-5-nights-6-days-hero.jpg',
     'gallery' => 
     array (
+      0 => 'images/tours/cape-town-5-nights-6-days-gallery-1.jpg',
+      1 => 'images/tours/cape-town-5-nights-6-days-gallery-2.jpg',
     ),
     'inclusions' => 
     array (
@@ -1193,12 +1201,15 @@ Pricing options:
     'images' => 
     array (
       0 => 'images/tours/dubai-5-nights-6-days-hero.jpg',
-      1 => 'images/tours/dubai-5-nights-6-days-bud.png',
+      1 => 'images/tours/dubai-5-nights-6-days-gallery-1.jpg',
+      2 => 'images/tours/dubai-5-nights-6-days-gallery-2.jpg',
     ),
-    'card_image' => 'images/tours/dubai-5-nights-6-days-bud.png',
+    'card_image' => 'images/tours/dubai-5-nights-6-days-hero.jpg',
     'hero_image' => 'images/tours/dubai-5-nights-6-days-hero.jpg',
     'gallery' => 
     array (
+      0 => 'images/tours/dubai-5-nights-6-days-gallery-1.jpg',
+      1 => 'images/tours/dubai-5-nights-6-days-gallery-2.jpg',
     ),
     'inclusions' => 
     array (

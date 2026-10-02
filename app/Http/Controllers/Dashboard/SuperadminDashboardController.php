@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail; 
 use App\Mail\PasswordChangedNotification; 
 use App\Mail\dashboard\AdminPassChangeNotification; 
+use Illuminate\Support\Str;
 
 class SuperadminDashboardController extends Controller
 {

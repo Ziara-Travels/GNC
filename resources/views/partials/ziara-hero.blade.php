@@ -40,7 +40,7 @@
             <span class="zt-slide__meta-item"><i class="fa-solid fa-headset"></i> Expert consultants</span>
           </div>
           <div class="zt-slide__ctas">
-            <a href="https://ziaratravels.co.ke/tours/" class="zt-cta zt-cta--primary"><span>Explore All Packages</span><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+            <a href="{{ route('tours.index') }}" class="zt-cta zt-cta--primary"><span>Explore All Packages</span><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
             <a href="tel:+254786336633" class="zt-cta zt-cta--ghost"><span class="zt-play"><i class="fa-solid fa-phone" aria-hidden="true"></i></span><span>Talk to Us</span></a>
           </div>
         </div>
@@ -61,7 +61,7 @@
             <span class="zt-slide__meta-item"><i class="fa-solid fa-binoculars"></i> Game drives</span>
           </div>
           <div class="zt-slide__ctas">
-            <a href="https://ziaratravels.co.ke/tours/" class="zt-cta zt-cta--primary"><span>Explore Safaris</span><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+            <a href="{{ route('tours.index') }}" class="zt-cta zt-cta--primary"><span>Explore Safaris</span><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
             <a href="tel:+254786336633" class="zt-cta zt-cta--ghost"><span class="zt-play"><i class="fa-solid fa-phone" aria-hidden="true"></i></span><span>Talk to Us</span></a>
           </div>
         </div>
@@ -82,7 +82,7 @@
             <span class="zt-slide__meta-item"><i class="fa-solid fa-mountain"></i> Kilimanjaro views</span>
           </div>
           <div class="zt-slide__ctas">
-            <a href="https://ziaratravels.co.ke/tours/" class="zt-cta zt-cta--primary"><span>Explore Safaris</span><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+            <a href="{{ route('tours.index') }}" class="zt-cta zt-cta--primary"><span>Explore Safaris</span><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
             <a href="tel:+254786336633" class="zt-cta zt-cta--ghost"><span class="zt-play"><i class="fa-solid fa-phone" aria-hidden="true"></i></span><span>Talk to Us</span></a>
           </div>
         </div>
@@ -103,7 +103,7 @@
             <span class="zt-slide__meta-item"><i class="fa-solid fa-route"></i> Conservancy stays</span>
           </div>
           <div class="zt-slide__ctas">
-            <a href="https://ziaratravels.co.ke/tours/" class="zt-cta zt-cta--primary"><span>Explore Safaris</span><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+            <a href="{{ route('tours.index') }}" class="zt-cta zt-cta--primary"><span>Explore Safaris</span><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
             <a href="tel:+254786336633" class="zt-cta zt-cta--ghost"><span class="zt-play"><i class="fa-solid fa-phone" aria-hidden="true"></i></span><span>Talk to Us</span></a>
           </div>
         </div>

@@ -21,6 +21,7 @@ use App\Models\Permission;
 use App\Models\Referral;
 use App\Models\Reward;
 use App\Models\Payment;
+use Illuminate\Support\Facades\Mail;
 
 class AdminDashboardController extends Controller
 {
