@@ -24,3 +24,7 @@ yarn-error.log
 *.sqlite3
 *.sqlite-journal
 /flightapp
+
+# Local design-reference screenshots (not part of the deployed site)
+/public/images/Join us section.png
+/public/images/Safaris and International Package section.png

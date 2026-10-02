@@ -30,8 +30,8 @@ class SEOHelper
         $html .= '<meta name="author" content="Ziara Travels">' . "\n";
         $html .= '<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">' . "\n";
         $html .= '<meta name="viewport" content="width=device-width, initial-scale=1.0">' . "\n";
-        $html .= '<meta name="theme-color" content="#3B82F6">' . "\n";
-        $html .= '<meta name="msapplication-TileColor" content="#3B82F6">' . "\n";
+        $html .= '<meta name="theme-color" content="#6b2c1f">' . "\n";
+        $html .= '<meta name="msapplication-TileColor" content="#6b2c1f">' . "\n";
         
         // Open Graph Tags
         $html .= '<meta property="og:type" content="website">' . "\n";
@@ -57,8 +57,8 @@ class SEOHelper
         $html .= '<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">' . "\n";
         $html .= '<meta name="apple-mobile-web-app-title" content="Ziara Travel">' . "\n";
         
-        // Microsoft Meta Tags
-        $html .= '<meta name="msapplication-TileImage" content="' . url('/images/icons/icon-144x144.png') . '">' . "\n";
+        // Microsoft Meta Tags — tile image matches the ziaratravels.co.ke favicon
+        $html .= '<meta name="msapplication-TileImage" content="' . url('/images/ziara/cropped-ziara-270x270.jpg') . '">' . "\n";
         $html .= '<meta name="msapplication-config" content="' . url('/browserconfig.xml') . '">' . "\n";
         
         // Canonical URL

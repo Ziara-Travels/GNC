@@ -13,6 +13,7 @@
 .zt-section { padding: 96px 0; }
 .zt-section--white { background: #fff; }
 .zt-section--pale  { background: var(--gold-pale); }
+.zt-section--cream { background: #faf5ee; }
 .zt-section--dark  { background: var(--maroon-deep); color: #fff; }
 .zt-section--dark .gsc-heading .title,
 .zt-section--dark .gsc-heading .title span,
@@ -23,114 +24,151 @@
 /* ── Hero wrapper (zt-wrap from capture is a bare positioning div) ── */
 .zt-wrap { position: relative; }
 
-/* ── Section headings (gsc-heading — GSC theme widget) ──────── */
-.gsc-heading { margin: 0 0 44px; }
+/* ── Section headings (gsc-heading — mirrors ziaratravels.co.ke) ──────
+   Titles are DM Sans 35px with NO decorative rule underneath, matching the
+   live site (it has no ::after line). The gold italic eyebrow stands in for
+   the theme's "reey" script face, which is not available outside the
+   WordPress build. ─────────────────────────────────────────────────── */
+.gsc-heading { margin: 0 0 26px; }
 .gsc-heading.align-center { text-align: center; }
 .gsc-heading.align-left { text-align: left; }
 
 .gsc-heading .sub-title {
+  position: relative;
+  display: inline-block;
   font-family: var(--font-display);
-  font-size: 21px;
   font-style: italic;
+  font-size: 22px;
+  line-height: 1;
   letter-spacing: .2px;
-  color: var(--gold-dim);
-  margin-bottom: 10px;
+  color: var(--gold);
+  text-indent: 15px;
+  margin-bottom: 0;
 }
 .gsc-heading .title {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-weight: 600;
-  font-size: 44px;
-  line-height: 1.15;
+  font-size: 35px;
+  line-height: 1.2;
   color: var(--ink);
-  letter-spacing: .2px;
-  margin: 0;
-}
-.gsc-heading .title span { position: relative; }
-.gsc-heading.align-center .title span::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  bottom: -14px;
-  transform: translateX(-50%);
-  width: 72px; height: 3px;
-  border-radius: 2px;
-  background: linear-gradient(90deg, var(--gold-dim), var(--gold));
-}
-.gsc-heading.align-left .title span::after {
-  content: '';
-  position: absolute;
-  left: 0; bottom: -14px;
-  width: 72px; height: 3px;
-  border-radius: 2px;
-  background: linear-gradient(90deg, var(--gold-dim), var(--gold));
+  margin: 0 0 8px;
 }
 .gsc-heading .title-desc {
-  margin-top: 30px;
   font-size: 16px;
   line-height: 1.75;
   color: var(--muted);
   max-width: 720px;
+  padding: 5px 0 10px;
 }
 .gsc-heading.align-center .title-desc { margin-left: auto; margin-right: auto; }
+
+/* Light heading variant for dark bands (newsletter, deal/show/search panels) */
+.gsc-heading--light .sub-title { color: var(--gold); }
+.gsc-heading--light .title { color: #fff; }
+.gsc-heading--light .title-desc { color: rgba(255, 255, 255, .72); }
+
+/* style-2 variant — used by the Safaris & Packages heading */
+.gsc-heading.style-2 .sub-title {
+  font-size: 25px;
+  text-indent: 36px;
+  padding-bottom: 55px;
+  text-shadow: 15px 16px rgba(0, 0, 0, .16);
+}
+
 @media (max-width: 768px) {
-  .gsc-heading .title { font-size: 32px; }
+  .gsc-heading .title { font-size: 25px; }
+  .gsc-heading .sub-title { font-size: 20px; }
+  .gsc-heading.style-2 .sub-title { font-size: 20px; padding-bottom: 28px; }
   .gsc-heading { margin-bottom: 34px; }
 }
 
-/* ── Destination banners (gsc-booking-banner style-1) ────────── */
-.ziara-banners {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 22px;
+/* ── Safaris & Packages (mirrors ziaratravels.co.ke 1198452 + 585f834) ──
+   Heading sits in the left half with the first two banners beside it; the
+   remaining four banners fill a full-width row underneath. ─────────── */
+.zt-safaris {
+  padding: 50px 0 0;
+  background-color: #fff;
+  background-image: url('../images/ziara/bg-line-map.png');
+  background-position: top left;
+  background-repeat: no-repeat;
 }
+.zt-safaris .container { max-width: 1140px; }
+.zt-safaris__top {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+}
+.zt-safaris__head { padding: 0 15px; }
+.zt-safaris__pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+.zt-safaris__row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  padding-top: 30px;
+}
+.zt-safaris__row .gsc-booking-banner,
+.zt-safaris__pair .gsc-booking-banner { padding: 0 15px; }
+
+/* ── Destination banners (gsc-booking-banner style-1) ────────── */
 .gsc-booking-banner.text-left.style-1 {
   position: relative;
+  border-radius: 8px;
   overflow: hidden;
-  border-radius: 18px;
-  box-shadow: var(--shadow-sm);
 }
-.gsc-booking-banner .listings-banner-content { position: relative; }
-.gsc-booking-banner .banner-image { position: relative; padding-bottom: 74%; overflow: hidden; }
-.gsc-booking-banner .banner-image img {
+.gsc-booking-banner .listings-banner-content {
+  position: relative;
+  overflow: hidden;
+  min-height: 290px;
+}
+.gsc-booking-banner .banner-image { position: absolute; inset: 0; }
+.gsc-booking-banner .banner-image::after {
+  content: '';
   position: absolute;
   inset: 0;
+  background: rgba(49, 48, 65, .5);
+  z-index: 1;
+  transition: background .4s var(--ease-out);
+}
+.gsc-booking-banner .banner-image img {
+  position: absolute;
+  top: 50%; left: 50%;
   width: 100%; height: 100%;
   object-fit: cover;
-  transition: transform .8s var(--ease-out);
+  transform: translate(-50%, -50%);
+  transition: transform 10s ease;
 }
-.gsc-booking-banner:hover .banner-image img { transform: scale(1.06); }
+.gsc-booking-banner:hover .banner-image img { transform: translate(-50%, -50%) scale(1.2); }
+.gsc-booking-banner:hover .banner-image::after { background: rgba(49, 48, 65, .38); }
 .gsc-booking-banner .banner-content {
   position: absolute;
-  left: 0; right: 0; bottom: 0;
-  padding: 22px 24px 24px;
-  background: linear-gradient(to top, rgba(28,14,10,.72), rgba(28,14,10,0));
-  z-index: 1;
+  left: 0; bottom: 0;
+  z-index: 11;
+  width: 100%;
+  padding: 15px 30px 25px;
 }
 .gsc-booking-banner .banner-content .title {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-weight: 600;
-  font-size: 28px;
+  font-size: 25px;
+  line-height: 1.2;
   color: #fff;
   margin: 0;
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
 }
-.gsc-booking-banner .banner-content .title::after {
-  content: '\2192';
-  font-family: 'Font Awesome 6 Free';
-  font-weight: 900;
-  font-size: 15px;
-  color: var(--gold);
-  opacity: 0;
-  transform: translateX(-6px);
-  transition: opacity .35s var(--ease-out), transform .35s var(--ease-out);
-}
-.gsc-booking-banner:hover .banner-content .title::after { opacity: 1; transform: translateX(0); }
-.gsc-booking-banner .link-term-overlay { position: absolute; inset: 0; z-index: 2; }
+.gsc-booking-banner .link-term-overlay { position: absolute; inset: 0; z-index: 15; }
 
-@media (max-width: 992px) { .ziara-banners { grid-template-columns: repeat(2, 1fr); gap: 18px; } }
-@media (max-width: 560px) { .ziara-banners { grid-template-columns: 1fr; } }
+@media (max-width: 1024px) {
+  .zt-safaris { padding-top: 70px; }
+  .zt-safaris__top { grid-template-columns: 1fr; }
+  .zt-safaris__row { grid-template-columns: repeat(2, 1fr); padding-top: 20px; }
+}
+@media (max-width: 560px) {
+  .zt-safaris__pair { grid-template-columns: 1fr; }
+  .zt-safaris__row { grid-template-columns: 1fr; }
+  .gsc-booking-banner .banner-content { padding: 15px 15px 20px; }
+  .gsc-booking-banner .banner-content .title { font-size: 22px; }
+}
 
 /* ── Carousel cards without theme JS: wrap into a tidy grid ───── */
 .ziara-carousel { max-width: 1180px; margin: 0 auto; overflow: visible; }
@@ -191,42 +229,70 @@
   line-height: 1.4;
 }
 
-/* ── Joining CTA (heading + button + image) ──────────────────── */
+/* ── Join Us (mirrors ziaratravels.co.ke section 6ea8b05) ────────────
+   Cream band, two equal columns: centred heading + CTA on the left,
+   photo on the right at 75% width. ────────────────────────────────── */
 .ziara-join {
-  background:
-    radial-gradient(1200px 480px at 85% -10%, rgba(201,162,39,.14), transparent 60%),
-    var(--maroon-deep);
+  padding: 50px 0 0;
+  background-color: #faf5ee;
+  background-image: url('../images/ziara/bg-line-2.png');
+  background-position: top left;
+  background-repeat: repeat;
 }
-.gsc-heading--light .sub-title { color: var(--gold); }
-.gsc-heading--light .title { color: #fff; }
-.gsc-heading--light .title-desc { color: rgba(255,255,255,.72); }
-.elementor-button {
-  display: inline-flex;
+.ziara-join .container { max-width: 1140px; }
+.zt-join__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   align-items: center;
-  gap: 12px;
-  padding: 16px 38px;
+}
+.zt-join__content { padding: 0 15px 30px; text-align: center; }
+.zt-join__content .gsc-heading { margin-bottom: 4px; }
+.zt-join__media { padding: 0 15px; text-align: center; }
+.zt-join__media img {
+  display: inline-block;
+  width: 75%;
+  border-radius: 10px;
+}
+.zt-join__cta { margin: 0 20px; }
+
+/* Contact Us — stock Elementor button as styled on the live site */
+.elementor-button {
+  display: inline-block;
+  padding: 15px 30px;
+  min-height: 47px;
   font-family: var(--font-body);
   font-size: 12px;
-  font-weight: 600;
-  letter-spacing: .9px;
+  font-weight: 700;
+  line-height: 20px;
   text-transform: uppercase;
+  text-decoration: none;
   color: #fff;
-  background: var(--gold-dim);
-  border-radius: 50px;
-  box-shadow: 0 10px 28px rgba(201,162,39,.32);
-  transition: background .35s, color .35s, transform .35s, box-shadow .35s;
+  background: var(--maroon);
+  border-radius: 4px;
+  transition: background .3s;
 }
-.elementor-button:hover { background: var(--gold); color: var(--maroon-deep); transform: translateY(-2px); box-shadow: 0 14px 34px rgba(201,162,39,.42); }
-.elementor-button-icon svg { width: 18px; height: 18px; fill: currentColor; }
-.ziara-join__image { margin-top: 56px; text-align: center; }
-.ziara-join__image img {
-  display: inline-block;
-  width: 100%;
-  max-width: 720px;
-  max-height: 460px;
-  object-fit: cover;
-  border-radius: 24px;
-  box-shadow: 0 30px 80px rgba(10,5,3,.45);
+.elementor-button:hover,
+.elementor-button:focus { background: var(--gold); color: #fff; }
+.elementor-button-content-wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.elementor-button-icon { display: flex; align-items: center; }
+.elementor-button-icon i,
+.elementor-button-icon svg { width: 1em; height: 1em; font-size: 1em; fill: currentColor; }
+
+@media (max-width: 1024px) {
+  .ziara-join { padding-top: 70px; }
+  .zt-join__grid { grid-template-columns: 65% 30%; justify-content: space-between; }
+}
+@media (max-width: 767px) {
+  .zt-join__grid { grid-template-columns: 1fr; }
+  .zt-join__content { padding-bottom: 10px; }
+  .zt-join__media img { width: 100%; }
+  .zt-join__cta { margin: 0; }
 }
 
 /* ── Search strip (book flights/hotels over the clone layout) ── */

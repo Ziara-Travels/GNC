@@ -7,6 +7,13 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ config('app.name', 'Ziara App') }}</title>
+
+    {{-- Favicons: identical set to ziaratravels.co.ke
+         (the msapplication TileImage is emitted by SEOHelper) --}}
+    <link rel="icon" href="{{ asset('images/ziara/cropped-ziara-32x32.jpg') }}" sizes="32x32">
+    <link rel="icon" href="{{ asset('images/ziara/cropped-ziara-192x192.jpg') }}" sizes="192x192">
+    <link rel="apple-touch-icon" href="{{ asset('images/ziara/cropped-ziara-180x180.jpg') }}">
+
     @php
         $seoHelper = new App\Helpers\SEOHelper();
         $currentPage = request()->route()->getName() ?? 'home';

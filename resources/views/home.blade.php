@@ -69,17 +69,27 @@
     </div>
 </div>
 
-{{-- ===== HEADING + DESTINATION BANNERS ===== --}}
-<section class="zt-section zt-section--white">
+{{-- ===== HEADING + DESTINATION BANNERS =====
+     Layout mirrors ziaratravels.co.ke section 1198452 + 585f834: the heading
+     occupies the left half with the first two banners beside it, and the
+     remaining four banners fill a full-width row underneath. --}}
+<section class="zt-section zt-section--white zt-safaris">
     <div class="container">
-        <div class="gsc-heading align-center style-2 widget auto-responsive">
-            <div class="content-inner">
-                <div class="sub-title"><span>Safaris &amp; Packages</span></div>
-                <h2 class="title"><span>Our Safaris &amp; International Packages</span></h2>
+        <div class="zt-safaris__top">
+            <div class="zt-safaris__head">
+                <div class="gsc-heading align-center style-2 widget auto-responsive">
+                    <div class="content-inner">
+                        <div class="sub-title"><span>Safaris &amp; Packages</span></div>
+                        <h2 class="title"><span>Our Safaris &amp; International Packages</span></h2>
+                    </div>
+                </div>
+            </div>
+            <div class="zt-safaris__pair">
+                @include('partials.ziara-banners', ['from' => 0, 'to' => 2])
             </div>
         </div>
-        <div class="ziara-banners">
-            @include('partials.ziara-banners')
+        <div class="zt-safaris__row">
+            @include('partials.ziara-banners', ['from' => 2])
         </div>
     </div>
 </section>
@@ -147,24 +157,32 @@
     </div>
 </section>
 
-{{-- ===== JOIN US ===== --}}
-<section class="zt-section zt-section--dark ziara-join">
+{{-- ===== JOIN US =====
+     Mirrors ziaratravels.co.ke section 6ea8b05: two equal columns, centred
+     heading + CTA on the left and the photo on the right at 75% width. --}}
+<section class="zt-section zt-section--cream ziara-join">
     <div class="container">
-        <div class="gsc-heading gsc-heading--light align-center style-1 widget auto-responsive" style="margin-bottom:34px;">
-            <div class="content-inner">
-                <div class="sub-title"><span>Join Us</span></div>
-                <h2 class="title"><span>Ready for an unforgetable tour?</span></h2>
-                <div class="title-desc">Plan your trip with us</div>
+        <div class="zt-join__grid">
+            <div class="zt-join__content">
+                <div class="gsc-heading align-center style-1 widget auto-responsive">
+                    <div class="content-inner">
+                        <div class="sub-title"><span>Join Us</span></div>
+                        <h2 class="title"><span>Ready for an unforgettable tour?</span></h2>
+                        <div class="title-desc">Plan your trip with us</div>
+                    </div>
+                </div>
+                <div class="zt-join__cta">
+                    <a class="elementor-button" href="{{ route('contactus') }}">
+                        <span class="elementor-button-content-wrapper">
+                            <span class="elementor-button-icon"><i class="fa-solid fa-circle-arrow-right" aria-hidden="true"></i></span>
+                            <span class="elementor-button-text">Contact Us</span>
+                        </span>
+                    </a>
+                </div>
             </div>
-        </div>
-        <div class="text-center">
-            <a class="elementor-button" href="{{ route('contactus') }}">
-                <span class="elementor-button-icon"><i class="fa-solid fa-circle-arrow-right" aria-hidden="true"></i></span>
-                <span class="elementor-button-text">Contact Us</span>
-            </a>
-        </div>
-        <div class="ziara-join__image">
-            <img src="{{ asset('images/ziara/006.jpeg') }}" alt="Ready for an unforgettable tour" loading="lazy">
+            <div class="zt-join__media">
+                <img src="{{ asset('images/ziara/006.jpeg') }}" alt="A Ziara Tours holiday group ready to travel" loading="lazy">
+            </div>
         </div>
     </div>
 </section>

@@ -1,120 +1,37 @@
-{{-- DESTINATION BANNERS - gsc-booking-banner style-1 (captured). --}}
-<div class="gsc-booking-banner text-left style-1">
-   <div class="listings-banner-content">
-      
-      
-               <div class="banner-image">
-            <img decoding="async" src="/images/ziara/008.jpeg" alt="Kenya Safaris" />
-         </div>
-      
-      <div class="banner-content">
-         
-         
-                     <h3 class="title">Kenya Safaris</h3>
-         
-         
-      </div>
+{{--
+    Destination banners — mirrors the gsc-booking-banner "style-1" cards on
+    ziaratravels.co.ke. Rendered in two slices to reproduce the reference
+    layout: the first two cards sit beside the section heading, the remaining
+    four fill the full-width row underneath.
 
-               <a class="link-term-overlay" href="https://ziaratravels.co.ke/kenya-safaris/"></a>
-                     
-   </div>
+    Usage:
+        @include('partials.ziara-banners', ['from' => 0, 'to' => 2])
+        @include('partials.ziara-banners', ['from' => 2])
+--}}
+@php
+    $banners = [
+        ['title' => 'Kenya Safaris', 'image' => 'images/ziara/008.jpeg', 'url' => 'https://ziaratravels.co.ke/kenya-safaris/'],
+        ['title' => 'Tanzania Safaris', 'image' => 'images/ziara/010.jpeg', 'url' => 'https://ziaratravels.co.ke/tanzania-safaris/'],
+        ['title' => 'Uganda Safaris', 'image' => 'images/ziara/003.jpeg', 'url' => 'https://ziaratravels.co.ke/uganda-safaris/'],
+        ['title' => 'Dubai Packages', 'image' => 'images/ziara/011.jpeg', 'url' => 'https://ziaratravels.co.ke/dubai-packages/'],
+        ['title' => 'South Africa Packages', 'image' => 'images/ziara/001.jpeg', 'url' => 'https://ziaratravels.co.ke/south-africa-packages/'],
+        ['title' => 'Bangkok Packages', 'image' => 'images/ziara/005.jpeg', 'url' => 'https://ziaratravels.co.ke/bangkok-packages/'],
+    ];
 
-<div class="gsc-booking-banner text-left style-1">
-   <div class="listings-banner-content">
-      
-      
-               <div class="banner-image">
-            <img decoding="async" src="/images/ziara/010.jpeg" alt="Tanzania Safaris" />
-         </div>
-      
-      <div class="banner-content">
-         
-         
-                     <h3 class="title">Tanzania Safaris</h3>
-         
-         
-      </div>
+    $from = $from ?? 0;
+    $to = $to ?? count($banners);
+@endphp
 
-               <a class="link-term-overlay" href="https://ziaratravels.co.ke/tanzania-safaris/"></a>
-                     
-   </div>
-
-<div class="gsc-booking-banner text-left style-1">
-   <div class="listings-banner-content">
-      
-      
-               <div class="banner-image">
-            <img decoding="async" src="/images/ziara/003.jpeg" alt="Uganda Safaris" />
-         </div>
-      
-      <div class="banner-content">
-         
-         
-                     <h3 class="title">Uganda Safaris</h3>
-         
-         
-      </div>
-
-               <a class="link-term-overlay" href="https://ziaratravels.co.ke/uganda-safaris/"></a>
-                     
-   </div>
-
-<div class="gsc-booking-banner text-left style-1">
-   <div class="listings-banner-content">
-      
-      
-               <div class="banner-image">
-            <img decoding="async" src="/images/ziara/011.jpeg" alt="Dubai Packages" />
-         </div>
-      
-      <div class="banner-content">
-         
-         
-                     <h3 class="title">Dubai Packages</h3>
-         
-         
-      </div>
-
-               <a class="link-term-overlay" href="https://ziaratravels.co.ke/dubai-packages/"></a>
-                     
-   </div>
-
-<div class="gsc-booking-banner text-left style-1">
-   <div class="listings-banner-content">
-      
-      
-               <div class="banner-image">
-            <img decoding="async" src="/images/ziara/001.jpeg" alt="South Africa Packages" />
-         </div>
-      
-      <div class="banner-content">
-         
-         
-                     <h3 class="title">South Africa Packages</h3>
-         
-         
-      </div>
-
-               <a class="link-term-overlay" href="https://ziaratravels.co.ke/south-africa-packages/"></a>
-                     
-   </div>
-
-<div class="gsc-booking-banner text-left style-1">
-   <div class="listings-banner-content">
-      
-      
-               <div class="banner-image">
-            <img decoding="async" src="/images/ziara/005.jpeg" alt="Bangkok Packages" />
-         </div>
-      
-      <div class="banner-content">
-         
-         
-                     <h3 class="title">Bangkok Packages</h3>
-         
-         
-      </div>
-
-               <a class="link-term-overlay" href="https://ziaratravels.co.ke/bangkok-packages/"></a>
-                     
-   </div>
+@foreach (array_slice($banners, $from, $to - $from) as $banner)
+    <div class="gsc-booking-banner text-left style-1">
+        <div class="listings-banner-content">
+            <div class="banner-image">
+                <img decoding="async" loading="lazy" src="{{ asset($banner['image']) }}" alt="{{ $banner['title'] }}">
+            </div>
+            <div class="banner-content">
+                <h3 class="title">{{ $banner['title'] }}</h3>
+            </div>
+            <a class="link-term-overlay" href="{{ $banner['url'] }}" aria-label="{{ $banner['title'] }}"></a>
+        </div>
+    </div>
+@endforeach
