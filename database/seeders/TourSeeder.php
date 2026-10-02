@@ -2,102 +2,65 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Tour;
+use Illuminate\Database\Seeder;
 
+/**
+ * Seeds the live tour catalogue mirrored from ziaratravels.co.ke.
+ *
+ * The source of truth is database/data/reference_tours.php, generated from the
+ * reference site so the content is reproducible rather than hand-maintained.
+ * Rows are keyed on `slug`, which makes repeated runs (including the one on
+ * every production boot) idempotent.
+ */
 class TourSeeder extends Seeder
 {
-    /**
-     * Seed the real tours catalog. This replaces the hardcoded arrays that used
-     * to live inline in TourController/Travel\ActivityController.
-     */
-    public function run()
+    public function run(): void
     {
-        $tours = [
-            [
-                'name' => 'Masai Mara Safari',
-                'short_description' => 'Experience the Great Migration in the world-famous Masai Mara.',
-                'full_description' => 'A 3 day safari through the Masai Mara National Reserve, home to the Great Migration and the Big Five.',
-                'city' => 'Masai Mara',
-                'country' => 'Kenya',
-                'images' => ['masai-mara.jpg'],
-                'price' => 45000,
-                'currency' => 'KES',
-                'duration' => '3 days',
-                'category' => 'Safari',
-                'rating' => 4.9,
-                'included_services' => ['Park fees', 'Game drives', 'Accommodation'],
-                'highlights' => ['Big Five', 'Hot Air Balloon', 'Masai Village Visit'],
-            ],
-            [
-                'name' => 'Serengeti Experience',
-                'short_description' => 'Explore the endless plains of the Serengeti National Park.',
-                'full_description' => 'A 4 day tour of the Serengeti, including the Ngorongoro Crater and the annual wildebeest migration.',
-                'city' => 'Serengeti',
-                'country' => 'Tanzania',
-                'images' => ['serengeti.jpg'],
-                'price' => 55000,
-                'currency' => 'KES',
-                'duration' => '4 days',
-                'category' => 'Safari',
-                'rating' => 4.8,
-                'included_services' => ['Park fees', 'Game drives', 'Accommodation'],
-                'highlights' => ['Game Drives', 'Wildebeest Migration', 'Ngorongoro Crater'],
-            ],
-            [
-                'name' => 'Gorilla Trekking Rwanda',
-                'short_description' => 'Trek through misty forests to encounter mountain gorillas.',
-                'full_description' => 'A 2 day trek through Volcanoes National Park to see mountain gorillas in their natural habitat.',
-                'city' => 'Volcanoes NP',
-                'country' => 'Rwanda',
-                'images' => ['rwanda-gorillas.jpg'],
-                'price' => 150000,
-                'currency' => 'KES',
-                'duration' => '2 days',
-                'category' => 'Wildlife',
-                'rating' => 5.0,
-                'included_services' => ['Permit fees', 'Guide', 'Accommodation'],
-                'highlights' => ['Mountain Gorillas', 'Misty Forests', 'Local Culture'],
-            ],
-            [
-                'name' => 'Zanzibar Spice Tour',
-                'short_description' => 'Discover the aromatic spice plantations of Zanzibar.',
-                'full_description' => 'A half-day tour of Zanzibar\'s spice plantations, tasting and learning about the island\'s famous spices.',
-                'city' => 'Zanzibar',
-                'country' => 'Tanzania',
-                'images' => ['zanzibar-spice.jpg'],
-                'price' => 3500,
-                'currency' => 'KES',
-                'duration' => '4 hours',
-                'duration_hours' => 4,
-                'category' => 'Cultural',
-                'rating' => 4.7,
-                'included_services' => ['Guide', 'Tastings', 'Transport'],
-                'highlights' => ['Spice Plantations', 'Local Tastings', 'Stone Town'],
-            ],
-            [
-                'name' => 'White Water Rafting - Nile',
-                'short_description' => 'Experience thrilling rapids at the source of the Nile.',
-                'full_description' => 'A full-day white water rafting adventure on the Nile River in Jinja, Uganda.',
-                'city' => 'Jinja',
-                'country' => 'Uganda',
-                'images' => ['nile-rafting.jpg'],
-                'price' => 8500,
-                'currency' => 'KES',
-                'duration' => '1 day',
-                'duration_hours' => 8,
-                'category' => 'Adventure',
-                'rating' => 4.8,
-                'included_services' => ['Safety gear', 'Guide', 'Lunch'],
-                'highlights' => ['White Water Rapids', 'Source of the Nile', 'Adventure'],
-            ],
-        ];
+        $catalogue = require database_path('data/reference_tours.php');
 
-        foreach ($tours as $tour) {
+        if (! is_array($catalogue) || $catalogue === []) {
+            $this->command?->error('Reference tour catalogue is empty; nothing seeded.');
+
+            return;
+        }
+
+        $now = now();
+
+        foreach ($catalogue as $row) {
+            $slug = $row['slug'];
+
+            // The reference lists the cheapest tier first; `price` holds that
+            // amount while `pricing_options` keeps every labelled option.
+            $options = $row['prices'] ?? [];
+
             Tour::updateOrCreate(
-                ['name' => $tour['name']],
-                $tour
+                ['slug' => $slug],
+                [
+                    'tour_reference'     => 'ZT' . strtoupper(substr(md5($slug), 0, 10)),
+                    'name'               => $row['name'],
+                    'short_description'  => $row['short_description'],
+                    'full_description'   => $row['full_description'],
+                    'card_excerpt'       => $row['card_excerpt'] ?? null,
+                    'city'               => $row['location'] !== '' ? $row['location'] : $row['name'],
+                    'country'            => $row['country'],
+                    'images'             => $row['images'],
+                    'price'              => $row['price'],
+                    'pricing_options'    => $options,
+                    'currency'           => $row['currency'],
+                    'duration'           => $row['duration'],
+                    'included_services'  => $row['inclusions'],
+                    'highlights'         => $options,
+                    'category'           => $row['category'],
+                    'featured'           => $row['featured'],
+                    'status'             => 'active',
+                    'published_at'       => $now,
+                    'updated_at'         => $now,
+                    'created_at'         => $now,
+                ]
             );
         }
+
+        $this->command?->info('Seeded ' . count($catalogue) . ' reference tours.');
     }
 }

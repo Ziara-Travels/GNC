@@ -31,6 +31,8 @@ class Tour extends Model
         'longitude',
         'images',
         'price',
+        'pricing_options',
+        'card_excerpt',
         'original_price',
         'currency',
         'discount_percent',
@@ -70,6 +72,7 @@ class Tour extends Model
 
     protected $casts = [
         'images' => 'array',
+        'pricing_options' => 'array',
         'included_services' => 'array',
         'excluded_services' => 'array',
         'highlights' => 'array',
@@ -150,6 +153,47 @@ class Tour extends Model
         return $query->where('difficulty_level', $difficulty);
     }
 
+    /**
+     * Parent category used by the reference breadcrumb, derived from the
+     * category slug ("Kenya Safaris" sits under "Safaris").
+     */
+    public function getCategoryParentAttribute(): string
+    {
+        return self::parentCategory($this->category);
+    }
+
+    public function getCategoryLabelAttribute(): string
+    {
+        return self::categoryLabel($this->category);
+    }
+
+    /**
+     * Human label for a category slug, usable without a hydrated model.
+     */
+    public static function categoryLabel(?string $category): string
+    {
+        return match ($category) {
+            'kenya-safaris' => 'Kenya Safaris',
+            'international-packages' => 'International packages',
+            'dubai-package' => 'Dubai package',
+            'bangkok-packages' => 'Bangkok Packages',
+            'safaris' => 'Safaris',
+            default => ucwords(str_replace('-', ' ', (string) $category)),
+        };
+    }
+
+    /**
+     * Parent category slug for the reference breadcrumb.
+     */
+    public static function parentCategory(?string $category): string
+    {
+        return match ($category) {
+            'kenya-safaris' => 'safaris',
+            'dubai-package', 'bangkok-packages' => 'international-packages',
+            default => (string) $category ?: 'safaris',
+        };
+    }
+
     // Accessors
     public function getDiscountedPriceAttribute()
     {
@@ -171,7 +215,65 @@ class Tour extends Model
 
     public function getMainImageAttribute()
     {
-        return $this->images[0] ?? '/images/travel/default-tour.jpg';
+        return $this->hero_image_url;
+    }
+
+    /**
+     * Resolves a stored image path to a public URL. Reference images are
+     * seeded as root-relative public paths (e.g. "images/tours/x-hero.jpg").
+     */
+    protected static function publicImageUrl(?string $path): string
+    {
+        if (! $path) {
+            return asset('images/travel/default-tour.svg');
+        }
+
+        if (preg_match('#^https?://#i', $path)) {
+            return $path;
+        }
+
+        return asset(ltrim($path, '/'));
+    }
+
+    /**
+     * Large image used for the detail-page hero. Seeded first in `images`.
+     */
+    public function getHeroImageUrlAttribute(): string
+    {
+        $images = is_array($this->images) ? $this->images : [];
+
+        return self::publicImageUrl($images[0] ?? null);
+    }
+
+    /**
+     * Listing/card image. The scraper saves the detail hero as "{slug}-hero.ext",
+     * so the first remaining entry is the card-sized variant.
+     */
+    public function getCardImageUrlAttribute(): string
+    {
+        $images = is_array($this->images) ? $this->images : [];
+
+        foreach ($images as $image) {
+            if (! preg_match('/-hero\.[a-z0-9]+$/i', (string) $image)) {
+                return self::publicImageUrl($image);
+            }
+        }
+
+        return $this->hero_image_url;
+    }
+
+    /**
+     * Remaining images, used for the detail-page gallery.
+     */
+    public function getGalleryUrlsAttribute(): array
+    {
+        $images = is_array($this->images) ? $this->images : [];
+        $card = $this->card_image_url;
+
+        return array_values(array_filter(
+            array_map([self::class, 'publicImageUrl'], $images),
+            fn ($url) => $url !== $this->hero_image_url && $url !== $card
+        ));
     }
 
     public function getAvailabilityStatusAttribute()

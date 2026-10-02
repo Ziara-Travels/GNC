@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" role="img" aria-label="Tour image unavailable">
+  <rect width="600" height="400" fill="#faf5ea"/>
+  <g fill="none" stroke="#6b2c1f" stroke-opacity=".35" stroke-width="2">
+    <path d="M0 300 L150 190 L260 280 L360 210 L600 320"/>
+    <circle cx="470" cy="110" r="34"/>
+  </g>
+  <text x="300" y="365" text-anchor="middle" font-family="Georgia, serif" font-size="19" fill="#8a7d70">Image coming soon</text>
+</svg>

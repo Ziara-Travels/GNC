@@ -80,6 +80,53 @@ class TourController extends Controller
     }
 
     /**
+     * Tours belonging to a reference category ("kenya-safaris", "dubai-package").
+     *
+     * Parent categories include their children, matching the reference site
+     * where "Safaris" lists the "Kenya Safaris" tours and "International
+     * packages" lists Dubai and Bangkok.
+     */
+    public function category(Request $request, string $slug)
+    {
+        $children = collect(Tour::active()->distinct()->pluck('category'))
+            ->filter(fn ($category) => Tour::parentCategory($category) === $slug)
+            ->push($slug)
+            ->unique()
+            ->values();
+
+        $tours = Tour::active()
+            ->whereIn('category', $children)
+            ->when($request->filled('q'), function ($query) use ($request) {
+                $term = $request->input('q');
+                $query->where(function ($q) use ($term) {
+                    $q->where('name', 'like', "%{$term}%")
+                      ->orWhere('city', 'like', "%{$term}%")
+                      ->orWhere('country', 'like', "%{$term}%");
+                });
+            })
+            ->orderByDesc('featured')
+            ->orderBy('id')
+            ->paginate(12)
+            ->appends($request->query());
+
+        $categories = collect(Tour::active()->distinct()->pluck('category'))
+            ->sort()
+            ->map(fn ($category) => [
+                'slug'  => $category,
+                'label' => Tour::categoryLabel($category),
+            ])
+            ->values();
+
+        return view('tours.search', [
+            'tours'       => $tours,
+            'searchTerm'  => $request->input('q', ''),
+            'cities'      => Tour::active()->distinct()->pluck('city'),
+            'categories'  => $categories,
+            'activeCategory' => $slug,
+        ]);
+    }
+
+    /**
      * Show a single tour
      */
     public function show($slug)

@@ -94,9 +94,17 @@
     </div>
 </section>
 
-{{-- ===== POPULAR SAFARIS (cards) ===== --}}
+{{-- ===== OUR SAFARIS (tour carousel) ===== --}}
 <section class="zt-section zt-section--pale">
     <div class="container">
+        <div class="zt-safaris__head" style="margin-bottom: 42px;">
+            <div class="gsc-heading align-center style-1 widget auto-responsive">
+                <div class="content-inner">
+                    <div class="sub-title"><span>Our Safaris</span></div>
+                    <h2 class="title"><span>Our Safaris</span></h2>
+                </div>
+            </div>
+        </div>
         <div class="ziara-carousel-wrap">
             @include('partials.ziara-safaris-carousel')
         </div>

@@ -159,12 +159,17 @@ Route::get('/hotels/confirmation/{reference}', [HotelSearchController::class, 'c
 
 
 // =====================================
+// Matches the reference URL structure (ziaratravels.co.ke/tour-category/...).
+Route::get('/tour-category/{slug}', [TourController::class, 'category'])
+    ->name('tour-category');
+
 // TOUR ROUTES
 // =====================================
 Route::prefix('tours')->name('tours.')->group(function () {
     // Public tour routes
     Route::get('/', [TourController::class, 'index'])->name('index');
     Route::get('/search', [TourController::class, 'search'])->name('search');
+    Route::get('/category/{slug}', [TourController::class, 'category'])->name('category');
     Route::get('/{slug}', [TourController::class, 'show'])->name('show');
 
     // Tour booking routes (require authentication)
