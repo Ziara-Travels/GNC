@@ -49,6 +49,7 @@ RUN apk add --no-cache \
     # Runtime deps
     nginx \
     supervisor \
+    su-exec \
     bash \
     git \
     curl \
@@ -64,7 +65,12 @@ RUN getent group www-data >/dev/null || addgroup -g 82 -S www-data \
 
 # Configure PHP-FPM (Alpine php84 uses /etc/php84/php-fpm.d/www.conf)
 # Default is usually a unix socket; force TCP 127.0.0.1:9000 to match nginx.conf.template
+# The pool must also be pinned to www-data: php84-fpm ships user/group unset, and a
+# root-run master otherwise drops the pool to "nobody", which cannot write storage/
+# and makes Blade's tempnam() fall back to the system temp dir (fatal ErrorException).
 RUN sed -i -E 's|^;?listen = .*|listen = 127.0.0.1:9000|' /etc/php84/php-fpm.d/www.conf \
+    && sed -i -E '/^;?(user|group) = /d' /etc/php84/php-fpm.d/www.conf \
+    && printf 'user = www-data\ngroup = www-data\n' >> /etc/php84/php-fpm.d/www.conf \
     && mkdir -p /run/php-fpm \
     # Create symlinks so start.sh's paths work
     && mkdir -p /usr/local/etc /usr/local/bin /usr/local/sbin \
