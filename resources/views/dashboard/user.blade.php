@@ -341,19 +341,19 @@
                                                                 <g id="countries">
                                                                     <!-- Kenya -->
                                                                     <path d="M180 120 L220 110 L230 140 L210 160 L180 150 Z" fill="#3B82F6" fill-opacity="0.7" stroke="#1E40AF" stroke-width="1" class="country-path" data-country="kenya">
-                                                                        <title>Kenya - {{ ($topDestinations->where('country', 'Kenya')->first()->booking_count ?? 0) }} bookings</title>
+                                                                        <title>Kenya - {{ ($topDestinations->where('destination_name', 'Kenya')->first()?->booking_count ?? 0) }} bookings</title>
                                                                     </path>
                                                                     <!-- Tanzania -->
                                                                     <path d="M180 150 L210 160 L220 190 L190 200 L170 180 Z" fill="#10B981" fill-opacity="0.7" stroke="#047857" stroke-width="1" class="country-path" data-country="tanzania">
-                                                                        <title>Tanzania - {{ ($topDestinations->where('country', 'Tanzania')->first()->booking_count ?? 0) }} bookings</title>
+                                                                        <title>Tanzania - {{ ($topDestinations->where('destination_name', 'Tanzania')->first()?->booking_count ?? 0) }} bookings</title>
                                                                     </path>
                                                                     <!-- Uganda -->
                                                                     <path d="M150 120 L180 115 L180 140 L160 145 Z" fill="#8B5CF6" fill-opacity="0.7" stroke="#7C3AED" stroke-width="1" class="country-path" data-country="uganda">
-                                                                        <title>Uganda - {{ ($topDestinations->where('country', 'Uganda')->first()->booking_count ?? 0) }} bookings</title>
+                                                                        <title>Uganda - {{ ($topDestinations->where('destination_name', 'Uganda')->first()?->booking_count ?? 0) }} bookings</title>
                                                                     </path>
                                                                     <!-- Rwanda -->
                                                                     <path d="M160 145 L175 140 L170 155 L160 155 Z" fill="#F59E0B" fill-opacity="0.7" stroke="#D97706" stroke-width="1" class="country-path" data-country="rwanda">
-                                                                        <title>Rwanda - {{ ($topDestinations->where('country', 'Rwanda')->first()->booking_count ?? 0) }} bookings</title>
+                                                                        <title>Rwanda - {{ ($topDestinations->where('destination_name', 'Rwanda')->first()?->booking_count ?? 0) }} bookings</title>
                                                                     </path>
                                                                 </g>
                                                                 

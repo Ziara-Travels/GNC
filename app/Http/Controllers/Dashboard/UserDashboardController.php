@@ -230,7 +230,7 @@ class UserDashboardController extends Controller
                 'recentActivities' => collect(),
                 'notifications' => collect(),
                 'chartData' => [],
-                'topDestinations' => [],
+                'topDestinations' => collect(),
                 'upcomingTrips' => collect(),
                 'flightData' => null,
                 'priceKes' => null,

@@ -393,7 +393,15 @@ Route::middleware(['auth'])->group(function () {
 // =====================================
 // USER DASHBOARD ROUTES
 // =====================================
-Route::middleware(['auth', 'role:user'])->prefix('user')->name('user.')->group(function () {
+// 'verified' requires a confirmed email address. Note this is deliberately the
+// stock 'verified' (EnsureEmailIsVerified) and NOT 'verified.active'
+// (EnsureEmailVerifiedAndActive): users.is_active defaults to false and is only
+// set true at verification time, so 'verified.active' would log out any
+// pre-existing account that was verified before that flag was introduced.
+// Booking/payment routes intentionally live in a separate 'auth'-only group
+// below so that the guest-booking continuation keeps working for unverified
+// users up until they confirm their email.
+Route::middleware(['auth', 'role:user', 'verified'])->prefix('user')->name('user.')->group(function () {
     // Dashboard main pages
     Route::get('/', [UserDashboardController::class, 'index'])->name('dashboard');
     Route::get('/home', [UserDashboardController::class, 'home'])->name('home');
